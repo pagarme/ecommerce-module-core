@@ -53,10 +53,6 @@ abstract class AbstractValidString extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        $object = new \stdClass();
-
-        $object->value = $this->getValue();
-
-        return $object;
+        return $this->getValue();
     }
 }

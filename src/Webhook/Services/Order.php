@@ -2,12 +2,14 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
+use Mundipagg\Core\Kernel\AbstractPlatformOrderDecorator;
+
 class Order
 {
     public function handlePaid(AbstractPlatformOrderDecorator $orderDecorator, $webHookData)
     {
         $result = [];
-        if($order->canInvoice()) {
+        if($orderDecorator->canInvoice()) {
             $invoice = $this->createInvoice($orderDecorator->getPlatformOrder());
             $result[] = [
                 "order" => "canInvoice",

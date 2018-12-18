@@ -21,7 +21,7 @@ abstract class AbstractEntity implements JsonSerializable
     protected $id;
 
     /**
-     * @return string
+     * @return AbstractValidString
      */
     public function getId()
     {

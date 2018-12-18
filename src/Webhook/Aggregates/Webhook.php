@@ -3,9 +3,51 @@
 namespace Mundipagg\Core\Webhook\Aggregates;
 
 use Mundipagg\Core\Kernel\AbstractEntity;
+use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 
 class Webhook extends AbstractEntity
 {
+    /** @var WebhookType */
+    protected $type;
+
+    /** @var AbstractEntity */
+    protected $entity;
+
+    /**
+     * @return WebhookType
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param WebhookType $type
+     * @return Webhook
+     */
+    public function setType(WebhookType $type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return AbstractEntity
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param AbstractEntity $entity
+     * @return Webhook
+     */
+    public function setEntity(AbstractEntity $entity)
+    {
+        $this->entity = $entity;
+        return $this;
+    }
 
     /**
      * Specify data which should be serialized to JSON
