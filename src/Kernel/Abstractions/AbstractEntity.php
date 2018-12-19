@@ -15,12 +15,20 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 abstract class AbstractEntity implements JsonSerializable
 {
     /**
-     * @var AbstractValidString
+     * @var int
      */
     protected $id;
 
     /**
-     * @return AbstractValidString
+     * Almost every Entity has an equivalent at mundipagg. This property holds the
+     * Mundipagg ID for the entity.
+     *
+     * @var AbstractValidString
+     */
+    protected $mundipaggId;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -31,9 +39,27 @@ abstract class AbstractEntity implements JsonSerializable
      * @param  string $id
      * @return AbstractEntity
      */
-    public function setId(AbstractValidString $id)
+    public function setId(int $id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return AbstractValidString
+     */
+    public function getMundipaggId()
+    {
+        return $this->mundipaggId;
+    }
+
+    /**
+     * @param AbstractValidString $mundipaggId
+     * @return AbstractEntity
+     */
+    public function setMundipaggId(AbstractValidString $mundipaggId)
+    {
+        $this->mundipaggId = $mundipaggId;
         return $this;
     }
 

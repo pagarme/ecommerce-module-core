@@ -19,7 +19,7 @@ class OrderFactory implements FactoryInterface
         $order = new Order();
         $status = $postData['status'];
 
-        $order->setId(new OrderId($postData['id']));
+        $order->setMundipaggId(new OrderId($postData['id']));
         $order
             ->setCode($postData['code'])
             ->setAmount($postData['amount'])

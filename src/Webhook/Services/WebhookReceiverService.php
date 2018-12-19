@@ -12,13 +12,16 @@ class WebhookReceiverService
         //@todo log webhook received.
 
         $repository = new WebhookRepository();
-        $webhook = $repository->find($postData->id);
+        $webhook = $repository->findByMundipaggId($postData->id);
         if ($webhook !== null) {
             throw new \Exception("Webhoook {$postData->id} already handled!");
         }
 
         $factory = new WebhookFactory();
         $webhook = $factory->createFromPostData($postData);
+
+        $repository->save($webhook);
+
 
         $handlerServiceClass =
             'Mundipagg\\Core\\Webhook\\Services\\' .

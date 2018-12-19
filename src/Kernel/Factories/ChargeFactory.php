@@ -19,7 +19,7 @@ class ChargeFactory implements FactoryInterface
         $charge = new Charge;
         $status = $postData['status'];
 
-        $charge->setId(new ChargeId($postData['id']));
+        $charge->setMundipaggId(new ChargeId($postData['id']));
         $charge->setCode($postData['code']);
         $charge->setAmount($postData['amount']);
         $charge->setPaidAmount($postData['paid_amount']);

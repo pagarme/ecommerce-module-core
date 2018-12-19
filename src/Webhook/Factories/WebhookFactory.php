@@ -19,7 +19,7 @@ class WebhookFactory implements FactoryInterface
     {
         $webhook = new Webhook();
 
-        $webhook->setId(new WebhookId($postData->id));
+        $webhook->setMundipaggId(new WebhookId($postData->id));
         $webhook->setType(WebhookType::fromPostType($postData->type));
 
         $factoryService = new FactoryService;
@@ -42,7 +42,8 @@ class WebhookFactory implements FactoryInterface
     {
         $webhook = new Webhook();
 
-        $webhook->setId(new WebhookId($dbData['id']));
+        $webhook->setId($dbData['id']);
+        $webhook->setMundipaggId(new WebhookId($dbData['mundipagg_id']));
 
         return $webhook;
     }

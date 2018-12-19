@@ -76,4 +76,9 @@ class ConfigurationRepository extends AbstractRepository
 
         return $object;
     }
+
+    public function findByMundipaggId($mundipaggId)
+    {
+        return null;
+    }
 }

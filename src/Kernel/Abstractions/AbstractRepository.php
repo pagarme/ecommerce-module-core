@@ -26,7 +26,9 @@ abstract class AbstractRepository
             $objectId = $object->getId();
         }
         if ($objectId === null) {
-            return $this->create($object);
+            $createResult = $this->create($object);
+            $object->setId($this->db->getLastId());
+            return $createResult;
         }
 
         return $this->update($object);
@@ -36,5 +38,6 @@ abstract class AbstractRepository
     abstract protected function update(AbstractEntity &$object);
     abstract public function delete(AbstractEntity $object);
     abstract public function find($objectId);
+    abstract public function findByMundipaggId($mundipaggId);
     abstract public function listEntities($limit, $listDisabled);
 }
