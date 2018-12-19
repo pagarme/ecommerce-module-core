@@ -2,12 +2,13 @@
 
 namespace Mundipagg\Core\Webhook\Factories;
 
-use Mundipagg\Core\Kernel\Aggregates\Order as OrderEntity;
+use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Mundipagg\Core\Kernel\Services\FactoryService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\ValueObjects\WebhookId;
 use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 
-class WebhookFactory
+class WebhookFactory implements FactoryInterface
 {
     /**
      * @return Webhook
@@ -19,13 +20,12 @@ class WebhookFactory
         $webhook->setId(new WebhookId($postData->id));
         $webhook->setType(WebhookType::fromPostType($postData->type));
 
-        /*
-         @todo implement this!
-        $entityFactory = MundipaggCore::getFactoryFor($webhook->getType()->getEntityType());
+        $factoryService = new FactoryService;
+
+        $entityFactory = $factoryService->getFactoryFor('Kernel', $webhook->getType()->getEntityType());
         $entity = $entityFactory->createFromPostData($postData->data);
-        */
-        //@fixme this is a mock. when the above block was implemented, please remove it.
-        $entity = new OrderEntity();
+
+        //$entity = new OrderEntity();
 
         $webhook->setEntity($entity);
 
