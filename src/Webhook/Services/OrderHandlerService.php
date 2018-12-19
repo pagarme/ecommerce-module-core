@@ -2,12 +2,12 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
+use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class OrderHandlerService extends AbstractHandlerService
 {
-    /** @var AbstractPlatformOrderDecorator */
+    /** @var AbstractDatabaseDecorator */
     private $orderDecorator;
 
     public function __construct()

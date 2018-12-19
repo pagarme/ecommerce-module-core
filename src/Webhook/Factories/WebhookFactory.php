@@ -11,7 +11,9 @@ use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 class WebhookFactory implements FactoryInterface
 {
     /**
+     * @param $postData
      * @return Webhook
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidClassException
      */
     public function createFromPostData($postData)
     {
@@ -28,6 +30,19 @@ class WebhookFactory implements FactoryInterface
         //$entity = new OrderEntity();
 
         $webhook->setEntity($entity);
+
+        return $webhook;
+    }
+
+    /**
+     * @param $dbData
+     * @return Webhook
+     */
+    public function createFromDbData($dbData)
+    {
+        $webhook = new Webhook();
+
+        $webhook->setId(new WebhookId($dbData['id']));
 
         return $webhook;
     }

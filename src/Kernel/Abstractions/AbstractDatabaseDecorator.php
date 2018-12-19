@@ -30,7 +30,7 @@ abstract class AbstractDatabaseDecorator
         if (isset($this->tableArray[$tableName])) {
             return $this->tableArray[$tableName];
         }
-        throw new Exception("Table name '$tableName' not found!");
+        throw new \Exception("Table name '$tableName' not found!");
     }
     abstract public function getLastId();
     abstract protected function setTableArray();

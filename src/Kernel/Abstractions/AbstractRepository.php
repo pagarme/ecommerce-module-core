@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleSetup as MPSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 
 abstract class AbstractRepository
 {

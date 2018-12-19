@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
+use Mundipagg\Core\Webhook\Repositories\WebhookRepository;
 
 class WebhookReceiverService
 {
@@ -10,14 +11,11 @@ class WebhookReceiverService
     {
         //@todo log webhook received.
 
-        /*
-         * @todo implement ths block!
         $repository = new WebhookRepository();
         $webhook = $repository->find($postData->id);
         if ($webhook !== null) {
             throw new \Exception("Webhoook {$postData->id} already handled!");
         }
-        */
 
         $factory = new WebhookFactory();
         $webhook = $factory->createFromPostData($postData);
