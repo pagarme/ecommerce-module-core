@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Webhook\Aggregates;
 
-use Mundipagg\Core\Kernel\AbstractEntity;
+use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 
 class Webhook extends AbstractEntity

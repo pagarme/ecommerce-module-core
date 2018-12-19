@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\AbstractValueObject;
+use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 
 abstract class AbstractValidString extends AbstractValueObject

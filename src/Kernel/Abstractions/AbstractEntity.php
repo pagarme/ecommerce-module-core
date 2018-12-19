@@ -1,7 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel;
-
+namespace Mundipagg\Core\Kernel\Abstractions;
 
 use JsonSerializable;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
