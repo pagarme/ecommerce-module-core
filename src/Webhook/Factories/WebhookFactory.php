@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Webhook\Factories;
 
+use Mundipagg\Core\Kernel\Exceptions\InvalidClassException;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Services\FactoryService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
@@ -24,7 +26,16 @@ class WebhookFactory implements FactoryInterface
 
         $factoryService = new FactoryService;
 
-        $entityFactory = $factoryService->getFactoryFor('Kernel', $webhook->getType()->getEntityType());
+        try {
+            $entityFactory =
+                $factoryService->getFactoryFor(
+                    'Kernel',
+                    $webhook->getType()->getEntityType()
+                );
+        }catch(InvalidClassException $e) {
+            throw new NotFoundException("Handler not found for {$postData->type} webhook");
+        }
+
         $entity = $entityFactory->createFromPostData($postData->data);
 
         //$entity = new OrderEntity();

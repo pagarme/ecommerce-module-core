@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 final class ChargeStatus extends AbstractValueObject
 {
     const PAID = 'paid';
+    const PENDING = 'pending';
 
     /** @var string */
     private $status;
@@ -23,6 +24,11 @@ final class ChargeStatus extends AbstractValueObject
     static public function paid()
     {
         return new self(self::PAID);
+    }
+
+    static public function pending()
+    {
+        return new self(self::PENDING);
     }
 
     /**

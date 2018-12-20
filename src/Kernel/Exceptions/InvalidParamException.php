@@ -7,7 +7,7 @@ namespace Mundipagg\Core\Kernel\Exceptions;
  * fails inside an Aggregate or Value Object setter.
  *
  */
-class InvalidParamException extends \Exception
+class InvalidParamException extends AbstractMundipaggCoreException
 {
     /**
      * InvalidParamException constructor.
@@ -19,6 +19,6 @@ class InvalidParamException extends \Exception
     public function __construct(string $message, string $value)
     {
         $message .= " Passed value: $value";
-        parent::__construct($message, 0, null);
+        parent::__construct($message, 400, null);
     }
 }
