@@ -14,4 +14,5 @@ interface PlatformOrderInterface
     public function addHistoryComment($message);
     public function setIsCustomerNotified();
     public function canInvoice();
+    public function getPlatformOrder();
 }

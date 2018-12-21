@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
+use Mundipagg\Core\Webhook\Exceptions\WebhookAlreadyHandledException;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
 use Mundipagg\Core\Webhook\Repositories\WebhookRepository;
@@ -23,7 +24,7 @@ class WebhookReceiverService
             $repository = new WebhookRepository();
             $webhook = $repository->findByMundipaggId($postData->id);
             if ($webhook !== null) {
-                throw new \Exception("Webhoook {$postData->id} already handled!");
+                throw new WebhookAlreadyHandledException($webhook);
             }
 
             $factory = new WebhookFactory();

@@ -7,7 +7,6 @@ use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 class WebhookHandlerNotFoundException extends NotFoundException
 {
-
     /**
      * WebhookHandlerNotFound constructor.
      */

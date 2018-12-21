@@ -9,6 +9,9 @@ class ENUS extends AbstractI18NTable
     protected function getTable()
     {
         return [
+            'Invoice created: #%d.' => null,
+            'Webhook received: %s.%s' => null,
+            'Order paid.' => null,
         ];
     }
 }

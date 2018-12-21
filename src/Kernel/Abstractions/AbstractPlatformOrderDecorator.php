@@ -14,5 +14,10 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $this->addMPHistoryComment($message);
     }
 
+    public function getPlatformOrder()
+    {
+        return $this->platformOrder;
+    }
+
     abstract protected function addMPHistoryComment($message);
 }

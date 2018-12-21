@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Webhook\Services;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
@@ -50,9 +51,12 @@ abstract class AbstractHandlerService
 
     protected function addWebHookReceivedHistory(Webhook $webhook)
     {
-        $message = 'Webhook received: ' .
-            $webhook->getType()->getEntityType() . '.' .
-            $webhook->getType()->getAction();
+        $i18n = new LocalizationService();
+        $message = $i18n->getDashboard(
+            'Webhook received: %s.%s',
+            $webhook->getType()->getEntityType(),
+            $webhook->getType()->getAction()
+        );
 
         $this->order->addHistoryComment($message);
     }
