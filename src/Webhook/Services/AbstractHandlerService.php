@@ -38,8 +38,13 @@ abstract class AbstractHandlerService
         $handler = 'handle' . ucfirst($webhook->getType()->getAction());
         if (method_exists($this, $handler)) {
             $this->loadOrder($webhook);
-            $this->addWebHookReceivedHistory($webhook);
-            return $this->$handler($webhook);
+
+            if ($this->order->getIncrementId() !== null) {
+                $this->addWebHookReceivedHistory($webhook);
+                return $this->$handler($webhook);
+            }
+
+            throw new NotFoundException("Order #{$webhook->getEntity()->getCode()} not found.");
         }
 
         throw new WebhookHandlerNotFoundException($webhook);

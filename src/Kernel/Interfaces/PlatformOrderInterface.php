@@ -15,4 +15,5 @@ interface PlatformOrderInterface
     public function setIsCustomerNotified();
     public function canInvoice();
     public function getPlatformOrder();
+    public function getIncrementId();
 }

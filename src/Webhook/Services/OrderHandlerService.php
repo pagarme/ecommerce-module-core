@@ -44,8 +44,8 @@ final class OrderHandlerService extends AbstractHandlerService
 
         /**
          *
- * @var PlatformOrderInterface $order 
-*/
+         * @var PlatformOrderInterface $order
+        */
         $order = new $orderDecoratorClass();
         $order->loadByIncrementId($webhook->getEntity()->getCode());
         $this->order = $order;
