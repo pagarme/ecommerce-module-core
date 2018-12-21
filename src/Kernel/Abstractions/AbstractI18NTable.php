@@ -7,7 +7,8 @@ use Mundipagg\Core\Kernel\Interfaces\I18NTableInterface;
 abstract class AbstractI18NTable implements I18NTableInterface
 {
     /**
-     * @param string $string
+     *
+     * @param  string $string
      * @return string
      */
     public function get($string)

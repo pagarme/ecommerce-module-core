@@ -37,34 +37,57 @@ final class Configuration extends AbstractEntity
     ];
 
     /**
+     *
      * @fixme since the module environment is defined by the type of public key
      * there is no point in saving the test keys.
-     *
      */
     const KEY_SECRET = 'KEY_SECRET';
     const KEY_PUBLIC = 'KEY_PUBLIC';
 
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $disabled;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $boletoEnabled;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $creditCardEnabled;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $twoCreditCardsEnabled;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $boletoCreditCardEnabled;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $testMode;
-    /** @var GUID */
+    /**
+     *
+     * @var GUID 
+     */
     private $hubInstallId;
 
     /**
+     *
      * @var AbstractValidString[]
      */
     private $keys;
 
     /**
+     *
      * @var CardConfig[]
      */
     private $cardConfigs;
@@ -111,7 +134,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param string|array $key
+     *
+     * @param  string|array $key
      * @return $this
      */
     public function setPublicKey($key)
@@ -131,7 +155,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param string|array $key
+     *
+     * @param  string|array $key
      * @return $this
      */
     public function setSecretKey($key)
@@ -155,6 +180,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isTestMode()
@@ -167,7 +193,7 @@ final class Configuration extends AbstractEntity
      * @deprecated Since the test mode is defined by the
      * presence of an test public key, this is not necessary.
      *
-     * @param bool $testMode
+     * @param  bool $testMode
      * @return Configuration
      */
     public function setTestMode($testMode)
@@ -180,6 +206,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isHubEnabled()
@@ -198,7 +225,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param bool $boletoEnabled
+     *
+     * @param  bool $boletoEnabled
      * @return Configuration
      */
     public function setBoletoEnabled($boletoEnabled)
@@ -211,7 +239,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param bool $creditCardEnabled
+     *
+     * @param  bool $creditCardEnabled
      * @return Configuration
      */
     public function setCreditCardEnabled($creditCardEnabled)
@@ -224,7 +253,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param bool $twoCreditCardsEnabled
+     *
+     * @param  bool $twoCreditCardsEnabled
      * @return Configuration
      */
     public function setTwoCreditCardsEnabled($twoCreditCardsEnabled)
@@ -237,7 +267,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param bool $boletoCreditCardEnabled
+     *
+     * @param  bool $boletoCreditCardEnabled
      * @return Configuration
      */
     public function setBoletoCreditCardEnabled($boletoCreditCardEnabled)
@@ -250,6 +281,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isBoletoEnabled()
@@ -258,6 +290,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isCreditCardEnabled()
@@ -266,6 +299,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isTwoCreditCardsEnabled()
@@ -274,6 +308,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isBoletoCreditCardEnabled()
@@ -282,7 +317,8 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param CardConfig $installmentConfig
+     *
+     * @param  CardConfig $installmentConfig
      * @throws Exception
      */
     public function addCardConfig(CardConfig $newCardConfig)
@@ -307,6 +343,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     *
      * @return CardConfig[]
      */
     public function getCardConfigs()
@@ -316,10 +353,11 @@ final class Configuration extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

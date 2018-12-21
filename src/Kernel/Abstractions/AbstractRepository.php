@@ -6,7 +6,10 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 
 abstract class AbstractRepository
 {
-    /** @var AbstractDatabaseDecorator */
+    /**
+     *
+     * @var AbstractDatabaseDecorator 
+     */
     protected $db;
 
     /**
@@ -17,11 +20,11 @@ abstract class AbstractRepository
         $this->db = MPSetup::getDatabaseAccessDecorator();
     }
 
-    public function save(AbstractEntity &$object){
+    public function save(AbstractEntity &$object)
+    {
         $objectId = null;
-        if (
-            is_object($object) &&
-            method_exists($object, 'getId')
+        if (is_object($object) 
+            && method_exists($object, 'getId')
         ) {
             $objectId = $object->getId();
         }

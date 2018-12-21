@@ -9,8 +9,7 @@ use JsonSerializable;
  * structurally compared.
  *
  * All the value objects should extend this class.
- *
-*/
+ */
 abstract class AbstractValueObject implements JsonSerializable
 {
     /**

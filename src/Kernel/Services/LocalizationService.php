@@ -10,6 +10,7 @@ final class LocalizationService
     const DEFAULT_LOCALE = 'en_US';
 
     /**
+     *
      * @param mixed Variable num of params.
      */
     public function getDashboard($string)
@@ -28,7 +29,10 @@ final class LocalizationService
     private function translateDashboard($string)
     {
         $locale = AbstractModuleCoreSetup::getDashboardLanguage();
-        /** @var AbstractI18NTable $i18nTable */
+        /**
+         *
+ * @var AbstractI18NTable $i18nTable 
+*/
         $i18nTable = $this->getI18NTableOrDefaultFor($locale);
 
         if ($i18nTable === null) {
@@ -54,7 +58,7 @@ final class LocalizationService
         }
 
         if ($locale === self::DEFAULT_LOCALE) {
-           return null;
+            return null;
         }
 
         return $this->getI18NTableOrDefaultFor(self::DEFAULT_LOCALE);

@@ -19,14 +19,16 @@ class ConfigurationFactory implements FactoryInterface
         $config = new Configuration();
 
         foreach ($postData['creditCard'] as $brand => $cardConfig) {
-            $config->addCardConfig(new CardConfig(
-                $cardConfig['is_enabled'],
-                $brand,
-                $cardConfig['installments_up_to'],
-                $cardConfig['installments_without_interest'],
-                $cardConfig['interest'],
-                $cardConfig['incremental_interest']
-            ));
+            $config->addCardConfig(
+                new CardConfig(
+                    $cardConfig['is_enabled'],
+                    $brand,
+                    $cardConfig['installments_up_to'],
+                    $cardConfig['installments_without_interest'],
+                    $cardConfig['interest'],
+                    $cardConfig['incremental_interest']
+                )
+            );
         }
 
         $config->setBoletoEnabled($postData['payment_mundipagg_boleto_status']);
@@ -43,14 +45,16 @@ class ConfigurationFactory implements FactoryInterface
         $data = json_decode($json);
 
         foreach ($data->cardConfigs as $cardConfig) {
-            $config->addCardConfig(new CardConfig(
-                $cardConfig->enabled,
-                $cardConfig->brand,
-                $cardConfig->maxInstallment,
-                $cardConfig->maxInstallmentWithoutInterest,
-                $cardConfig->initialInterest,
-                $cardConfig->incrementalInterest
-            ));
+            $config->addCardConfig(
+                new CardConfig(
+                    $cardConfig->enabled,
+                    $cardConfig->brand,
+                    $cardConfig->maxInstallment,
+                    $cardConfig->maxInstallmentWithoutInterest,
+                    $cardConfig->initialInterest,
+                    $cardConfig->incrementalInterest
+                )
+            );
         }
         $config->setBoletoEnabled($data->boletoEnabled);
         $config->setCreditCardEnabled($data->creditCardEnabled);

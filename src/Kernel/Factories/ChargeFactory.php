@@ -13,7 +13,8 @@ class ChargeFactory implements FactoryInterface
 {
 
     /**
-     * @param array $postData
+     *
+     * @param  array $postData
      * @return Charge
      */
     public function createFromPostData($postData)

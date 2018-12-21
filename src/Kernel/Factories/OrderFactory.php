@@ -12,7 +12,8 @@ use Throwable;
 class OrderFactory implements FactoryInterface
 {
     /**
-     * @param array $postData
+     *
+     * @param  array $postData
      * @return \Mundipagg\Core\Kernel\Abstractions\AbstractEntity|Order
      * @throws NotFoundException
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException

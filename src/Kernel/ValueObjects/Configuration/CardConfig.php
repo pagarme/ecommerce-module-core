@@ -7,27 +7,46 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 
 final class CardConfig extends AbstractValueObject
 {
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $enabled;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $brand;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $maxInstallment;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $maxInstallmentWithoutInterest;
-    /** @var float */
+    /**
+     *
+     * @var float 
+     */
     private $initialInterest;
-    /** @var float */
+    /**
+     *
+     * @var float 
+     */
     private $incrementalInterest;
 
     /**
      * InstallmentConfigValueObject constructor.
-     * @param $enabled
-     * @param $brand
-     * @param $maxInstallment
-     * @param $maxInstallmentWithoutInterest
-     * @param $initialInterest
-     * @param $incrementalInterest
+     *
+     * @param  $enabled
+     * @param  $brand
+     * @param  $maxInstallment
+     * @param  $maxInstallmentWithoutInterest
+     * @param  $initialInterest
+     * @param  $incrementalInterest
      * @throws InvalidParamException
      */
     public function __construct(
@@ -37,8 +56,7 @@ final class CardConfig extends AbstractValueObject
         $maxInstallmentWithoutInterest,
         $initialInterest,
         $incrementalInterest
-    )
-    {
+    ) {
         $this->setEnabled($enabled);
         $this->setBrand($brand);
         $this->setMaxInstallment($maxInstallment);
@@ -48,6 +66,7 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
+     *
      * @param bool $enabled
      */
     private function setEnabled($enabled)
@@ -57,7 +76,8 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
-     * @param string $brand
+     *
+     * @param  string $brand
      * @return CardConfig
      */
     private function setBrand($brand)
@@ -67,7 +87,8 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
-     * @param int $maxInstallment
+     *
+     * @param  int $maxInstallment
      * @return CardConfig
      */
     private function setMaxInstallment($maxInstallment)
@@ -82,7 +103,8 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
-     * @param int $maxInstallmentWithoutInterest
+     *
+     * @param  int $maxInstallmentWithoutInterest
      * @return CardConfig
      */
     private function setMaxInstallmentWithoutInterest($maxInstallmentWithoutInterest)
@@ -101,7 +123,7 @@ final class CardConfig extends AbstractValueObject
 
         if ($newMaxInstallmentWithoutInterest > $this->maxInstallment) {
             throw new InvalidParamException(
-                "'Max installment without interest' must be equal or smaller than 'Max Installments'! " ,
+                "'Max installment without interest' must be equal or smaller than 'Max Installments'! ",
                 $maxInstallmentWithoutInterest
             );
         }
@@ -111,7 +133,8 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
-     * @param float $initialInterest
+     *
+     * @param  float $initialInterest
      * @return CardConfig
      */
     private function setInitialInterest($initialInterest)
@@ -128,7 +151,8 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
-     * @param float $incrementalInterest
+     *
+     * @param  float $incrementalInterest
      * @return CardConfig
      */
     private function setIncrementalInterest($incrementalInterest)
@@ -148,6 +172,7 @@ final class CardConfig extends AbstractValueObject
 
 
     /**
+     *
      * @return bool
      */
     public function isEnabled()
@@ -155,6 +180,7 @@ final class CardConfig extends AbstractValueObject
         return $this->enabled;
     }
     /**
+     *
      * @return string
      */
     public function getBrand()
@@ -162,6 +188,7 @@ final class CardConfig extends AbstractValueObject
         return $this->brand;
     }
     /**
+     *
      * @return int
      */
     public function getMaxInstallment()
@@ -169,6 +196,7 @@ final class CardConfig extends AbstractValueObject
         return $this->maxInstallment;
     }
     /**
+     *
      * @return int
      */
     public function getMaxInstallmentWithoutInterest()
@@ -176,6 +204,7 @@ final class CardConfig extends AbstractValueObject
         return $this->maxInstallmentWithoutInterest;
     }
     /**
+     *
      * @return float
      */
     public function getInitialInterest()
@@ -184,6 +213,7 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
+     *
      * @return float
      */
     public function getIncrementalInterest()
@@ -193,10 +223,11 @@ final class CardConfig extends AbstractValueObject
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {
@@ -225,7 +256,6 @@ final class CardConfig extends AbstractValueObject
             $this->maxInstallment === $object->getMaxInstallment() &&
             $this->maxInstallmentWithoutInterest === $object->getMaxInstallmentWithoutInterest() &&
             $this->initialInterest === $object->getInitialInterest() &&
-            $this->incrementalInterest === $object->getIncrementalInterest()
-            ;
+            $this->incrementalInterest === $object->getIncrementalInterest();
     }
 }

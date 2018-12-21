@@ -7,9 +7,15 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class WebhookType extends AbstractValueObject
 {
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $entityType;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $action;
 
     private function __construct($entityType, $action)
@@ -26,7 +32,8 @@ final class WebhookType extends AbstractValueObject
     }
 
     /**
-     * @param string $entityType
+     *
+     * @param  string $entityType
      * @return WebhookType
      */
     private function setEntityType($entityType)
@@ -36,7 +43,8 @@ final class WebhookType extends AbstractValueObject
     }
 
     /**
-     * @param string $action
+     *
+     * @param  string $action
      * @return WebhookType
      */
     private function setAction($action)
@@ -46,6 +54,7 @@ final class WebhookType extends AbstractValueObject
     }
 
     /**
+     *
      * @return mixed
      */
     public function getEntityType()
@@ -54,6 +63,7 @@ final class WebhookType extends AbstractValueObject
     }
 
     /**
+     *
      * @return mixed
      */
     public function getAction()
@@ -65,23 +75,23 @@ final class WebhookType extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param WebhookType $object
+     * @param  WebhookType $object
      * @return bool
      */
     protected function isEqual($object)
     {
         return
             $this->getEntityType() === $object->getEntityType() &&
-            $this->getAction() === $object->getAction()
-        ;
+            $this->getAction() === $object->getAction();
     }
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

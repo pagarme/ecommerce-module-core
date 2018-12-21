@@ -19,16 +19,24 @@ abstract class AbstractModuleCoreSetup
     static protected $instance;
     static protected $config;
     static protected $platformRoot;
-    /** @var Configuration */
+    /**
+     *
+     * @var Configuration 
+     */
     static protected $moduleConfig;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     static protected $dashboardLanguage;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     static protected $storeLanguage;
 
-    protected function __construct() {}
-
     /**
+     *
      * @return mixed
      */
     static public function getPlatformRoot()
@@ -37,8 +45,9 @@ abstract class AbstractModuleCoreSetup
     }
 
     /**
-     * @param null $platformRoot
-     * @throws Exception
+     *
+     * @param  mixed $platformRoot
+     * @throws \Exception
      */
     static public function bootstrap($platformRoot = null)
     {
@@ -58,6 +67,7 @@ abstract class AbstractModuleCoreSetup
     }
 
     /**
+     *
      * @return Configuration
      */
     static public function getModuleConfiguration()
@@ -97,16 +107,21 @@ abstract class AbstractModuleCoreSetup
         return new $DBDecoratorClass($concreteCoreSetupClass::getDatabaseAccessObject());
     }
 
-    static public function getDashboardLanguage() {
+    static public function getDashboardLanguage()
+    {
         return self::$instance->_getDashboardLanguage();
     }
-    static public function getStoreLanguage() {
+    static public function getStoreLanguage()
+    {
         return self::$instance->_getStoreLanguage();
     }
 
     abstract static protected function setConfig();
     abstract static public function getDatabaseAccessObject();
-    /** @return string **/
+    /**
+     *
+     * @return string 
+     **/
     abstract static protected function getPlatformHubAppPublicAppKey();
     abstract static protected function _getDashboardLanguage();
     abstract static protected function _getStoreLanguage();

@@ -13,7 +13,8 @@ use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 class WebhookFactory implements FactoryInterface
 {
     /**
-     * @param $postData
+     *
+     * @param  $postData
      * @return Webhook
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidClassException
      */
@@ -44,7 +45,8 @@ class WebhookFactory implements FactoryInterface
     }
 
     /**
-     * @param $dbData
+     *
+     * @param  $dbData
      * @return Webhook
      */
     public function createFromDbData($dbData)

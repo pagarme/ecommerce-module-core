@@ -9,11 +9,15 @@ final class ChargeStatus extends AbstractValueObject
     const PAID = 'paid';
     const PENDING = 'pending';
 
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $status;
 
     /**
      * ChargeStatus constructor.
+     *
      * @param string $status
      */
     private function __construct($status)
@@ -32,6 +36,7 @@ final class ChargeStatus extends AbstractValueObject
     }
 
     /**
+     *
      * @return string
      */
     public function getStatus()
@@ -40,7 +45,8 @@ final class ChargeStatus extends AbstractValueObject
     }
 
     /**
-     * @param string $status
+     *
+     * @param  string $status
      * @return ChargeStatus
      */
     private function setStatus($status)
@@ -53,7 +59,7 @@ final class ChargeStatus extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param ChargeStatus $object
+     * @param  ChargeStatus $object
      * @return bool
      */
     protected function isEqual($object)
@@ -63,10 +69,11 @@ final class ChargeStatus extends AbstractValueObject
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

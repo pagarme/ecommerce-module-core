@@ -7,13 +7,20 @@ use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
 
 class Webhook extends AbstractEntity
 {
-    /** @var WebhookType */
+    /**
+     *
+     * @var WebhookType 
+     */
     protected $type;
 
-    /** @var AbstractEntity */
+    /**
+     *
+     * @var AbstractEntity 
+     */
     protected $entity;
 
     /**
+     *
      * @return WebhookType
      */
     public function getType()
@@ -22,7 +29,8 @@ class Webhook extends AbstractEntity
     }
 
     /**
-     * @param WebhookType $type
+     *
+     * @param  WebhookType $type
      * @return Webhook
      */
     public function setType(WebhookType $type)
@@ -32,6 +40,7 @@ class Webhook extends AbstractEntity
     }
 
     /**
+     *
      * @return AbstractEntity
      */
     public function getEntity()
@@ -40,7 +49,8 @@ class Webhook extends AbstractEntity
     }
 
     /**
-     * @param AbstractEntity $entity
+     *
+     * @param  AbstractEntity $entity
      * @return Webhook
      */
     public function setEntity(AbstractEntity $entity)
@@ -51,10 +61,11 @@ class Webhook extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

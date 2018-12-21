@@ -8,16 +8,29 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
 final class Order extends AbstractEntity
 {
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $code;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $amount;
-    /** @var OrderStatus */
+    /**
+     *
+     * @var OrderStatus 
+     */
     private $status;
-    /** @var Charge[] */
+    /**
+     *
+     * @var Charge[] 
+     */
     private $charges;
 
     /**
+     *
      * @return string
      */
     public function getCode()
@@ -26,7 +39,8 @@ final class Order extends AbstractEntity
     }
 
     /**
-     * @param string $code
+     *
+     * @param  string $code
      * @return Order
      */
     public function setCode(string $code)
@@ -36,6 +50,7 @@ final class Order extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getAmount()
@@ -44,7 +59,8 @@ final class Order extends AbstractEntity
     }
 
     /**
-     * @param int $amount
+     *
+     * @param  int $amount
      * @return Order
      */
     public function setAmount(int $amount)
@@ -58,6 +74,7 @@ final class Order extends AbstractEntity
     }
 
     /**
+     *
      * @return OrderStatus
      */
     public function getStatus()
@@ -66,7 +83,8 @@ final class Order extends AbstractEntity
     }
 
     /**
-     * @param OrderStatus $status
+     *
+     * @param  OrderStatus $status
      * @return Order
      */
     public function setStatus(OrderStatus $status)
@@ -76,6 +94,7 @@ final class Order extends AbstractEntity
     }
 
     /**
+     *
      * @return Charge[]
      */
     public function getCharges()
@@ -84,7 +103,8 @@ final class Order extends AbstractEntity
     }
 
     /**
-     * @param Charge $charge
+     *
+     * @param  Charge $charge
      * @return Order
      */
     public function addCharge($charge)
@@ -96,10 +116,11 @@ final class Order extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

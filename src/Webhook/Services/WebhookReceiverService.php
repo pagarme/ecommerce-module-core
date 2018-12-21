@@ -11,7 +11,8 @@ use Mundipagg\Core\Webhook\Repositories\WebhookRepository;
 class WebhookReceiverService
 {
     /**
-     * @param $postData
+     *
+     * @param  $postData
      * @return mixed
      * @throws NotFoundException
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidClassException
@@ -39,6 +40,7 @@ class WebhookReceiverService
                 throw new WebhookHandlerNotFoundException($webhook);
             }
             /**
+             *
              * @var AbstractHandlerService $handlerService
              */
             $handlerService = new $handlerServiceClass();

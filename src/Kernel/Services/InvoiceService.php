@@ -10,7 +10,8 @@ class InvoiceService
 {
 
     /**
-     * @param PlatformOrderInterface $order
+     *
+     * @param  PlatformOrderInterface $order
      * @return PlatformInvoiceInterface
      */
     public function createInvoiceFor(PlatformOrderInterface $order)
@@ -20,7 +21,10 @@ class InvoiceService
             MPSetup::get(
                 MPSetup::CONCRETE_PLATFORM_INVOICE_DECORATOR_CLASS
             );
-        /** @var PlatformInvoiceInterface $invoice */
+        /**
+         *
+ * @var PlatformInvoiceInterface $invoice 
+*/
         $invoice = new $platformInvoiceDecoratorClass();
         $invoice->createFor($order);
 

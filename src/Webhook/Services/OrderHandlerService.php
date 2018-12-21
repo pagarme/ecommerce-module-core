@@ -42,7 +42,10 @@ final class OrderHandlerService extends AbstractHandlerService
         $orderDecoratorClass =
             MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
-        /** @var PlatformOrderInterface $order */
+        /**
+         *
+ * @var PlatformOrderInterface $order 
+*/
         $order = new $orderDecoratorClass();
         $order->loadByIncrementId($webhook->getEntity()->getCode());
         $this->order = $order;

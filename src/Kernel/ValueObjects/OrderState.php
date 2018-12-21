@@ -15,11 +15,15 @@ final class OrderState extends AbstractValueObject
     const HOLDED = 'holded';
     const PAYMENT_REVIEW = 'payment_review';
 
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $state;
 
     /**
      * OrderStatus constructor.
+     *
      * @param string $state
      */
     private function __construct($state)
@@ -68,6 +72,7 @@ final class OrderState extends AbstractValueObject
     }
 
     /**
+     *
      * @return string
      */
     public function getState()
@@ -76,7 +81,8 @@ final class OrderState extends AbstractValueObject
     }
 
     /**
-     * @param string $status
+     *
+     * @param  string $status
      * @return OrderStatus
      */
     private function setState($state)
@@ -89,7 +95,7 @@ final class OrderState extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param OrderStatus $object
+     * @param  OrderStatus $object
      * @return bool
      */
     protected function isEqual($object)
@@ -99,10 +105,11 @@ final class OrderState extends AbstractValueObject
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

@@ -11,11 +11,15 @@ use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
 abstract class AbstractHandlerService
 {
-    /** @var PlatformOrderInterface */
+    /**
+     *
+     * @var PlatformOrderInterface 
+     */
     protected $order;
 
     /**
-     * @param Webhook $webhook
+     *
+     * @param  Webhook $webhook
      * @return mixed
      * @throws InvalidParamException
      * @throws NotFoundException
@@ -41,11 +45,14 @@ abstract class AbstractHandlerService
         throw new WebhookHandlerNotFoundException($webhook);
     }
 
-    /** @return string */
+    /**
+     *
+     * @return string 
+     */
     protected function getValidEntity()
     {
         $childClassName = substr(strrchr(static::class, "\\"), 1);
-        $childEntity = str_replace('HandlerService','',$childClassName);
+        $childEntity = str_replace('HandlerService', '', $childClassName);
         return strtolower($childEntity);
     }
 

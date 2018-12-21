@@ -8,16 +8,29 @@ use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 
 final class Charge extends AbstractEntity
 {
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $amount;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $paidAmount;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $code;
-    /** @var ChargeStatus */
+    /**
+     *
+     * @var ChargeStatus 
+     */
     private $status;
 
     /**
+     *
      * @return int
      */
     public function getAmount()
@@ -26,7 +39,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param int $amount
+     *
+     * @param  int $amount
      * @return Charge
      */
     public function setAmount(int $amount)
@@ -39,6 +53,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getPaidAmount()
@@ -47,7 +62,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param int $paidAmount
+     *
+     * @param  int $paidAmount
      * @return Charge
      */
     public function setPaidAmount(int $paidAmount)
@@ -61,6 +77,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return string
      */
     public function getCode()
@@ -69,7 +86,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param string $code
+     *
+     * @param  string $code
      * @return Charge
      */
     public function setCode($code)
@@ -79,6 +97,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return ChargeStatus
      */
     public function getStatus()
@@ -87,7 +106,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param ChargeStatus $status
+     *
+     * @param  ChargeStatus $status
      * @return Charge
      */
     public function setStatus(ChargeStatus $status)
@@ -98,10 +118,11 @@ final class Charge extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

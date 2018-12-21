@@ -10,11 +10,11 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
  * this class.
  *
  * Holds the business rules related to entities.
- *
  */
 abstract class AbstractEntity implements JsonSerializable
 {
     /**
+     *
      * @var int
      */
     protected $id;
@@ -28,6 +28,7 @@ abstract class AbstractEntity implements JsonSerializable
     protected $mundipaggId;
 
     /**
+     *
      * @return int
      */
     public function getId()
@@ -36,6 +37,7 @@ abstract class AbstractEntity implements JsonSerializable
     }
 
     /**
+     *
      * @param  string $id
      * @return AbstractEntity
      */
@@ -46,6 +48,7 @@ abstract class AbstractEntity implements JsonSerializable
     }
 
     /**
+     *
      * @return AbstractValidString
      */
     public function getMundipaggId()
@@ -54,7 +57,8 @@ abstract class AbstractEntity implements JsonSerializable
     }
 
     /**
-     * @param AbstractValidString $mundipaggId
+     *
+     * @param  AbstractValidString $mundipaggId
      * @return AbstractEntity
      */
     public function setMundipaggId(AbstractValidString $mundipaggId)

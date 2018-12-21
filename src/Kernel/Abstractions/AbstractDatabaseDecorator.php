@@ -38,6 +38,7 @@ abstract class AbstractDatabaseDecorator
     abstract protected function doQuery($query);
 
     /**
+     *
      * @return array
      */
     abstract protected function doFetch($query);

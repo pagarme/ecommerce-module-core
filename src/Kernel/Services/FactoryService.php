@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 final class FactoryService
 {
     /**
+     *
      * @param $component
      * @param $entity
      *
