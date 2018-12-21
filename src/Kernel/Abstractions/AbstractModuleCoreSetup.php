@@ -20,6 +20,10 @@ abstract class AbstractModuleCoreSetup
     static protected $platformRoot;
     /** @var Configuration */
     static protected $moduleConfig;
+    /** @var string */
+    static protected $dashboardLanguage;
+    /** @var string */
+    static protected $storeLanguage;
 
     protected function __construct() {}
 
@@ -91,9 +95,19 @@ abstract class AbstractModuleCoreSetup
 
         return new $DBDecoratorClass($concreteCoreSetupClass::getDatabaseAccessObject());
     }
+
+    static public function getDashboardLanguage() {
+        return self::$instance->_getDashboardLanguage();
+    }
+    static public function getStoreLanguage() {
+        return self::$instance->_getStoreLanguage();
+    }
+
     abstract static protected function setConfig();
     abstract static public function getDatabaseAccessObject();
     /** @return string **/
     abstract static protected function getPlatformHubAppPublicAppKey();
+    abstract static protected function _getDashboardLanguage();
+    abstract static protected function _getStoreLanguage();
 }
 

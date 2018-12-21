@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
+use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
 use Mundipagg\Core\Webhook\Repositories\WebhookRepository;
 
@@ -33,17 +34,18 @@ class WebhookReceiverService
                 ucfirst($webhook->getType()->getEntityType()).
                 'HandlerService';
 
-            if (class_exists($handlerServiceClass)) {
-                /**
-                 * @var AbstractHandlerService $handlerService
-                 */
-                $handlerService = new $handlerServiceClass();
-
-                $return = $handlerService->handle($webhook);
-                $repository->save($webhook);
-
-                return $return;
+            if (!class_exists($handlerServiceClass)) {
+                throw new WebhookHandlerNotFoundException($webhook);
             }
+            /**
+             * @var AbstractHandlerService $handlerService
+             */
+            $handlerService = new $handlerServiceClass();
+
+            $return = $handlerService->handle($webhook);
+            $repository->save($webhook);
+
+            return $return;
 
         }catch(NotFoundException $e) {
             //@todo log invalid webhook type.

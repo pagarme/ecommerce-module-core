@@ -2,12 +2,11 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
 abstract class AbstractHandlerService
 {
@@ -37,11 +36,8 @@ abstract class AbstractHandlerService
             $this->addWebHookReceivedHistory($webhook);
             return $this->$handler($webhook);
         }
-        $message =
-            "Handler for {$webhook->getType()->getEntityType()}." .
-            "{$webhook->getType()->getAction()} webhook not found!";
 
-        throw new NotFoundException($message);
+        throw new WebhookHandlerNotFoundException($webhook);
     }
 
     /** @return string */
