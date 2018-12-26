@@ -41,6 +41,7 @@ abstract class AbstractHandlerService
 
             if ($this->order->getIncrementId() !== null) {
                 $this->addWebHookReceivedHistory($webhook);
+                $this->order->save();
                 return $this->$handler($webhook);
             }
 

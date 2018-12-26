@@ -2,7 +2,9 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
+use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
+use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Webhook\Exceptions\WebhookAlreadyHandledException;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
@@ -19,8 +21,12 @@ class WebhookReceiverService
      */
     public function handle($postData)
     {
+        $logService = new LogService(
+            'Webhook',
+            true
+        );
         try {
-            //@todo log webhook received.
+            $logService->info("Received", $postData);
 
             $repository = new WebhookRepository();
             $webhook = $repository->findByMundipaggId($postData->id);
@@ -49,9 +55,8 @@ class WebhookReceiverService
             $repository->save($webhook);
 
             return $return;
-
-        }catch(NotFoundException $e) {
-            //@todo log invalid webhook type.
+        }catch(AbstractMundipaggCoreException $e) {
+            $logService->exception($e);
             throw $e;
         }
     }

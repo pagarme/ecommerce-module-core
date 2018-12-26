@@ -16,30 +16,33 @@ abstract class AbstractModuleCoreSetup
 
     const CONCRETE_FORMAT_SERVICE = 1000;
 
-    static protected $instance;
-    static protected $config;
-    static protected $platformRoot;
+    protected static $moduleVersion;
+    protected static $logPath;
+    protected static $instance;
+    protected static $config;
+    protected static $platformRoot;
     /**
      *
      * @var Configuration 
      */
-    static protected $moduleConfig;
+    protected static $moduleConfig;
     /**
      *
      * @var string 
      */
-    static protected $dashboardLanguage;
+    protected static $dashboardLanguage;
     /**
      *
      * @var string 
      */
-    static protected $storeLanguage;
+    protected static $storeLanguage;
+
 
     /**
      *
      * @return mixed
      */
-    static public function getPlatformRoot()
+    public static function getPlatformRoot()
     {
         return static::$platformRoot;
     }
@@ -49,11 +52,13 @@ abstract class AbstractModuleCoreSetup
      * @param  mixed $platformRoot
      * @throws \Exception
      */
-    static public function bootstrap($platformRoot = null)
+    public static function bootstrap($platformRoot = null)
     {
         if (static::$instance === null) {
             static::$instance = new static();
             static::$instance->setConfig();
+            static::$instance->setModuleVersion();
+            static::$instance->setLogPath();
             static::$config[self::CONCRETE_MODULE_CORE_SETUP_CLASS] = static::class;
 
             static::$platformRoot = $platformRoot;
@@ -70,12 +75,12 @@ abstract class AbstractModuleCoreSetup
      *
      * @return Configuration
      */
-    static public function getModuleConfiguration()
+    public static function getModuleConfiguration()
     {
         return static::$moduleConfig;
     }
 
-    static public function get($configId)
+    public static function get($configId)
     {
         self::bootstrap();
 
@@ -86,20 +91,20 @@ abstract class AbstractModuleCoreSetup
         return static::$config[$configId];
     }
 
-    static public function getAll()
+    public static function getAll()
     {
         self::bootstrap();
 
         return static::$config;
     }
 
-    static public function getHubAppPublicAppKey()
+    public static function getHubAppPublicAppKey()
     {
         $moduleCoreSetupClass = self::get(self::CONCRETE_MODULE_CORE_SETUP_CLASS);
         return $moduleCoreSetupClass::getPlatformHubAppPublicAppKey();
     }
 
-    static public function getDatabaseAccessDecorator()
+    public static function getDatabaseAccessDecorator()
     {
         $concreteCoreSetupClass = self::get(self::CONCRETE_MODULE_CORE_SETUP_CLASS);
         $DBDecoratorClass = $concreteCoreSetupClass::get(self::CONCRETE_DATABASE_DECORATOR_CLASS);
@@ -107,23 +112,35 @@ abstract class AbstractModuleCoreSetup
         return new $DBDecoratorClass($concreteCoreSetupClass::getDatabaseAccessObject());
     }
 
-    static public function getDashboardLanguage()
+    public static function getModuleVersion()
+    {   
+        return self::$moduleVersion;
+    }
+
+    public static function getLogPath()
+    {
+        return self::$logPath;
+    }
+
+    public static function getDashboardLanguage()
     {
         return self::$instance->_getDashboardLanguage();
     }
-    static public function getStoreLanguage()
+    public static function getStoreLanguage()
     {
         return self::$instance->_getStoreLanguage();
     }
 
-    abstract static protected function setConfig();
-    abstract static public function getDatabaseAccessObject();
+    abstract protected static function setConfig();
+    abstract protected static function setModuleVersion();
+    abstract protected static function setLogPath();
+    abstract public static function getDatabaseAccessObject();
     /**
      *
      * @return string 
      **/
-    abstract static protected function getPlatformHubAppPublicAppKey();
-    abstract static protected function _getDashboardLanguage();
-    abstract static protected function _getStoreLanguage();
+    abstract protected static function getPlatformHubAppPublicAppKey();
+    abstract protected static function _getDashboardLanguage();
+    abstract protected static function _getStoreLanguage();
 }
 
