@@ -16,4 +16,12 @@ interface PlatformOrderInterface
     public function canInvoice();
     public function getPlatformOrder();
     public function getIncrementId();
+    public function payAmount($amount);
+    public function getGrandTotal();
+    public function getTotalPaid();
+    public function getTotalDue();
+    public function setTotalPaid($amount);
+    public function setBaseTotalPaid($amount);
+    public function setTotalDue($amount);
+    public function setBaseTotalDue($amount);
 }

@@ -12,6 +12,7 @@ class ENUS extends AbstractI18NTable
             'Invoice created: #%d.' => null,
             'Webhook received: %s.%s' => null,
             'Order paid.' => null,
+            'Payment received: %.2f' => null,
         ];
     }
 }

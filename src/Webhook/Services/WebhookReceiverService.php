@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Webhook\Services;
 use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\Exceptions\WebhookAlreadyHandledException;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
@@ -37,22 +38,18 @@ class WebhookReceiverService
             $factory = new WebhookFactory();
             $webhook = $factory->createFromPostData($postData);
 
-            $handlerServiceClass =
-                'Mundipagg\\Core\\Webhook\\Services\\' .
-                ucfirst($webhook->getType()->getEntityType()).
-                'HandlerService';
-
-            if (!class_exists($handlerServiceClass)) {
-                throw new WebhookHandlerNotFoundException($webhook);
-            }
-            /**
-             *
-             * @var AbstractHandlerService $handlerService
-             */
-            $handlerService = new $handlerServiceClass();
+            $handlerService = $this->getHandlerServiceFor($webhook);
 
             $return = $handlerService->handle($webhook);
             $repository->save($webhook);
+            $logService->info(
+                "Webhook handled successfuly",
+                (object)[
+                    'id' => $webhook->getId(),
+                    'mundipaggId' => $webhook->getMundipaggId(),
+                    'result' => $return
+                ]
+            );
 
             return $return;
         }catch(AbstractMundipaggCoreException $e) {
@@ -61,4 +58,22 @@ class WebhookReceiverService
         }
     }
 
+    private function getHandlerServiceFor(Webhook $webhook)
+    {
+        $handlerServiceClass =
+            'Mundipagg\\Core\\Webhook\\Services\\' .
+            ucfirst($webhook->getType()->getEntityType()).
+            'HandlerService';
+
+        if (!class_exists($handlerServiceClass)) {
+            throw new WebhookHandlerNotFoundException($webhook);
+        }
+
+
+        /**
+         *
+         * @var AbstractHandlerService $handlerService
+         */
+        return new $handlerServiceClass();
+    }
 }
