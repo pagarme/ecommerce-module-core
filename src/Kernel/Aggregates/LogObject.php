@@ -7,7 +7,10 @@ use Mundipagg\Core\Kernel\ValueObjects\VersionPair;
 
 final class LogObject extends AbstractEntity
 {
-    /** @var VersionPair */
+    /**
+     *
+     * @var VersionPair 
+     */
     private $versions;
     private $method;
     private $data;
@@ -26,6 +29,7 @@ final class LogObject extends AbstractEntity
     }
 
     /**
+     *
      * @return mixed
      */
     public function getMethod()
@@ -34,7 +38,8 @@ final class LogObject extends AbstractEntity
     }
 
     /**
-     * @param mixed $method
+     *
+     * @param  mixed $method
      * @return LogObject
      */
     public function setMethod($method)
@@ -44,6 +49,7 @@ final class LogObject extends AbstractEntity
     }
 
     /**
+     *
      * @return mixed
      */
     public function getData()
@@ -52,7 +58,8 @@ final class LogObject extends AbstractEntity
     }
 
     /**
-     * @param mixed $data
+     *
+     * @param  mixed $data
      * @return LogObject
      */
     public function setData($data)
@@ -62,6 +69,7 @@ final class LogObject extends AbstractEntity
     }
 
     /**
+     *
      * @return VersionPair
      */
     public function getVersions()
@@ -70,7 +78,8 @@ final class LogObject extends AbstractEntity
     }
 
     /**
-     * @param $versions
+     *
+     * @param  $versions
      * @return $this
      */
     public function setVersions($versions)
@@ -81,10 +90,11 @@ final class LogObject extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

@@ -6,9 +6,15 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class VersionPair extends AbstractValueObject
 {
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $moduleVersion;
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $coreVersion;
 
     public function __construct($moduleVersion, $coreVersion)
@@ -18,6 +24,7 @@ final class VersionPair extends AbstractValueObject
     }
 
     /**
+     *
      * @return string
      */
     public function getModuleVersion()
@@ -26,7 +33,8 @@ final class VersionPair extends AbstractValueObject
     }
 
     /**
-     * @param string $moduleVersion
+     *
+     * @param  string $moduleVersion
      * @return VersionPair
      */
     private function setModuleVersion($moduleVersion)
@@ -36,6 +44,7 @@ final class VersionPair extends AbstractValueObject
     }
 
     /**
+     *
      * @return string
      */
     public function getCoreVersion()
@@ -44,7 +53,8 @@ final class VersionPair extends AbstractValueObject
     }
 
     /**
-     * @param string $coreVersion
+     *
+     * @param  string $coreVersion
      * @return VersionPair
      */
     private function setCoreVersion($coreVersion)
@@ -57,23 +67,23 @@ final class VersionPair extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param VersionPair $object
+     * @param  VersionPair $object
      * @return bool
      */
     protected function isEqual($object)
     {
         return
             $this->getCoreVersion() === $object->getCoreVersion() &&
-            $this->getModuleVersion() === $object->getModuleVersion()
-        ;
+            $this->getModuleVersion() === $object->getModuleVersion();
     }
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

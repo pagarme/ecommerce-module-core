@@ -8,9 +8,10 @@ use Mundipagg\Core\Kernel\ValueObjects\VersionPair;
 class LogObjectFactory
 {
     /**
-     * @param array $callerBacktrace
-     * @param mixed $sourceObject
-     * @param VersionPair $versions
+     *
+     * @param  array       $callerBacktrace
+     * @param  mixed       $sourceObject
+     * @param  VersionPair $versions
      * @return LogObject
      */
     public function createFromLogger(
@@ -33,7 +34,8 @@ class LogObjectFactory
     }
 
     /**
-     * @param array $data
+     *
+     * @param  array $data
      * @return LogObject
      */
     public function createFromArray($data)

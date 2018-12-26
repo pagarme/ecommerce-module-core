@@ -18,7 +18,10 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $i18n = new LocalizationService();
 
-        /** @var Charge $charge */
+        /**
+         *
+ * @var Charge $charge 
+*/
         $charge = $webhook->getEntity();
         $paidAmount = $charge->getPaidAmount();
 

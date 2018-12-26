@@ -28,7 +28,7 @@ final class LogService
         $this->monolog = new Logger(
             $this->channelName
         );
-        $handler = new StreamHandler( $this->fileName, Logger::DEBUG );
+        $handler = new StreamHandler($this->fileName, Logger::DEBUG);
         $handler->setFormatter(new JsonPrettyFormatter());
         $this->monolog->pushHandler($handler);
     }
