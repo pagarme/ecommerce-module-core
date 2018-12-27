@@ -3,13 +3,10 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class ChargeHandlerService extends AbstractHandlerService
@@ -20,24 +17,45 @@ final class ChargeHandlerService extends AbstractHandlerService
 
         /**
          *
- * @var Charge $charge 
-*/
+         * @var Charge $charge
+        */
         $charge = $webhook->getEntity();
-        $paidAmount = $charge->getPaidAmount();
+        $transaction = $charge->getLastTransaction();
+        $paidAmount = $transaction->getAmount();
 
         $amountInCurrency = $this->order->payAmount($paidAmount);
 
+        $history = $i18n->getDashboard(
+            'Payment received: %.2f',
+            $amountInCurrency
+        );
+
+        $returnMessage = "Amount Paid: $amountInCurrency";
+
+        if ($transaction->getStatus()->equals(TransactionStatus::partialCapture())) {
+            $history .= " ({$i18n->getDashboard('Partial Payment')}";
+
+            $totalAmount = $charge->getAmount();
+            $amountToCancel = $totalAmount - $paidAmount;
+
+            $amountCanceledInCurrency = $this->order->cancelAmount($amountToCancel);
+            $history .= ". " .
+                $i18n->getDashboard(
+                    'Canceled amount: %.2f',
+                    $amountCanceledInCurrency
+                ) . ')';
+
+            $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
+        }
+
         $this->order->addHistoryComment(
-            $i18n->getDashboard(
-                'Payment received: %.2f',
-                $amountInCurrency
-            )
+            $history
         );
 
         $this->order->save();
 
         $result = [
-            "message" => "Amount Paid: $amountInCurrency",
+            "message" => $returnMessage,
             "code" => 200
         ];
 

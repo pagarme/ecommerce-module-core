@@ -17,6 +17,7 @@ interface PlatformOrderInterface
     public function getPlatformOrder();
     public function getIncrementId();
     public function payAmount($amount);
+    public function cancelAmount($amountToRefund);
     public function getGrandTotal();
     public function getTotalPaid();
     public function getTotalDue();
@@ -24,4 +25,6 @@ interface PlatformOrderInterface
     public function setBaseTotalPaid($amount);
     public function setTotalDue($amount);
     public function setBaseTotalDue($amount);
+    public function setTotalCanceled($amount);
+    public function setBaseTotalCanceled($amount);
 }

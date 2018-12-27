@@ -16,7 +16,10 @@ final class OrderHandlerService extends AbstractHandlerService
     {
         $order = $this->order;
 
-        $result = [];
+        $result = [
+            "message" => 'Can\'t create Invoice for the order!',
+            "code" => 200
+        ];
         if($order->canInvoice()) {
             $invoiceService = new InvoiceService();
             $i18n = new LocalizationService();

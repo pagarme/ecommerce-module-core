@@ -29,6 +29,9 @@ final class Charge extends AbstractEntity
      */
     private $status;
 
+    /** @var Transaction */
+    private $lastTransaction;
+
     /**
      *
      * @return int
@@ -117,6 +120,24 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     * @return Transaction
+     */
+    public function getLastTransaction()
+    {
+        return $this->lastTransaction;
+    }
+
+    /**
+     * @param Transaction $lastTransaction
+     * @return Charge
+     */
+    public function setLastTransaction(Transaction $lastTransaction)
+    {
+        $this->lastTransaction = $lastTransaction;
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -129,10 +150,12 @@ final class Charge extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
+        $obj->mundipaggId = $this->getMundipaggId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
+        $obj->lastTransaction = $this->getLastTransaction();
 
         return $obj;
     }

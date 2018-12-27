@@ -28,6 +28,10 @@ class ChargeFactory implements FactoryInterface
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
         $charge->setPaidAmount($paidAmount);
 
+        $transactionFactory = new TransactionFactory();
+        $lastTransaction = $transactionFactory->createFromPostData($postData['last_transaction']);
+        $charge->setLastTransaction($lastTransaction);
+
         try {
             ChargeStatus::$status();
         }catch(Throwable $e) {

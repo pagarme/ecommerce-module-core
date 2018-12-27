@@ -51,6 +51,29 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         return $amountInCurrency;
     }
 
+    public function cancelAmount($amount)
+    {
+        $platformOrder = $this->getPlatformOrder();
+
+        /*
+         * @todo this format operations should be made by a currency format service.
+         *      But before doing this, check if a decorator can depend on a service.
+         */
+
+        $amountInCurrency = number_format($amount / 100, 2);
+        $grandTotal = number_format($platformOrder->getGrandTotal(), 2);
+        $totalCanceled = number_format($platformOrder->getTotalCanceled(), 2);
+
+        $totalCanceled += $amountInCurrency;
+        if ($totalCanceled > $grandTotal) {
+            $totalCanceled = $grandTotal;
+        }
+
+        $platformOrder->setTotalCanceled($totalCanceled);
+        $platformOrder->setBaseTotalCanceled($totalCanceled);
+
+        return $amountInCurrency;
+    }
 
     abstract protected function addMPHistoryComment($message);
 }

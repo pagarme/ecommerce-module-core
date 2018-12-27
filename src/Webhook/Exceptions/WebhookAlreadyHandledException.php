@@ -13,6 +13,6 @@ class WebhookAlreadyHandledException extends AbstractMundipaggCoreException
     public function __construct(Webhook $webhook)
     {
         $message = "Webhoook {$webhook->getMundipaggId()->getValue()} already handled!";
-        parent::__construct($message);
+        parent::__construct($message, 400);
     }
 }

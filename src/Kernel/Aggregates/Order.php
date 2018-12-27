@@ -127,6 +127,7 @@ final class Order extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
+        $obj->mundipaggId = $this->getMundipaggId();
         $obj->code = $this->getCode();
         $obj->amount = $this->getAmount();
         $obj->status = $this->getStatus();
