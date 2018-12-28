@@ -35,7 +35,13 @@ abstract class AbstractHandlerService
             );
         }
 
-        $handler = 'handle' . ucfirst($webhook->getType()->getAction());
+        $baseActions = explode('_', $webhook->getType()->getAction());
+        $action = '';
+        foreach ($baseActions as $baseAction) {
+            $action .= ucfirst($baseAction);
+        }
+
+        $handler = 'handle' . $action;
         if (method_exists($this, $handler)) {
             $this->loadOrder($webhook);
 

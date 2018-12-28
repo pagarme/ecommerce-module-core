@@ -3,11 +3,15 @@
 namespace Mundipagg\Core\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
+use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 
 final class Charge extends AbstractEntity
 {
+    /** @var OrderId */
+    private $orderId;
     /**
      *
      * @var int 
@@ -19,6 +23,19 @@ final class Charge extends AbstractEntity
      */
     private $paidAmount;
     /**
+     * Holds the amount that will not be captured in any away.
+     *
+     * @var int
+     */
+    private $canceledAmount;
+    /**
+     * Holds the amount that was once captured but then returned to the client.
+     *
+     * @var int
+     */
+    private $refundedAmount;
+
+    /**
      *
      * @var string 
      */
@@ -29,8 +46,65 @@ final class Charge extends AbstractEntity
      */
     private $status;
 
-    /** @var Transaction */
-    private $lastTransaction;
+    /** @var Transaction[] */
+    private $transactions;
+
+    /**
+     * @return OrderId
+     */
+    public function getOrderId()
+    {
+        return $this->orderId;
+    }
+
+    /**
+     * @param OrderId $orderId
+     * @return Charge
+     */
+    public function setOrderId(OrderId $orderId)
+    {
+        $this->orderId = $orderId;
+        return $this;
+    }
+
+    /**
+     * @param int $amount
+     */
+    public function pay($amount)
+    {
+        if ($this->status->equals(ChargeStatus::paid())) {
+            throw new InvalidOperationException(
+                'You can\'t pay a charge that was payed already!'
+            );
+        }
+        if (!$this->status->equals(ChargeStatus::pending())) {
+            throw new InvalidOperationException(
+                'You can\'t pay a charge that isn\'t pending!'
+            );
+        }
+
+        $this->setPaidAmount($amount);
+
+        $amountToCancel = $this->amount - $this->getPaidAmount();
+        $this->setCanceledAmount($amountToCancel);
+
+        $this->status = ChargeStatus::paid();
+    }
+
+    /**
+     * @param int $amount
+     */
+    public function cancel($amount)
+    {
+        if ($this->status->equals(ChargeStatus::paid())) {
+            $this->setRefundedAmount($amount);
+            return;
+        }
+
+        //if the charge wasn't payed yet the charge should be canceled.
+        $this->setCanceledAmount($this->amount);
+        $this->status = ChargeStatus::canceled();
+    }
 
     /**
      *
@@ -71,11 +145,62 @@ final class Charge extends AbstractEntity
      */
     public function setPaidAmount(int $paidAmount)
     {
-
         if ($paidAmount < 0) {
-            throw new InvalidParamException("Paid Amount should be greater or equal to 0!", $paidAmount);
+            $paidAmount = 0;
         }
         $this->paidAmount = $paidAmount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCanceledAmount()
+    {
+        return $this->canceledAmount;
+    }
+
+    /**
+     * @param int $canceledAmount
+     * @return Charge
+     */
+    private function setCanceledAmount(int $canceledAmount)
+    {
+        if ($canceledAmount < 0) {
+            $canceledAmount = 0;
+        }
+
+        if ($canceledAmount > $this->amount) {
+            $canceledAmount = $this->amount;
+        }
+
+        $this->canceledAmount = $canceledAmount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRefundedAmount()
+    {
+        return $this->refundedAmount;
+    }
+
+    /**
+     * @param int $refundedAmount
+     * @return Charge
+     */
+    private function setRefundedAmount(int $refundedAmount)
+    {
+        if ($refundedAmount < 0) {
+            $refundedAmount = 0;
+        }
+
+        if ($refundedAmount > $this->paidAmount) {
+            $refundedAmount = $this->paidAmount;
+        }
+
+        $this->refundedAmount = $refundedAmount;
         return $this;
     }
 
@@ -120,21 +245,62 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @return Transaction
+     * @return null|Transaction
      */
     public function getLastTransaction()
     {
-        return $this->lastTransaction;
+        $transactions = $this->getTransactions();
+        if (count($transactions) === 0) {
+            return null;
+        }
+
+        $newest = $transactions[0];
+
+        foreach ($transactions as $transaction) {
+            if (
+                $newest->getCreatedAt()->getTimestamp() <
+                $transaction->getCreatedAt()->getTimestamp()
+            ) {
+                $newest = $transaction;
+            }
+        }
+
+        return $newest;
     }
 
     /**
-     * @param Transaction $lastTransaction
+     * @param Transaction $newTransaction
      * @return Charge
      */
-    public function setLastTransaction(Transaction $lastTransaction)
+    public function addTransaction(Transaction $newTransaction)
     {
-        $this->lastTransaction = $lastTransaction;
+        $transactions = $this->getTransactions();
+        //cant add a transaction that was already added.
+        foreach ($transactions as $transaction) {
+            if (
+                $transaction->getMundipaggId()->equals(
+                    $newTransaction->getMundipaggId()
+                )
+            ) {
+                return $this;
+            }
+        }
+
+        $transactions[] = $newTransaction;
+        $this->transactions = $transactions;
+
         return $this;
+    }
+
+    /**
+     * @return Transaction[]
+     */
+    public function getTransactions()
+    {
+        if (!is_array($this->transactions)) {
+            return [];
+        }
+        return $this->transactions;
     }
 
     /**
@@ -153,9 +319,11 @@ final class Charge extends AbstractEntity
         $obj->mundipaggId = $this->getMundipaggId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();
+        $obj->canceledAmount = $this->getPaidAmount();
+        $obj->refundedAmount = $this->getPaidAmount();
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
-        $obj->lastTransaction = $this->getLastTransaction();
+        //$obj->lastTransaction = $this->getLastTransaction();
 
         return $obj;
     }

@@ -10,6 +10,7 @@ use Mundipagg\Core\Webhook\Exceptions\WebhookAlreadyHandledException;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
 use Mundipagg\Core\Webhook\Repositories\WebhookRepository;
+use Mundipagg\Core\Webhook\ValueObjects\WebhookId;
 
 class WebhookReceiverService
 {
@@ -30,7 +31,7 @@ class WebhookReceiverService
             $logService->info("Received", $postData);
 
             $repository = new WebhookRepository();
-            $webhook = $repository->findByMundipaggId($postData->id);
+            $webhook = $repository->findByMundipaggId(new WebhookId($postData->id));
             if ($webhook !== null) {
                 throw new WebhookAlreadyHandledException($webhook);
             }

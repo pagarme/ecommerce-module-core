@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Factories;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
@@ -72,5 +73,15 @@ class ConfigurationFactory implements FactoryInterface
         $config->setSecretKey((array)$data->keys);
 
         return $config;
+    }
+
+    /**
+     *
+     * @param  array $dbData
+     * @return AbstractEntity
+     */
+    public function createFromDbData($dbData)
+    {
+        // TODO: Implement createFromDbData() method.
     }
 }

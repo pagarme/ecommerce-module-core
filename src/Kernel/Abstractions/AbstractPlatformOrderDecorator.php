@@ -75,5 +75,29 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         return $amountInCurrency;
     }
 
+    public function refundAmount($amount)
+    {
+        $platformOrder = $this->getPlatformOrder();
+
+        /*
+         * @todo this format operations should be made by a currency format service.
+         *      But before doing this, check if a decorator can depend on a service.
+         */
+
+        $amountInCurrency = number_format($amount / 100, 2);
+        $grandTotal = number_format($platformOrder->getGrandTotal(), 2);
+        $totalRefunded = number_format($platformOrder->getTotalRefunded(), 2);
+
+        $totalRefunded += $amountInCurrency;
+        if ($totalRefunded > $grandTotal) {
+            $totalRefunded = $grandTotal;
+        }
+
+        $platformOrder->setTotalRefunded($totalRefunded);
+        $platformOrder->setBaseTotalRefunded($totalRefunded);
+
+        return $amountInCurrency;
+    }
+
     abstract protected function addMPHistoryComment($message);
 }

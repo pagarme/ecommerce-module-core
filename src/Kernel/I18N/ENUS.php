@@ -14,6 +14,7 @@ class ENUS extends AbstractI18NTable
             'Order paid.' => null,
             'Payment received: %.2f' => null,
             'Canceled amount: %.2f' => null,
+            'Refunded amount: %.2f' => null,
             'Partial Payment' => null,
         ];
     }

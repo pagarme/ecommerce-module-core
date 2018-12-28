@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
@@ -14,6 +15,13 @@ final class OrderHandlerService extends AbstractHandlerService
 {
     protected function handlePaid(Webhook $webhook)
     {
+
+        $orderRepository = new OrderRepository();
+        $order = $webhook->getEntity();
+
+        $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
+
+
         $order = $this->order;
 
         $result = [

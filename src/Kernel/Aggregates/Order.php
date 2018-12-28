@@ -3,21 +3,16 @@
 namespace Mundipagg\Core\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
 final class Order extends AbstractEntity
 {
-    /**
-     *
-     * @var string 
-     */
-    private $code;
-    /**
-     *
-     * @var int 
-     */
-    private $amount;
+    /** @var PlatformOrderInterface */
+    private $platformOrder;
+
     /**
      *
      * @var OrderStatus 
@@ -30,23 +25,30 @@ final class Order extends AbstractEntity
     private $charges;
 
     /**
+     * @return PlatformOrderInterface
+     */
+    public function getPlatformOrder()
+    {
+        return $this->platformOrder;
+    }
+
+    /**
+     * @param PlatformOrderInterface $platformOrder
+     * @return Order
+     */
+    public function setPlatformOrder(PlatformOrderInterface $platformOrder)
+    {
+        $this->platformOrder = $platformOrder;
+        return $this;
+    }
+
+    /**
      *
      * @return string
      */
     public function getCode()
     {
-        return $this->code;
-    }
-
-    /**
-     *
-     * @param  string $code
-     * @return Order
-     */
-    public function setCode(string $code)
-    {
-        $this->code = $code;
-        return $this;
+        return intval($this->platformOrder->getCode());
     }
 
     /**
@@ -55,22 +57,11 @@ final class Order extends AbstractEntity
      */
     public function getAmount()
     {
-        return $this->amount;
-    }
-
-    /**
-     *
-     * @param  int $amount
-     * @return Order
-     */
-    public function setAmount(int $amount)
-    {
-        if ($amount < 0) {
-            throw new InvalidParamException("Amount should be greater or equal to 0", $amount);
+        $amount = 0;
+        foreach ($this->getCharges() as $charge) {
+            $amount += $charge->getAmount();
         }
-
-        $this->amount = $amount;
-        return $this;
+        return $amount;
     }
 
     /**
@@ -99,20 +90,52 @@ final class Order extends AbstractEntity
      */
     public function getCharges()
     {
+        if (!is_array($this->charges)) {
+            return [];
+        }
         return $this->charges;
     }
 
     /**
      *
-     * @param  Charge $charge
+     * @param Charge $newCharge
      * @return Order
      */
-    public function addCharge($charge)
+    public function addCharge(Charge $newCharge)
     {
-        $this->charges[] = $charge;
-        return $this;
+        $charges = $this->getCharges();
+        //cant add a charge that was already added.
+        foreach ($charges as $charge) {
+            if (
+            $charge->getMundipaggId()->equals(
+                $newCharge->getMundipaggId()
+            )
+            ) {
+                return $this;
+            }
+        }
+
+        $charges[] = $newCharge;
+        $this->charges = $charges;
+
+        return $this;  
     }
 
+    public function updateCharge(Charge $updatedCharge)
+    {
+        $charges = $this->getCharges();
+
+        foreach ($charges as &$charge) {
+            if ($charge->getMundipaggId()->equals($updatedCharge->getMundipaggId()))
+            {
+                $charge = $updatedCharge;
+                $this->charges = $charges;
+                return;
+            }
+        }
+
+        $this->addCharge($updatedCharge);
+    }
 
     /**
      * Specify data which should be serialized to JSON

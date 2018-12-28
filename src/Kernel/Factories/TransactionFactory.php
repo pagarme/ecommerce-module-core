@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Factories;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Transaction;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
@@ -48,5 +49,15 @@ class TransactionFactory implements FactoryInterface
         $transaction->setAmount($postData['amount']);
 
         return $transaction;
+    }
+
+    /**
+     *
+     * @param  array $dbData
+     * @return AbstractEntity
+     */
+    public function createFromDbData($dbData)
+    {
+        // TODO: Implement createFromDbData() method.
     }
 }

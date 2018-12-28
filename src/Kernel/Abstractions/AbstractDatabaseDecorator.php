@@ -6,6 +6,9 @@ abstract class AbstractDatabaseDecorator
 {
     const TABLE_MODULE_CONFIGURATION = 0;
     const TABLE_WEBHOOK = 1;
+    const TABLE_ORDER = 2;
+    const TABLE_CHARGE = 3;
+    const TABLE_TRANSACTION = 4;
 
     protected $db;
     protected $tablePrefix;

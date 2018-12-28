@@ -9,6 +9,8 @@ final class TransactionStatus extends AbstractValueObject
    const CAPTURED = "captured";
    const PARTIAL_CAPTURE = "partial_capture";
    const AUTHORIZED_PENDING_CAPTURE = 'authorized_pending_capture';
+   const VOIDED = 'voided';
+   const PARTIAL_VOID = 'partial_void';
 
     /**
      *
@@ -39,6 +41,16 @@ final class TransactionStatus extends AbstractValueObject
     public static function authorizedPendingCapture()
     {
         return new self(self::AUTHORIZED_PENDING_CAPTURE);
+    }
+
+    public static function voided()
+    {
+        return new self(self::VOIDED);
+    }
+
+    public static function partialVoid()
+    {
+        return new self(self::PARTIAL_VOID);
     }
 
     /**

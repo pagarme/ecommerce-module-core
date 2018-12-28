@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Aggregates;
 
+use DateTime;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
@@ -17,6 +18,8 @@ final class Transaction extends AbstractEntity
     private $amount;
     /** @var TransactionStatus */
     private $status;
+    /** @var \DateTime */
+    private $createdAt;
 
     /**
      * @return TransactionType
@@ -64,6 +67,25 @@ final class Transaction extends AbstractEntity
     {
         return $this->status;
     }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param DateTime $createdAt
+     * @return Transaction
+     */
+    public function setCreatedAt(DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
 
     /**
      * @param TransactionStatus $status

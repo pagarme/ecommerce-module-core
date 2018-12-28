@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Webhook\Repositories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
+use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Webhook\Factories\WebhookFactory;
 
 class WebhookRepository extends AbstractRepository
@@ -48,10 +49,11 @@ class WebhookRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findByMundipaggId($mundipaggId)
+    public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
+        $id = $mundipaggId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_WEBHOOK);
-        $query = "SELECT * FROM $table WHERE mundipagg_id = '$mundipaggId'";
+        $query = "SELECT * FROM $table WHERE mundipagg_id = '$id'";
 
         $result = $this->db->fetch($query);
 

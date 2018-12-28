@@ -9,6 +9,7 @@ final class OrderStatus extends AbstractValueObject
     const PAID = 'paid';
     const PENDING = 'pending';
     const PROCESSING = 'processing';
+    const CANCELED = 'canceled';
 
 
     /**
@@ -40,6 +41,11 @@ final class OrderStatus extends AbstractValueObject
     static public function pending()
     {
         return new self(self::PENDING);
+    }
+
+    static public function canceled()
+    {
+        return new self(self::CANCELED);
     }
 
     /**
@@ -84,6 +90,6 @@ final class OrderStatus extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->getStatus();
     }
 }

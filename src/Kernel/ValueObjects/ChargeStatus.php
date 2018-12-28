@@ -8,6 +8,7 @@ final class ChargeStatus extends AbstractValueObject
 {
     const PAID = 'paid';
     const PENDING = 'pending';
+    const CANCELED = 'canceled';
 
     /**
      *
@@ -33,6 +34,11 @@ final class ChargeStatus extends AbstractValueObject
     static public function pending()
     {
         return new self(self::PENDING);
+    }
+
+    static public function canceled()
+    {
+        return new self(self::CANCELED);
     }
 
     /**
