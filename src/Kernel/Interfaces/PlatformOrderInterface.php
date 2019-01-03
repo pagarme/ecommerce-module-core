@@ -10,6 +10,7 @@ interface PlatformOrderInterface
     public function save();
     public function setState(OrderState $state);
     /**
+     *
      * @return OrderState
      */
     public function getState();

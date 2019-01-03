@@ -10,7 +10,10 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
 final class Order extends AbstractEntity
 {
-    /** @var PlatformOrderInterface */
+    /**
+     *
+     * @var PlatformOrderInterface 
+     */
     private $platformOrder;
 
     /**
@@ -25,6 +28,7 @@ final class Order extends AbstractEntity
     private $charges;
 
     /**
+     *
      * @return PlatformOrderInterface
      */
     public function getPlatformOrder()
@@ -33,7 +37,8 @@ final class Order extends AbstractEntity
     }
 
     /**
-     * @param PlatformOrderInterface $platformOrder
+     *
+     * @param  PlatformOrderInterface $platformOrder
      * @return Order
      */
     public function setPlatformOrder(PlatformOrderInterface $platformOrder)
@@ -98,7 +103,7 @@ final class Order extends AbstractEntity
 
     /**
      *
-     * @param Charge $newCharge
+     * @param  Charge $newCharge
      * @return Order
      */
     public function addCharge(Charge $newCharge)
@@ -106,8 +111,7 @@ final class Order extends AbstractEntity
         $charges = $this->getCharges();
         //cant add a charge that was already added.
         foreach ($charges as $charge) {
-            if (
-            $charge->getMundipaggId()->equals(
+            if ($charge->getMundipaggId()->equals(
                 $newCharge->getMundipaggId()
             )
             ) {
@@ -126,8 +130,7 @@ final class Order extends AbstractEntity
         $charges = $this->getCharges();
 
         foreach ($charges as &$charge) {
-            if ($charge->getMundipaggId()->equals($updatedCharge->getMundipaggId()))
-            {
+            if ($charge->getMundipaggId()->equals($updatedCharge->getMundipaggId())) {
                 $chargeId = $charge->getId();
                 $charge = $updatedCharge;
                 if ($overwriteId) {

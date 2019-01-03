@@ -55,7 +55,8 @@ final class ChargeRepository extends AbstractRepository
     }
 
     /**
-     * @param Charge $object
+     *
+     * @param  Charge $object
      * @throws \Exception
      */
     protected function create(AbstractEntity &$object)

@@ -32,7 +32,8 @@ final class TransactionRepository extends AbstractRepository
     }
 
     /**
-     * @param Transaction $object
+     *
+     * @param  Transaction $object
      * @throws \Exception
      */
     protected function create(AbstractEntity &$object)

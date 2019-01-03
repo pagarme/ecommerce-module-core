@@ -106,7 +106,7 @@ class ChargeFactory implements FactoryInterface
                     'status' => $tranStatus[$index],
                     'created_at' => $tranCreatedAt[$index]
                 ];
-               $transactions[] = $transaction;
+                $transactions[] = $transaction;
             }
         }
 

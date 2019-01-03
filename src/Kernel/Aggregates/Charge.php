@@ -10,7 +10,10 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 
 final class Charge extends AbstractEntity
 {
-    /** @var OrderId */
+    /**
+     *
+     * @var OrderId 
+     */
     private $orderId;
     /**
      *
@@ -46,10 +49,14 @@ final class Charge extends AbstractEntity
      */
     private $status;
 
-    /** @var Transaction[] */
+    /**
+     *
+     * @var Transaction[] 
+     */
     private $transactions;
 
     /**
+     *
      * @return OrderId
      */
     public function getOrderId()
@@ -58,7 +65,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param OrderId $orderId
+     *
+     * @param  OrderId $orderId
      * @return Charge
      */
     public function setOrderId(OrderId $orderId)
@@ -68,6 +76,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @param int $amount
      */
     public function pay($amount)
@@ -92,6 +101,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @param int $amount
      */
     public function cancel($amount)
@@ -157,6 +167,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getCanceledAmount()
@@ -169,7 +180,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param int $canceledAmount
+     *
+     * @param  int $canceledAmount
      * @return Charge
      */
     public function setCanceledAmount(int $canceledAmount)
@@ -187,6 +199,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getRefundedAmount()
@@ -199,7 +212,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param int $refundedAmount
+     *
+     * @param  int $refundedAmount
      * @return Charge
      */
     public function setRefundedAmount(int $refundedAmount)
@@ -257,6 +271,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return null|Transaction
      */
     public function getLastTransaction()
@@ -269,9 +284,7 @@ final class Charge extends AbstractEntity
         $newest = $transactions[0];
 
         foreach ($transactions as $transaction) {
-            if (
-                $newest->getCreatedAt()->getTimestamp() <
-                $transaction->getCreatedAt()->getTimestamp()
+            if ($newest->getCreatedAt()->getTimestamp() <$transaction->getCreatedAt()->getTimestamp()
             ) {
                 $newest = $transaction;
             }
@@ -281,7 +294,8 @@ final class Charge extends AbstractEntity
     }
 
     /**
-     * @param Transaction $newTransaction
+     *
+     * @param  Transaction $newTransaction
      * @return Charge
      */
     public function addTransaction(Transaction $newTransaction)
@@ -289,10 +303,9 @@ final class Charge extends AbstractEntity
         $transactions = $this->getTransactions();
         //cant add a transaction that was already added.
         foreach ($transactions as $transaction) {
-            if (
-                $transaction->getMundipaggId()->equals(
-                    $newTransaction->getMundipaggId()
-                )
+            if ($transaction->getMundipaggId()->equals(
+                $newTransaction->getMundipaggId()
+            )
             ) {
                 return $this;
             }
@@ -305,6 +318,7 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     *
      * @return Transaction[]
      */
     public function getTransactions()
@@ -320,8 +334,7 @@ final class Charge extends AbstractEntity
         $transactions = $this->getTransactions();
 
         foreach ($transactions as &$transaction) {
-            if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId()))
-            {
+            if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId())) {
                 $transactionId = $transaction->getId();
                 $transaction = $updatedTransaction;
                 if ($overwriteId) {

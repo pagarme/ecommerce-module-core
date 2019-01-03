@@ -6,11 +6,11 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class TransactionStatus extends AbstractValueObject
 {
-   const CAPTURED = "captured";
-   const PARTIAL_CAPTURE = "partial_capture";
-   const AUTHORIZED_PENDING_CAPTURE = 'authorized_pending_capture';
-   const VOIDED = 'voided';
-   const PARTIAL_VOID = 'partial_void';
+    const CAPTURED = "captured";
+    const PARTIAL_CAPTURE = "partial_capture";
+    const AUTHORIZED_PENDING_CAPTURE = 'authorized_pending_capture';
+    const VOIDED = 'voided';
+    const PARTIAL_VOID = 'partial_void';
 
     /**
      *

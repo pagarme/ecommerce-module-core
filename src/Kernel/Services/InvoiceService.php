@@ -48,8 +48,8 @@ class InvoiceService
     /**
      * This method is based on the original canInvoice method of Magento2.
      *
-     * @see Magento\Sales\Model\Order::canInvoice;
-     * @param Order $order
+     * @see    Magento\Sales\Model\Order::canInvoice;
+     * @param  Order $order
      * @return null|string
      */
     public function getInvoiceCantBeCreatedReason(Order $order)
@@ -57,7 +57,7 @@ class InvoiceService
         $platformOrder = $order->getPlatformOrder();
 
         if ($platformOrder->canUnhold()) {
-           return 'canUnhold';
+            return 'canUnhold';
         }
 
         if ($platformOrder->isPaymentReview()) {
@@ -77,7 +77,9 @@ class InvoiceService
             return 'Order is Closed';
         }
 
-        /** @todo How can we do this conditions decoupled of the platform?
+        /**
+         *
+ * @todo How can we do this conditions decoupled of the platform?
 
         if ($platformOrder->getActionFlag(self::ACTION_FLAG_INVOICE) === false) {
             return false;

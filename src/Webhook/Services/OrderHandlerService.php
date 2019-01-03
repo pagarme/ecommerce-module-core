@@ -58,7 +58,10 @@ final class OrderHandlerService extends AbstractHandlerService
     protected function loadOrder($webhook)
     {
         $orderRepository = new OrderRepository();
-        /** @var Order $order */
+        /**
+         *
+ * @var Order $order 
+*/
         $order = $webhook->getEntity();
         $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
 

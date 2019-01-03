@@ -12,7 +12,8 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 final class OrderRepository extends AbstractRepository
 {
     /**
-     * @param Order $object
+     *
+     * @param  Order $object
      * @throws \Exception
      */
     protected function create(AbstractEntity &$object)
@@ -36,7 +37,8 @@ final class OrderRepository extends AbstractRepository
     }
 
     /**
-     * @param Order $object
+     *
+     * @param  Order $object
      * @throws \Exception
      */
     protected function update(AbstractEntity &$object)

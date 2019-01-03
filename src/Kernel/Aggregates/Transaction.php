@@ -12,19 +12,33 @@ use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 final class Transaction extends AbstractEntity
 {
     /**
+     *
      * @var TransactionType
      */
     private $transactionType;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $amount;
-    /** @var TransactionStatus */
+    /**
+     *
+     * @var TransactionStatus 
+     */
     private $status;
-    /** @var \DateTime */
+    /**
+     *
+     * @var \DateTime 
+     */
     private $createdAt;
-    /** @var ChargeId */
+    /**
+     *
+     * @var ChargeId 
+     */
     private $chargeId;
 
     /**
+     *
      * @return TransactionType
      */
     public function getTransactionType()
@@ -33,6 +47,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @param TransactionType $transactionType
      */
     public function setTransactionType(TransactionType $transactionType)
@@ -41,6 +56,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getAmount()
@@ -49,6 +65,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @param int $amount
      */
     public function setAmount(int $amount)
@@ -64,6 +81,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return TransactionStatus
      */
     public function getStatus()
@@ -72,6 +90,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return DateTime
      */
     public function getCreatedAt()
@@ -80,7 +99,8 @@ final class Transaction extends AbstractEntity
     }
 
     /**
-     * @param DateTime $createdAt
+     *
+     * @param  DateTime $createdAt
      * @return Transaction
      */
     public function setCreatedAt(DateTime $createdAt)
@@ -91,6 +111,7 @@ final class Transaction extends AbstractEntity
 
 
     /**
+     *
      * @param TransactionStatus $status
      */
     public function setStatus(TransactionStatus $status)
@@ -99,6 +120,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return ChargeId
      */
     public function getChargeId()
@@ -107,7 +129,8 @@ final class Transaction extends AbstractEntity
     }
 
     /**
-     * @param ChargeId $chargeId
+     *
+     * @param  ChargeId $chargeId
      * @return Transaction
      */
     public function setChargeId(ChargeId $chargeId)
@@ -118,10 +141,11 @@ final class Transaction extends AbstractEntity
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {

@@ -24,10 +24,16 @@ final class ChargeHandlerService extends AbstractHandlerService
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
-        /** @var Order $order */
+        /**
+         *
+ * @var Order $order 
+*/
         $order = $this->order;
 
-        /** @var Charge $charge */
+        /**
+         *
+ * @var Charge $charge 
+*/
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
@@ -81,7 +87,10 @@ final class ChargeHandlerService extends AbstractHandlerService
     protected function loadOrder($webhook)
     {
         $orderRepository = new OrderRepository();
-        /** @var Charge $charge */
+        /**
+         *
+ * @var Charge $charge 
+*/
         $charge = $webhook->getEntity();
         $order = $orderRepository->findByMundipaggId($charge->getOrderId());
 

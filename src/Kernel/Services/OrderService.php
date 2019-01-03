@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Aggregates\Order;
 final class OrderService
 {
     /**
+     *
      * @param Order $order
      */
     public function syncPlatformWith(Order $order)

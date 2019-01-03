@@ -6,7 +6,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class TransactionType extends AbstractValueObject
 {
-   const CREDIT_CARD = "credit_card";
+    const CREDIT_CARD = "credit_card";
     /**
      *
      * @var string 
