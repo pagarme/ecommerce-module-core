@@ -70,6 +70,6 @@ final class TransactionType extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->type;
     }
 }

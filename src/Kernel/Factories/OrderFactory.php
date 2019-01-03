@@ -50,6 +50,9 @@ class OrderFactory implements FactoryInterface
         $chargeFactory = new ChargeFactory();
 
         foreach($charges as $charge) {
+            $charge['order'] = [
+                'id' => $order->getMundipaggId()->getValue()
+            ];
             $newCharge = $chargeFactory->createFromPostData($charge);
             $order->addCharge($newCharge);
         }
@@ -83,6 +86,14 @@ class OrderFactory implements FactoryInterface
         $chargeRepository = new ChargeRepository();
         $charges = $chargeRepository->findByOrderId($order->getMundipaggId());
 
+        foreach ($charges as $charge) {
+            $order->addCharge($charge);
+        }
+
+        $order->setPlatformOrder(
+            $this->getPlatformOrder($dbData['code'])
+        );
+
         return $order;
     }
 
@@ -97,6 +108,34 @@ class OrderFactory implements FactoryInterface
          */
         $order = new $orderDecoratorClass();
         $order->loadByIncrementId($code);
+        return $order;
+    }
+
+    public function createFromPlatformData(
+        PlatformOrderInterface $platformOrder,
+        $orderId
+    ) {
+        $order = new Order;
+
+        $order->setMundipaggId(new OrderId($orderId));
+
+        $baseStatus = explode('_', $platformOrder->getStatus());
+        $status = $baseStatus[0];
+        for ($i = 1; $i < count($baseStatus); $i++) {
+            $status .= ucfirst(($baseStatus[$i]));
+        }
+
+        try {
+            OrderStatus::$status();
+        }catch(Throwable $e) {
+            throw new InvalidParamException(
+                "Invalid order status!",
+                $status
+            );
+        }
+        $order->setStatus(OrderStatus::$status());
+        $order->setPlatformOrder($platformOrder);
+
         return $order;
     }
 }

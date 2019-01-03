@@ -6,14 +6,15 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use MundiPagg\MundiPagg\Model\ChargesRepository;
 
 final class ChargeHandlerService extends AbstractHandlerService
 {
@@ -26,31 +27,30 @@ final class ChargeHandlerService extends AbstractHandlerService
         /** @var Order $order */
         $order = $this->order;
 
+        /** @var Charge $charge */
         $charge = $webhook->getEntity();
-
-
-        $chargeRepository->save($charge);
-
 
         $transaction = $charge->getLastTransaction();
 
         $outdatedCharge = $chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
-        $outdatedCharge->addTransaction($charge->getLastTransaction());
-        $charge = $outdatedCharge;
+        if ($outdatedCharge !== null) {
+            $outdatedCharge->addTransaction($charge->getLastTransaction());
+            $charge = $outdatedCharge;
+        }
 
         $paidAmount = $transaction->getAmount();
+        if (!$charge->getStatus()->equals(ChargeStatus::paid())) {
+            $charge->pay($paidAmount);
+        }
 
-        $charge->pay($paidAmount);
         $order->updateCharge($charge);
 
-        $history = $this->prepareHistoryComment($charge);
-
-        $orderService->syncPlatformWith($order);
-        $this->order->addHistoryComment($history);
-
         $orderRepository->save($order);
+        $history = $this->prepareHistoryComment($charge);
+        $this->order->getPlatformOrder()->addHistoryComment($history);
+        $orderService->syncPlatformWith($order);
 
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
@@ -80,15 +80,29 @@ final class ChargeHandlerService extends AbstractHandlerService
 
     protected function loadOrder($webhook)
     {
-        $orderDecoratorClass =
-            MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+        $orderRepository = new OrderRepository();
+        /** @var Charge $charge */
+        $charge = $webhook->getEntity();
+        $order = $orderRepository->findByMundipaggId($charge->getOrderId());
 
-        /**
-         *
-         * @var PlatformOrderInterface $order
-        */
-        $order = new $orderDecoratorClass();
-        $order->loadByIncrementId($webhook->getEntity()->getCode());
+        if ($order === null) {
+            $orderDecoratorClass =
+                MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+
+            /**
+             *
+             * @var PlatformOrderInterface $order
+             */
+            $order = new $orderDecoratorClass();
+            $order->loadByIncrementId($charge->getCode());
+
+            $orderFactory = new OrderFactory();
+            $order = $orderFactory->createFromPlatformData(
+                $order,
+                $charge->getOrderId()->getValue()
+            );
+        }
+
         $this->order = $order;
     }
 

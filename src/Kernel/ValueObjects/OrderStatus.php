@@ -11,7 +11,6 @@ final class OrderStatus extends AbstractValueObject
     const PROCESSING = 'processing';
     const CANCELED = 'canceled';
 
-
     /**
      *
      * @var string 
@@ -41,6 +40,11 @@ final class OrderStatus extends AbstractValueObject
     static public function pending()
     {
         return new self(self::PENDING);
+    }
+
+    static public function pendingPayment()
+    {
+        return self::pending();
     }
 
     static public function canceled()

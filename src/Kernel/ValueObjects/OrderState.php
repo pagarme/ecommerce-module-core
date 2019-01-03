@@ -95,12 +95,12 @@ final class OrderState extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param  OrderStatus $object
+     * @param  OrderState $object
      * @return bool
      */
     protected function isEqual($object)
     {
-        return $this->getState() === $object->getStatus();
+        return $this->getState() === $object->getState();
     }
 
     /**

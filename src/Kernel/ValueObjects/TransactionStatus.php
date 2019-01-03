@@ -95,6 +95,6 @@ final class TransactionStatus extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->status;
     }
 }

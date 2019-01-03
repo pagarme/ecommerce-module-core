@@ -2,9 +2,9 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
+use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
@@ -13,7 +13,7 @@ abstract class AbstractHandlerService
 {
     /**
      *
-     * @var PlatformOrderInterface 
+     * @var Order
      */
     protected $order;
 
@@ -44,10 +44,11 @@ abstract class AbstractHandlerService
         $handler = 'handle' . $action;
         if (method_exists($this, $handler)) {
             $this->loadOrder($webhook);
+            $platformOrder = $this->order->getPlatformOrder();
 
-            if ($this->order->getIncrementId() !== null) {
+            if ($platformOrder->getIncrementId() !== null) {
                 $this->addWebHookReceivedHistory($webhook);
-                $this->order->save();
+                $platformOrder->save();
                 return $this->$handler($webhook);
             }
 
@@ -77,7 +78,8 @@ abstract class AbstractHandlerService
             $webhook->getType()->getAction()
         );
 
-        $this->order->addHistoryComment($message);
+        $platformOrder = $this->order->getPlatformOrder();
+        $platformOrder->addHistoryComment($message);
     }
 
     abstract protected function loadOrder($webhook);

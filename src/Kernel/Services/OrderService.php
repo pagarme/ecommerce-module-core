@@ -35,6 +35,9 @@ final class OrderService
         $platformOrder->setTotalRefunded($refundedAmount);
         $platformOrder->setBaseTotalRefunded($refundedAmount);
 
+        $platformOrder->setStatus($order->getStatus());
+        //@todo $platformOrder->setState($order->getState());
+
         $platformOrder->save();
     }
 }

@@ -135,6 +135,10 @@ final class Charge extends AbstractEntity
      */
     public function getPaidAmount()
     {
+        if ($this->paidAmount === null) {
+            return 0;
+        }
+
         return $this->paidAmount;
     }
 
@@ -157,6 +161,10 @@ final class Charge extends AbstractEntity
      */
     public function getCanceledAmount()
     {
+        if ($this->canceledAmount === null) {
+            return 0;
+        }
+
         return $this->canceledAmount;
     }
 
@@ -164,7 +172,7 @@ final class Charge extends AbstractEntity
      * @param int $canceledAmount
      * @return Charge
      */
-    private function setCanceledAmount(int $canceledAmount)
+    public function setCanceledAmount(int $canceledAmount)
     {
         if ($canceledAmount < 0) {
             $canceledAmount = 0;
@@ -183,6 +191,10 @@ final class Charge extends AbstractEntity
      */
     public function getRefundedAmount()
     {
+        if ($this->refundedAmount === null) {
+            return 0;
+        }
+
         return $this->refundedAmount;
     }
 
@@ -190,7 +202,7 @@ final class Charge extends AbstractEntity
      * @param int $refundedAmount
      * @return Charge
      */
-    private function setRefundedAmount(int $refundedAmount)
+    public function setRefundedAmount(int $refundedAmount)
     {
         if ($refundedAmount < 0) {
             $refundedAmount = 0;
@@ -303,6 +315,26 @@ final class Charge extends AbstractEntity
         return $this->transactions;
     }
 
+    public function updateTransaction(Transaction $updatedTransaction, $overwriteId = false)
+    {
+        $transactions = $this->getTransactions();
+
+        foreach ($transactions as &$transaction) {
+            if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId()))
+            {
+                $transactionId = $transaction->getId();
+                $transaction = $updatedTransaction;
+                if ($overwriteId) {
+                    $transaction->setId($transactionId);
+                }
+                $this->transactions = $transactions;
+                return;
+            }
+        }
+
+        $this->addTransaction($updatedTransaction);
+    }
+
     /**
      * Specify data which should be serialized to JSON
      *
@@ -317,10 +349,11 @@ final class Charge extends AbstractEntity
 
         $obj->id = $this->getId();
         $obj->mundipaggId = $this->getMundipaggId();
+        $obj->orderId = $this->getOrderId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();
-        $obj->canceledAmount = $this->getPaidAmount();
-        $obj->refundedAmount = $this->getPaidAmount();
+        $obj->canceledAmount = $this->getCanceledAmount();
+        $obj->refundedAmount = $this->getRefundedAmount();
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
         //$obj->lastTransaction = $this->getLastTransaction();

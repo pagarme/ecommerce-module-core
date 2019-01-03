@@ -83,6 +83,6 @@ final class ChargeStatus extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->status;
     }
 }

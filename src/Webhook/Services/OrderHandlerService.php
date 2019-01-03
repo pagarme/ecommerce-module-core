@@ -3,10 +3,12 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
+use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
@@ -15,50 +17,71 @@ final class OrderHandlerService extends AbstractHandlerService
 {
     protected function handlePaid(Webhook $webhook)
     {
-
-        $orderRepository = new OrderRepository();
-        $order = $webhook->getEntity();
-
-        $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
-
-
         $order = $this->order;
-
         $result = [
-            "message" => 'Can\'t create Invoice for the order!',
+            "message" => 'Can\'t create Invoice for the order! Reason: ',
             "code" => 200
         ];
-        if($order->canInvoice()) {
-            $invoiceService = new InvoiceService();
-            $i18n = new LocalizationService();
 
-            $invoiceService->createInvoiceFor($order);
-            $order->setState(OrderState::processing());
+        $invoiceService = new InvoiceService();
+        $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
+        $result["message"] .= $cantCreateReason;
+
+        $invoice = $invoiceService->createInvoiceFor($order);
+        if ($invoice !== null) {
+            $platformOrder = $order->getPlatformOrder();
+
             $order->setStatus(OrderStatus::processing());
-            $order->addHistoryComment(
+            //@todo maybe an Order Aggregate should have a State too.
+            $platformOrder->setState(OrderState::processing());
+
+            $i18n = new LocalizationService();
+            $platformOrder->addHistoryComment(
                 $i18n->getDashboard('Order paid.')
             );
-            $order->save();
+
+            $orderRepository = new OrderRepository();
+            $orderRepository->save($order);
+
+            $orderService = new OrderService();
+            $orderService->syncPlatformWith($order);
 
             $result = [
                 "message" => 'Order paid and invoice created.',
                 "code" => 200
             ];
         }
+
         return $result;
     }
 
     protected function loadOrder($webhook)
     {
-        $orderDecoratorClass =
-            MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+        $orderRepository = new OrderRepository();
+        /** @var Order $order */
+        $order = $webhook->getEntity();
+        $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
 
-        /**
-         *
-         * @var PlatformOrderInterface $order
-        */
-        $order = new $orderDecoratorClass();
-        $order->loadByIncrementId($webhook->getEntity()->getCode());
+        if ($order === null) {
+
+            $orderDecoratorClass =
+                MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+
+            /**
+             *
+             * @var PlatformOrderInterface $order
+             */
+            $order = new $orderDecoratorClass();
+            $order->loadByIncrementId($order->getPlatformOrder()->getIncrementId());
+
+
+            $orderFactory = new OrderFactory();
+            $order = $orderFactory->createFromPlatformData(
+                $order,
+                $order->getMundipaggId()->getValue()
+            );
+        }
+
         $this->order = $order;
     }
 }

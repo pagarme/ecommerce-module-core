@@ -6,6 +6,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Transaction;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
@@ -48,6 +49,9 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setAmount($postData['amount']);
 
+        $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $postData['created_at']);
+        $transaction->setCreatedAt($createdAt);
+
         return $transaction;
     }
 
@@ -58,6 +62,45 @@ class TransactionFactory implements FactoryInterface
      */
     public function createFromDbData($dbData)
     {
-        // TODO: Implement createFromDbData() method.
+        $transaction = new Transaction();
+
+        $transaction->setId($dbData['id']);
+        $transaction->setChargeId(new ChargeId($dbData['charge_id']));
+        $transaction->setMundipaggId(new TransactionId($dbData['mundipagg_id']));
+
+        $transaction->setAmount($dbData['amount']);
+
+        $baseStatus = explode('_', $dbData['status']);
+        $status = $baseStatus[0];
+        for ($i = 1; $i < count($baseStatus); $i++) {
+            $status .= ucfirst(($baseStatus[$i]));
+        }
+
+        if (!method_exists(TransactionStatus::class, $status)) {
+            throw new InvalidParamException(
+                "$status is not a valid TransactionStatus!",
+                $status
+            );
+        }
+        $transaction->setStatus(TransactionStatus::$status());
+
+        $baseType = explode('_', $dbData['type']);
+        $type = $baseType[0];
+        for ($i = 1; $i < count($baseType); $i++) {
+            $type .= ucfirst(($baseType[$i]));
+        }
+
+        if (!method_exists(TransactionType::class, $type)) {
+            throw new InvalidParamException(
+                "$type is not a valid TransactionType!",
+                $type
+            );
+        }
+        $transaction->setTransactionType(TransactionType::$type());
+
+        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $dbData['created_at']);
+        $transaction->setCreatedAt($createdAt);
+
+        return $transaction;
     }
 }

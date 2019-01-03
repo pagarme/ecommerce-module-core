@@ -9,11 +9,19 @@ interface PlatformOrderInterface
 {
     public function save();
     public function setState(OrderState $state);
+    /**
+     * @return OrderState
+     */
+    public function getState();
     public function setStatus(OrderStatus $status);
+    public function getStatus();
     public function loadByIncrementId($incrementId);
     public function addHistoryComment($message);
     public function setIsCustomerNotified();
     public function canInvoice();
+    public function canUnhold();
+    public function isPaymentReview();
+    public function isCanceled();
     public function getPlatformOrder();
     public function getIncrementId();
     public function payAmount($amount);

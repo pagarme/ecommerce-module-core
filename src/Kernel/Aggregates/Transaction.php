@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use DateTime;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 
@@ -20,6 +21,8 @@ final class Transaction extends AbstractEntity
     private $status;
     /** @var \DateTime */
     private $createdAt;
+    /** @var ChargeId */
+    private $chargeId;
 
     /**
      * @return TransactionType
@@ -96,6 +99,24 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     * @return ChargeId
+     */
+    public function getChargeId()
+    {
+        return $this->chargeId;
+    }
+
+    /**
+     * @param ChargeId $chargeId
+     * @return Transaction
+     */
+    public function setChargeId(ChargeId $chargeId)
+    {
+        $this->chargeId = $chargeId;
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -104,6 +125,16 @@ final class Transaction extends AbstractEntity
      */
     public function jsonSerialize()
     {
+        $obj = new \stdClass();
 
+        $obj->id = $this->getId();
+        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->chargeId = $this->getChargeId();
+        $obj->amount = $this->getAmount();
+        $obj->type = $this->getTransactionType();
+        $obj->status = $this->getStatus();
+        $obj->createdAt = $this->getCreatedAt()->format('Y-m-d H:i:s');
+
+        return $obj;
     }
 }

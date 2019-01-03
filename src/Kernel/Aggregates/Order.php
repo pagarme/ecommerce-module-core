@@ -121,14 +121,18 @@ final class Order extends AbstractEntity
         return $this;  
     }
 
-    public function updateCharge(Charge $updatedCharge)
+    public function updateCharge(Charge $updatedCharge, $overwriteId = false)
     {
         $charges = $this->getCharges();
 
         foreach ($charges as &$charge) {
             if ($charge->getMundipaggId()->equals($updatedCharge->getMundipaggId()))
             {
+                $chargeId = $charge->getId();
                 $charge = $updatedCharge;
+                if ($overwriteId) {
+                    $charge->setId($chargeId);
+                }
                 $this->charges = $charges;
                 return;
             }
