@@ -26,14 +26,14 @@ final class ChargeHandlerService extends AbstractHandlerService
 
         /**
          *
- * @var Order $order 
-*/
+         * @var Order $order
+        */
         $order = $this->order;
 
         /**
          *
- * @var Charge $charge 
-*/
+         * @var Charge $charge
+        */
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
@@ -75,13 +75,44 @@ final class ChargeHandlerService extends AbstractHandlerService
 
     protected function handleRefunded(Webhook $webhook)
     {
-        $a = 1;
+        $orderRepository = new OrderRepository();
         $chargeRepository = new ChargeRepository();
+        $orderService = new OrderService();
+
+        $order = $this->order;
+
+        /**
+         *
+         * @var Charge $charge
+         */
         $charge = $webhook->getEntity();
 
+        $transaction = $charge->getLastTransaction();
 
-        $chargeRepository->save($charge);
+        $outdatedCharge = $chargeRepository->findByMundipaggId(
+            $charge->getMundipaggId()
+        );
+        if ($outdatedCharge !== null) {
+            $outdatedCharge->addTransaction($transaction);
+            $charge = $outdatedCharge;
+        }
 
+        $charge->cancel($transaction->getAmount());
+
+        $order->updateCharge($charge);
+
+        $orderRepository->save($order);
+        $history = $this->prepareHistoryComment($charge);
+        $order->getPlatformOrder()->addHistoryComment($history);
+        $orderService->syncPlatformWith($order);
+
+        $returnMessage = $this->prepareReturnMessage($charge);
+        $result = [
+            "message" => $returnMessage,
+            "code" => 200
+        ];
+
+        return $result;
     }
 
     protected function loadOrder($webhook)
@@ -120,26 +151,38 @@ final class ChargeHandlerService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
+        if ($charge->getStatus()->equals(ChargeStatus::paid())) {
+            $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
+            $history = $i18n->getDashboard(
+                'Payment received: %.2f',
+                $amountInCurrency
+            );
+
+            $canceledAmount = $charge->getCanceledAmount();
+            if ($canceledAmount > 0) {
+                $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
+
+                $history .= " ({$i18n->getDashboard('Partial Payment')}";
+                $history .= ". " .
+                    $i18n->getDashboard(
+                        'Canceled amount: %.2f',
+                        $amountCanceledInCurrency
+                    ) . ')';
+            }
+
+            return $history;
+        }
+
+        $amountInCurrency = $moneyService->centsToFloat($charge->getRefundedAmount());
         $history = $i18n->getDashboard(
-            'Payment received: %.2f',
-            $amountInCurrency
+            'Charge canceled.'
         );
 
-        $canceledAmount = $charge->getCanceledAmount();
-        if ($canceledAmount > 0) {
-            $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
-
-            $history .= " ({$i18n->getDashboard('Partial Payment')}";
-            $history .= ". " .
-                $i18n->getDashboard(
-                    'Canceled amount: %.2f',
-                    $amountCanceledInCurrency
-                ) . ')';
-
-
-        }
+        $history .= ' ' . $i18n->getDashboard(
+            'Refunded amount: %.2f',
+                $amountInCurrency
+        );
 
         return $history;
     }
@@ -148,16 +191,23 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
+        if ($charge->getStatus()->equals(ChargeStatus::paid())) {
+            $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
-        $returnMessage = "Amount Paid: $amountInCurrency";
+            $returnMessage = "Amount Paid: $amountInCurrency";
 
-        $canceledAmount = $charge->getCanceledAmount();
-        if ($canceledAmount > 0) {
-            $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
+            $canceledAmount = $charge->getCanceledAmount();
+            if ($canceledAmount > 0) {
+                $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
 
-            $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
+                $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
+            }
+
+            return $returnMessage;
         }
+
+        $amountInCurrency = $moneyService->centsToFloat($charge->getRefundedAmount());
+        $returnMessage = "Charge canceled. Refunded amount: $amountInCurrency";
 
         return $returnMessage;
     }

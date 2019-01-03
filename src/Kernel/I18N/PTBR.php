@@ -12,10 +12,12 @@ class PTBR extends AbstractI18NTable
             'Invoice created: #%d.' => 'Invoice criada: #%d',
             'Webhook received: %s.%s' => 'Webhook recebido: %s.%s',
             'Order paid.' => 'Pedido pago.',
+            'Order canceled.' => 'Pedido cancelado.',
             'Payment received: %.2f' => 'Pagamento recebido: %.2f',
             'Canceled amount: %.2f' => 'Quantia cancelada: %.2f',
             'Refunded amount: %.2f' => 'Quantia estornada: %.2f',
-            'Partial Payment' => 'Pagamento Parcial'
+            'Partial Payment' => 'Pagamento Parcial',
+            'Charge canceled.' => 'Cobrança cancelada.'
         ];
     }
 }
