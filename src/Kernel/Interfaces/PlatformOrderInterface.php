@@ -43,6 +43,7 @@ interface PlatformOrderInterface
     public function getCode();
 
     /**
+     *
      * @return PlatformInvoiceInterface[]
      */
     public function getInvoiceCollection();

@@ -181,7 +181,7 @@ final class ChargeHandlerService extends AbstractHandlerService
 
         $history .= ' ' . $i18n->getDashboard(
             'Refunded amount: %.2f',
-                $amountInCurrency
+            $amountInCurrency
         );
 
         return $history;

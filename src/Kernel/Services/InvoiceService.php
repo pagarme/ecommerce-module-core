@@ -100,6 +100,7 @@ class InvoiceService
     }
 
     /**
+     *
      * @param Order $order
      */
     public function cancelInvoicesFor(Order $order)
@@ -122,11 +123,15 @@ class InvoiceService
         PlatformOrderInterface $plaformOrder
     ) {
         $creditmemoClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_CREDITMEMO_DECORATOR_CLASS);
-        /** @var PlatformCreditmemoInterface $creditmemo */
+        /**
+         *
+ * @var PlatformCreditmemoInterface $creditmemo 
+*/
         $creditmemo = new $creditmemoClass();
 
 
         /**
+         *
          * @fixme to refund an order we have to set the total refunded to 0, since
          *        the refund process will set the correct refund value by itself.
          *        So, setting this value is not a charge handling responsibility.
@@ -166,7 +171,8 @@ class InvoiceService
     }
 
     /**
-     * @param Order $order
+     *
+     * @param  Order $order
      * @return PlatformInvoiceInterface[]
      */
     private function getCancelableInvoicesFor(Order $order)
