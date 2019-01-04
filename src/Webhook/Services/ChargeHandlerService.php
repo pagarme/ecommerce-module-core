@@ -115,7 +115,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    protected function loadOrder($webhook)
+    protected function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
         /**

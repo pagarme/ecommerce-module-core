@@ -70,7 +70,6 @@ class WebhookReceiverService
             throw new WebhookHandlerNotFoundException($webhook);
         }
 
-
         /**
          *
          * @var AbstractHandlerService $handlerService

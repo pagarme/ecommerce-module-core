@@ -24,7 +24,7 @@ final class OrderRepository extends AbstractRepository
 
         $query = "
           INSERT INTO $orderTable (`mundipagg_id`, `code`, `status`) 
-          VALUES ('{$order->mundipaggId}', {$order->code}, '{$order->status}');
+          VALUES ('{$order->mundipaggId}', '{$order->code}', '{$order->status}');
          ";
 
         $this->db->query($query);

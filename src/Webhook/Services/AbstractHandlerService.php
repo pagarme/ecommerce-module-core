@@ -82,5 +82,5 @@ abstract class AbstractHandlerService
         $platformOrder->addHistoryComment($message);
     }
 
-    abstract protected function loadOrder($webhook);
+    abstract protected function loadOrder(Webhook $webhook);
 }

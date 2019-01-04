@@ -53,7 +53,7 @@ final class Order extends AbstractEntity
      */
     public function getCode()
     {
-        return intval($this->platformOrder->getCode());
+        return $this->platformOrder->getCode();
     }
 
     /**

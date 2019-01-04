@@ -37,7 +37,13 @@ interface PlatformOrderInterface
     public function setBaseTotalDue($amount);
     public function setTotalCanceled($amount);
     public function setBaseTotalCanceled($amount);
+    public function getTotalRefunded();
     public function setTotalRefunded($amount);
     public function setBaseTotalRefunded($amount);
     public function getCode();
+
+    /**
+     * @return PlatformInvoiceInterface[]
+     */
+    public function getInvoiceCollection();
 }

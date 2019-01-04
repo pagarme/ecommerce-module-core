@@ -9,7 +9,8 @@ class ENUS extends AbstractI18NTable
     protected function getTable()
     {
         return [
-            'Invoice created: #%d.' => null,
+            'Invoice created: #%s.' => null,
+            'Invoice canceled: #%s.' => null,
             'Webhook received: %s.%s' => null,
             'Order paid.' => null,
             'Order canceled.' => null,
@@ -17,7 +18,8 @@ class ENUS extends AbstractI18NTable
             'Canceled amount: %.2f' => null,
             'Refunded amount: %.2f' => null,
             'Partial Payment' => null,
-            'Charge canceled.' => null
+            'Charge canceled.' => null,
+            'Creditmemo created: #%s.' => null,
         ];
     }
 }

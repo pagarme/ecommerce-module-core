@@ -9,9 +9,11 @@ use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Vertex\Services\Invoice;
 
 final class OrderHandlerService extends AbstractHandlerService
 {
@@ -29,6 +31,8 @@ final class OrderHandlerService extends AbstractHandlerService
 
         $invoice = $invoiceService->createInvoiceFor($order);
         if ($invoice !== null) {
+            $invoice->setState(InvoiceState::paid());
+            $invoice->save();
             $platformOrder = $order->getPlatformOrder();
 
             $order->setStatus(OrderStatus::processing());
@@ -55,7 +59,40 @@ final class OrderHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    protected function loadOrder($webhook)
+    protected function handleCanceled(Webhook $webhook)
+    {
+        $result = [
+            "message" => 'Order can\'t be canceled! Reason: ',
+            "code" => 200
+        ];
+
+        $order = $this->order;
+
+        $invoiceService = new InvoiceService();
+        $invoiceService->cancelInvoicesFor($order);
+
+        $order->setStatus(OrderStatus::canceled());
+
+        $orderRepository = new OrderRepository();
+        $orderRepository->save($order);
+
+        $i18n = new LocalizationService();
+        $history = $i18n->getDashboard(
+            'Order canceled.'
+        );
+        $order->getPlatformOrder()->addHistoryComment($history);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
+
+        $result = [
+            "message" => 'Order canceled.',
+            "code" => 200
+        ];
+        return $result;
+    }
+
+    protected function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
         /**
