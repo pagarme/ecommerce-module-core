@@ -51,6 +51,10 @@ final class ChargeHandlerService extends AbstractHandlerService
             $charge->pay($paidAmount);
         }
 
+        if ($charge->getPaidAmount() == 0) {
+            $charge->setPaidAmount($paidAmount);
+        }
+
         $order->updateCharge($charge);
 
         $orderRepository->save($order);
@@ -71,6 +75,16 @@ final class ChargeHandlerService extends AbstractHandlerService
     protected function handlePartialCanceled_TODO(Webhook $webhook)
     {
         //@todo
+    }
+
+    //@todo handleOverpaid
+    protected function handleOverpaid_TODO(Webhook $webhook)
+    {
+        //@todo What should we do when receive a overpaid charge webhook?
+        //add history about the extra value.
+        //call $this->handlePaid($webook);
+        //add info about extra value on return message;
+        //return message
     }
 
     protected function handleRefunded(Webhook $webhook)

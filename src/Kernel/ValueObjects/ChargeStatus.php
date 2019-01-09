@@ -10,6 +10,9 @@ final class ChargeStatus extends AbstractValueObject
     const PENDING = 'pending';
     const CANCELED = 'canceled';
 
+    const UNDERPAID = 'underpaid';
+    const OVERPAID = 'overpaid';
+
     /**
      *
      * @var string 
@@ -39,6 +42,16 @@ final class ChargeStatus extends AbstractValueObject
     static public function canceled()
     {
         return new self(self::CANCELED);
+    }
+
+    static public function underpaid()
+    {
+        return new self(self::UNDERPAID);
+    }
+
+    static public function overpaid()
+    {
+        return new self(self::OVERPAID);
     }
 
     /**

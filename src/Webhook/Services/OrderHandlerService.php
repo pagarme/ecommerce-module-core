@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
@@ -107,18 +108,20 @@ final class OrderHandlerService extends AbstractHandlerService
             $orderDecoratorClass =
                 MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
+            /** @var Order $webhookOrder */
+            $webhookOrder = $webhook->getEntity();
             /**
              *
              * @var PlatformOrderInterface $order
              */
             $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($order->getPlatformOrder()->getIncrementId());
+            $order->loadByIncrementId($webhookOrder->getCode());
 
 
             $orderFactory = new OrderFactory();
             $order = $orderFactory->createFromPlatformData(
                 $order,
-                $order->getMundipaggId()->getValue()
+                $webhookOrder->getMundipaggId()->getValue()
             );
         }
 

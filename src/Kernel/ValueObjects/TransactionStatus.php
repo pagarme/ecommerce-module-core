@@ -12,6 +12,11 @@ final class TransactionStatus extends AbstractValueObject
     const VOIDED = 'voided';
     const PARTIAL_VOID = 'partial_void';
 
+    const GENERATED = 'generated';
+    const UNDERPAID = 'underpaid';
+    const PAID = 'paid';
+    const OVERPAID = 'overpaid';
+
     /**
      *
      * @var string 
@@ -51,6 +56,26 @@ final class TransactionStatus extends AbstractValueObject
     public static function partialVoid()
     {
         return new self(self::PARTIAL_VOID);
+    }
+
+    public static function generated()
+    {
+        return new self(self::GENERATED);
+    }
+
+    public static function underpaid()
+    {
+        return new self(self::UNDERPAID);
+    }
+
+    public static function paid()
+    {
+        return new self(self::PAID);
+    }
+
+    public static function overpaid()
+    {
+        return new self(self::OVERPAID);
     }
 
     /**
