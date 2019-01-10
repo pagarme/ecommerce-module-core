@@ -20,6 +20,11 @@ final class OrderHandlerService extends AbstractHandlerService
 {
     protected function handlePaid(Webhook $webhook)
     {
+        /* @fixme
+         *      On authAndCapture, returns  "Can't create Invoice for the order!
+         *      Reason: No items to be invoiced or M2 Action Flag Invoice is false"         *
+         */
+
         $order = $this->order;
         $result = [
             "message" => 'Can\'t create Invoice for the order! Reason: ',
@@ -91,6 +96,16 @@ final class OrderHandlerService extends AbstractHandlerService
             "code" => 200
         ];
         return $result;
+    }
+
+    //@todo handlePaymentFailed
+    protected function handlePaymentFailed_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
+        //ocurrs in the next case of the simulator too.
     }
 
     protected function loadOrder(Webhook $webhook)

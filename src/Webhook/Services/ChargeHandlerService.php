@@ -77,6 +77,25 @@ final class ChargeHandlerService extends AbstractHandlerService
         //@todo
     }
 
+    //@todo handleProcessing
+    protected function handleProcessing_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
+    }
+
+    //@todo handlePaymentFailed
+    protected function handlePaymentFailed_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
+        //ocurrs in the next case of the simulator too.
+    }
+
     //@todo handleOverpaid
     protected function handleOverpaid_TODO(Webhook $webhook)
     {

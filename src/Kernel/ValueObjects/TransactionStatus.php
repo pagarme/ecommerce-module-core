@@ -11,6 +11,8 @@ final class TransactionStatus extends AbstractValueObject
     const AUTHORIZED_PENDING_CAPTURE = 'authorized_pending_capture';
     const VOIDED = 'voided';
     const PARTIAL_VOID = 'partial_void';
+    const WITH_ERROR = 'withError';
+    const NOT_AUTHORIZED = 'notAuthorized';
 
     const GENERATED = 'generated';
     const UNDERPAID = 'underpaid';
@@ -76,6 +78,16 @@ final class TransactionStatus extends AbstractValueObject
     public static function overpaid()
     {
         return new self(self::OVERPAID);
+    }
+
+    public static function withError()
+    {
+        return new self(self::WITH_ERROR);
+    }
+
+    public static function notAuthorized()
+    {
+        return new self(self::NOT_AUTHORIZED);
     }
 
     /**
