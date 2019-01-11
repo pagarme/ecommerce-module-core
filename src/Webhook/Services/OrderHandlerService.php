@@ -124,7 +124,8 @@ final class OrderHandlerService extends AbstractHandlerService
 
 
     /**
-     * @param Webhook $webhook
+     *
+     * @param  Webhook $webhook
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
     protected function loadOrder(Webhook $webhook)
@@ -142,7 +143,10 @@ final class OrderHandlerService extends AbstractHandlerService
             $orderDecoratorClass =
                 MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
-            /** @var Order $webhookOrder */
+            /**
+             *
+ * @var Order $webhookOrder 
+*/
             $webhookOrder = $webhook->getEntity();
             /**
              *

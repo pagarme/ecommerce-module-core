@@ -18,7 +18,8 @@ use Mundipagg\Core\Webhook\Aggregates\Webhook;
 final class ChargeHandlerService extends AbstractHandlerService
 {
     /**
-     * @param Webhook $webhook
+     *
+     * @param  Webhook $webhook
      * @return array
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidOperationException
      */
@@ -208,7 +209,8 @@ final class ChargeHandlerService extends AbstractHandlerService
     }
 
     /**
-     * @param Webhook $webhook
+     *
+     * @param  Webhook $webhook
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
     protected function loadOrder(Webhook $webhook)
@@ -261,9 +263,10 @@ final class ChargeHandlerService extends AbstractHandlerService
 
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
-                $history .= ". " . $i18n->getDashboard("Extra amount paid: %.2f",
-                        $moneyService->centsToFloat($extraValue)
-                    );
+                $history .= ". " . $i18n->getDashboard(
+                    "Extra amount paid: %.2f",
+                    $moneyService->centsToFloat($extraValue)
+                );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
