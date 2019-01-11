@@ -27,6 +27,7 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
+                GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at
@@ -159,6 +160,7 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
+                GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at

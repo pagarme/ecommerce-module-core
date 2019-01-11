@@ -92,6 +92,7 @@ class ChargeFactory implements FactoryInterface
             $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
             $tranChargeId = explode(',', $dbData['tran_charge_id']);
             $tranAmount = explode(',', $dbData['tran_amount']);
+            $tranPaidAmount = explode(',', $dbData['tran_paid_amount']);
             $tranType = explode(',', $dbData['tran_type']);
             $tranStatus = explode(',', $dbData['tran_status']);
             $tranCreatedAt = explode(',', $dbData['tran_created_at']);
@@ -102,6 +103,7 @@ class ChargeFactory implements FactoryInterface
                     'mundipagg_id' => $tranMundipaggId[$index],
                     'charge_id' => $tranChargeId[$index],
                     'amount' => $tranAmount[$index],
+                    'paid_amount' => $tranPaidAmount[$index],
                     'type' => $tranType[$index],
                     'status' => $tranStatus[$index],
                     'created_at' => $tranCreatedAt[$index]

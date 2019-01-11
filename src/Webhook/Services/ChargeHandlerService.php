@@ -145,14 +145,9 @@ final class ChargeHandlerService extends AbstractHandlerService
         // no further action is needed.
     }
 
-    //@todo handleOverpaid
-    protected function handleOverpaid_TODO(Webhook $webhook)
+    protected function handleOverpaid(Webhook $webhook)
     {
-        //@todo What should we do when receive a overpaid charge webhook?
-        //add history about the extra value.
-        //call $this->handlePaid($webook);
-        //add info about extra value on return message;
-        //return message
+        return $this->handlePaid($webhook);
     }
 
     //@todo handleCreated
@@ -252,13 +247,24 @@ final class ChargeHandlerService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())) {
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid()) ||
+            $charge->getStatus()->equals(ChargeStatus::overpaid())
+
+        ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
             $history = $i18n->getDashboard(
                 'Payment received: %.2f',
                 $amountInCurrency
             );
+
+            $extraValue = $charge->getPaidAmount() - $charge->getAmount();
+            if ($extraValue > 0) {
+                $history .= ". " . $i18n->getDashboard("Extra amount paid: %.2f",
+                        $moneyService->centsToFloat($extraValue)
+                    );
+            }
 
             $refundedAmount = $charge->getRefundedAmount();
             if ($refundedAmount > 0) {
@@ -302,10 +308,19 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())) {
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid()) ||
+            $charge->getStatus()->equals(ChargeStatus::overpaid())
+        ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
             $returnMessage = "Amount Paid: $amountInCurrency";
+
+            $extraValue = $charge->getPaidAmount() - $charge->getAmount();
+            if ($extraValue > 0) {
+                $returnMessage .= ". Extra value paid: " .
+                    $moneyService->centsToFloat($extraValue);
+            }
 
             $canceledAmount = $charge->getCanceledAmount();
             if ($canceledAmount > 0) {
@@ -313,8 +328,6 @@ final class ChargeHandlerService extends AbstractHandlerService
 
                 $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
             }
-
-
 
 
             $refundedAmount = $charge->getRefundedAmount();

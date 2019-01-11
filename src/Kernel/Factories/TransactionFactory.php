@@ -49,6 +49,9 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setAmount($postData['amount']);
 
+        $paidAmountIndex = isset($postData['paid_amount']) ? 'paid_amount' : 'amount';
+        $transaction->setPaidAmount($postData[$paidAmountIndex]);
+
         $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $postData['created_at']);
         $transaction->setCreatedAt($createdAt);
 
@@ -69,6 +72,7 @@ class TransactionFactory implements FactoryInterface
         $transaction->setMundipaggId(new TransactionId($dbData['mundipagg_id']));
 
         $transaction->setAmount($dbData['amount']);
+        $transaction->setPaidAmount($dbData['paid_amount']);
 
         $baseStatus = explode('_', $dbData['status']);
         $status = $baseStatus[0];

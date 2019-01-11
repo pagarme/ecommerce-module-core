@@ -23,6 +23,12 @@ final class Transaction extends AbstractEntity
     private $amount;
     /**
      *
+     * @var int
+     */
+    private $paidAmount;
+
+    /**
+     *
      * @var TransactionStatus 
      */
     private $status;
@@ -62,6 +68,31 @@ final class Transaction extends AbstractEntity
     public function getAmount()
     {
         return $this->amount;
+    }
+
+    /**
+     *
+     * @param int $amount
+     */
+    public function setPaidAmount(int $paidAmount)
+    {
+        if ($paidAmount < 0) {
+            throw new InvalidParamException(
+                'Paid amount should be greater than or equal to 0!',
+                $paidAmount
+            );
+        }
+
+        $this->paidAmount = $paidAmount;
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getPaidAmount()
+    {
+        return $this->paidAmount !== null ? $this->paidAmount : $this->getAmount();
     }
 
     /**
@@ -155,6 +186,7 @@ final class Transaction extends AbstractEntity
         $obj->mundipaggId = $this->getMundipaggId();
         $obj->chargeId = $this->getChargeId();
         $obj->amount = $this->getAmount();
+        $obj->paidAmount = $this->getPaidAmount();
         $obj->type = $this->getTransactionType();
         $obj->status = $this->getStatus();
         $obj->createdAt = $this->getCreatedAt()->format('Y-m-d H:i:s');

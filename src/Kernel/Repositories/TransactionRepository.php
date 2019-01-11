@@ -49,6 +49,7 @@ final class TransactionRepository extends AbstractRepository
                 mundipagg_id, 
                 charge_id,                
                 amount, 
+                paid_amount, 
                 type,
                 status,
                 created_at
@@ -61,6 +62,7 @@ final class TransactionRepository extends AbstractRepository
                 '{$simpleObject->mundipaggId}',
                 '{$simpleObject->chargeId}',                
                 {$simpleObject->amount},
+                {$simpleObject->paidAmount},
                 '{$simpleObject->type}',
                 '{$simpleObject->status}',
                 '{$simpleObject->createdAt}'

@@ -81,23 +81,17 @@ final class Charge extends AbstractEntity
      */
     public function pay($amount)
     {
-        if ($this->status->equals(ChargeStatus::paid())) {
-            throw new InvalidOperationException(
-                'You can\'t pay a charge that was payed already!'
-            );
-        }
-        if (!$this->status->equals(ChargeStatus::pending())) {
-            throw new InvalidOperationException(
-                'You can\'t pay a charge that isn\'t pending!'
-            );
-        }
-
         $this->setPaidAmount($amount);
 
         $amountToCancel = $this->amount - $this->getPaidAmount();
         $this->setCanceledAmount($amountToCancel);
 
         $this->status = ChargeStatus::paid();
+
+        if ($this->getLastTransaction()->getPaidAmount() > $this->getAmount()) {
+            $this->status = ChargeStatus::overpaid();
+            $this->setPaidAmount($this->getLastTransaction()->getPaidAmount());
+        }
     }
 
     /**

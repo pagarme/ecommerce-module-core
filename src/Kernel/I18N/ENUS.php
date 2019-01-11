@@ -21,6 +21,7 @@ class ENUS extends AbstractI18NTable
             'Charge canceled.' => null,
             'Creditmemo created: #%s.' => null,
             'until now' => null,
+            'Extra amount paid: %.2f' => null,
         ];
     }
 }
