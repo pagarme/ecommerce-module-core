@@ -14,7 +14,6 @@ use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Vertex\Services\Invoice;
 
 final class OrderHandlerService extends AbstractHandlerService
 {
@@ -105,9 +104,29 @@ final class OrderHandlerService extends AbstractHandlerService
         //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
         // only and auth and capture.
         //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
-        //ocurrs in the next case of the simulator too.
+        //occurs in the next case of the simulator too.
+
+        //When this webhook is received, the order wasn't created on magento, so
+        // no further action is needed.
     }
 
+    //@todo handleCreated
+    protected function handleCreated_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
+    //@todo handleClosed
+    protected function handleClosed_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
+
+    /**
+     * @param Webhook $webhook
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
     protected function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();

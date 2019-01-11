@@ -3,7 +3,6 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
@@ -18,6 +17,11 @@ use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class ChargeHandlerService extends AbstractHandlerService
 {
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidOperationException
+     */
     protected function handlePaid(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
@@ -37,7 +41,10 @@ final class ChargeHandlerService extends AbstractHandlerService
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
-
+        /**
+         *
+         * @var Charge $outdatedCharge
+         */
         $outdatedCharge = $chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
@@ -71,42 +78,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    //@todo handlePartialCanceled
-    protected function handlePartialCanceled_TODO(Webhook $webhook)
-    {
-        //@todo
-    }
-
-    //@todo handleProcessing
-    protected function handleProcessing_TODO(Webhook $webhook)
-    {
-        //@todo
-        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
-    }
-
-    //@todo handlePaymentFailed
-    protected function handlePaymentFailed_TODO(Webhook $webhook)
-    {
-        //@todo
-        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
-        //ocurrs in the next case of the simulator too.
-    }
-
-    //@todo handleOverpaid
-    protected function handleOverpaid_TODO(Webhook $webhook)
-    {
-        //@todo What should we do when receive a overpaid charge webhook?
-        //add history about the extra value.
-        //call $this->handlePaid($webook);
-        //add info about extra value on return message;
-        //return message
-    }
-
-    protected function handleRefunded(Webhook $webhook)
+    protected function handlePartialCanceled(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
         $chargeRepository = new ChargeRepository();
@@ -121,7 +93,10 @@ final class ChargeHandlerService extends AbstractHandlerService
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
-
+        /**
+         *
+         * @var Charge $outdatedCharge
+         */
         $outdatedCharge = $chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
@@ -148,6 +123,99 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $result;
     }
 
+    //@todo handleProcessing
+    protected function handleProcessing_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
+    }
+
+    //@todo handlePaymentFailed
+    protected function handlePaymentFailed_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
+        //ocurrs in the next case of the simulator too.
+
+        //When this webhook is received, the order wasn't created on magento, so
+        // no further action is needed.
+    }
+
+    //@todo handleOverpaid
+    protected function handleOverpaid_TODO(Webhook $webhook)
+    {
+        //@todo What should we do when receive a overpaid charge webhook?
+        //add history about the extra value.
+        //call $this->handlePaid($webook);
+        //add info about extra value on return message;
+        //return message
+    }
+
+    //@todo handleCreated
+    protected function handleCreated_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
+    //@todo handlePending
+    protected function handlePending_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
+    protected function handleRefunded(Webhook $webhook)
+    {
+        $orderRepository = new OrderRepository();
+        $chargeRepository = new ChargeRepository();
+        $orderService = new OrderService();
+
+        $order = $this->order;
+
+        /**
+         *
+         * @var Charge $charge
+         */
+        $charge = $webhook->getEntity();
+
+        $transaction = $charge->getLastTransaction();
+        /**
+         *
+         * @var Charge $outdatedCharge
+         */
+        $outdatedCharge = $chargeRepository->findByMundipaggId(
+            $charge->getMundipaggId()
+        );
+        if ($outdatedCharge !== null) {
+            $outdatedCharge->addTransaction($transaction);
+            $charge = $outdatedCharge;
+        }
+
+        $charge->cancel($transaction->getAmount());
+
+        $order->updateCharge($charge);
+
+        $orderRepository->save($order);
+        $history = $this->prepareHistoryComment($charge);
+        $order->getPlatformOrder()->addHistoryComment($history);
+        $orderService->syncPlatformWith($order);
+
+        $returnMessage = $this->prepareReturnMessage($charge);
+        $result = [
+            "message" => $returnMessage,
+            "code" => 200
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
     protected function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
@@ -192,6 +260,15 @@ final class ChargeHandlerService extends AbstractHandlerService
                 $amountInCurrency
             );
 
+            $refundedAmount = $charge->getRefundedAmount();
+            if ($refundedAmount > 0) {
+                $history = $i18n->getDashboard(
+                    'Refunded amount: %.2f',
+                    $moneyService->centsToFloat($refundedAmount)
+                );
+                $history .= " (" . $i18n->getDashboard('until now') . ")";
+            }
+
             $canceledAmount = $charge->getCanceledAmount();
             if ($canceledAmount > 0) {
                 $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
@@ -216,11 +293,12 @@ final class ChargeHandlerService extends AbstractHandlerService
             'Refunded amount: %.2f',
             $amountInCurrency
         );
+        $history .= " (" . $i18n->getDashboard('until now') . ")";
 
         return $history;
     }
 
-    private function prepareReturnMessage($charge)
+    private function prepareReturnMessage(Charge $charge)
     {
         $moneyService = new MoneyService();
 
@@ -235,6 +313,16 @@ final class ChargeHandlerService extends AbstractHandlerService
 
                 $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
             }
+
+
+
+
+            $refundedAmount = $charge->getRefundedAmount();
+            if ($refundedAmount > 0) {
+                $returnMessage = "Refunded amount unil now: " .
+                    $moneyService->centsToFloat($refundedAmount);
+            }
+
 
             return $returnMessage;
         }
