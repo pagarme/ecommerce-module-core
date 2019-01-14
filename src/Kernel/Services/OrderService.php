@@ -3,6 +3,8 @@
 namespace Mundipagg\Core\Kernel\Services;
 
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use src\Kernel\Abstractions\AbstractDataService;
 
 final class OrderService
 {
@@ -40,5 +42,19 @@ final class OrderService
         //@todo $platformOrder->setState($order->getState());
 
         $platformOrder->save();
+    }
+
+    public function updateAcquirerData(Order $order)
+    {
+        $dataServiceClass =
+            MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
+
+        /**
+         *
+ * @var AbstractDataService $dataService 
+*/
+        $dataService = new $dataServiceClass();
+
+        $dataService->updateAcquirerData($order);
     }
 }

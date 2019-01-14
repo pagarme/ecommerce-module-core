@@ -25,10 +25,12 @@ final class ChargeHandlerService extends AbstractHandlerService
      */
     protected function handlePaid(Webhook $webhook)
     {
+        //magento\sales\model\order\payment\interceptor
         $orderRepository = new OrderRepository();
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
+        //Magento\Sales\Model\Order\Payment\Transaction\Repository
         /**
          *
          * @var Order $order
@@ -68,6 +70,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $this->order->getPlatformOrder()->addHistoryComment($history);
+        $orderService->updateAcquirerData($order);
         $orderService->syncPlatformWith($order);
 
         $returnMessage = $this->prepareReturnMessage($charge);
@@ -249,10 +252,8 @@ final class ChargeHandlerService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if (
-            $charge->getStatus()->equals(ChargeStatus::paid()) ||
-            $charge->getStatus()->equals(ChargeStatus::overpaid())
-
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
+            || $charge->getStatus()->equals(ChargeStatus::overpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
@@ -311,9 +312,8 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if (
-            $charge->getStatus()->equals(ChargeStatus::paid()) ||
-            $charge->getStatus()->equals(ChargeStatus::overpaid())
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
+            || $charge->getStatus()->equals(ChargeStatus::overpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 

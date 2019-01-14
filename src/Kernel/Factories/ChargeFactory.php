@@ -97,6 +97,15 @@ class ChargeFactory implements FactoryInterface
             $tranStatus = explode(',', $dbData['tran_status']);
             $tranCreatedAt = explode(',', $dbData['tran_created_at']);
 
+            $tranAcquirerNsu = explode(',', $dbData['tran_acquirer_nsu']);
+            $tranAcquirerTid = explode(',', $dbData['tran_acquirer_tid']);
+            $tranAcquirerAuthCode = explode(
+                ',',
+                $dbData['tran_acquirer_auth_code']
+            );
+            $tranAcquirerName = explode(',', $dbData['tran_acquirer_name']);
+            $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
+
             foreach ($tranId as $index => $id) {
                 $transaction = [
                     'id' => $id,
@@ -106,6 +115,11 @@ class ChargeFactory implements FactoryInterface
                     'paid_amount' => $tranPaidAmount[$index],
                     'type' => $tranType[$index],
                     'status' => $tranStatus[$index],
+                    'acquirer_name' => $tranAcquirerName[$index],
+                    'acquirer_tid' => $tranAcquirerTid[$index],
+                    'acquirer_nsu' => $tranAcquirerNsu[$index],
+                    'acquirer_auth_code' => $tranAcquirerAuthCode[$index],
+                    'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index]
                 ];
                 $transactions[] = $transaction;

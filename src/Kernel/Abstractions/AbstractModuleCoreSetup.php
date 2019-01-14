@@ -15,6 +15,8 @@ abstract class AbstractModuleCoreSetup
     const CONCRETE_PLATFORM_CREDITMEMO_DECORATOR_CLASS = 14;
     const CONCRETE_PRODUCT_DECORATOR_CLASS = 15;
 
+    const CONCRETE_DATA_SERVICE = 100;
+
     const CONCRETE_FORMAT_SERVICE = 1000;
 
     protected static $moduleVersion;

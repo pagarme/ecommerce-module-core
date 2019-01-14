@@ -50,19 +50,28 @@ final class TransactionRepository extends AbstractRepository
                 charge_id,                
                 amount, 
                 paid_amount, 
+                acquirer_nsu,
+                acquirer_tid,
+                acquirer_auth_code,
+                acquirer_name,
+                acquirer_message,
                 type,
                 status,
                 created_at
             )
           VALUES 
         ";
-
         $query .= "
             (
                 '{$simpleObject->mundipaggId}',
                 '{$simpleObject->chargeId}',                
                 {$simpleObject->amount},
                 {$simpleObject->paidAmount},
+                {$simpleObject->acquirerNsu},
+                {$simpleObject->acquirerTid},
+                {$simpleObject->acquirerAuthCode},
+                '{$simpleObject->acquirerName}',
+                '{$simpleObject->acquirerMessage}',
                 '{$simpleObject->type}',
                 '{$simpleObject->status}',
                 '{$simpleObject->createdAt}'

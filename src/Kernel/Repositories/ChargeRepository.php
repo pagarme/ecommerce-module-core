@@ -28,6 +28,11 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
+                GROUP_CONCAT(t.acquirer_name) as tran_acquirer_name,                
+                GROUP_CONCAT(t.acquirer_message) as tran_acquirer_message,                
+                GROUP_CONCAT(t.acquirer_nsu) as tran_acquirer_nsu,                
+                GROUP_CONCAT(t.acquirer_tid) as tran_acquirer_tid,                
+                GROUP_CONCAT(t.acquirer_auth_code) as tran_acquirer_auth_code,                
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at
@@ -161,6 +166,11 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
+                GROUP_CONCAT(t.acquirer_name) as tran_acquirer_name,                
+                GROUP_CONCAT(t.acquirer_message) as tran_acquirer_message,                
+                GROUP_CONCAT(t.acquirer_nsu) as tran_acquirer_nsu,                
+                GROUP_CONCAT(t.acquirer_tid) as tran_acquirer_tid,                
+                GROUP_CONCAT(t.acquirer_auth_code) as tran_acquirer_auth_code,                
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at

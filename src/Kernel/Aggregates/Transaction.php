@@ -45,6 +45,32 @@ final class Transaction extends AbstractEntity
 
     /**
      *
+     * @var string 
+     */
+    private $acquirerName;
+    /**
+     *
+     * @var int 
+     */
+    private $acquirerTid;
+    /**
+     *
+     * @var int 
+     */
+    private $acquirerNsu;
+    /**
+     *
+     * @var int 
+     */
+    private $acquirerAuthCode;
+    /**
+     *
+     * @var string 
+     */
+    private $acquirerMessage;
+
+    /**
+     *
      * @return TransactionType
      */
     public function getTransactionType()
@@ -171,6 +197,106 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
+     * @return string
+     */
+    public function getAcquirerName()
+    {
+        return $this->acquirerName;
+    }
+
+    /**
+     *
+     * @param  string $acquirerName
+     * @return Transaction
+     */
+    public function setAcquirerName($acquirerName)
+    {
+        $this->acquirerName = $acquirerName;
+        return $this;
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getAcquirerTid()
+    {
+        return $this->acquirerTid;
+    }
+
+    /**
+     *
+     * @param  int $acquirerTid
+     * @return Transaction
+     */
+    public function setAcquirerTid($acquirerTid)
+    {
+        $this->acquirerTid = $acquirerTid;
+        return $this;
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getAcquirerNsu()
+    {
+        return $this->acquirerNsu;
+    }
+
+    /**
+     *
+     * @param  int $acquirerNsu
+     * @return Transaction
+     */
+    public function setAcquirerNsu($acquirerNsu)
+    {
+        $this->acquirerNsu = $acquirerNsu;
+        return $this;
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getAcquirerAuthCode()
+    {
+        return $this->acquirerAuthCode;
+    }
+
+    /**
+     *
+     * @param  int $acquirerAuthCode
+     * @return Transaction
+     */
+    public function setAcquirerAuthCode($acquirerAuthCode)
+    {
+        $this->acquirerAuthCode = $acquirerAuthCode;
+        return $this;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getAcquirerMessage()
+    {
+        return $this->acquirerMessage;
+    }
+
+    /**
+     *
+     * @param  string $acquirerMessage
+     * @return Transaction
+     */
+    public function setAcquirerMessage($acquirerMessage)
+    {
+        $this->acquirerMessage = $acquirerMessage;
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -187,6 +313,11 @@ final class Transaction extends AbstractEntity
         $obj->chargeId = $this->getChargeId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();
+        $obj->acquirerName = $this->getAcquirerName();
+        $obj->acquirerMessage = $this->getAcquirerMessage();
+        $obj->acquirerNsu = $this->getAcquirerNsu();
+        $obj->acquirerTid = $this->getAcquirerTid();
+        $obj->acquirerAuthCode = $this->getAcquirerAuthCode();
         $obj->type = $this->getTransactionType();
         $obj->status = $this->getStatus();
         $obj->createdAt = $this->getCreatedAt()->format('Y-m-d H:i:s');

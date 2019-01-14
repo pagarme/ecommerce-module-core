@@ -52,6 +52,12 @@ class TransactionFactory implements FactoryInterface
         $paidAmountIndex = isset($postData['paid_amount']) ? 'paid_amount' : 'amount';
         $transaction->setPaidAmount($postData[$paidAmountIndex]);
 
+        $transaction->setAcquirerName($postData['acquirer_name']);
+        $transaction->setAcquirerMessage($postData['acquirer_message']);
+        $transaction->setAcquirerNsu($postData['acquirer_nsu']);
+        $transaction->setAcquirerTid($postData['acquirer_tid']);
+        $transaction->setAcquirerAuthCode($postData['acquirer_auth_code']);
+
         $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $postData['created_at']);
         $transaction->setCreatedAt($createdAt);
 
@@ -73,6 +79,12 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setAmount($dbData['amount']);
         $transaction->setPaidAmount($dbData['paid_amount']);
+
+        $transaction->setAcquirerName($dbData['acquirer_name']);
+        $transaction->setAcquirerMessage($dbData['acquirer_message']);
+        $transaction->setAcquirerNsu($dbData['acquirer_nsu']);
+        $transaction->setAcquirerTid($dbData['acquirer_tid']);
+        $transaction->setAcquirerAuthCode($dbData['acquirer_auth_code']);
 
         $baseStatus = explode('_', $dbData['status']);
         $status = $baseStatus[0];
