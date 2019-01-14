@@ -40,7 +40,6 @@ abstract class AbstractModuleCoreSetup
      */
     protected static $storeLanguage;
 
-
     /**
      *
      * @return mixed

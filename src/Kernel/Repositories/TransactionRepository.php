@@ -14,7 +14,6 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 
 final class TransactionRepository extends AbstractRepository
 {
-
     public function findByChargeId(ChargeId $chargeId)
     {
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
@@ -109,8 +108,6 @@ final class TransactionRepository extends AbstractRepository
     {
         // TODO: Implement find() method.
     }
-
-
 
     public function listEntities($limit, $listDisabled)
     {

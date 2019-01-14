@@ -26,7 +26,7 @@ final class FactoryService
                     return $factory;
                 }
             }
-        }catch(\Exception $e) {
+        } catch(\Exception $e) {
             throw new InvalidClassException($fullFactoryClassName, FactoryInterface::class);
         }
         throw new InvalidClassException($fullFactoryClassName, FactoryInterface::class);

@@ -144,8 +144,6 @@ final class ChargeRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
-
-
     public function listEntities($limit, $listDisabled)
     {
         // TODO: Implement listEntities() method.

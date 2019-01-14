@@ -12,7 +12,6 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 
 class InvoiceService
 {
-
     /**
      *
      * @param  Order $platformOrder
@@ -125,10 +124,9 @@ class InvoiceService
         $creditmemoClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_CREDITMEMO_DECORATOR_CLASS);
         /**
          *
- * @var PlatformCreditmemoInterface $creditmemo 
-*/
+         * @var PlatformCreditmemoInterface $creditmemo
+        */
         $creditmemo = new $creditmemoClass();
-
 
         /**
          *

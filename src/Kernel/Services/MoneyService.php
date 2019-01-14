@@ -4,7 +4,6 @@ namespace Mundipagg\Core\Kernel\Services;
 
 final class MoneyService
 {
-
     /**
      *
      * @param  int $amount

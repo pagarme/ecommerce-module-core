@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Webhook\ValueObjects;
 
-
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class WebhookType extends AbstractValueObject

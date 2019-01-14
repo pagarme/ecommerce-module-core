@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Kernel\Abstractions;
 
-
 use Mundipagg\Core\Kernel\Interfaces\PlatformInvoiceInterface;
 
 abstract class AbstractInvoiceDecorator implements PlatformInvoiceInterface

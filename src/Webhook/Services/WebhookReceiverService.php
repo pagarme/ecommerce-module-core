@@ -53,7 +53,7 @@ class WebhookReceiverService
             );
 
             return $return;
-        }catch(AbstractMundipaggCoreException $e) {
+        } catch(AbstractMundipaggCoreException $e) {
             $logService->exception($e);
             throw $e;
         }

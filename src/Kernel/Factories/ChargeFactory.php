@@ -15,7 +15,6 @@ use Zend\Console\Prompt\Char;
 
 class ChargeFactory implements FactoryInterface
 {
-
     /**
      *
      * @param  array $postData
