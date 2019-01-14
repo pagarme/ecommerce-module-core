@@ -8,7 +8,9 @@
         }
     ],
     "type": "library",
-    "require": {},
+    "require": {
+        "monolog/monolog": "~1.6"
+    },
     "autoload": {
         "psr-4": {
             "Mundipagg\\Core\\": "src",
