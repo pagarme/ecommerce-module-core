@@ -9,8 +9,7 @@ final class VersionService
 {
     public function getCoreVersion()
     {
-        //@todo get the correct number;
-        return '0.1.0';
+        return '1.0.0';
     }
 
     public function getModuleVersion()
