@@ -91,7 +91,7 @@ final class ChargeRepository extends AbstractRepository
             (
                 '{$simpleObject->mundipaggId}',
                 '{$simpleObject->orderId}',
-                {$simpleObject->code},
+                '{$simpleObject->code}',
                 {$simpleObject->amount},
                 {$simpleObject->paidAmount},
                 {$simpleObject->canceledAmount},
