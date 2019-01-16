@@ -15,13 +15,13 @@ final class TransactionType extends AbstractValueObject
     private $type;
 
     /**
-     * OrderStatus constructor.
+     * TransactionType constructor.
      *
-     * @param string $status
+     * @param string $type
      */
-    private function __construct($status)
+    private function __construct($type)
     {
-        $this->setType($status);
+        $this->setType($type);
     }
 
     public static function creditCard()
@@ -45,12 +45,12 @@ final class TransactionType extends AbstractValueObject
 
     /**
      *
-     * @param  string $status
-     * @return OrderStatus
+     * @param  string $type
+     * @return TransactionType
      */
-    private function setType($status)
+    private function setType($type)
     {
-        $this->type = $status;
+        $this->type = $type;
         return $this;
     }
 
@@ -58,12 +58,12 @@ final class TransactionType extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param  OrderStatus $object
+     * @param  TransactionType $object
      * @return bool
      */
     protected function isEqual($object)
     {
-        return $this->getStatus() === $object->getStatus();
+        return $this->getType() === $object->getType();
     }
 
     /**
