@@ -21,7 +21,8 @@ class PTBR extends AbstractI18NTable
             'Charge canceled.' => 'Cobrança cancelada.',
             'Creditmemo created: #%s.' => 'Creditmemo criado: #%s.',
             'until now' => 'até agora',
-            'Extra amount paid: %.2f' => "Quantia extra paga: %.2f"
+            'Extra amount paid: %.2f' => "Quantia extra paga: %.2f",
+            'Remaining amount: %.2f' => "Quantidade faltante: %.2f"
         ];
     }
 }
