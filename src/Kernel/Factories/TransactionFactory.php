@@ -52,13 +52,28 @@ class TransactionFactory implements FactoryInterface
         $paidAmountIndex = isset($postData['paid_amount']) ? 'paid_amount' : 'amount';
         $transaction->setPaidAmount($postData[$paidAmountIndex]);
 
-        $transaction->setAcquirerName($postData['acquirer_name']);
-        $transaction->setAcquirerMessage($postData['acquirer_message']);
-        $transaction->setAcquirerNsu($postData['acquirer_nsu']);
-        $transaction->setAcquirerTid($postData['acquirer_tid']);
-        $transaction->setAcquirerAuthCode($postData['acquirer_auth_code']);
+        $acquirerName = isset($postData['acquirer_name']) ?
+            $postData['acquirer_name'] : '';
+        $acquirerMessage = isset($postData['acquirer_message']) ?
+            $postData['acquirer_message'] : '';
+        $acquirerNsu = isset($postData['acquirer_nsu']) ?
+            $postData['acquirer_nsu'] : 0;
+        $acquirerTid = isset($postData['acquirer_tid']) ?
+            $postData['acquirer_tid'] : 0;
+        $acquirerAuthCode = isset($postData['acquirer_auth_code']) ?
+            $postData['acquirer_auth_code'] : 0;
 
-        $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $postData['created_at']);
+        $transaction->setAcquirerName($acquirerName);
+        $transaction->setAcquirerMessage($acquirerMessage);
+        $transaction->setAcquirerNsu($acquirerNsu);
+        $transaction->setAcquirerTid($acquirerTid);
+        $transaction->setAcquirerAuthCode($acquirerAuthCode);
+
+        $createdAt = \DateTime::createFromFormat(
+            'Y-m-d\TH:i:s',
+            substr($postData['created_at'],0,19)
+        );
+
         $transaction->setCreatedAt($createdAt);
 
         return $transaction;

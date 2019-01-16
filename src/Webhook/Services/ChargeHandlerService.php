@@ -13,6 +13,7 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class ChargeHandlerService extends AbstractHandlerService
@@ -56,7 +57,7 @@ final class ChargeHandlerService extends AbstractHandlerService
             $charge = $outdatedCharge;
         }
 
-        $paidAmount = $transaction->getAmount();
+        $paidAmount = $transaction->getPaidAmount();
         if (!$charge->getStatus()->equals(ChargeStatus::paid())) {
             $charge->pay($paidAmount);
         }
@@ -70,7 +71,11 @@ final class ChargeHandlerService extends AbstractHandlerService
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $this->order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->updateAcquirerData($order);
+
+        if ($transaction->getTransactionType()->equals(TransactionType::creditCard())) {
+            $orderService->updateAcquirerData($order);
+        }
+
         $orderService->syncPlatformWith($order);
 
         $returnMessage = $this->prepareReturnMessage($charge);
@@ -153,6 +158,12 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         return $this->handlePaid($webhook);
     }
+
+    protected function handleUnderpaid(Webhook $webhook)
+    {
+        return $this->handlePaid($webhook);
+    }
+
 
     //@todo handleCreated
     protected function handleCreated_TODO(Webhook $webhook)
@@ -252,8 +263,9 @@ final class ChargeHandlerService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
-            || $charge->getStatus()->equals(ChargeStatus::overpaid())
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) ||
+            $charge->getStatus()->equals(ChargeStatus::overpaid()) ||
+            $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
@@ -268,6 +280,13 @@ final class ChargeHandlerService extends AbstractHandlerService
                     "Extra amount paid: %.2f",
                     $moneyService->centsToFloat($extraValue)
                 );
+            }
+
+            if ($extraValue < 0) {
+                $history .= ". " . $i18n->getDashboard(
+                        "Remaining amount: %.2f",
+                        $moneyService->centsToFloat(abs($extraValue))
+                    );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
@@ -312,8 +331,9 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
-            || $charge->getStatus()->equals(ChargeStatus::overpaid())
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) ||
+            $charge->getStatus()->equals(ChargeStatus::overpaid()) ||
+            $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
@@ -323,6 +343,11 @@ final class ChargeHandlerService extends AbstractHandlerService
             if ($extraValue > 0) {
                 $returnMessage .= ". Extra value paid: " .
                     $moneyService->centsToFloat($extraValue);
+            }
+
+            if ($extraValue < 0) {
+                $returnMessage .= ". Remaining Amount: " .
+                    $moneyService->centsToFloat(abs($extraValue));
             }
 
             $canceledAmount = $charge->getCanceledAmount();
@@ -338,7 +363,6 @@ final class ChargeHandlerService extends AbstractHandlerService
                 $returnMessage = "Refunded amount unil now: " .
                     $moneyService->centsToFloat($refundedAmount);
             }
-
 
             return $returnMessage;
         }

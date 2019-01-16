@@ -83,10 +83,14 @@ final class Charge extends AbstractEntity
     {
         $this->setPaidAmount($amount);
 
-        $amountToCancel = $this->amount - $this->getPaidAmount();
-        $this->setCanceledAmount($amountToCancel);
+        if ($this->getStatus()->equals(ChargeStatus::underpaid())) {
+            $this->status = ChargeStatus::underpaid();
+            return;
+        }
 
         $this->status = ChargeStatus::paid();
+        $amountToCancel = $this->amount - $this->getPaidAmount();
+        $this->setCanceledAmount($amountToCancel);
 
         if ($this->getLastTransaction()->getPaidAmount() > $this->getAmount()) {
             $this->status = ChargeStatus::overpaid();
