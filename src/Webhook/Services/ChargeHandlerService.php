@@ -164,7 +164,6 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $this->handlePaid($webhook);
     }
 
-
     //@todo handleCreated
     protected function handleCreated_TODO(Webhook $webhook)
     {

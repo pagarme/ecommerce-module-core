@@ -52,16 +52,30 @@ class TransactionFactory implements FactoryInterface
         $paidAmountIndex = isset($postData['paid_amount']) ? 'paid_amount' : 'amount';
         $transaction->setPaidAmount($postData[$paidAmountIndex]);
 
-        $acquirerName = isset($postData['acquirer_name']) ?
-            $postData['acquirer_name'] : '';
-        $acquirerMessage = isset($postData['acquirer_message']) ?
-            $postData['acquirer_message'] : '';
-        $acquirerNsu = isset($postData['acquirer_nsu']) ?
-            $postData['acquirer_nsu'] : 0;
-        $acquirerTid = isset($postData['acquirer_tid']) ?
-            $postData['acquirer_tid'] : 0;
-        $acquirerAuthCode = isset($postData['acquirer_auth_code']) ?
-            $postData['acquirer_auth_code'] : 0;
+        $acquirerName = '';
+        if (isset($postData['acquirer_name'])) {
+            $acquirerName = $postData['acquirer_name'];
+        }
+
+        $acquirerMessage = '';
+        if (isset($postData['acquirer_message'])) {
+            $acquirerMessage = $postData['acquirer_message'];
+        }
+
+        $acquirerNsu = 0;
+        if (isset($postData['acquirer_nsu'])) {
+            $acquirerNsu = $postData['acquirer_nsu'];
+        }
+
+        $acquirerTid = 0;
+        if (isset($postData['acquirer_tid'])) {
+            $acquirerTid = $postData['acquirer_tid'];
+        }
+
+        $acquirerAuthCode = 0;
+        if (isset($postData['acquirer_auth_code'])) {
+            $acquirerAuthCode = $postData['acquirer_auth_code'];
+        }
 
         $transaction->setAcquirerName($acquirerName);
         $transaction->setAcquirerMessage($acquirerMessage);
