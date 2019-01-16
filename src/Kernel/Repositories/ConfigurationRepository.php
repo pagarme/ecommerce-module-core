@@ -2,29 +2,28 @@
 
 namespace Mundipagg\Core\Kernel\Repositories;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
+use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 
 class ConfigurationRepository extends AbstractRepository
 {
     protected function create(AbstractEntity &$object)
     {
         $jsonEncoded = json_encode($object);
-
-        $query = "
-             INSERT INTO `" . $this->db->getTable('CONFIGURATION_TABLE') . "` (data)" .
-            "VALUES ('$jsonEncoded')
-        ";
+        $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
+        
+        $query = "INSERT INTO `$configTable` (data) VALUES ('$jsonEncoded')";
 
         $this->db->query($query);
     }
 
     protected function update(AbstractEntity &$object)
     {
-        $query = "
-            SELECT * FROM `" . $this->db->getTable('CONFIGURATION_TABLE') . "`;
-        ";
+        $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
+        $query = " SELECT * FROM `$configTable`;";
 
         $result = $this->db->fetch($query);
 
@@ -34,7 +33,7 @@ class ConfigurationRepository extends AbstractRepository
 
         $jsonEncoded = json_encode($object);
         $query = "
-            UPDATE `" . $this->db->getTable('CONFIGURATION_TABLE') . "` set data = '{$jsonEncoded}';
+            UPDATE `$configTable` set data = '{$jsonEncoded}';
         ";
         
         return $this->db->query($query);
@@ -47,15 +46,16 @@ class ConfigurationRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        $query = "SELECT data FROM `" . $this->db->getTable('CONFIGURATION_TABLE') . "`";
-        $query .= "WHERE id = 1;";
+        $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
+
+        $query = "SELECT data FROM `$configTable` WHERE id = 1;";
 
         $result = $this->db->fetch($query);
 
         $factory = new ConfigurationFactory();
 
         if (empty($result->row)) {
-            return $factory->createEmpty();
+            return null;
         }
 
         return $factory->createFromJsonData($result->row['data']);
@@ -66,19 +66,8 @@ class ConfigurationRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findOrNew($objectId)
+    public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        $object = $this->find($objectId);
-        if ($object === null) {
-            $factory = new ConfigurationFactory();
-            $object = $factory->createEmpty();
-        }
-
-        return $object;
-    }
-
-    public function findByMundipaggId($mundipaggId)
-    {
-        return null;
+        // TODO: Implement findByMundipaggId() method.
     }
 }

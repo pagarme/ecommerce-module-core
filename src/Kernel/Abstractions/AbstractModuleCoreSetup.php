@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 
 abstract class AbstractModuleCoreSetup
 {
@@ -65,12 +66,23 @@ abstract class AbstractModuleCoreSetup
 
             static::$platformRoot = $platformRoot;
 
-            /*@fixme make this work!
-            $configRepository = new ConfigurationRepository();
-
-            static::$moduleConfig = $configRepository->findOrNew(1);
-            */
+            static::updateModuleConfiguration();
         }
+    }
+
+    protected static function updateModuleConfiguration()
+    {
+        $configurationRepository = new ConfigurationRepository;
+
+        static::$instance->loadModuleConfiguration();
+
+        $config = $configurationRepository->find(1);
+        if ($config !== null)
+        {
+            static::$moduleConfig->setId(1);
+        }
+
+        $configurationRepository->save(static::$moduleConfig);
     }
 
     /**
@@ -134,6 +146,7 @@ abstract class AbstractModuleCoreSetup
     }
 
     abstract protected static function setConfig();
+    abstract protected static function loadModuleConfiguration();
     abstract protected static function setModuleVersion();
     abstract protected static function setLogPath();
     abstract public static function getDatabaseAccessObject();

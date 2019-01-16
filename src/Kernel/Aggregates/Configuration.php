@@ -36,11 +36,6 @@ final class Configuration extends AbstractEntity
         self::CREDIT_CARD_BRAND_AMEX
     ];
 
-    /**
-     *
-     * @fixme since the module environment is defined by the type of public key
-     * there is no point in saving the test keys.
-     */
     const KEY_SECRET = 'KEY_SECRET';
     const KEY_PUBLIC = 'KEY_PUBLIC';
 
@@ -94,7 +89,7 @@ final class Configuration extends AbstractEntity
 
     public function __construct()
     {
-        $this->disabled = false;
+        /*$this->disabled = false;
         $this->cardConfigs = [];
 
         $this->keys = [
@@ -102,7 +97,7 @@ final class Configuration extends AbstractEntity
             self::KEY_PUBLIC => null,
         ];
 
-        $this->hubInstallId = new HubAccessTokenKey(null);
+        $this->hubInstallId = new HubAccessTokenKey(null);*/
     }
 
     public function isDisabled()
@@ -116,11 +111,6 @@ final class Configuration extends AbstractEntity
             $disabled,
             FILTER_VALIDATE_BOOLEAN
         );
-    }
-
-    public function getId()
-    {
-        return 0;
     }
 
     public function getPublicKey()
@@ -211,6 +201,10 @@ final class Configuration extends AbstractEntity
      */
     public function isHubEnabled()
     {
+        if ($this->hubInstallId === null)
+        {
+            return false;
+        }
         return $this->hubInstallId->getValue() !== null;
     }
 
@@ -348,7 +342,7 @@ final class Configuration extends AbstractEntity
      */
     public function getCardConfigs()
     {
-        return $this->cardConfigs;
+        return $this->cardConfigs !== null ? $this->cardConfigs : [];
     }
 
     /**
@@ -368,9 +362,9 @@ final class Configuration extends AbstractEntity
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
-            "hubInstallId" => $this->hubInstallId->getValue(),
+            "hubInstallId" => $this->isHubEnabled() ? $this->hubInstallId->getValue() : null,
             "keys" => $this->keys,
-            "cardConfigs" => $this->cardConfigs
+            "cardConfigs" => $this->getCardConfigs()
         ];
     }
 
