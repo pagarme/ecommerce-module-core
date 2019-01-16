@@ -22,6 +22,7 @@ class PTBR extends AbstractI18NTable
             'Creditmemo created: #%s.' => 'Creditmemo criado: #%s.',
             'until now' => 'até agora',
             'Extra amount paid: %.2f' => "Quantia extra paga: %.2f",
+            "Order '%s' canceled at Mundipagg" => "Pedido '%s' cancelado na Mundipagg",
             'Remaining amount: %.2f' => "Quantidade faltante: %.2f"
         ];
     }

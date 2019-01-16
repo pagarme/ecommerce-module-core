@@ -2,9 +2,13 @@
 
 namespace Mundipagg\Core\Kernel\Services;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use src\Kernel\Abstractions\AbstractDataService;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
+use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
 final class OrderService
 {
@@ -51,10 +55,64 @@ final class OrderService
 
         /**
          *
- * @var AbstractDataService $dataService 
+ * @var AbstractDataService $dataService
 */
         $dataService = new $dataServiceClass();
 
         $dataService->updateAcquirerData($order);
+    }
+
+    public function cancelAtMundipagg(Order $order)
+    {
+        if ($order->getStatus()->equals(OrderStatus::canceled())) {
+            return;
+        }
+
+        $orderRepository = new OrderRepository();
+
+        $savedOrder = $orderRepository->findByMundipaggId($order->getMundipaggId());
+        if ($savedOrder !== null) {
+            $order = $savedOrder;
+        }
+
+        $APIService = new APIService();
+
+        $charges = $order->getCharges();
+        $results = [];
+        foreach ($charges as $charge) {
+            $result = $APIService->cancelCharge($charge);
+            if ($result !== null) {
+                $results[$charge->getMundipaggId()->getValue()] = $result;
+            }
+            $order->updateCharge($charge);
+        }
+
+        $orderRepository->save($order);
+
+        if (empty($results)) {
+            $i18n = new LocalizationService();
+            $order->getPlatformOrder()->addHistoryComment(
+                $i18n->getDashboard(
+                    "Order '%s' canceled at Mundipagg",
+                    $order->getMundipaggId()->getValue()
+                )
+            );
+
+            $order->getPlatformOrder()->save();
+            return;
+        }
+
+        $history = '';
+    }
+
+    public function cancelAtMundipaggByPlatformOrder(PlatformOrderInterface $platformOrder)
+    {
+        $orderId = $platformOrder->getMundipaggId();
+        $APIService = new APIService();
+
+        $order = $APIService->getOrder($orderId);
+        if (is_a($order, Order::class)) {
+            $this->cancelAtMundipagg($order);
+        }
     }
 }

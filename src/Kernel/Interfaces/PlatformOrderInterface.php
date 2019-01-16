@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Interfaces;
 
+use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
@@ -41,6 +42,8 @@ interface PlatformOrderInterface
     public function setTotalRefunded($amount);
     public function setBaseTotalRefunded($amount);
     public function getCode();
+    /** @return OrderId */
+    public function getMundipaggId();
 
     /**
      *
