@@ -64,15 +64,14 @@ final class OrderService
 
     public function cancelAtMundipagg(Order $order)
     {
-        if ($order->getStatus()->equals(OrderStatus::canceled())) {
-            return;
-        }
-
         $orderRepository = new OrderRepository();
-
         $savedOrder = $orderRepository->findByMundipaggId($order->getMundipaggId());
         if ($savedOrder !== null) {
             $order = $savedOrder;
+        }
+
+        if ($order->getStatus()->equals(OrderStatus::canceled())) {
+            return;
         }
 
         $APIService = new APIService();
@@ -87,22 +86,30 @@ final class OrderService
             $order->updateCharge($charge);
         }
 
-        $orderRepository->save($order);
+        $i18n = new LocalizationService();
 
         if (empty($results)) {
-            $i18n = new LocalizationService();
             $order->getPlatformOrder()->addHistoryComment(
                 $i18n->getDashboard(
                     "Order '%s' canceled at Mundipagg",
                     $order->getMundipaggId()->getValue()
                 )
             );
-
+            $order->setStatus(OrderStatus::canceled());
+            $orderRepository->save($order);
             $order->getPlatformOrder()->save();
             return;
         }
 
-        $history = '';
+        $history = $i18n->getDashboard("Some charges couldn't be canceled at Mundipagg. Reasons:");
+        $history .= "<br /><ul>";
+        foreach ($results as $chargeId => $reason)
+        {
+            $history .= "<li>$chargeId : $reason</li>";
+        }
+        $history .= '</ul>';
+        $order->getPlatformOrder()->addHistoryComment($history);
+        $order->getPlatformOrder()->save();
     }
 
     public function cancelAtMundipaggByPlatformOrder(PlatformOrderInterface $platformOrder)

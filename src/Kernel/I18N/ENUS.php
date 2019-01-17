@@ -23,7 +23,8 @@ class ENUS extends AbstractI18NTable
             'until now' => null,
             'Extra amount paid: %.2f' => null,
             "Order '%s' canceled at Mundipagg" => null,
-            'Remaining amount: %.2f' => null
+            'Remaining amount: %.2f' => null,
+            "Some charges couldn't be canceled at Mundipagg. Reasons:" => null
         ];
     }
 }

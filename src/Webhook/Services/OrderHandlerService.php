@@ -73,6 +73,14 @@ final class OrderHandlerService extends AbstractHandlerService
 
         $order = $this->order;
 
+        if($order->getStatus()->equals(OrderStatus::canceled())) {
+            $result = [
+                "message" => "It is not possible to cancel an order that was already canceled.",
+                "code" => 200
+            ];
+            return $result;
+        }
+
         $invoiceService = new InvoiceService();
         $invoiceService->cancelInvoicesFor($order);
 

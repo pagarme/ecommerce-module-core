@@ -23,7 +23,8 @@ class PTBR extends AbstractI18NTable
             'until now' => 'até agora',
             'Extra amount paid: %.2f' => "Quantia extra paga: %.2f",
             "Order '%s' canceled at Mundipagg" => "Pedido '%s' cancelado na Mundipagg",
-            'Remaining amount: %.2f' => "Quantidade faltante: %.2f"
+            'Remaining amount: %.2f' => "Quantidade faltante: %.2f",
+            "Some charges couldn't be canceled at Mundipagg. Reasons:" => "Algumas cobranças não puderam ser canceladas na Mundipagg. Razões:"
         ];
     }
 }
