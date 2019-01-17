@@ -10,7 +10,8 @@
     ],
     "type": "library",
     "require": {
-        "monolog/monolog": "~1.6"
+        "monolog/monolog": "~1.6",
+        "mundipagg/mundiapi": "^3.0"
     },
     "autoload": {
         "psr-4": {

@@ -13,6 +13,7 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
+use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
@@ -183,6 +184,13 @@ final class ChargeHandlerService extends AbstractHandlerService
         $orderService = new OrderService();
 
         $order = $this->order;
+        if($order->getStatus()->equals(OrderStatus::canceled())) {
+            $result = [
+                "message" => "It is not possible to refund a charge of an order that was canceled.",
+                "code" => 200
+            ];
+            return $result;
+        }
 
         /**
          *
@@ -199,11 +207,15 @@ final class ChargeHandlerService extends AbstractHandlerService
             $charge->getMundipaggId()
         );
         if ($outdatedCharge !== null) {
-            $outdatedCharge->addTransaction($transaction);
             $charge = $outdatedCharge;
         }
+        $cancelAmount = $charge->getAmount();
+        if ($transaction !== null) {
+            $outdatedCharge->addTransaction($transaction);
+            $cancelAmount = $transaction->getAmount();
+        }
 
-        $charge->cancel($transaction->getAmount());
+        $charge->cancel($cancelAmount);
 
         $order->updateCharge($charge);
 
@@ -283,9 +295,9 @@ final class ChargeHandlerService extends AbstractHandlerService
 
             if ($extraValue < 0) {
                 $history .= ". " . $i18n->getDashboard(
-                        "Remaining amount: %.2f",
-                        $moneyService->centsToFloat(abs($extraValue))
-                    );
+                    "Remaining amount: %.2f",
+                    $moneyService->centsToFloat(abs($extraValue))
+                );
             }
 
             $refundedAmount = $charge->getRefundedAmount();

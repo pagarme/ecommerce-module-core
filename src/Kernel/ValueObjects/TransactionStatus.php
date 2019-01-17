@@ -10,6 +10,7 @@ final class TransactionStatus extends AbstractValueObject
     const PARTIAL_CAPTURE = "partial_capture";
     const AUTHORIZED_PENDING_CAPTURE = 'authorized_pending_capture';
     const VOIDED = 'voided';
+    const REFUNDED = 'refunded';
     const PARTIAL_VOID = 'partial_void';
     const WITH_ERROR = 'withError';
     const NOT_AUTHORIZED = 'notAuthorized';
@@ -88,6 +89,11 @@ final class TransactionStatus extends AbstractValueObject
     public static function notAuthorized()
     {
         return new self(self::NOT_AUTHORIZED);
+    }
+
+    public static function refunded()
+    {
+        return new self(self::REFUNDED);
     }
 
     /**

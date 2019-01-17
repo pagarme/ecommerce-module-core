@@ -102,8 +102,11 @@ final class Charge extends AbstractEntity
      *
      * @param int $amount
      */
-    public function cancel($amount)
+    public function cancel($amount = 0)
     {
+        if ($amount === 0) {
+            $amount = $this->getPaidAmount();
+        }
         if ($this->status->equals(ChargeStatus::paid())) {
             $amountRefunded = $amount + $this->getRefundedAmount();
             $this->setRefundedAmount($amountRefunded);
