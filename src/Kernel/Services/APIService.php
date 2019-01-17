@@ -4,10 +4,9 @@ namespace Mundipagg\Core\Kernel\Services;
 
 use MundiAPILib\APIException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
-use MundiAPILib\Models\GetChargeResponse;
 use MundiAPILib\MundiAPIClient;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 
@@ -53,7 +52,7 @@ class APIService
 
     private function getChargeController()
     {
-        return $this->getMundiPaggApiClient()->getCharges();
+        return $this->apiClient->getCharges();
     }
 
     /**
@@ -61,14 +60,15 @@ class APIService
      */
     private function getOrderController()
     {
-        return $this->getMundiPaggApiClient()->getOrders();
+        return $this->apiClient->getOrders();
     }
 
 
     private function getMundiPaggApiClient()
     {
-        //@fixme get from config.
-        $secretKey = '';
+        $config = MPSetup::getModuleConfiguration();
+
+        $secretKey = $config->getSecretKey()->getValue();
         $password = '';
 
         return new MundiAPIClient($secretKey, $password);
