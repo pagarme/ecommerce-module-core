@@ -77,8 +77,7 @@ abstract class AbstractModuleCoreSetup
         static::$instance->loadModuleConfiguration();
 
         $config = $configurationRepository->find(1);
-        if ($config !== null)
-        {
+        if ($config !== null) {
             static::$moduleConfig->setId(1);
         }
 

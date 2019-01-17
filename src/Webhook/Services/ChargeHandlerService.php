@@ -295,9 +295,9 @@ final class ChargeHandlerService extends AbstractHandlerService
 
             if ($extraValue < 0) {
                 $history .= ". " . $i18n->getDashboard(
-                        "Remaining amount: %.2f",
-                        $moneyService->centsToFloat(abs($extraValue))
-                    );
+                    "Remaining amount: %.2f",
+                    $moneyService->centsToFloat(abs($extraValue))
+                );
             }
 
             $refundedAmount = $charge->getRefundedAmount();

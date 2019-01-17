@@ -56,6 +56,7 @@ class APIService
     }
 
     /**
+     *
      * @return \MundiAPILib\Controllers\OrdersController
      */
     private function getOrderController()

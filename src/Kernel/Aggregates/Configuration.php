@@ -201,8 +201,7 @@ final class Configuration extends AbstractEntity
      */
     public function isHubEnabled()
     {
-        if ($this->hubInstallId === null)
-        {
+        if ($this->hubInstallId === null) {
             return false;
         }
         return $this->hubInstallId->getValue() !== null;

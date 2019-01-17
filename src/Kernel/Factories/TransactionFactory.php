@@ -85,7 +85,7 @@ class TransactionFactory implements FactoryInterface
 
         $createdAt = \DateTime::createFromFormat(
             'Y-m-d\TH:i:s',
-            substr($postData['created_at'],0,19)
+            substr($postData['created_at'], 0, 19)
         );
 
         $transaction->setCreatedAt($createdAt);

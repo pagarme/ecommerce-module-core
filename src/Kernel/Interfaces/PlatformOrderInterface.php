@@ -42,7 +42,10 @@ interface PlatformOrderInterface
     public function setTotalRefunded($amount);
     public function setBaseTotalRefunded($amount);
     public function getCode();
-    /** @return OrderId */
+    /**
+     *
+     * @return OrderId 
+     */
     public function getMundipaggId();
 
     /**
