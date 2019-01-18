@@ -316,14 +316,8 @@ final class Configuration extends AbstractEntity
      */
     public function addCardConfig(CardConfig $newCardConfig)
     {
-        if (!in_array($newCardConfig->getBrand(), self::$validBrands)) {
-            throw new InvalidParamException(
-                "The brand is invalid!",
-                $newCardConfig->getBrand()
-            );
-        }
-
-        foreach ($this->cardConfigs as $cardConfig) {
+        $cardConfigs = $this->getCardConfigs();
+        foreach ($cardConfigs as $cardConfig) {
             if ($cardConfig->equals($newCardConfig)) {
                 throw new InvalidParamException(
                     "The card config is already added!",
