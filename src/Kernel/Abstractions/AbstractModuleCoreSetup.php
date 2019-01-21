@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 
 abstract class AbstractModuleCoreSetup
 {
@@ -65,12 +66,22 @@ abstract class AbstractModuleCoreSetup
 
             static::$platformRoot = $platformRoot;
 
-            /*@fixme make this work!
-            $configRepository = new ConfigurationRepository();
-
-            static::$moduleConfig = $configRepository->findOrNew(1);
-            */
+            static::updateModuleConfiguration();
         }
+    }
+
+    protected static function updateModuleConfiguration()
+    {
+        $configurationRepository = new ConfigurationRepository;
+
+        static::$instance->loadModuleConfiguration();
+
+        $config = $configurationRepository->find(1);
+        if ($config !== null) {
+            static::$moduleConfig->setId(1);
+        }
+
+        $configurationRepository->save(static::$moduleConfig);
     }
 
     /**
@@ -133,7 +144,13 @@ abstract class AbstractModuleCoreSetup
         return self::$instance->_getStoreLanguage();
     }
 
+    public static function formatToCurrency($price)
+    {
+        return self::$instance->_formatToCurrency($price);
+    }
+
     abstract protected static function setConfig();
+    abstract protected static function loadModuleConfiguration();
     abstract protected static function setModuleVersion();
     abstract protected static function setLogPath();
     abstract public static function getDatabaseAccessObject();
@@ -144,5 +161,6 @@ abstract class AbstractModuleCoreSetup
     abstract protected static function getPlatformHubAppPublicAppKey();
     abstract protected static function _getDashboardLanguage();
     abstract protected static function _getStoreLanguage();
+    abstract protected static function _formatToCurrency($price);
 }
 

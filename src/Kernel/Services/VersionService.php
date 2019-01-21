@@ -9,7 +9,7 @@ final class VersionService
 {
     public function getCoreVersion()
     {
-        return '1.0.1';
+        return '1.2.0';
     }
 
     public function getModuleVersion()

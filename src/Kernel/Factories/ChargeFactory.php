@@ -32,10 +32,17 @@ class ChargeFactory implements FactoryInterface
         $charge->setPaidAmount($paidAmount);
         $charge->setOrderId(new OrderId($postData['order']['id']));
 
-        $transactionFactory = new TransactionFactory();
-        $lastTransaction = $transactionFactory->createFromPostData($postData['last_transaction']);
-        $lastTransaction->setChargeId($charge->getMundipaggId());
-        $charge->addTransaction($lastTransaction);
+        $lastTransactionData = null;
+        if (isset($postData['last_transaction'])) {
+            $lastTransactionData = $postData['last_transaction'];
+        }
+
+        if ($lastTransactionData !== null) {
+            $transactionFactory = new TransactionFactory();
+            $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
+            $lastTransaction->setChargeId($charge->getMundipaggId());
+            $charge->addTransaction($lastTransaction);
+        }
 
         try {
             ChargeStatus::$status();
