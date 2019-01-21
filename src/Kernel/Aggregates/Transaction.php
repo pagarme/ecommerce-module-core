@@ -50,17 +50,17 @@ final class Transaction extends AbstractEntity
     private $acquirerName;
     /**
      *
-     * @var int 
+     * @var string
      */
     private $acquirerTid;
     /**
      *
-     * @var int 
+     * @var string
      */
     private $acquirerNsu;
     /**
      *
-     * @var int 
+     * @var string
      */
     private $acquirerAuthCode;
     /**
@@ -218,7 +218,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @return int
+     * @return string
      */
     public function getAcquirerTid()
     {
@@ -227,7 +227,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @param  int $acquirerTid
+     * @param  string $acquirerTid
      * @return Transaction
      */
     public function setAcquirerTid($acquirerTid)
@@ -238,7 +238,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @return int
+     * @return string
      */
     public function getAcquirerNsu()
     {
@@ -247,7 +247,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @param  int $acquirerNsu
+     * @param  string $acquirerNsu
      * @return Transaction
      */
     public function setAcquirerNsu($acquirerNsu)
@@ -258,7 +258,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @return int
+     * @return string
      */
     public function getAcquirerAuthCode()
     {
@@ -267,7 +267,7 @@ final class Transaction extends AbstractEntity
 
     /**
      *
-     * @param  int $acquirerAuthCode
+     * @param  string $acquirerAuthCode
      * @return Transaction
      */
     public function setAcquirerAuthCode($acquirerAuthCode)

@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 
@@ -46,14 +47,16 @@ class ConfigurationFactory implements FactoryInterface
         $data = json_decode($json);
 
         foreach ($data->cardConfigs as $cardConfig) {
+            $brand = strtolower($cardConfig->brand);
             $config->addCardConfig(
                 new CardConfig(
                     $cardConfig->enabled,
-                    $cardConfig->brand,
+                    CardBrand::$brand(),
                     $cardConfig->maxInstallment,
                     $cardConfig->maxInstallmentWithoutInterest,
                     $cardConfig->initialInterest,
-                    $cardConfig->incrementalInterest
+                    $cardConfig->incrementalInterest,
+                    $cardConfig->minValue
                 )
             );
         }
