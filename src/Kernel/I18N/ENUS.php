@@ -24,7 +24,10 @@ class ENUS extends AbstractI18NTable
             'Extra amount paid: %.2f' => null,
             "Order '%s' canceled at Mundipagg" => null,
             'Remaining amount: %.2f' => null,
-            "Some charges couldn't be canceled at Mundipagg. Reasons:" => null
+            "Some charges couldn't be canceled at Mundipagg. Reasons:" => null,
+            "without interest" => null,
+            "with %.2f%% of interest" => null,
+            "%dx of %s %s (Total: %s)" => null
         ];
     }
 }

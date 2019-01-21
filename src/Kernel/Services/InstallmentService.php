@@ -9,8 +9,6 @@ use Mundipagg\Core\Kernel\ValueObjects\Installment;
 
 final class InstallmentService
 {
-
-
     /**
      * @param Order|null $order
      * @param CardBrand|null $brand
@@ -84,7 +82,6 @@ final class InstallmentService
     public function getLabelFor(Installment $installment)
     {
         $i18n = new LocalizationService();
-        $currencySymbol = 'R$'; //@todo get correct currency symbol.
 
         $interestLabel = $i18n->getDashboard('without interest');
         if ($installment->getInterest() > 0) {
@@ -95,16 +92,19 @@ final class InstallmentService
             );
         }
 
-        //@todo get correct currency format.
+        $formattedValue = MPSetup::formatToCurrency(
+            $installment->getValue() / 100
+        );
+        $formattedTotal = MPSetup::formatToCurrency(
+            $installment->getValue() / 100
+        );
 
         $label = $i18n->getDashboard(
-            "%dx of %s%.2f %s (Total: %s%.2f)",
+            "%dx of %s %s (Total: %s)",
             $installment->getTimes(),
-            $currencySymbol,
-            $installment->getValue() / 100,
+            $formattedValue,
             $interestLabel,
-            $currencySymbol,
-            $installment->getTotal() / 100
+            $formattedTotal
         );
 
         return $label;

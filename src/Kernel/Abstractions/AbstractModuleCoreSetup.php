@@ -144,6 +144,11 @@ abstract class AbstractModuleCoreSetup
         return self::$instance->_getStoreLanguage();
     }
 
+    public static function formatToCurrency($price)
+    {
+        return self::$instance->_formatToCurrency($price);
+    }
+
     abstract protected static function setConfig();
     abstract protected static function loadModuleConfiguration();
     abstract protected static function setModuleVersion();
@@ -156,5 +161,6 @@ abstract class AbstractModuleCoreSetup
     abstract protected static function getPlatformHubAppPublicAppKey();
     abstract protected static function _getDashboardLanguage();
     abstract protected static function _getStoreLanguage();
+    abstract protected static function _formatToCurrency($price);
 }
 
