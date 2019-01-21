@@ -40,7 +40,10 @@ final class CardConfig extends AbstractValueObject
      */
     private $incrementalInterest;
 
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $minValue;
 
     /**
@@ -230,6 +233,7 @@ final class CardConfig extends AbstractValueObject
     }
 
     /**
+     *
      * @return int
      */
     public function getMinValue()
@@ -240,8 +244,7 @@ final class CardConfig extends AbstractValueObject
     public function setMinValue($minValue)
     {
         $newMinValue = intval($minValue);
-        if ($newMinValue < 0)
-        {
+        if ($newMinValue < 0) {
             throw new InvalidParamException(
                 "'Minimum value' must be equal or greater than 0! ",
                 $minValue

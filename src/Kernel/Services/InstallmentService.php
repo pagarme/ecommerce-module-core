@@ -10,31 +10,29 @@ use Mundipagg\Core\Kernel\ValueObjects\Installment;
 final class InstallmentService
 {
     /**
-     * @param Order|null $order
-     * @param CardBrand|null $brand
-     * @param null $value
+     *
+     * @param  Order|null     $order
+     * @param  CardBrand|null $brand
+     * @param  null           $value
      * @return Installment[]
      */
     public function getInstallmentsFor(
         Order $order = null,
         CardBrand $brand = null,
         $value = null
-    )
-    {
+    ) {
         $amount = 0;
         if($order !== null) {
             $platformOrder = $order->getPlatformOrder();
             $amount = $platformOrder->getGrandTotal() * 100;
         }
 
-        if ($value !== null)
-        {
+        if ($value !== null) {
             $amount = $value;
         }
 
         $baseBrand = CardBrand::nobrand();
-        if ($brand !== null)
-        {
+        if ($brand !== null) {
             $baseBrand = $brand;
         }
 
@@ -42,16 +40,14 @@ final class InstallmentService
 
         $brandConfig = null;
 
-        foreach ($cardConfigs as $cardConfig)
-        {
+        foreach ($cardConfigs as $cardConfig) {
             if ($cardConfig->getBrand()->equals($baseBrand)) {
                 $brandConfig = $cardConfig;
                 break;
             }
         }
 
-        if ($brandConfig === null)
-        {
+        if ($brandConfig === null) {
             return [];
         }
 
@@ -88,7 +84,6 @@ final class InstallmentService
             $interestLabel = ", " . $i18n->getDashboard(
                 'with %.2f%% of interest',
                 $installment->getInterest() * 100
-
             );
         }
 

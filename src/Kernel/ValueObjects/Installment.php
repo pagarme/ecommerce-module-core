@@ -8,24 +8,28 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 final class Installment extends AbstractValueObject
 {
     /**
+     *
      * @var int
      */
     protected $times;
     /**
+     *
      * @var int
      */
     protected $baseTotal;
     /**
+     *
      * @var float
      */
     protected $interest;
 
     /**
      * Installment constructor.
-     * @param int $times
+     *
+     * @param int   $times
      * @param float $value
-     * @param float $interest This should be expressed in real float value, not percentual value.
-     * @param int $baseTotal
+     * @param float $interest  This should be expressed in real float value, not percentual value.
+     * @param int   $baseTotal
      */
     public function __construct($times, $baseTotal, $interest)
     {
@@ -35,7 +39,8 @@ final class Installment extends AbstractValueObject
     }
 
     /**
-     * @param int $times
+     *
+     * @param  int $times
      * @return $this
      * @throws InvalidParamException
      */
@@ -53,7 +58,8 @@ final class Installment extends AbstractValueObject
     }
 
     /**
-     * @param int $baseTotal
+     *
+     * @param  int $baseTotal
      * @return $this
      * @throws InvalidParamException
      */
@@ -71,7 +77,8 @@ final class Installment extends AbstractValueObject
     }
 
     /**
-     * @param float $interest
+     *
+     * @param  float $interest
      * @return $this
      * @throws InvalidParamException
      */
@@ -88,8 +95,9 @@ final class Installment extends AbstractValueObject
         return $this;
     }
 
-//calculated property getters
+    //calculated property getters
     /**
+     *
      * @return int
      */
     public function getTotal()
@@ -97,6 +105,7 @@ final class Installment extends AbstractValueObject
         return round(floatval(($this->baseTotal * (1+$this->interest))));
     }
     /**
+     *
      * @return int
      */
     public function getValue()
@@ -104,8 +113,9 @@ final class Installment extends AbstractValueObject
         return round(floatval($this->getTotal() / $this->times));
     }
 
-//base property getters
+    //base property getters
     /**
+     *
      * @return int
      */
     public function getTimes()
@@ -113,6 +123,7 @@ final class Installment extends AbstractValueObject
         return $this->times;
     }
     /**
+     *
      * @return int
      */
     public function getBaseTotal()
@@ -120,6 +131,7 @@ final class Installment extends AbstractValueObject
         return $this->baseTotal;
     }
     /**
+     *
      * @return float
      */
     public function getInterest()
@@ -131,7 +143,7 @@ final class Installment extends AbstractValueObject
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param Installment $object
+     * @param  Installment $object
      * @return bool
      */
     protected function isEqual($object)
@@ -139,16 +151,16 @@ final class Installment extends AbstractValueObject
         return
             $this->getTimes() === $object->getTimes() &&
             $this->getBaseTotal() === $object->getBaseTotal() &&
-            $this->getInterest() === $object->getInterest()
-        ;
+            $this->getInterest() === $object->getInterest();
     }
 
     /**
      * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @since  5.4.0
      */
     public function jsonSerialize()
     {
