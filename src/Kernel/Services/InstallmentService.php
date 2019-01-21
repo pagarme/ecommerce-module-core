@@ -96,7 +96,7 @@ final class InstallmentService
             $installment->getValue() / 100
         );
         $formattedTotal = MPSetup::formatToCurrency(
-            $installment->getValue() / 100
+            $installment->getTotal() / 100
         );
 
         $label = $i18n->getDashboard(
