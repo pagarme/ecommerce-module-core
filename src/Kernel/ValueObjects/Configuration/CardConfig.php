@@ -71,9 +71,15 @@ final class CardConfig extends AbstractValueObject
         $this->setBrand($brand);
         $this->setMaxInstallment($maxInstallment);
         $this->setMaxInstallmentWithoutInterest($maxInstallmentWithoutInterest);
-        $this->setInitialInterest($initialInterest);
-        $this->setIncrementalInterest($incrementalInterest);
-        $this->setMinValue($minValue);
+        $this->setInitialInterest(
+            $initialInterest !== null ? $initialInterest : 0
+        );
+        $this->setIncrementalInterest(
+            $incrementalInterest !== null ? $incrementalInterest : 0
+        );
+        $this->setMinValue(
+            $minValue !== null ? $minValue : 0
+        );
     }
 
     /**
@@ -151,9 +157,9 @@ final class CardConfig extends AbstractValueObject
     private function setInitialInterest($initialInterest)
     {
         $newInitialInterest = floatval($initialInterest);
-        if ($newInitialInterest <= 0) {
+        if ($newInitialInterest < 0) {
             throw new InvalidParamException(
-                "'Initial Interest' must be greater than 0! ",
+                "'Initial Interest' must be at least 0! ",
                 $initialInterest
             );
         }
@@ -172,7 +178,7 @@ final class CardConfig extends AbstractValueObject
 
         if ($newIncrementalInterest < 0) {
             throw new InvalidParamException(
-                "'Incremental Interest' must be equal or greater than 0! ",
+                "'Incremental Interest' must be at least 0! ",
                 $incrementalInterest
             );
         }
@@ -246,7 +252,7 @@ final class CardConfig extends AbstractValueObject
         $newMinValue = intval($minValue);
         if ($newMinValue < 0) {
             throw new InvalidParamException(
-                "'Minimum value' must be equal or greater than 0! ",
+                "'Minimum value' must be at least 0! ",
                 $minValue
             );
         }
