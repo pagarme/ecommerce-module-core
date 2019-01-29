@@ -59,9 +59,6 @@ final class OrderHandlerService extends AbstractHandlerService
             $orderRepository = new OrderRepository();
             $orderRepository->save($order);
 
-
-
-
             $orderService->syncPlatformWith($order);
 
             $result = [
