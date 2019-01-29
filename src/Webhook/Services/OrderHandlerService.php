@@ -13,6 +13,7 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class OrderHandlerService extends AbstractHandlerService
@@ -40,6 +41,12 @@ final class OrderHandlerService extends AbstractHandlerService
             $invoice->save();
             $platformOrder = $order->getPlatformOrder();
 
+            $orderService = new OrderService();
+
+            /** @var Order $webhookOrder */
+            $webhookOrder = $webhook->getEntity();
+            $orderService->updateAcquirerData($webhookOrder);
+
             $order->setStatus(OrderStatus::processing());
             //@todo maybe an Order Aggregate should have a State too.
             $platformOrder->setState(OrderState::processing());
@@ -52,7 +59,9 @@ final class OrderHandlerService extends AbstractHandlerService
             $orderRepository = new OrderRepository();
             $orderRepository->save($order);
 
-            $orderService = new OrderService();
+
+
+
             $orderService->syncPlatformWith($order);
 
             $result = [

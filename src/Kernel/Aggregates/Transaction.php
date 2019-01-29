@@ -69,6 +69,12 @@ final class Transaction extends AbstractEntity
      */
     private $acquirerMessage;
 
+    /** @var string */
+    private $brand;
+
+    /** @var int */
+    private $installments;
+
     /**
      *
      * @return TransactionType
@@ -297,6 +303,43 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param string $brand
+     * @return Transaction
+     */
+    public function setBrand($brand)
+    {
+        $this->brand = $brand;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInstallments()
+    {
+        return $this->installments;
+    }
+
+    /**
+     * @param int $installments
+     * @return Transaction
+     */
+    public function setInstallments($installments)
+    {
+        $this->installments = $installments;
+        return $this;
+    }
+
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -321,6 +364,8 @@ final class Transaction extends AbstractEntity
         $obj->type = $this->getTransactionType();
         $obj->status = $this->getStatus();
         $obj->createdAt = $this->getCreatedAt()->format('Y-m-d H:i:s');
+        $obj->brand = $this->getBrand();
+        $obj->installments = $this->getInstallments();
 
         return $obj;
     }
