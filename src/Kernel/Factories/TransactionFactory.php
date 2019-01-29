@@ -89,6 +89,15 @@ class TransactionFactory implements FactoryInterface
         );
 
         $transaction->setCreatedAt($createdAt);
+        $brand = null;
+        $installments = null;
+        if (isset ($postData['card'])) {
+            $brand = $postData['card']['brand'];
+            $installments = $postData['installments'];
+
+            $transaction->setBrand($brand);
+            $transaction->setInstallments($installments);
+        }
 
         return $transaction;
     }

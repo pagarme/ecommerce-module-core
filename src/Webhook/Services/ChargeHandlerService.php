@@ -73,9 +73,13 @@ final class ChargeHandlerService extends AbstractHandlerService
         $history = $this->prepareHistoryComment($charge);
         $this->order->getPlatformOrder()->addHistoryComment($history);
 
-        if ($transaction->getTransactionType()->equals(TransactionType::creditCard())) {
+        /*
+         * @moved to order.paid handler.
+          if ($transaction->getTransactionType()->equals
+    (TransactionType::creditCard())) {
             $orderService->updateAcquirerData($order);
         }
+        */
 
         $orderService->syncPlatformWith($order);
 
