@@ -115,6 +115,10 @@ final class OrderService
     public function cancelAtMundipaggByPlatformOrder(PlatformOrderInterface $platformOrder)
     {
         $orderId = $platformOrder->getMundipaggId();
+        if (empty($orderId)) {
+            return;
+        }
+
         $APIService = new APIService();
 
         $order = $APIService->getOrder($orderId);
