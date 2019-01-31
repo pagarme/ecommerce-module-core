@@ -2,10 +2,10 @@
 
 namespace Mundipagg\Core\Webhook\Exceptions;
 
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
+use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
-class WebhookHandlerNotFoundException extends NotFoundException
+class WebhookHandlerNotFoundException extends AbstractMundipaggCoreException
 {
     /**
      * WebhookHandlerNotFound constructor.
@@ -15,6 +15,6 @@ class WebhookHandlerNotFoundException extends NotFoundException
         $message =
             "Handler for {$webhook->getType()->getEntityType()}." .
             "{$webhook->getType()->getAction()} webhook not found!";
-        parent::__construct($message);
+        parent::__construct($message, 200, null);
     }
 }
