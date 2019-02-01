@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
@@ -111,17 +112,20 @@ final class OrderHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    //@todo handlePaymentFailed
-    protected function handlePaymentFailed_TODO(Webhook $webhook)
+    protected function handlePaymentFailed(Webhook $webhook)
     {
-        //@todo
-        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
-        //occurs in the next case of the simulator too.
+        $i18n = new LocalizationService();
 
-        //When this webhook is received, the order wasn't created on magento, so
-        // no further action is needed.
+        $history = $i18n->getDashboard(
+            'Order payment failed'
+        );
+        $history .= '. ' . $i18n->getDashboard(
+            'The order will be canceled'
+        ) . '.';
+
+        $this->order->getPlatformOrder()->addHistoryComment($history);
+
+        return $this->handleCanceled($webhook);
     }
 
     //@todo handleCreated
@@ -147,8 +151,8 @@ final class OrderHandlerService extends AbstractHandlerService
         $orderRepository = new OrderRepository();
         /**
          *
- * @var Order $order 
-*/
+         * @var Order $order
+        */
         $order = $webhook->getEntity();
         $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
 
@@ -159,8 +163,8 @@ final class OrderHandlerService extends AbstractHandlerService
 
             /**
              *
- * @var Order $webhookOrder 
-*/
+             * @var Order $webhookOrder
+            */
             $webhookOrder = $webhook->getEntity();
             /**
              *
@@ -169,6 +173,11 @@ final class OrderHandlerService extends AbstractHandlerService
             $order = new $orderDecoratorClass();
             $order->loadByIncrementId($webhookOrder->getCode());
 
+            if ($order->getIncrementId() === null) {
+                throw new NotFoundException(
+                    "Order Not found!"
+                );
+            }
 
             $orderFactory = new OrderFactory();
             $order = $orderFactory->createFromPlatformData(

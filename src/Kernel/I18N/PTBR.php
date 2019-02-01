@@ -27,7 +27,9 @@ class PTBR extends AbstractI18NTable
             "Some charges couldn't be canceled at Mundipagg. Reasons:" => "Algumas cobranças não puderam ser canceladas na Mundipagg. Razões:",
             "without interest" => "sem juros",
             "with %.2f%% of interest" => "com %.2f%% de juros",
-            "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)"
+            "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
+            "Order payment failed" => "Pagamento do pedido falhou",
+            "The order will be canceled" => "O pedido será cancelado"
         ];
     }
 }
