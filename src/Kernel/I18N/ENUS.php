@@ -27,7 +27,10 @@ class ENUS extends AbstractI18NTable
             "Some charges couldn't be canceled at Mundipagg. Reasons:" => null,
             "without interest" => null,
             "with %.2f%% of interest" => null,
-            "%dx of %s %s (Total: %s)" => null
+            "%dx of %s %s (Total: %s)" => null,
+            "Order payment failed" => null,
+            "Order payment failed" => null,
+            "The order will be canceled" => null
         ];
     }
 }
