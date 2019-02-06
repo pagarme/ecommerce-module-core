@@ -2,9 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\ValueObjects\Key;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-
-final class PublicKey extends AbstractValidString
+final class PublicKey extends AbstractPublicKey
 {
     protected function validateValue($value)
     {

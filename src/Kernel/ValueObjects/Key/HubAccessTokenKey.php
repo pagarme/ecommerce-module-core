@@ -2,9 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\ValueObjects\Key;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-
-final class HubAccessTokenKey extends AbstractValidString
+final class HubAccessTokenKey extends AbstractSecretKey
 {
     protected function validateValue($value)
     {
