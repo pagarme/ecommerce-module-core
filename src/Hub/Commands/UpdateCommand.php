@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Hub\Commands;
 
-use Mundipagg\Core\AbstractMundipaggModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
 use Exception;
 
 class UpdateCommand extends AbstractCommand

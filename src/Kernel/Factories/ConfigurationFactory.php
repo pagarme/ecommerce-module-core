@@ -76,6 +76,18 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
+        if (isset($data->keys) ) {
+            if (!isset($data->publicKey)) {
+                $index = Configuration::KEY_PUBLIC;
+                $data->publicKey = $data->keys->$index;
+            }
+
+            if (!isset($data->secretKey)) {
+                $index = Configuration::KEY_SECRET;
+                $data->secretKey = $data->keys->$index;
+            }
+        }
+        
         if (isset($data->publicKey)) {
             $config->setPublicKey(
                 $this->createPublicKey($data->publicKey)

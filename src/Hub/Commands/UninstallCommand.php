@@ -3,11 +3,11 @@
 namespace Mundipagg\Core\Hub\Commands;
 
 use Exception;
-use Mundipagg\Core\AbstractMundipaggModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\GatewayId\GUID;
-use Mundipagg\Core\Kernel\GatewayKey\PublicKey;
-use Mundipagg\Core\Kernel\GatewayKey\SecretKey;
-use Mundipagg\Repositories\Configuration as ConfigurationRepository;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
+use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
+use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
+use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 
 class UninstallCommand extends AbstractCommand
 {
@@ -37,9 +37,7 @@ class UninstallCommand extends AbstractCommand
 
         $moduleConfig->setTestMode(null);
 
-        $configRepo = new ConfigurationRepository(
-            MPSetup::getDatabaseAccessDecorator()
-        );
+        $configRepo = new ConfigurationRepository();
 
         $configRepo->save($moduleConfig);
     }

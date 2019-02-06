@@ -2,17 +2,17 @@
 
 namespace Mundipagg\Core\Hub\Factories;
 
-use Mundipagg\Core\Kernel\GatewayId\AccountId;
-use Mundipagg\Core\Kernel\GatewayKey\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\GatewayKey\PublicKey;
-use Mundipagg\Core\Kernel\GatewayKey\TestPublicKey;
-use Mundipagg\Core\Kernel\GatewayId\GUID;
-use Mundipagg\Core\Kernel\GatewayId\MerchantId;
 use Mundipagg\Core\Hub\Commands\AbstractCommand;
 use Mundipagg\Core\Hub\Commands\CommandType;
+use Mundipagg\Core\Kernel\ValueObjects\Id\AccountId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
+use Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId;
+use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use ReflectionClass;
 
-class CommandFactory
+class HubCommandFactory
 {
     /**
      * @param $object

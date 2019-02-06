@@ -3,8 +3,8 @@
 namespace Mundipagg\Core\Hub\Commands;
 
 use Exception;
-use Mundipagg\Core\AbstractMundipaggModuleCoreSetup as MPSetup;
-use Mundipagg\Repositories\Configuration as ConfigurationRepository;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 
 class InstallCommand extends AbstractCommand
 {
@@ -18,21 +18,15 @@ class InstallCommand extends AbstractCommand
 
         $moduleConfig->setHubInstallId($this->getInstallId());
 
-        $moduleConfig->setTestMode(
-            $this->getType()->equals(CommandType::Sandbox())
-        );
-
         $moduleConfig->setPublicKey(
-            $this->getAccountPublicKey()->getValue()
+            $this->getAccountPublicKey()
         );
 
         $moduleConfig->setSecretKey(
-            $this->getAccessToken()->getValue()
+            $this->getAccessToken()
         );
 
-        $configRepo = new ConfigurationRepository(
-            MPSetup::getDatabaseAccessDecorator()
-        );
+        $configRepo = new ConfigurationRepository();
 
         $configRepo->save($moduleConfig);
     }

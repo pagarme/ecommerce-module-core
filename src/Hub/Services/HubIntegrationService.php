@@ -2,8 +2,13 @@
 
 namespace Mundipagg\Core\Hub\Services;
 
+use Mundipagg\Core\Hub\Aggregates\InstallToken;
+use Mundipagg\Core\Hub\Factories\HubCommandFactory;
 use Mundipagg\Core\Hub\Factories\InstallTokenFactory;
 use Mundipagg\Core\Hub\Repositories\InstallTokenRepository;
+use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Unirest\Request;
 
 final class HubIntegrationService
 {
@@ -40,11 +45,9 @@ final class HubIntegrationService
         $webhookUrl = null
     )
     {
-        $tokenRepo = new InstallTokenRepository(
-            MPSetup::getDatabaseAccessDecorator()
-        );
+        $tokenRepo = new InstallTokenRepository();
 
-        $installToken = $tokenRepo->findByToken($installToken);
+        $installToken = $tokenRepo->findByMundipaggId(new HubInstallToken($installToken));
 
         if (
             is_a($installToken, InstallToken::class) &&
@@ -75,11 +78,13 @@ final class HubIntegrationService
                 json_encode($body)
             );
 
-            $this->executeCommandFromPost($result->body);
+            if ($result->code === 201) {
+                $this->executeCommandFromPost($result->body);
 
-            //if its ok
-            $installToken->setUsed(true);
-            $tokenRepo->save($installToken);
+                //if its ok
+                $installToken->setUsed(true);
+                $tokenRepo->save($installToken);
+            }
         }
     }
 

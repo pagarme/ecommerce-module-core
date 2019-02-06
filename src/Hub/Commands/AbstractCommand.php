@@ -2,13 +2,13 @@
 
 namespace Mundipagg\Core\Hub\Commands;
 
-use Mundipagg\Core\Kernel\GatewayId\AccountId;
 use Mundipagg\Core\Kernel\CommandInterface;
-use Mundipagg\Core\Kernel\GatewayKey\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\GatewayKey\PublicKey;
-use Mundipagg\Core\Kernel\GatewayKey\TestPublicKey;
-use Mundipagg\Core\Kernel\GatewayId\GUID;
-use Mundipagg\Core\Kernel\GatewayId\MerchantId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\AccountId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
+use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
 
 abstract class AbstractCommand implements CommandInterface
 {
