@@ -93,6 +93,11 @@ abstract class AbstractModuleCoreSetup
         return static::$moduleConfig;
     }
 
+    public static function setModuleConfiguration(Configuration $moduleConfig)
+    {
+        static::$moduleConfig = $moduleConfig;
+    }
+
     public static function get($configId)
     {
         self::bootstrap();

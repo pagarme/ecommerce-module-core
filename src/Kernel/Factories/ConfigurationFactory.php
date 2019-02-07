@@ -88,13 +88,13 @@ class ConfigurationFactory implements FactoryInterface
             }
         }
         
-        if (isset($data->publicKey)) {
+        if (!empty($data->publicKey)) {
             $config->setPublicKey(
                 $this->createPublicKey($data->publicKey)
             );
         }
 
-        if (isset($data->secretKey)) {
+        if (!empty($data->secretKey)) {
             $config->setSecretKey(
                 $this->createSecretKey($data->secretKey)
             );

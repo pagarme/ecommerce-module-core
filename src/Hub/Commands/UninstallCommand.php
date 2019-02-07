@@ -4,9 +4,8 @@ namespace Mundipagg\Core\Hub\Commands;
 
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
-use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
+use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
 use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 
 class UninstallCommand extends AbstractCommand
@@ -24,21 +23,22 @@ class UninstallCommand extends AbstractCommand
             throw new Exception("Access Denied.");
         }
 
-        $moduleConfig->setHubInstallId(
-            new GUID(null)
-        );
+        $cleanConfig = json_decode(json_encode($moduleConfig));
+        $cleanConfig->keys = [
+            Configuration::KEY_SECRET => null,
+            Configuration::KEY_PUBLIC => null,
+        ];
+        $cleanConfig->testMode = true;
+        $cleanConfig->hubInstallId = null;
 
-        $moduleConfig->setPublicKey(
-            new PublicKey(null)
-        );
-        $moduleConfig->setSecretKey(
-            new SecretKey(null)
-        );
-
-        $moduleConfig->setTestMode(null);
-
+        $cleanConfig = json_encode($cleanConfig);
+        $configFactory = new ConfigurationFactory();
+        $cleanConfig = $configFactory->createFromJsonData($cleanConfig);
+        $cleanConfig->setId($moduleConfig->getId());
+        MPSetup::setModuleConfiguration($cleanConfig);
+        
         $configRepo = new ConfigurationRepository();
 
-        $configRepo->save($moduleConfig);
+        $configRepo->save($cleanConfig);
     }
 }
