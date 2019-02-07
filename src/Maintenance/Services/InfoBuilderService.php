@@ -7,6 +7,10 @@ use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class InfoBuilderService
 {
+    /**
+     * @param array $query
+     * @return string|array
+     */
     public function buildInfoFromQueryArray(array $query)
     {
         $infos = [];
@@ -14,7 +18,11 @@ class InfoBuilderService
             foreach ($query as $parameter => $value) {
                 $infoRetriever = $this->getInfoRetrieverServiceFor($parameter);
                 if ($infoRetriever !== null) {
-                    $infos[$parameter] = $infoRetriever->retrieveInfo($value);
+                    $data = $infoRetriever->retrieveInfo($value);
+                    if (is_string($data)) {
+                        return $data;
+                    }
+                    $infos[$parameter] = $data;
                 }
             }
             return $infos;
