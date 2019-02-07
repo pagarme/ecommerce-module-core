@@ -3,15 +3,43 @@
 namespace Mundipagg\Core\Maintenance\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class InfoBuilderService
 {
     public function buildInfoFromQueryArray(array $query)
     {
+        $infos = [];
         if ($this->isTokenValid($query)) {
-
+            foreach ($query as $parameter => $value) {
+                $infoRetriever = $this->getInfoRetrieverServiceFor($parameter);
+                if ($infoRetriever !== null) {
+                    $infos[$parameter] = $infoRetriever->retrieveInfo($value);
+                }
+            }
+            return $infos;
         }
+        return [];
     }
+
+    /**
+     * @param $parameter
+     * @return null|InfoRetrieverServiceInterface
+     */
+    private function getInfoRetrieverServiceFor($parameter)
+    {
+        $infoRetrieverServiceClass =
+            'Mundipagg\\Core\\Maintenance\\Services\\' .
+            ucfirst($parameter) .
+            'InfoRetrieverService';
+
+        if (!class_exists($infoRetrieverServiceClass)) {
+            return null;
+        }
+
+        return new $infoRetrieverServiceClass();
+    }
+
 
     private function isTokenValid($token)
     {
