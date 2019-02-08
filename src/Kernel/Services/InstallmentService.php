@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Services;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Installment;
 
 final class InstallmentService
@@ -105,18 +106,23 @@ final class InstallmentService
         return $label;
     }
 
-    protected function filterInstallmentsByMinValue($installments, $brandConfig)
+    /**
+     * @param Installment[] $installments
+     * @param CardConfig $brandConfig
+     * @return array
+     */
+    protected function filterInstallmentsByMinValue(array $installments, CardConfig $brandConfig)
     {
         return array_filter(
             $installments,
-            function($installment) use ($brandConfig){
-                if (
+            function(Installment $installment) use ($brandConfig){
+                return
                     $installment->getTimes() === 1 ||
-                    $installment->getValue() > $brandConfig->getMinValue()
-                ) {
-                    return $installment;
-                }
+                    $installment->getValue() >= $brandConfig->getMinValue()
+                ;
             }
         );
+
+
     }
 }
