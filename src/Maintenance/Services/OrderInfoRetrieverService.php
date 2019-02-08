@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Maintenance\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
@@ -40,6 +41,29 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
 
     private function getCoreOrderInfo($orderIncrementId)
     {
-        return 'core';
+        $platformOrderClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+        /** @var PlatformOrderInterface $platformOrder */
+        $platformOrder = new $platformOrderClass();
+        $platformOrder->loadByIncrementId($orderIncrementId);
+
+        $mundipaggOrderId = $platformOrder->getMundipaggId();
+
+        if ($mundipaggOrderId === null) {
+            return null;
+        }
+        
+        $orderRepository = new OrderRepository();
+
+        $data = null;
+        try {
+            $data = $orderRepository->findByMundipaggId($mundipaggOrderId);
+        }catch (\Throwable $e)
+        {}
+
+        $coreOrder = new \stdClass();
+        $coreOrder->mpOrderId = $mundipaggOrderId;
+        $coreOrder->data = $data;
+
+        return $coreOrder;
     }
 }
