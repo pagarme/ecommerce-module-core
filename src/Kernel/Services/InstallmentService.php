@@ -72,7 +72,7 @@ final class InstallmentService
             $installments[] = new Installment($i, $amount, $interest / 100);
         }
 
-        return $installments;
+        return $this->filterInstallmentsByMinValue($installments, $brandConfig);
     }
 
     public function getLabelFor(Installment $installment)
@@ -103,5 +103,20 @@ final class InstallmentService
         );
 
         return $label;
+    }
+
+    protected function filterInstallmentsByMinValue($installments, $brandConfig)
+    {
+        return array_filter(
+            $installments,
+            function($installment) use ($brandConfig){
+                if (
+                    $installment->getTimes() === 1 ||
+                    $installment->getValue() > $brandConfig->getMinValue()
+                ) {
+                    return $installment;
+                }
+            }
+        );
     }
 }
