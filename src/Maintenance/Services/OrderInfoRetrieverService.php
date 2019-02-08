@@ -31,10 +31,9 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
         $platformOrderInfo->order = $platformOrder->getData();
 
         $platformOrderInfo->history = $platformOrder->getHistoryCommentCollection();
-
-        $platformOrderInfo->transaction = 'platform ordertransaction data';
-        $platformOrderInfo->payments = 'platform order payments data';
-        $platformOrderInfo->invoices = 'platform order invoice data';
+        $platformOrderInfo->transaction = $platformOrder->getTransactionCollection();
+        $platformOrderInfo->payments = $platformOrder->getPaymentCollection();
+        $platformOrderInfo->invoices = $platformOrder->getInvoiceCollection();
 
         return $platformOrderInfo;
     }

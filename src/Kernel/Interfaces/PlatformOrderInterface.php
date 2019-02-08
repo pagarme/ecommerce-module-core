@@ -55,4 +55,7 @@ interface PlatformOrderInterface
      * @return PlatformInvoiceInterface[]
      */
     public function getInvoiceCollection();
+    public function getTransactionCollection();
+    public function getPaymentCollection();
+
 }
