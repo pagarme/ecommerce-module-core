@@ -102,7 +102,7 @@ final class Installment extends AbstractValueObject
      */
     public function getTotal()
     {
-        return round(floatval(($this->baseTotal * (1+$this->interest))));
+        return round(floatval(($this->baseTotal * (1 + $this->interest))));
     }
     /**
      *
