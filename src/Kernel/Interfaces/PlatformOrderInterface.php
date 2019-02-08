@@ -19,6 +19,7 @@ interface PlatformOrderInterface
     public function getStatus();
     public function loadByIncrementId($incrementId);
     public function addHistoryComment($message);
+    public function getHistoryCommentCollection();
     public function setIsCustomerNotified();
     public function canInvoice();
     public function canUnhold();
@@ -42,6 +43,7 @@ interface PlatformOrderInterface
     public function setTotalRefunded($amount);
     public function setBaseTotalRefunded($amount);
     public function getCode();
+    public function getData();
     /**
      *
      * @return OrderId 
