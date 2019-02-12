@@ -33,7 +33,7 @@ final class ComposerInstallDataSource
         );
         return array_filter(
             $files, function ($file) {
-            return
+                return
                 strpos($file, 'integrityData') === false
                 ;
             }
@@ -62,8 +62,7 @@ final class ComposerInstallDataSource
         $finalDirs = [];
 
         foreach ($dirs as $dir) {
-            if (substr ($dir , 0, 1) == '.')
-            {
+            if (substr($dir, 0, 1) == '.') {
                 continue;
             }
             $finalDir = $moduleRoot . DIRECTORY_SEPARATOR . $dir;
