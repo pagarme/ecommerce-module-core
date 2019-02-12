@@ -3,71 +3,106 @@
 namespace Mundipagg\Core\Maintenance\Services;
 
 use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Mundipagg\Core\Maintenance\Interfaces\InstallDataSourceInterface;
+use Mundipagg\Core\Maintenance\Interfaces\ModuleInstallTypeInterface;
+use Mundipagg\Core\Maintenance\Services\InstallDataSource\CoreInstallDataSource;
 
 class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
 {
-    private $integrityFilePath;
-    
-    public function __construct()
-    {
-        $dir = explode(DIRECTORY_SEPARATOR, __DIR__);
-        array_pop($dir);
-        $dir = implode (DIRECTORY_SEPARATOR, $dir);
-
-
-        $this->integrityFilePath = $dir . DIRECTORY_SEPARATOR .
-            'Assets' . DIRECTORY_SEPARATOR . 'integrityData';
-    }
-
     public function retrieveInfo($value)
     {
         $integrityInfo = new \stdClass();
 
         $integrityInfo->core = $this->getIntegrityInfo(
-            $this->getCoreAnchorDir(),
-            $this->integrityFilePath
+            new CoreInstallDataSource()
         );
-        $integrityInfo->module = $this->getIntegrityInfo(
-            $this->getModuleAnchorDir(),
-            $this->getModuleIntegrityFilePath()
-        );
+
+        $moduleInstall = $this->getModuleInstallDataSource();
+
+        $integrityInfo->module = $this->getEmptyIntegrityInfo();
+
+        if ($moduleInstall !== null) {
+            $integrityInfo->module = $this->getIntegrityInfo(
+                $moduleInstall
+            );
+        }
 
         return $integrityInfo;
     }
 
-    private function getIntegrityInfo($anchorDirectory, $integrityFilePath)
+    /**
+     * @return InstallDataSourceInterface|null
+     */
+    public function getModuleInstallDataSource()
     {
-        if ($anchorDirectory === null) {
-            return $this->getEmptyIntegrityInfo();
+        $installDataSourcesDir = __DIR__ . DIRECTORY_SEPARATOR . 'InstallDataSource';
+
+        $classes = scandir($installDataSourcesDir);
+        array_walk($classes, function(&$class){
+            $class = str_replace('InstallDataSource.php', '', $class);
+        });
+        $classes = array_filter($classes, function($item)
+        {
+           return strlen($item) > 2;
+        });
+
+        $validInstallTypes = [];
+        $namespace = __NAMESPACE__ . '\\InstallDataSource';
+        foreach ($classes as $class) {
+
+            $installClass =  $namespace . '\\' . $class . 'InstallDataSource';
+            $implements = class_implements($installClass);
+            if (in_array(ModuleInstallTypeInterface::class,$implements)) {
+               $validInstallTypes[] = $installClass;
+            }
         }
 
-        $anchorDirectory .= DIRECTORY_SEPARATOR . 'src';
-        $files = $this->scandirs([$anchorDirectory]);
+        $integrityFilePath = null;
+
+        foreach ($validInstallTypes as $installTypeClass) {
+            /** @var InstallDataSourceInterface $install */
+            $install = new $installTypeClass;
+            $integrityFilePath = $install->getIntegrityFilePath();
+            if ($integrityFilePath !== null) {
+                return $install;
+            }
+        }
+
+        return null;
+    }
+
+    private function getIntegrityInfo(InstallDataSourceInterface $dataInstallSource)
+    {
+        $files = $dataInstallSource->getFiles();
+
+        $rootDir = $this->detectRootDir($files);
 
         $fileHashs = [];
         foreach ($files as $file) {
             $cleanFilename = str_replace(
-                $anchorDirectory . DIRECTORY_SEPARATOR,
+                $rootDir,
                 '',
                 $file
             );
             $fileHashs[$cleanFilename] = $this->generateFileHash($file);
         }
 
-        $integrityData = $this->loadIntegrityData($integrityFilePath);
+        $itegrityFilePath = $dataInstallSource->getIntegrityFilePath();
+
+        $integrityData = $this->loadIntegrityData($itegrityFilePath);
 
         $altered = [];
         $removed = [];
         $added = [];
         $processedFiles = 0;
         foreach ($fileHashs as $file => $hash) {
-            $fullPath = $anchorDirectory . DIRECTORY_SEPARATOR . $file;
+            $fullPath = $rootDir . $file;
+            $processedFiles++;
 
-            if ($fullPath == $this->integrityFilePath) {
+            if ($fullPath == $itegrityFilePath) {
                 continue;
             }
 
-            $processedFiles++;
             if (!file_exists($fullPath)) {
                 $removed[$file] = $hash;
                 continue;
@@ -100,6 +135,7 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         $integrityInfo->reference = $integrityData;
 
         return $integrityInfo;
+
     }
 
     private function getEmptyIntegrityInfo()
@@ -126,89 +162,71 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
     {
         return md5_file($filename);
     }
-
-    private function scanDirs($dirs)
-    {
-        $files = [];
-        foreach($dirs as $dir) {
-            $foundFiles = scandir($dir);
-            if ($foundFiles !== false) {
-                foreach ($foundFiles as $foundFile) {
-                    if (strlen($foundFile) < 3) {
-                        continue;
-                    }
-
-                    $foundFile = $dir . DIRECTORY_SEPARATOR . $foundFile;
-                    $foundFile = preg_replace('/\\' .DIRECTORY_SEPARATOR. '{2,}/', DIRECTORY_SEPARATOR, $foundFile);
-
-                    if (is_dir($foundFile)) {
-                        $files = array_merge(
-                            $files,
-                            $this->scanDirs([$foundFile])
-                        );
-                        continue;
-                    }
-
-                    $files[$foundFile] = $foundFile;
-                }
-            }
-        }
-        return array_values($files);
-    }
-
     
-    private function getCoreAnchorDir()
-    {
-        $currentDir = __DIR__;
-
-        do {
-            $currentDir = explode(DIRECTORY_SEPARATOR, $currentDir);
-            array_pop($currentDir);
-            $currentDir = implode(DIRECTORY_SEPARATOR, $currentDir);
-
-            if (strpos($currentDir, 'ecommerce-module-core') === false) {
-                return null;
-            }
-
-            $composerJsonFilename =  $currentDir . DIRECTORY_SEPARATOR . 'composer.json';
-
-        } while (!file_exists($composerJsonFilename));
-
-        return $currentDir;
-    }
-
     private function loadIntegrityData($integrityFilePath)
     {
-        $data = json_decode(file_get_contents($integrityFilePath), true);
+        $data = [];
+
+        if (strlen($integrityFilePath) > 0) {
+            $data = json_decode(file_get_contents($integrityFilePath), true);
+        }
+
         return $data;
+    }
+
+    private function detectRootDir($files)
+    {
+        $dirCount = [];
+        foreach ($files as $file) {
+            $explodedPath = explode(DIRECTORY_SEPARATOR, $file);
+
+            array_pop($explodedPath);
+
+            foreach ($explodedPath as $position => $part)
+            {
+                if (!isset($dirCount[$position])) {
+                    $dirCount[$position] = [];
+                }
+                if (!isset($dirCount[$position][$part])) {
+                    $dirCount[$position][$part] = 0;
+                }
+                $dirCount[$position][$part]++;
+            }
+        }
+        $fileCount = count($files);
+        $dirCount = array_filter($dirCount, function($dir) use($fileCount) {
+            return count($dir) == 1 && end($dir) == $fileCount;
+        });
+
+        $rootDir = '';
+        foreach ($dirCount as $part) {
+            $part = array_keys($part);
+            $part = end($part);
+            $rootDir .= $part . DIRECTORY_SEPARATOR;
+        }
+
+        return $rootDir;
     }
 
     public function generateCoreIntegrityFile()
     {
-        $coreIntegrityData = $this->getIntegrityInfo();
+        $dataSource = new CoreInstallDataSource();
+        $files = $dataSource->getFiles();
+        $integrityFilePath = $dataSource->getIntegrityFilePath();
 
-        $assetsDir = explode(DIRECTORY_SEPARATOR, $this->integrityFilePath);
-        array_pop($assetsDir);
-        $assetsDir = implode (DIRECTORY_SEPARATOR, $assetsDir);
+        $rootDir = $this->detectRootDir($files);
 
-        if (!is_dir($assetsDir)) {
-            mkdir($assetsDir);
+        $fileHashs = [];
+        foreach ($files as $file) {
+            $cleanFilename = str_replace(
+                $rootDir,
+                '',
+                $file
+            );
+            $fileHashs[$cleanFilename] = $this->generateFileHash($file);
         }
 
-
-        file_put_contents(
-            $this->integrityFilePath,
-            json_encode($coreIntegrityData->files)
-        );
-    }
-
-    public function getModuleAnchorDir()
-    {
-        return null;
-    }
-
-    public function getModuleIntegrityFilePath()
-    {
-        return null;
+        $integrityData = json_encode($fileHashs);
+        file_put_contents($integrityFilePath, $integrityData);
     }
 }

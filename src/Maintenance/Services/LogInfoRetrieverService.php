@@ -80,7 +80,6 @@ class LogInfoRetrieverService implements InfoRetrieverServiceInterface
         $result = [];
         foreach ($files as $file) {
 
-            //"/var/www/opencart.localhost/storage/logs/Mundipagg_opencart_2018-02-20.log"
             $matchDate = [];
             preg_match('/\d{4}-\d{2}-\d{2}/', $file, $matchDate);
 

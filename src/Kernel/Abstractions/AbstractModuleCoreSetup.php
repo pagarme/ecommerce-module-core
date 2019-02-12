@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
+use ReflectionClass;
 
 abstract class AbstractModuleCoreSetup
 {
@@ -152,6 +153,17 @@ abstract class AbstractModuleCoreSetup
     public static function formatToCurrency($price)
     {
         return self::$instance->_formatToCurrency($price);
+    }
+
+    public static function getModuleConcreteDir()
+    {
+        $concretePlatformCoreSetupClass = self::get(self::CONCRETE_MODULE_CORE_SETUP_CLASS);
+
+        $moduleCoreSetupReflection = new ReflectionClass($concretePlatformCoreSetupClass);
+        $concreteCoreSetupFilename = $moduleCoreSetupReflection->getFileName();
+        $concreteDir = explode(DIRECTORY_SEPARATOR, $concreteCoreSetupFilename);
+        array_pop($concreteDir);
+        return implode(DIRECTORY_SEPARATOR, $concreteDir);
     }
 
     abstract protected static function setConfig();
