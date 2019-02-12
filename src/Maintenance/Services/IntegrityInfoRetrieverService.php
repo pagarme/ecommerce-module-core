@@ -13,19 +13,22 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
     {
         $integrityInfo = new \stdClass();
 
-        $integrityInfo->core = $this->getIntegrityInfo(
+        $core= $this->getIntegrityInfo(
             new CoreInstallDataSource()
         );
 
         $moduleInstall = $this->getModuleInstallDataSource();
 
-        $integrityInfo->module = $this->getEmptyIntegrityInfo();
+        $module = $this->getEmptyIntegrityInfo();
 
         if ($moduleInstall !== null) {
-            $integrityInfo->module = $this->getIntegrityInfo(
+            $module = $this->getIntegrityInfo(
                 $moduleInstall
             );
         }
+
+        $integrityInfo->module = $module;
+        $integrityInfo->core = $core;
 
         return $integrityInfo;
     }
@@ -217,9 +220,8 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         return $rootDir;
     }
 
-    public function generateCoreIntegrityFile()
+    private function generateIntegrityFile($dataSource)
     {
-        $dataSource = new CoreInstallDataSource();
         $files = $dataSource->getFiles();
         $integrityFilePath = $dataSource->getIntegrityFilePath();
 
@@ -237,5 +239,20 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
 
         $integrityData = json_encode($fileHashs);
         file_put_contents($integrityFilePath, $integrityData);
+    }
+
+    public function generateCoreIntegrityFile()
+    {
+        $this->generateIntegrityFile(new CoreInstallDataSource());
+    }
+
+    public function generateModuleIntegrityFile()
+    {
+        $dataSource = $this->getModuleInstallDataSource();
+        if ($dataSource === null) {
+            return;
+        }
+
+        $this->generateIntegrityFile($dataSource);
     }
 }
