@@ -42,9 +42,7 @@ final class ComposerInstallDataSource
 
     public function getIntegrityFilePath()
     {
-        if (file_exists($this->integrityFilePath)
-            && file_exists($this->composerJsonFilePath)
-        ) {
+        if (file_exists($this->composerJsonFilePath)) {
             return $this->integrityFilePath;
         }
 

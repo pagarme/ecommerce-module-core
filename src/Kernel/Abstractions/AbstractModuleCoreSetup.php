@@ -26,6 +26,7 @@ abstract class AbstractModuleCoreSetup
     protected static $instance;
     protected static $config;
     protected static $platformRoot;
+    protected static $moduleConcreteDir;
     /**
      *
      * @var Configuration 
@@ -157,13 +158,27 @@ abstract class AbstractModuleCoreSetup
 
     public static function getModuleConcreteDir()
     {
+        if (isset(self::$moduleConcreteDir)) {
+            return self::$moduleConcreteDir;
+        }
+
         $concretePlatformCoreSetupClass = self::get(self::CONCRETE_MODULE_CORE_SETUP_CLASS);
 
         $moduleCoreSetupReflection = new ReflectionClass($concretePlatformCoreSetupClass);
         $concreteCoreSetupFilename = $moduleCoreSetupReflection->getFileName();
         $concreteDir = explode(DIRECTORY_SEPARATOR, $concreteCoreSetupFilename);
         array_pop($concreteDir);
-        return implode(DIRECTORY_SEPARATOR, $concreteDir);
+
+        self::$moduleConcreteDir = implode(DIRECTORY_SEPARATOR, $concreteDir);
+
+        return self::$moduleConcreteDir;
+    }
+
+    public static function setModuleConcreteDir($concreteModuleDir)
+    {
+        if(!isset(self::$moduleConcreteDir)) {
+            self::$moduleConcreteDir = $concreteModuleDir;
+        }
     }
 
     abstract protected static function setConfig();
