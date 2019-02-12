@@ -30,6 +30,10 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
         $platformOrder = new $platformOrderClass();
         $platformOrder->loadByIncrementId($orderIncrementId);
 
+        if ($platformOrder->getCode() === null) {
+            return null;
+        }
+
         $platformOrderInfo = new \stdClass();
 
         $platformOrderInfo->order = $platformOrder->getData();
@@ -51,6 +55,10 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
 */
         $platformOrder = new $platformOrderClass();
         $platformOrder->loadByIncrementId($orderIncrementId);
+
+        if ($platformOrder->getCode() === null) {
+            return null;
+        }
 
         $mundipaggOrderId = $platformOrder->getMundipaggId();
 
