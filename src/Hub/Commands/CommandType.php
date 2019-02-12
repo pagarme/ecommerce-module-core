@@ -10,7 +10,10 @@ final class CommandType implements ValueObject
     const PRODUCTION = 'Production';
     const DEVELOPMENT = 'Development';
 
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $value;
 
     public static function Sandbox()
@@ -34,6 +37,7 @@ final class CommandType implements ValueObject
     }
 
     /**
+     *
      * @return string
      */
     public function getValue()
@@ -42,7 +46,8 @@ final class CommandType implements ValueObject
     }
 
     /**
-     * @param string $value
+     *
+     * @param  string $value
      * @return CommandType
      */
     private function setValue($value)
@@ -51,7 +56,10 @@ final class CommandType implements ValueObject
         return $this;
     }
 
-    /** @var static $object */
+    /**
+     *
+     * @var static $object 
+     */
     public function equals($object)
     {
         return $this->value === $object->getValue();

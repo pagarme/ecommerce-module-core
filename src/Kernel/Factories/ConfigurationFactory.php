@@ -106,27 +106,27 @@ class ConfigurationFactory implements FactoryInterface
 
     private function createPublicKey($key)
     {
-       try {
+        try {
             return new TestPublicKey($key);
-       } catch(\Throwable $e) {
-       }
+        } catch(\Throwable $e) {
+        }
 
-       return new PublicKey($key);
+        return new PublicKey($key);
     }
 
     private function createSecretKey($key)
     {
-       try {
+        try {
             return new TestSecretKey($key);
-       } catch(\Throwable $e) {
-       }
+        } catch(\Throwable $e) {
+        }
 
         try {
             return new SecretKey($key);
         } catch(\Throwable $e) {
         }
 
-       return new HubAccessTokenKey($key);
+        return new HubAccessTokenKey($key);
     }
 
 

@@ -8,7 +8,8 @@ use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 class InfoBuilderService
 {
     /**
-     * @param array $query
+     *
+     * @param  array $query
      * @return string|array
      */
     public function buildInfoFromQueryArray(array $query)
@@ -31,7 +32,8 @@ class InfoBuilderService
     }
 
     /**
-     * @param $parameter
+     *
+     * @param  $parameter
      * @return null|InfoRetrieverServiceInterface
      */
     private function getInfoRetrieverServiceFor($parameter)
@@ -53,7 +55,7 @@ class InfoBuilderService
     {
         if (is_array($token)) {
             if (!isset($token['token'])) {
-               return false;
+                return false;
             }
             $token = $token['token'];
         }

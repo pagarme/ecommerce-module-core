@@ -13,7 +13,8 @@ use Unirest\Request;
 final class HubIntegrationService
 {
     /**
-     * @param $installSeed
+     *
+     * @param  $installSeed
      * @return \Mundipagg\Core\Hub\ValueObjects\HubInstallToken
      */
     public function startHubIntegration($installSeed)
@@ -43,16 +44,14 @@ final class HubIntegrationService
         $authorizationCode,
         $hubCallbackUrl = null,
         $webhookUrl = null
-    )
-    {
+    ) {
         $tokenRepo = new InstallTokenRepository();
 
         $installToken = $tokenRepo->findByMundipaggId(new HubInstallToken($installToken));
 
-        if (
-            is_a($installToken, InstallToken::class) &&
-            !$installToken->isExpired() &&
-            !$installToken->isUsed()
+        if (is_a($installToken, InstallToken::class) 
+            && !$installToken->isExpired() 
+            && !$installToken->isUsed()
         ) {
             $body = [
                 "code" => $authorizationCode

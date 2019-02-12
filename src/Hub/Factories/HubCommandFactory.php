@@ -15,7 +15,8 @@ use ReflectionClass;
 class HubCommandFactory
 {
     /**
-     * @param $object
+     *
+     * @param  $object
      * @return AbstractCommand
      * @throws \ReflectionException
      */
@@ -28,7 +29,10 @@ class HubCommandFactory
             throw new \Exception("Invalid Command class! $commandClass");
         }
 
-        /** @var AbstractCommand $command */
+        /**
+         *
+ * @var AbstractCommand $command 
+*/
         $command = new $commandClass();
 
         $command->setAccessToken(

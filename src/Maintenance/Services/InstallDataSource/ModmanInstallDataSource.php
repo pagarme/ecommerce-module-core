@@ -26,18 +26,19 @@ final class ModmanInstallDataSource
             $this->getInstallDirs(),
             true
         );
-        return array_filter($files, function($file) {
-            return
+        return array_filter(
+            $files, function ($file) {
+                return
                 strpos($file, 'integrityData') === false
                 ;
-        });
+            }
+        );
     }
 
     public function getIntegrityFilePath()
     {
-        if (
-            file_exists($this->integrityFilePath) &&
-            file_exists($this->modmanFilePath)
+        if (file_exists($this->integrityFilePath) 
+            && file_exists($this->modmanFilePath)
         ) {
             return $this->integrityFilePath;
         }
@@ -52,10 +53,12 @@ final class ModmanInstallDataSource
         $lines = [];
         preg_match_all('/^(?!#).+/m', $rawData, $lines);
         $lines = array_pop($lines);
-        array_walk($lines, function(&$line) {
-            $data = explode(' ', $line);
-            $line = end($data);
-        });
+        array_walk(
+            $lines, function (&$line) {
+                $data = explode(' ', $line);
+                $line = end($data);
+            }
+        );
 
         $platformRootDir = '';
         foreach ($lines as $line) {
@@ -65,15 +68,19 @@ final class ModmanInstallDataSource
             }
         }
 
-        array_walk($lines, function(&$line) use ($platformRootDir) {
-            $line = $platformRootDir . $line;
-        });
+        array_walk(
+            $lines, function (&$line) use ($platformRootDir) {
+                $line = $platformRootDir . $line;
+            }
+        );
 
-        $lines = array_filter($lines, function($line) {
-            return
+        $lines = array_filter(
+            $lines, function ($line) {
+                return
                 strpos($line, 'modman') === false
                 ;
-        });
+            }
+        );
 
         return $lines;
     }

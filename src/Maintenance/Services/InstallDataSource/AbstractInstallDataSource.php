@@ -17,13 +17,9 @@ abstract class AbstractInstallDataSource implements InstallDataSourceInterface
             $foundFiles = scandir($dir);
             if ($foundFiles !== false) {
                 foreach ($foundFiles as $foundFile) {
-                    if (
-                        strlen($foundFile) < 3 ||
-                        (
-                            $ignoreVendor &&
-                            strpos($foundFile, 'vendor') !== false
-                        )
-
+                    if (strlen($foundFile) < 3 
+                        || (                        $ignoreVendor 
+                        && strpos($foundFile, 'vendor') !== false)
                     ) {
                         continue;
                     }

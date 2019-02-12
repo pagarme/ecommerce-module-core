@@ -46,7 +46,7 @@ class LogInfoRetrieverService implements InfoRetrieverServiceInterface
             $uriZip =
                 ltrim(preg_replace('/log/', 'logDownload=zip:' . $encoded, $requestURI), '/');
             $uriRaw =
-                ltrim(preg_replace('/log/', 'logDownload=raw:' . $encoded, $requestURI),'/');
+                ltrim(preg_replace('/log/', 'logDownload=raw:' . $encoded, $requestURI), '/');
 
             $donwloadURIs[] = [
                 'file' => $file,

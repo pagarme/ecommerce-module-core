@@ -12,20 +12,39 @@ use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
 
 abstract class AbstractCommand implements CommandInterface
 {
-    /** @var HubAccessTokenKey */
+    /**
+     *
+     * @var HubAccessTokenKey 
+     */
     protected $accessToken;
-    /** @var AccountId */
+    /**
+     *
+     * @var AccountId 
+     */
     protected $accountId;
-    /** @var PublicKey|TestPublicKey */
+    /**
+     *
+     * @var PublicKey|TestPublicKey 
+     */
     protected $accountPublicKey;
-    /** @var GUID */
+    /**
+     *
+     * @var GUID 
+     */
     protected $installId;
-    /** @var MerchantId */
+    /**
+     *
+     * @var MerchantId 
+     */
     protected $merchantId;
-    /** @var CommandType */
+    /**
+     *
+     * @var CommandType 
+     */
     protected $type;
 
     /**
+     *
      * @return HubAccessTokenKey
      */
     public function getAccessToken()
@@ -34,7 +53,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param HubAccessTokenKey $accessToken
+     *
+     * @param  HubAccessTokenKey $accessToken
      * @return AbstractCommand
      */
     public function setAccessToken($accessToken)
@@ -44,6 +64,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     *
      * @return AccountId
      */
     public function getAccountId()
@@ -52,7 +73,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param AccountId $accountId
+     *
+     * @param  AccountId $accountId
      * @return AbstractCommand
      */
     public function setAccountId($accountId)
@@ -62,6 +84,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     *
      * @return PublicKey|TestPublicKey
      */
     public function getAccountPublicKey()
@@ -70,7 +93,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param PublicKey|TestPublicKey $accountPublicKey
+     *
+     * @param  PublicKey|TestPublicKey $accountPublicKey
      * @return AbstractCommand
      */
     public function setAccountPublicKey($accountPublicKey)
@@ -80,6 +104,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     *
      * @return GUID
      */
     public function getInstallId()
@@ -88,7 +113,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param GUID $installId
+     *
+     * @param  GUID $installId
      * @return AbstractCommand
      */
     public function setInstallId($installId)
@@ -98,6 +124,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     *
      * @return MerchantId
      */
     public function getMerchantId()
@@ -106,7 +133,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param MerchantId $merchantId
+     *
+     * @param  MerchantId $merchantId
      * @return AbstractCommand
      */
     public function setMerchantId($merchantId)
@@ -116,6 +144,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     *
      * @return CommandType
      */
     public function getType()
@@ -124,7 +153,8 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param CommandType $type
+     *
+     * @param  CommandType $type
      * @return AbstractCommand
      */
     public function setType($type)

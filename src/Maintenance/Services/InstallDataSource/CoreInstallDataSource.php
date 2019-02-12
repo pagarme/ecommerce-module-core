@@ -12,7 +12,7 @@ final class CoreInstallDataSource extends AbstractInstallDataSource
         $dir = explode(DIRECTORY_SEPARATOR, __DIR__);
         array_pop($dir);
         array_pop($dir);
-        $dir = implode (DIRECTORY_SEPARATOR, $dir);
+        $dir = implode(DIRECTORY_SEPARATOR, $dir);
 
 
         $this->integrityFilePath = $dir . DIRECTORY_SEPARATOR .

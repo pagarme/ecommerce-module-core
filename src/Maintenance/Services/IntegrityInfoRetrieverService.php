@@ -31,6 +31,7 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
     }
 
     /**
+     *
      * @return InstallDataSourceInterface|null
      */
     public function getModuleInstallDataSource()
@@ -38,13 +39,16 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         $installDataSourcesDir = __DIR__ . DIRECTORY_SEPARATOR . 'InstallDataSource';
 
         $classes = scandir($installDataSourcesDir);
-        array_walk($classes, function(&$class){
-            $class = str_replace('InstallDataSource.php', '', $class);
-        });
-        $classes = array_filter($classes, function($item)
-        {
-           return strlen($item) > 2;
-        });
+        array_walk(
+            $classes, function (&$class) {
+                $class = str_replace('InstallDataSource.php', '', $class);
+            }
+        );
+        $classes = array_filter(
+            $classes, function ($item) {
+                return strlen($item) > 2;
+            }
+        );
 
         $validInstallTypes = [];
         $namespace = __NAMESPACE__ . '\\InstallDataSource';
@@ -52,15 +56,18 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
 
             $installClass =  $namespace . '\\' . $class . 'InstallDataSource';
             $implements = class_implements($installClass);
-            if (in_array(ModuleInstallTypeInterface::class,$implements)) {
-               $validInstallTypes[] = $installClass;
+            if (in_array(ModuleInstallTypeInterface::class, $implements)) {
+                $validInstallTypes[] = $installClass;
             }
         }
 
         $integrityFilePath = null;
 
         foreach ($validInstallTypes as $installTypeClass) {
-            /** @var InstallDataSourceInterface $install */
+            /**
+             *
+ * @var InstallDataSourceInterface $install 
+*/
             $install = new $installTypeClass;
             $integrityFilePath = $install->getIntegrityFilePath();
             if ($integrityFilePath !== null) {
@@ -194,9 +201,11 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
             }
         }
         $fileCount = count($files);
-        $dirCount = array_filter($dirCount, function($dir) use($fileCount) {
-            return count($dir) == 1 && end($dir) == $fileCount;
-        });
+        $dirCount = array_filter(
+            $dirCount, function ($dir) use ($fileCount) {
+                return count($dir) == 1 && end($dir) == $fileCount;
+            }
+        );
 
         $rootDir = '';
         foreach ($dirCount as $part) {

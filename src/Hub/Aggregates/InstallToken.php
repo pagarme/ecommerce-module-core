@@ -9,16 +9,29 @@ final class InstallToken extends AbstractEntity
 {
     const LIFE_SPAN = 1800; //time in seconds
 
-    /** @var HubInstallToken */
+    /**
+     *
+     * @var HubInstallToken 
+     */
     private $token;
-    /** @var bool */
+    /**
+     *
+     * @var bool 
+     */
     private $used;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $createdAtTimestamp;
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $expireAtTimestamp;
 
     /**
+     *
      * @return HubInstallToken
      */
     public function getToken()
@@ -27,7 +40,8 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
-     * @param HubInstallToken $token
+     *
+     * @param  HubInstallToken $token
      * @return InstallToken
      */
     public function setToken(HubInstallToken $token)
@@ -37,6 +51,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isUsed()
@@ -45,7 +60,8 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
-     * @param bool $used
+     *
+     * @param  bool $used
      * @return InstallToken
      */
     public function setUsed($used)
@@ -55,6 +71,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isExpired()
@@ -63,6 +80,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getCreatedAtTimestamp()
@@ -71,7 +89,8 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
-     * @param int $createdAtTimestamp
+     *
+     * @param  int $createdAtTimestamp
      * @return InstallToken
      */
     public function setCreatedAtTimestamp($createdAtTimestamp)
@@ -81,6 +100,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getExpireAtTimestamp()
@@ -89,7 +109,8 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
-     * @param int $expireAtTimestamp
+     *
+     * @param  int $expireAtTimestamp
      * @return InstallToken
      */
     public function setExpireAtTimestamp($expireAtTimestamp)
@@ -99,6 +120,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return bool
      */
     public function isDisabled()
@@ -111,6 +133,7 @@ final class InstallToken extends AbstractEntity
     }
 
     /**
+     *
      * @return array|mixed
      */
     public function jsonSerialize()

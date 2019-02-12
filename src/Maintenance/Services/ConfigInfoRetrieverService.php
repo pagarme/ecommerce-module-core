@@ -10,9 +10,11 @@ class ConfigInfoRetrieverService implements InfoRetrieverServiceInterface
 {
     public function retrieveInfo($value)
     {
-        $obfuscated = json_decode(json_encode(
-            AbstractModuleCoreSetup::getModuleConfiguration()
-        ));
+        $obfuscated = json_decode(
+            json_encode(
+                AbstractModuleCoreSetup::getModuleConfiguration()
+            )
+        );
 
         $obfuscated->hubInstallId = $this->obfuscate($obfuscated->hubInstallId);
 

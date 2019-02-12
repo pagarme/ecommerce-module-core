@@ -107,19 +107,19 @@ final class InstallmentService
     }
 
     /**
-     * @param Installment[] $installments
-     * @param CardConfig $brandConfig
+     *
+     * @param  Installment[] $installments
+     * @param  CardConfig    $brandConfig
      * @return array
      */
     protected function filterInstallmentsByMinValue(array $installments, CardConfig $brandConfig)
     {
         return array_filter(
             $installments,
-            function(Installment $installment) use ($brandConfig){
+            function (Installment $installment) use ($brandConfig) {
                 return
                     $installment->getTimes() === 1 ||
-                    $installment->getValue() >= $brandConfig->getMinValue()
-                ;
+                    $installment->getValue() >= $brandConfig->getMinValue();
             }
         );
 

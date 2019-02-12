@@ -42,7 +42,7 @@ class LogDownloadInfoRetrieverService implements InfoRetrieverServiceInterface
         $zip = new ZipArchive;
         $zipFileName = tempnam(sys_get_temp_dir(), 'MP_');
         $zipSuccess = false;
-        if ($zip->open($zipFileName) === TRUE) {
+        if ($zip->open($zipFileName) === true) {
             $zip->addFile($file, $downloadFileName);
             $zip->close();
             $zipSuccess = true;

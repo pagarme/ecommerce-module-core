@@ -11,19 +11,22 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
 {
     public function retrieveInfo($value)
     {
-       $orderInfo = new \stdClass();
+        $orderInfo = new \stdClass();
 
-       $orderInfo->core = $this->getCoreOrderInfo($value);
-       $orderInfo->platform = $this->getPlatformOrderInfo($value);
+        $orderInfo->core = $this->getCoreOrderInfo($value);
+        $orderInfo->platform = $this->getPlatformOrderInfo($value);
 
-       return $orderInfo;
+        return $orderInfo;
     }
 
 
     private function getPlatformOrderInfo($orderIncrementId)
     {
         $platformOrderClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-        /** @var PlatformOrderInterface $platformOrder */
+        /**
+         *
+ * @var PlatformOrderInterface $platformOrder 
+*/
         $platformOrder = new $platformOrderClass();
         $platformOrder->loadByIncrementId($orderIncrementId);
 
@@ -42,7 +45,10 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
     private function getCoreOrderInfo($orderIncrementId)
     {
         $platformOrderClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-        /** @var PlatformOrderInterface $platformOrder */
+        /**
+         *
+ * @var PlatformOrderInterface $platformOrder 
+*/
         $platformOrder = new $platformOrderClass();
         $platformOrder->loadByIncrementId($orderIncrementId);
 
@@ -58,7 +64,8 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
         try {
             $data = $orderRepository->findByMundipaggId($mundipaggOrderId);
         }catch (\Throwable $e)
-        {}
+        {
+        }
 
         $coreOrder = new \stdClass();
         $coreOrder->mpOrderId = $mundipaggOrderId;
