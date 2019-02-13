@@ -176,11 +176,14 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
     private function loadIntegrityData($integrityFilePath)
     {
         $data = [];
+        try {
+            if (strlen($integrityFilePath) > 0) {
+                $data = json_decode(file_get_contents($integrityFilePath), true);
+            }
+        } catch (\Throwable $e)
+        {
 
-        if (strlen($integrityFilePath) > 0) {
-            $data = json_decode(file_get_contents($integrityFilePath), true);
         }
-
         return $data;
     }
 
