@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
+use ReflectionClass;
 
 abstract class AbstractModuleCoreSetup
 {
@@ -25,6 +26,7 @@ abstract class AbstractModuleCoreSetup
     protected static $instance;
     protected static $config;
     protected static $platformRoot;
+    protected static $moduleConcreteDir;
     /**
      *
      * @var Configuration 
@@ -93,6 +95,11 @@ abstract class AbstractModuleCoreSetup
         return static::$moduleConfig;
     }
 
+    public static function setModuleConfiguration(Configuration $moduleConfig)
+    {
+        static::$moduleConfig = $moduleConfig;
+    }
+
     public static function get($configId)
     {
         self::bootstrap();
@@ -147,6 +154,31 @@ abstract class AbstractModuleCoreSetup
     public static function formatToCurrency($price)
     {
         return self::$instance->_formatToCurrency($price);
+    }
+
+    public static function getModuleConcreteDir()
+    {
+        if (isset(self::$moduleConcreteDir)) {
+            return self::$moduleConcreteDir;
+        }
+
+        $concretePlatformCoreSetupClass = self::get(self::CONCRETE_MODULE_CORE_SETUP_CLASS);
+
+        $moduleCoreSetupReflection = new ReflectionClass($concretePlatformCoreSetupClass);
+        $concreteCoreSetupFilename = $moduleCoreSetupReflection->getFileName();
+        $concreteDir = explode(DIRECTORY_SEPARATOR, $concreteCoreSetupFilename);
+        array_pop($concreteDir);
+
+        self::$moduleConcreteDir = implode(DIRECTORY_SEPARATOR, $concreteDir);
+
+        return self::$moduleConcreteDir;
+    }
+
+    public static function setModuleConcreteDir($concreteModuleDir)
+    {
+        if(!isset(self::$moduleConcreteDir)) {
+            self::$moduleConcreteDir = $concreteModuleDir;
+        }
     }
 
     abstract protected static function setConfig();

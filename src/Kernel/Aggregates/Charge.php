@@ -292,9 +292,7 @@ final class Charge extends AbstractEntity
         $newest = $transactions[0];
 
         foreach ($transactions as $transaction) {
-            if (
-                $newest->getCreatedAt()->getTimestamp() <
-                $transaction->getCreatedAt()->getTimestamp()
+            if ($newest->getCreatedAt()->getTimestamp() <$transaction->getCreatedAt()->getTimestamp()
             ) {
                 $newest = $transaction;
             }

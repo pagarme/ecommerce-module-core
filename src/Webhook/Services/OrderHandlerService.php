@@ -44,7 +44,10 @@ final class OrderHandlerService extends AbstractHandlerService
 
             $orderService = new OrderService();
 
-            /** @var Order $webhookOrder */
+            /**
+             *
+ * @var Order $webhookOrder 
+*/
             $webhookOrder = $webhook->getEntity();
             $orderService->updateAcquirerData($webhookOrder);
 

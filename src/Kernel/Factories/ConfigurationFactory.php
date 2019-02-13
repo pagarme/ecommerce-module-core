@@ -8,6 +8,11 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
+use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\TestSecretKey;
 
 class ConfigurationFactory implements FactoryInterface
 {
@@ -65,18 +70,65 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
-        $config->setTestMode($data->testMode);
         if ($data->hubInstallId !== null) {
             $config->setHubInstallId(
                 new GUID($data->hubInstallId)
             );
         }
 
-        $config->setPublicKey((array)$data->keys);
-        $config->setSecretKey((array)$data->keys);
+        if (isset($data->keys) ) {
+            if (!isset($data->publicKey)) {
+                $index = Configuration::KEY_PUBLIC;
+                $data->publicKey = $data->keys->$index;
+            }
+
+            if (!isset($data->secretKey)) {
+                $index = Configuration::KEY_SECRET;
+                $data->secretKey = $data->keys->$index;
+            }
+        }
+        
+        if (!empty($data->publicKey)) {
+            $config->setPublicKey(
+                $this->createPublicKey($data->publicKey)
+            );
+        }
+
+        if (!empty($data->secretKey)) {
+            $config->setSecretKey(
+                $this->createSecretKey($data->secretKey)
+            );
+        }
 
         return $config;
     }
+
+
+    private function createPublicKey($key)
+    {
+        try {
+            return new TestPublicKey($key);
+        } catch(\Throwable $e) {
+        }
+
+        return new PublicKey($key);
+    }
+
+    private function createSecretKey($key)
+    {
+        try {
+            return new TestSecretKey($key);
+        } catch(\Throwable $e) {
+        }
+
+        try {
+            return new SecretKey($key);
+        } catch(\Throwable $e) {
+        }
+
+        return new HubAccessTokenKey($key);
+    }
+
 
     /**
      *

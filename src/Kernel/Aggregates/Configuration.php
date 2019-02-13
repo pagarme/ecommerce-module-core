@@ -7,6 +7,8 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
+use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
@@ -16,26 +18,6 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 
 final class Configuration extends AbstractEntity
 {
-    const CREDIT_CARD_BRAND_DEFAULT = 'Default';
-    const CREDIT_CARD_BRAND_VISA = 'Visa';
-    const CREDIT_CARD_BRAND_MASTERCARD = 'Mastercard';
-    const CREDIT_CARD_BRAND_HIPERCARD = 'Hipercard';
-    const CREDIT_CARD_BRAND_ELO = 'Elo';
-    const CREDIT_CARD_BRAND_DINERS = 'Diners';
-    const CREDIT_CARD_BRAND_AMEX = 'Amex';
-
-    const BOLETO_BRAND_BOLETO = 'Boleto';
-
-    static private $validBrands = [
-        self::CREDIT_CARD_BRAND_DEFAULT,
-        self::CREDIT_CARD_BRAND_VISA,
-        self::CREDIT_CARD_BRAND_MASTERCARD,
-        self::CREDIT_CARD_BRAND_HIPERCARD,
-        self::CREDIT_CARD_BRAND_ELO,
-        self::CREDIT_CARD_BRAND_DINERS,
-        self::CREDIT_CARD_BRAND_AMEX
-    ];
-
     const KEY_SECRET = 'KEY_SECRET';
     const KEY_PUBLIC = 'KEY_PUBLIC';
 
@@ -89,7 +71,6 @@ final class Configuration extends AbstractEntity
 
     public function __construct()
     {
-        /*$this->disabled = false;
         $this->cardConfigs = [];
 
         $this->keys = [
@@ -97,7 +78,7 @@ final class Configuration extends AbstractEntity
             self::KEY_PUBLIC => null,
         ];
 
-        $this->hubInstallId = new HubAccessTokenKey(null);*/
+        $this->testMode = true;
     }
 
     public function isDisabled()
@@ -128,19 +109,16 @@ final class Configuration extends AbstractEntity
      * @param  string|array $key
      * @return $this
      */
-    public function setPublicKey($key)
+    public function setPublicKey(AbstractPublicKey $key)
     {
-        $index = self::KEY_PUBLIC;
-        $keyClass = PublicKey::class;
-        if ($this->isTestMode()) {
-            $keyClass = TestPublicKey::class;
-        }
+        $this->testMode = false;
 
-        if (is_array($key)) {
-            $key = $key[$index];
-        }
+        $this->keys[self::KEY_PUBLIC] = $key;
 
-        $this->keys[$index] = new $keyClass($key);
+        if (is_a($key, TestPublicKey::class)) {
+            $this->testMode = true;
+        };
+
         return $this;
     }
 
@@ -149,23 +127,9 @@ final class Configuration extends AbstractEntity
      * @param  string|array $key
      * @return $this
      */
-    public function setSecretKey($key)
+    public function setSecretKey(AbstractSecretKey $key)
     {
-        $index = self::KEY_SECRET;
-        $keyClass = SecretKey::class;
-        if ($this->isTestMode()) {
-            $keyClass = TestSecretKey::class;
-        }
-
-        if ($this->isHubEnabled()) {
-            $keyClass = HubAccessTokenKey::class;
-        }
-
-        if (is_array($key)) {
-            $key = $key[$index];
-        }
-
-        $this->keys[$index] = new $keyClass($key);
+        $this->keys[self::KEY_SECRET] = $key;
         return $this;
     }
 
@@ -176,23 +140,6 @@ final class Configuration extends AbstractEntity
     public function isTestMode()
     {
         return $this->testMode;
-    }
-
-    /**
-     *
-     * @deprecated Since the test mode is defined by the
-     * presence of an test public key, this is not necessary.
-     *
-     * @param  bool $testMode
-     * @return Configuration
-     */
-    public function setTestMode($testMode)
-    {
-        $this->testMode = filter_var(
-            $testMode,
-            FILTER_VALIDATE_BOOLEAN
-        );
-        return $this;
     }
 
     /**
@@ -359,18 +306,5 @@ final class Configuration extends AbstractEntity
             "keys" => $this->keys,
             "cardConfigs" => $this->getCardConfigs()
         ];
-    }
-
-    public function updateFromSettings(Configuration $config)
-    {
-        $this->cardConfigs = [];
-        foreach ($config->getCardConfigs() as $cardConfig) {
-            $this->addCardConfig($cardConfig);
-        }
-
-        $this->setBoletoEnabled($config->isBoletoEnabled());
-        $this->setCreditCardEnabled($config->isCreditCardEnabled());
-        $this->setBoletoCreditCardEnabled($config->isBoletoCreditCardEnabled());
-        $this->setTwoCreditCardsEnabled($config->isTwoCreditCardsEnabled());
     }
 }

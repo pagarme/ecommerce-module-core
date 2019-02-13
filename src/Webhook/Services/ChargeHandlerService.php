@@ -76,7 +76,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         /*
          * @moved to order.paid handler.
           if ($transaction->getTransactionType()->equals
-    (TransactionType::creditCard())) {
+        (TransactionType::creditCard())) {
             $orderService->updateAcquirerData($order);
         }
         */
@@ -278,9 +278,9 @@ final class ChargeHandlerService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) ||
-            $charge->getStatus()->equals(ChargeStatus::overpaid()) ||
-            $charge->getStatus()->equals(ChargeStatus::underpaid())
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
+            || $charge->getStatus()->equals(ChargeStatus::overpaid()) 
+            || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
@@ -346,9 +346,9 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) ||
-            $charge->getStatus()->equals(ChargeStatus::overpaid()) ||
-            $charge->getStatus()->equals(ChargeStatus::underpaid())
+        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
+            || $charge->getStatus()->equals(ChargeStatus::overpaid()) 
+            || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
 
