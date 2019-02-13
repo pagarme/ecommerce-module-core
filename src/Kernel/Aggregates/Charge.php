@@ -377,6 +377,7 @@ final class Charge extends AbstractEntity
         $obj->refundedAmount = $this->getRefundedAmount();
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
+        $obj->transactions = $this->getTransactions();
         //$obj->lastTransaction = $this->getLastTransaction();
 
         return $obj;
