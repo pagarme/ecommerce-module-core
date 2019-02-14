@@ -21,6 +21,11 @@ final class LogService
     {
         $this->channelName = $channelName;
         $this->path = AbstractModuleCoreSetup::getLogPath();
+
+        if (is_array($this->path)) {
+            $this->path = array_shift($this->path);
+        }
+
         $this->addHost = $addHost;
 
         $this->setFileName();
