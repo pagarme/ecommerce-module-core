@@ -69,10 +69,16 @@ final class Transaction extends AbstractEntity
      */
     private $acquirerMessage;
 
-    /** @var string */
+    /**
+     *
+     * @var string 
+     */
     private $brand;
 
-    /** @var int */
+    /**
+     *
+     * @var int 
+     */
     private $installments;
 
     /**
@@ -303,6 +309,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return string
      */
     public function getBrand()
@@ -311,7 +318,8 @@ final class Transaction extends AbstractEntity
     }
 
     /**
-     * @param string $brand
+     *
+     * @param  string $brand
      * @return Transaction
      */
     public function setBrand($brand)
@@ -321,6 +329,7 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     *
      * @return int
      */
     public function getInstallments()
@@ -329,7 +338,8 @@ final class Transaction extends AbstractEntity
     }
 
     /**
-     * @param int $installments
+     *
+     * @param  int $installments
      * @return Transaction
      */
     public function setInstallments($installments)
