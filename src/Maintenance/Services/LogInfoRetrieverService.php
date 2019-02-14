@@ -41,12 +41,23 @@ class LogInfoRetrieverService implements InfoRetrieverServiceInterface
         $files = $this->filterLogFilesByDate($value, $files);
 
         $requestURI = $_SERVER['REQUEST_URI'];
+        $needle = 'log';
+        if (strlen($value) > 0) {
+            $needle .= "=$value";
+        }
         foreach ($files as $key => $file) {
             $encoded = base64_encode($file);
+
             $uriZip =
-                ltrim(preg_replace('/log/', 'logDownload=zip:' . $encoded, $requestURI), '/');
+                ltrim(preg_replace(
+                    '/' . $needle . '/',
+                    'logDownload=zip:' . $encoded, $requestURI
+                ), '/');
             $uriRaw =
-                ltrim(preg_replace('/log/', 'logDownload=raw:' . $encoded, $requestURI), '/');
+                ltrim(preg_replace(
+                    '/' . $needle . '/',
+                    'logDownload=raw:' . $encoded, $requestURI
+                ), '/');
 
             $donwloadURIs[] = [
                 'file' => $file,
