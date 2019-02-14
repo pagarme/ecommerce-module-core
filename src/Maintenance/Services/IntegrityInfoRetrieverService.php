@@ -223,7 +223,7 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         return $rootDir;
     }
 
-    private function generateIntegrityFile($dataSource)
+    private function generateIntegrityFile(InstallDataSourceInterface $dataSource)
     {
         $files = $dataSource->getFiles();
         $integrityFilePath = $dataSource->getIntegrityFilePath();

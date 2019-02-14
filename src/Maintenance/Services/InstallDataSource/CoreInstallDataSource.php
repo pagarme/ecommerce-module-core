@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Maintenance\Services\InstallDataSource;
 
-
 final class CoreInstallDataSource extends AbstractInstallDataSource
 {
     private $integrityFilePath;
@@ -13,7 +12,6 @@ final class CoreInstallDataSource extends AbstractInstallDataSource
         array_pop($dir);
         array_pop($dir);
         $dir = implode(DIRECTORY_SEPARATOR, $dir);
-
 
         $this->integrityFilePath = $dir . DIRECTORY_SEPARATOR .
             'Assets' . DIRECTORY_SEPARATOR . 'integrityData';
