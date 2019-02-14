@@ -23,7 +23,7 @@ final class LogService
         $this->path = AbstractModuleCoreSetup::getLogPath();
 
         if (is_array($this->path)) {
-            $this->path = array_pop($this->path);
+            $this->path = array_shift($this->path);
         }
 
         $this->addHost = $addHost;
