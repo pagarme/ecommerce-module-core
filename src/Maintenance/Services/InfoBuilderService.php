@@ -15,20 +15,23 @@ class InfoBuilderService
     public function buildInfoFromQueryArray(array $query)
     {
         $infos = [];
-        if ($this->isTokenValid($query)) {
-            foreach ($query as $parameter => $value) {
-                $infoRetriever = $this->getInfoRetrieverServiceFor($parameter);
-                if ($infoRetriever !== null) {
-                    $data = $infoRetriever->retrieveInfo($value);
-                    if (is_string($data)) {
-                        return $data;
-                    }
-                    $infos[$parameter] = $data;
-                }
-            }
-            return $infos;
+        if (!$this->isTokenValid($query)) {
+            return [];
         }
-        return [];
+
+        foreach ($query as $parameter => $value) {
+            $infoRetriever = $this->getInfoRetrieverServiceFor($parameter);
+            if ($infoRetriever === null) {
+                continue;
+            }
+
+            $data = $infoRetriever->retrieveInfo($value);
+            if (is_string($data)) {
+                return $data;
+            }
+            $infos[$parameter] = $data;
+        }
+        return $infos;
     }
 
     /**

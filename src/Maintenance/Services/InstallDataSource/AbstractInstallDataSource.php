@@ -25,7 +25,11 @@ abstract class AbstractInstallDataSource implements InstallDataSourceInterface
                     }
 
                     $foundFile = $dir . DIRECTORY_SEPARATOR . $foundFile;
-                    $foundFile = preg_replace('/\\' .DIRECTORY_SEPARATOR. '{2,}/', DIRECTORY_SEPARATOR, $foundFile);
+                    $foundFile = preg_replace(
+                        '/\\' .DIRECTORY_SEPARATOR. '{2,}/',
+                        DIRECTORY_SEPARATOR,
+                        $foundFile
+                    );
 
                     if (is_dir($foundFile)) {
                         $files = array_merge(

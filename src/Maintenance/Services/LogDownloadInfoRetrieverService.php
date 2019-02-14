@@ -22,7 +22,6 @@ class LogDownloadInfoRetrieverService implements InfoRetrieverServiceInterface
             return null;
         }
 
-
         if (!in_array($file, $validLogFiles)) {
             return null;
         }

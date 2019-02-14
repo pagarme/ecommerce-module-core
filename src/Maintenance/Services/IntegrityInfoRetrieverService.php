@@ -145,7 +145,6 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         $integrityInfo->reference = $integrityData;
 
         return $integrityInfo;
-
     }
 
     private function getEmptyIntegrityInfo()
