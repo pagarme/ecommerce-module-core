@@ -1,0 +1,90 @@
+<?php
+
+namespace Mundipagg\Core\Payment\ValueObjects;
+
+use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+
+final class PaymentMethod extends AbstractValueObject
+{
+    const CREDIT_CARD = 'credit_card';
+    const TICKET = 'ticket';
+    const VOUCHER = 'voucher';
+    const BANK_TRANSFER = 'bank_transfer';
+    const SAFETY_PAY = 'safety_pay';
+    const CHECKOUT = 'checkout';
+    const CASH = 'cash';
+
+    private $method;
+
+    private function __construct($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    static public function creditCard()
+    {
+        return new self(self::CREDIT_CARD);
+    }
+
+    static public function ticket()
+    {
+        return new self(self::TICKET);
+    }
+
+    static public function voucher()
+    {
+        return new self(self::VOUCHER);
+    }
+
+    static public function bankTransfer()
+    {
+        return new self(self::BANK_TRANSFER);
+    }
+
+    static public function safetyPay()
+    {
+        return new self(self::SAFETY_PAY);
+    }
+
+    static public function checkout()
+    {
+        return new self(self::CHECKOUT);
+    }
+
+    static public function cash()
+    {
+        return new self(self::CASH);
+    }
+
+    /**
+     * To check the structural equality of value objects,
+     * this method should be implemented in this class children.
+     *
+     * @param  $object
+     * @return bool
+     */
+    protected function isEqual($object)
+    {
+        return $this->getMethod() === $object->getMethod();
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->getMethod();
+    }
+}
+
+
+
