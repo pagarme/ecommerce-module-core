@@ -113,6 +113,9 @@ class LogInfoRetrieverService implements InfoRetrieverServiceInterface
     {
         $files = [];
         foreach($dirs as $logDir) {
+            if (!file_exists($logDir)) {
+                continue;
+            }
             $foundFiles = scandir($logDir);
             if ($foundFiles !== false) {
                 foreach ($foundFiles as $foundFile) {
