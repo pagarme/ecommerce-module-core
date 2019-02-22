@@ -45,4 +45,6 @@ abstract class AbstractPayment extends AbstractEntity
 
         return $obj;
     }
+
+    abstract static public function getBaseCode();
 }

@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Payment\Aggregates\Order;
 
 class APIService
 {
@@ -33,6 +34,11 @@ class APIService
         } catch (APIException $e) {
             return $e->getMessage();
         }
+    }
+
+    public function createOrder(Order $order)
+    {
+
     }
 
     public function getOrder(OrderId $orderId)

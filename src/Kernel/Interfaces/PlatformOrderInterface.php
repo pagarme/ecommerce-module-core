@@ -5,6 +5,9 @@ namespace Mundipagg\Core\Kernel\Interfaces;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Aggregates\Item;
+use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 
 interface PlatformOrderInterface
 {
@@ -58,4 +61,11 @@ interface PlatformOrderInterface
     public function getTransactionCollection();
     public function getPaymentCollection();
 
+    /** @return Customer */
+    public function getCustomer();
+    /** @return Item[] */
+    public function getItemCollection();
+
+    /** @return AbstractPayment[] */
+    public function getPaymentMethodCollection();
 }

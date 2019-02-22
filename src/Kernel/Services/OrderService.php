@@ -5,10 +5,18 @@ namespace Mundipagg\Core\Kernel\Services;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Aggregates\Address;
+use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Aggregates\Item;
+use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Mundipagg\Core\Payment\ValueObjects\CardToken;
+use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
+use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Payment\ValueObjects\Phone;
+use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
 final class OrderService
 {
@@ -125,5 +133,44 @@ final class OrderService
         if (is_a($order, Order::class)) {
             $this->cancelAtMundipagg($order);
         }
+    }
+
+    public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
+    {
+        //build PaymentOrder based on platformOrder
+        //Send through the APIService to mundipagg
+        //pass the response to the correct handler.
+
+
+        return $this->paymentTest($platformOrder);
+    }
+
+    private function paymentTest($platformOrder)
+    {
+        $user = new Customer();
+        $user->setType(CustomerType::individual());
+
+        $order = new PaymentOrder();
+        $payments = $platformOrder->getPaymentMethodCollection();
+
+        foreach ($payments as $payment) {
+            $order->addPayment($payment);
+        }
+
+        $items = $platformOrder->getItemCollection();
+        foreach ($items as $item) {
+            $order->addItem($item);
+        }
+
+        $order->setCode($platformOrder->getCode());
+        $order->setAntifraudEnabled(false);
+        $order->setCustomer($platformOrder->getCustomer());
+
+        //$orderService = new OrderService();
+
+
+
+        return [$order];
+
     }
 }

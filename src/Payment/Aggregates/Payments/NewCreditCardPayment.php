@@ -16,7 +16,7 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
         return $obj;
     }
 
-    protected function setIdentifier(AbstractCardIdentifier $identifier)
+    public function setIdentifier(AbstractCardIdentifier $identifier)
     {
         $this->identifier = $identifier;
     }
