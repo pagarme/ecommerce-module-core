@@ -8,14 +8,9 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Aggregates\Address;
 use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Item;
-use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
-use Mundipagg\Core\Payment\ValueObjects\CardToken;
-use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
-use Mundipagg\Core\Payment\ValueObjects\Phone;
+
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
 final class OrderService

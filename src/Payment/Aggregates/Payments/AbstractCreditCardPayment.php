@@ -10,8 +10,6 @@ use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 abstract class AbstractCreditCardPayment extends AbstractPayment
 {
-    const BASE_CODE = 'credit_card';
-
     /** @var int */
     protected $installments;
     /** @var string */
@@ -26,7 +24,6 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
     {
         $this->installments = 1;
         $this->capture = true;
-        $this->paymentMethod = PaymentMethod::creditCard();
     }
 
     /**
@@ -111,7 +108,7 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
 
     static public function getBaseCode()
     {
-        return self::BASE_CODE;
+        return PaymentMethod::creditCard()->getMethod();
     }
 
 }

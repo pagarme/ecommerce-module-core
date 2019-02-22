@@ -11,8 +11,6 @@ use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 final class BoletoPayment extends AbstractPayment
 {
-    const BASE_CODE = 'boleto';
-
     /** @var BoletoBank */
     private $bank;
     /** @var string */
@@ -62,6 +60,6 @@ final class BoletoPayment extends AbstractPayment
 
     static public function getBaseCode()
     {
-        return self::BASE_CODE;
+        return PaymentMethod::boleto()->getMethod();
     }
 }

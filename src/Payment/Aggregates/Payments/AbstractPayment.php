@@ -12,30 +12,11 @@ abstract class AbstractPayment extends AbstractEntity
     use WithAmountTrait;
     use WithCustomerTrait;
 
-    /** @var PaymentMethod */
-    protected $paymentMethod;
-
-    /**
-     * @return PaymentMethod
-     */
-    public function getPaymentMethod()
-    {
-        return $this->paymentMethod;
-    }
-
-    /**
-     * @param PaymentMethod $paymentMethod
-     */
-    public function setPaymentMethod(PaymentMethod $paymentMethod)
-    {
-        $this->paymentMethod = $paymentMethod;
-    }
-
     public function jsonSerialize()
     {
         $obj = new \stdClass();
 
-        $obj->paymentMethod = $this->getPaymentMethod();
+        $obj->paymentMethod = static::getBaseCode();
         $obj->amount = $this->getAmount();
 
         $customer = $this->getCustomer();

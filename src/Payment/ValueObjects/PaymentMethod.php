@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 final class PaymentMethod extends AbstractValueObject
 {
     const CREDIT_CARD = 'credit_card';
+    const BOLETO = 'boleto';
     const TICKET = 'ticket';
     const VOUCHER = 'voucher';
     const BANK_TRANSFER = 'bank_transfer';
@@ -29,6 +30,11 @@ final class PaymentMethod extends AbstractValueObject
     static public function creditCard()
     {
         return new self(self::CREDIT_CARD);
+    }
+
+    static public function boleto()
+    {
+        return new self(self::BOLETO);
     }
 
     static public function ticket()

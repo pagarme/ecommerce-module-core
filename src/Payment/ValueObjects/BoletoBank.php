@@ -65,27 +65,27 @@ class BoletoBank extends AbstractValueObject
 
     static public function santander()
     {
-        return new self(self::NAME_SANTANDER, self::NAME_SANTANDER);
+        return new self(self::CODE_SANTANDER, self::NAME_SANTANDER);
     }
 
     static public function bradesco()
     {
-        return new self(self::NAME_BRADESCO, self::NAME_BRADESCO);
+        return new self(self::CODE_BRADESCO, self::NAME_BRADESCO);
     }
 
     static public function itau()
     {
-        return new self(self::NAME_ITAU, self::NAME_ITAU);
+        return new self(self::CODE_ITAU, self::NAME_ITAU);
     }
 
     static public function citibank()
     {
-        return new self(self::NAME_CITIBANK, self::NAME_CITIBANK);
+        return new self(self::CODE_CITIBANK, self::NAME_CITIBANK);
     }
 
     static public function cef()
     {
-        return new self(self::NAME_CEF, self::NAME_CEF);
+        return new self(self::CODE_CEF, self::NAME_CEF);
     }
 
     /**
