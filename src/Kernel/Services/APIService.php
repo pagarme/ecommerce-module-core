@@ -3,14 +3,17 @@
 namespace Mundipagg\Core\Kernel\Services;
 
 use MundiAPILib\APIException;
+use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateBoletoPaymentRequest;
 use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
+use MundiAPILib\Models\CreateOrderItemRequest;
 use MundiAPILib\Models\CreateOrderRequest;
 use MundiAPILib\Models\CreatePaymentRequest;
 use MundiAPILib\Models\CreatePhoneRequest;
 use MundiAPILib\Models\CreatePhonesRequest;
+use MundiAPILib\Models\CreateShippingRequest;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
@@ -22,6 +25,7 @@ use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 
 class APIService
 {
@@ -50,6 +54,33 @@ class APIService
 
     public function createOrder(Order $order)
     {
+        $orderRequest = $this->buildOrderRequest($order);
+
+        $orderController = $this->getOrderController();
+
+        try {
+            $response = $orderController->createOrder($orderRequest);
+            $stdClass = json_decode(json_encode($response), true);
+            $orderFactory = new OrderFactory();
+            return $orderFactory->createFromPostData($stdClass);
+
+        } catch (ErrorException $e) {
+            return $e;
+        }
+        /**
+
+        "message": "The request is invalid.",
+        "errors": {
+        "order.customer.name": [
+        "The name field is required."
+        ]
+        },
+         */
+
+    }
+
+    private function buildOrderRequest(Order $order)
+    {
         $orderRequest = new CreateOrderRequest();
 
         $orderRequest->antifraudEnabled = $order->isAntifraudEnabled();
@@ -57,11 +88,51 @@ class APIService
         $orderRequest->code = $order->getCode();
         $orderRequest->metadata = $this->getOrderMetaData();
         $orderRequest->customer = $this->createCustomerRequest($order);
-
         $orderRequest->payments = $this->createPaymentRequests($order);
 
-        $a = 1;
+        $orderRequest->items = $this->createItemsRequest($order);
 
+        $shipping = $order->getShipping();
+        if ($shipping !== null) {
+            $orderRequest->shipping = $this->createShippingRequest($shipping);
+        }
+
+
+        return $orderRequest;
+    }
+
+    private function createItemsRequest(Order $order)
+    {
+        $itemsRequest = [];
+
+        foreach ($order->getItems() as $item) {
+            $itemRequest = new CreateOrderItemRequest();
+
+            $itemRequest->description = $item->getDescription();
+            $itemRequest->amount = $item->getAmount();
+            $itemRequest->quantity = $item->getQuantity();
+
+            $itemsRequest[] = $itemRequest;
+        }
+
+        return $itemsRequest;
+    }
+
+
+    private function createShippingRequest(Shipping $shipping)
+    {
+        $shippingRequest = new CreateShippingRequest();
+
+        $shippingRequest->amount = $shipping->getAmount();
+        $shippingRequest->description = $shipping->getDescription();
+        $shippingRequest->recipientName = $shipping->getRecipientName();
+        $shippingRequest->recipientPhone = $shipping->getRecipientPhone()
+            ->getFullNumber();
+        $customer = new Customer();
+        $customer->setAddress($shipping->getAddress());
+        $shippingRequest->address = $this->createAddressRequest($customer);
+
+        return $shippingRequest;
     }
 
     private function createPaymentRequests(Order $order)
@@ -75,11 +146,22 @@ class APIService
 
             $baseMethod = (get_class($payment))::getBaseCode();
             $newPayment->$baseMethod = $this->preparePaymentData($payment);
+            $newPayment->paymentMethod = $this->cammel2SnakeCase($baseMethod);
 
             $paymentRequests[] = $newPayment;
         }
 
         return $paymentRequests;
+    }
+
+    private function cammel2SnakeCase($cammelCaseString)
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $cammelCaseString, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
 
     private function preparePaymentData(AbstractPayment $payment)
@@ -117,10 +199,10 @@ class APIService
         $customerRequest = new CreateCustomerRequest();
         $customer = $order->getCustomer();
 
-        $customerRequest->name = $customer->getName();
-        $customerRequest->email = $customer->getEmail();
-        $customerRequest->document = $customer->getDocument();
-        $customerRequest->type = $customer->getType()->getType();
+        //$customerRequest->name = $customer->getName();
+        //$customerRequest->email = $customer->getEmail();
+        //$customerRequest->document = $customer->getDocument();
+        //$customerRequest->type = $customer->getType()->getType();
         $customerRequest->address = $this->createAddressRequest($customer);
 
         $customerRequest->phones = new CreatePhonesRequest();
@@ -203,6 +285,8 @@ class APIService
 
         $secretKey = $config->getSecretKey()->getValue();
         $password = '';
+
+        \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         return new MundiAPIClient($secretKey, $password);
     }

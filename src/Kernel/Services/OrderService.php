@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
@@ -138,9 +139,24 @@ final class OrderService
         //Send through the APIService to mundipagg
         $apiService = new APIService();
         $response = $apiService->createOrder($order);
-        //pass the response to the correct handler.
 
-        return [$order];
+        $handler = $this->getResponseHandler($response);
+        $handler->handle($response);
+
+        return [$response];
+    }
+
+    /** @return ResponseHandlerInterface */
+    private function getResponseHandler($response)
+    {
+        $responseClass = get_class($response);
+        $responseClass = explode('\\', $responseClass);
+
+        $responseClass =
+            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            end($responseClass) . 'Handler';
+
+        return new $responseClass;
     }
 
     /** @Todo do the validations */
@@ -166,6 +182,11 @@ final class OrderService
         $order->setCode($platformOrder->getCode());
         $order->setAntifraudEnabled(false);
         $order->setCustomer($platformOrder->getCustomer());
+
+        $shipping = $platformOrder->getShipping();
+        if ($shipping !== null) {
+            $order->setShipping($shipping);
+        }
 
         return $order;
     }

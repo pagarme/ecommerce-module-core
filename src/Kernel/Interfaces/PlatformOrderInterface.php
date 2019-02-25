@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Item;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 
 interface PlatformOrderInterface
 {
@@ -68,4 +69,6 @@ interface PlatformOrderInterface
 
     /** @return AbstractPayment[] */
     public function getPaymentMethodCollection();
+    /** @return null|Shipping */
+    public function getShipping();
 }
