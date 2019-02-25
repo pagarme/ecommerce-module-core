@@ -67,16 +67,6 @@ class APIService
         } catch (ErrorException $e) {
             return $e;
         }
-        /**
-
-        "message": "The request is invalid.",
-        "errors": {
-        "order.customer.name": [
-        "The name field is required."
-        ]
-        },
-         */
-
     }
 
     private function buildOrderRequest(Order $order)
@@ -199,10 +189,10 @@ class APIService
         $customerRequest = new CreateCustomerRequest();
         $customer = $order->getCustomer();
 
-        //$customerRequest->name = $customer->getName();
-        //$customerRequest->email = $customer->getEmail();
-        //$customerRequest->document = $customer->getDocument();
-        //$customerRequest->type = $customer->getType()->getType();
+        $customerRequest->name = $customer->getName();
+        $customerRequest->email = $customer->getEmail();
+        $customerRequest->document = $customer->getDocument();
+        $customerRequest->type = $customer->getType()->getType();
         $customerRequest->address = $this->createAddressRequest($customer);
 
         $customerRequest->phones = new CreatePhonesRequest();
