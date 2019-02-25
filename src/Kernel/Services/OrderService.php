@@ -133,14 +133,20 @@ final class OrderService
     public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
     {
         //build PaymentOrder based on platformOrder
+        $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
+
         //Send through the APIService to mundipagg
+        $apiService = new APIService();
+        $response = $apiService->createOrder($order);
         //pass the response to the correct handler.
 
-
-        return $this->paymentTest($platformOrder);
+        return [$order];
     }
 
-    private function paymentTest($platformOrder)
+    /** @Todo do the validations */
+    private function extractPaymentOrderFromPlatformOrder(
+        PlatformOrderInterface $platformOrder
+    )
     {
         $user = new Customer();
         $user->setType(CustomerType::individual());
@@ -161,11 +167,6 @@ final class OrderService
         $order->setAntifraudEnabled(false);
         $order->setCustomer($platformOrder->getCustomer());
 
-        //$orderService = new OrderService();
-
-
-
-        return [$order];
-
+        return $order;
     }
 }

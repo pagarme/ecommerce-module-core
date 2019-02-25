@@ -55,6 +55,14 @@ final class Phone extends AbstractValueObject
         return $this->number;
     }
 
+    public function getFullNumber()
+    {
+        return
+            $this->countryCode->getValue() .
+            $this->areaCode->getValue() .
+            $this->number->getValue();
+    }
+
     /**
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.

@@ -6,12 +6,12 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class PaymentMethod extends AbstractValueObject
 {
-    const CREDIT_CARD = 'credit_card';
+    const CREDIT_CARD = 'creditCard';
     const BOLETO = 'boleto';
     const TICKET = 'ticket';
     const VOUCHER = 'voucher';
-    const BANK_TRANSFER = 'bank_transfer';
-    const SAFETY_PAY = 'safety_pay';
+    const BANK_TRANSFER = 'bankTransfer';
+    const SAFETY_PAY = 'safetyPay';
     const CHECKOUT = 'checkout';
     const CASH = 'cash';
 

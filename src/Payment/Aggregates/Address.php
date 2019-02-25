@@ -36,6 +36,8 @@ final class Address extends AbstractEntity
      * @var string
      */
     private $country;
+    /** @var string */
+    private $state;
 
     /**
      * @return string
@@ -177,6 +179,24 @@ final class Address extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     * @return Address
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return string data which can be serialized by <b>json_encode</b>,
@@ -193,6 +213,7 @@ final class Address extends AbstractEntity
         $obj->complement = $this->complement;
         $obj->zipCode = $this->zipCode;
         $obj->city = $this->city;
+        $obj->state = $this->state;
         $obj->country = $this->country;
         $obj->line1 = $this->getLine1();
         $obj->line2 = $this->getLine2();
