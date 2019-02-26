@@ -13,6 +13,7 @@ class PTBR extends AbstractI18NTable
             'Invoice canceled: #%s.' => 'Invoice cancelada: #%s',
             'Webhook received: %s.%s' => 'Webhook recebido: %s.%s',
             'Order paid.' => 'Pedido pago.',
+            'Order created at Mundipagg. Id: %s' => 'Pedido criado na Mundipagg. Id %s',
             'Order canceled.' => 'Pedido cancelado.',
             'Payment received: %.2f' => 'Pagamento recebido: %.2f',
             'Canceled amount: %.2f' => 'Quantia cancelada: %.2f',

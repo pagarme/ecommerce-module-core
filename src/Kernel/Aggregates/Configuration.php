@@ -21,11 +21,14 @@ final class Configuration extends AbstractEntity
     const KEY_SECRET = 'KEY_SECRET';
     const KEY_PUBLIC = 'KEY_PUBLIC';
 
+    const CARD_OPERATION_AUTH_ONLY = 'auth_only';
+    const CARD_OPERATION_AUTH_AND_CAPTURE = 'auth_and_capture';
+
     /**
      *
      * @var bool 
      */
-    private $disabled;
+    private $enabled;
     /**
      *
      * @var bool 
@@ -57,6 +60,9 @@ final class Configuration extends AbstractEntity
      */
     private $hubInstallId;
 
+    /** @var string */
+    private $cardOperation;
+
     /**
      *
      * @var AbstractValidString[]
@@ -81,15 +87,15 @@ final class Configuration extends AbstractEntity
         $this->testMode = true;
     }
 
-    public function isDisabled()
+    public function isEnabled()
     {
-        return $this->disabled;
+        return $this->enabled;
     }
 
-    public function setDisabled($disabled)
+    public function setEnabled($enabled)
     {
-        $this->disabled = filter_var(
-            $disabled,
+        $this->enabled = filter_var(
+            $enabled,
             FILTER_VALIDATE_BOOLEAN
         );
     }
@@ -286,6 +292,31 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getCardOperation()
+    {
+        return $this->cardOperation;
+    }
+
+    /**
+     * @param string $cardOperation
+     */
+    public function setCardOperation($cardOperation)
+    {
+        $this->cardOperation = $cardOperation;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCapture()
+    {
+        //@todo if antifraud is enabled, this method should always return false;
+        return $this->moduleConfig->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -296,7 +327,7 @@ final class Configuration extends AbstractEntity
     public function jsonSerialize()
     {
         return [
-            "disabled" => $this->disabled,
+            "enabled" => $this->enabled,
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
@@ -304,6 +335,7 @@ final class Configuration extends AbstractEntity
             "testMode" => $this->testMode,
             "hubInstallId" => $this->isHubEnabled() ? $this->hubInstallId->getValue() : null,
             "keys" => $this->keys,
+            "cardOperation" => $this->cardOperation,
             "cardConfigs" => $this->getCardConfigs()
         ];
     }

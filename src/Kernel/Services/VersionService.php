@@ -34,6 +34,11 @@ final class VersionService
         return AbstractModuleCoreSetup::getModuleVersion();
     }
 
+    public function getPlatformVersion()
+    {
+        return AbstractModuleCoreSetup::getPlatformVersion();
+    }
+
     public function getVersionPair()
     {
         return new VersionPair(

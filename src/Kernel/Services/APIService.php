@@ -236,6 +236,7 @@ class APIService
 
         $metadata->moduleVersion = $versionService->getModuleVersion();
         $metadata->coreVersion = $versionService->getCoreVersion();
+        $metadata->platformVersion = $versionService->getPlatformVersion();
 
         return $metadata;
     }

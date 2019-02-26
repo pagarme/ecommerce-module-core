@@ -17,9 +17,9 @@ use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler implements ResponseHandlerInterface
 {
-
     /**
      * @param Order $order
+     * @return mixed
      */
     public function handle($order)
     {
@@ -30,15 +30,40 @@ final class OrderHandler implements ResponseHandlerInterface
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
-        $this->$statusHandler($order);
-
+        return $this->$statusHandler($order);
     }
 
+    /**
+     * @param Order $order
+     * @return bool
+     */
     private function handleOrderStatusPending(Order $order)
     {
-        $a = 1;
+        $this->createAuthorizationTransaction($order);
+
+        $order->setStatus(OrderStatus::pending());
+        $platformOrder = $order->getPlatformOrder();
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard(
+                'Order created at Mundipagg. Id: %s',
+                $order->getMundipaggId()->getValue()
+            )
+        );
+
+        $orderRepository = new OrderRepository();
+        $orderRepository->save($order);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
+        return true;
     }
 
+    /**
+     * @param Order $order
+     * @return bool|string|null
+     */
     private function handleOrderStatusPaid(Order $order)
     {
         $invoiceService = new InvoiceService();
@@ -66,7 +91,9 @@ final class OrderHandler implements ResponseHandlerInterface
 
             $orderService = new OrderService();
             $orderService->syncPlatformWith($order);
+            return true;
         }
+        return $cantCreateReason;
     }
 
     private function createCaptureTransaction(Order $order)
@@ -80,6 +107,19 @@ final class OrderHandler implements ResponseHandlerInterface
          */
         $dataService = new $dataServiceClass();
         $dataService->createCaptureTransaction($order);
+    }
+
+    private function createAuthorizationTransaction(Order $order)
+    {
+        $dataServiceClass =
+            MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
+
+        /**
+         *
+         * @var AbstractDataService $dataService
+         */
+        $dataService = new $dataServiceClass();
+        $dataService->createAuthorizationTransaction($order);
     }
 
     private function handleOrderStatusCanceled(Order $order)

@@ -63,6 +63,8 @@ final class PaymentFactory
             return [];
         }
 
+        $capture = $this->moduleConfig->isCapture();
+
         $cardsData = $data->$cardDataIndex;
 
         $payments = [];
@@ -72,6 +74,7 @@ final class PaymentFactory
                 continue;
             }
 
+            $payment->setCapture($capture);
             $payment->setAmount($cardData->amount);
             $payment->setInstallments($cardData->installments);
             $payment->setStatementDescriptor($this->cardStatementDescriptor);
