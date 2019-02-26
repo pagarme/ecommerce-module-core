@@ -7,4 +7,6 @@ use Mundipagg\Core\Kernel\Aggregates\Order;
 abstract class AbstractDataService
 {
     abstract public function updateAcquirerData(Order $order);
+    abstract public function createCaptureTransaction(Order $order);
+    abstract public function createAuthorizationTransaction(Order $order);
 }

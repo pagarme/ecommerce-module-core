@@ -29,6 +29,7 @@ interface PlatformOrderInterface
     public function canUnhold();
     public function isPaymentReview();
     public function isCanceled();
+    public function setPlatformOrder($platformOrder);
     public function getPlatformOrder();
     public function getIncrementId();
     public function payAmount($amount);

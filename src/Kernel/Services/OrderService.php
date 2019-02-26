@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
@@ -133,6 +134,11 @@ final class OrderService
 
     public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
     {
+        //set pending
+        $platformOrder->setState(OrderState::stateNew());
+        $platformOrder->setStatus(OrderStatus::pending());
+        $platformOrder->save();
+
         //build PaymentOrder based on platformOrder
         $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
 
@@ -180,6 +186,7 @@ final class OrderService
         }
 
         $order->setCode($platformOrder->getCode());
+        //@todo get antfraud config from module configuration
         $order->setAntifraudEnabled(false);
         $order->setCustomer($platformOrder->getCustomer());
 

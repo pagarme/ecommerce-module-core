@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
@@ -48,9 +50,7 @@ final class OrderHandler implements ResponseHandlerInterface
             $invoice->save();
             $platformOrder = $order->getPlatformOrder();
 
-            $orderService = new OrderService();
-
-            $orderService->updateAcquirerData($order);
+            $this->createCaptureTransaction($order);
 
             $order->setStatus(OrderStatus::processing());
             //@todo maybe an Order Aggregate should have a State too.
@@ -64,8 +64,22 @@ final class OrderHandler implements ResponseHandlerInterface
             $orderRepository = new OrderRepository();
             $orderRepository->save($order);
 
+            $orderService = new OrderService();
             $orderService->syncPlatformWith($order);
         }
+    }
+
+    private function createCaptureTransaction(Order $order)
+    {
+        $dataServiceClass =
+            MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
+
+        /**
+         *
+         * @var AbstractDataService $dataService
+         */
+        $dataService = new $dataServiceClass();
+        $dataService->createCaptureTransaction($order);
     }
 
     private function handleOrderStatusCanceled(Order $order)

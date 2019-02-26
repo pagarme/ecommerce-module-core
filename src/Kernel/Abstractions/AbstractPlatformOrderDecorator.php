@@ -19,6 +19,11 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         return $this->platformOrder;
     }
 
+    public function setPlatformOrder($platformOrder)
+    {
+        $this->platformOrder = $platformOrder;
+    }
+
     public function payAmount($amount)
     {
         $platformOrder = $this->getPlatformOrder();

@@ -17,18 +17,6 @@ class InfoBuilderService
      */
     public function buildInfoFromQueryArray(array $query)
     {
-
-        $orderService = new OrderService();
-
-        $decoratorClass = AbstractModuleCoreSetup::get
-        (AbstractModuleCoreSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-
-        /** @var AbstractPlatformOrderDecorator $platformOrder */
-        $platformOrder = new $decoratorClass();
-        $platformOrder->loadByIncrementId($query['order']);
-
-        return $orderService->createOrderAtMundipagg($platformOrder);
-
         $infos = [];
         if (!$this->isTokenValid($query)) {
             return [];
