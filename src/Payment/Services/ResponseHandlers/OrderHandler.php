@@ -12,10 +12,9 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
-final class OrderHandler implements ResponseHandlerInterface
+final class OrderHandler extends AbstractResponseHandler
 {
     /**
      * @param Order $order
@@ -23,9 +22,13 @@ final class OrderHandler implements ResponseHandlerInterface
      */
     public function handle($order)
     {
-        $statusHandler =
-            'handleOrderStatus' .
-            ucfirst($order->getStatus()->getStatus());
+        $orderStatus = ucfirst($order->getStatus()->getStatus());
+        $statusHandler = 'handleOrderStatus' . $orderStatus;
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Handling order status: $orderStatus"
+        );
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);

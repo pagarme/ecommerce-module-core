@@ -17,6 +17,13 @@ use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
 final class OrderService
 {
+    private $logService;
+
+    public function __construct()
+    {
+        $this->logService = new OrderLogService();
+    }
+
     /**
      *
      * @param Order $order
@@ -134,6 +141,13 @@ final class OrderService
 
     public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
     {
+        $orderInfo = $this->getOrderInfo($platformOrder);
+
+        $this->logService->orderInfo(
+            $platformOrder->getCode(),
+            'Creating order.',
+            $orderInfo
+        );
         //set pending
         $platformOrder->setState(OrderState::stateNew());
         $platformOrder->setStatus(OrderStatus::pending());
@@ -196,5 +210,16 @@ final class OrderService
         }
 
         return $order;
+    }
+
+    /**
+     * @param PlatformOrderInterface $platformOrder
+     * @return \stdClass
+     */
+    private function getOrderInfo(PlatformOrderInterface $platformOrder)
+    {
+        $orderInfo = new \stdClass();
+        $orderInfo->grandTotal = $platformOrder->getGrandTotal();
+        return $orderInfo;
     }
 }

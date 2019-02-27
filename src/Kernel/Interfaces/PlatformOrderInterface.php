@@ -13,12 +13,12 @@ use Mundipagg\Core\Payment\Aggregates\Shipping;
 interface PlatformOrderInterface
 {
     public function save();
-    public function setState(OrderState $state);
     /**
      *
      * @return OrderState
      */
     public function getState();
+    public function setState(OrderState $state);
     public function setStatus(OrderStatus $status);
     public function getStatus();
     public function loadByIncrementId($incrementId);

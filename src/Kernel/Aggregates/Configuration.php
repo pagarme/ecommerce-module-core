@@ -313,7 +313,7 @@ final class Configuration extends AbstractEntity
     public function isCapture()
     {
         //@todo if antifraud is enabled, this method should always return false;
-        return $this->moduleConfig->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
+        return $this->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
     }
 
     /**

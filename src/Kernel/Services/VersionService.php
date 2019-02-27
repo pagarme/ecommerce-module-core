@@ -3,7 +3,7 @@
 namespace Mundipagg\Core\Kernel\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Kernel\ValueObjects\VersionPair;
+use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
 
 final class VersionService
 {
@@ -39,11 +39,12 @@ final class VersionService
         return AbstractModuleCoreSetup::getPlatformVersion();
     }
 
-    public function getVersionPair()
+    public function getVersionInfo()
     {
-        return new VersionPair(
+        return new VersionInfo(
             $this->getModuleVersion(),
-            $this->getCoreVersion()
+            $this->getCoreVersion(),
+            $this->getPlatformVersion()
         );
     }
 }

@@ -30,10 +30,12 @@ use Mundipagg\Core\Payment\Aggregates\Shipping;
 class APIService
 {
     private $apiClient;
+    private $logService;
 
     public function __construct()
     {
         $this->apiClient = $this->getMundiPaggApiClient();
+        $this->logService = new OrderLogService(2);
     }
 
     public function cancelCharge(Charge &$charge)
@@ -54,17 +56,30 @@ class APIService
 
     public function createOrder(Order $order)
     {
+        $endpoint = $this->getAPIBaseEndpoint();
+
         $orderRequest = $this->buildOrderRequest($order);
+        $this->logService->orderInfo(
+            $order->getCode(),
+            'Create order Request to ' . $endpoint,
+            $orderRequest
+        );
 
         $orderController = $this->getOrderController();
 
         try {
             $response = $orderController->createOrder($orderRequest);
+            $this->logService->orderInfo(
+                $order->getCode(),
+                'Order Response',
+                $response
+            );
             $stdClass = json_decode(json_encode($response), true);
             $orderFactory = new OrderFactory();
             return $orderFactory->createFromPostData($stdClass);
 
         } catch (ErrorException $e) {
+            $this->logService->exception($e);
             return $e;
         }
     }
@@ -280,5 +295,10 @@ class APIService
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         return new MundiAPIClient($secretKey, $password);
+    }
+
+    private function getAPIBaseEndpoint()
+    {
+        return \MundiAPILib\Configuration::$BASEURI;
     }
 }

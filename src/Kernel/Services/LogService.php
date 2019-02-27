@@ -9,16 +9,18 @@ use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
 use Mundipagg\Core\Kernel\Factories\LogObjectFactory;
 use Mundipagg\Core\Kernel\Log\JsonPrettyFormatter;
 
-final class LogService
+class LogService
 {
-    private $path;
-    private $addHost;
-    private $channelName;
-    private $monolog;
-    private $fileName;
+    protected $path;
+    protected $addHost;
+    protected $channelName;
+    protected $monolog;
+    protected $fileName;
+    protected $stackTraceDepth;
 
     public function __construct($channelName, $addHost = false)
     {
+        $this->stackTraceDepth = 2;
         $this->channelName = $channelName;
         $this->path = AbstractModuleCoreSetup::getLogPath();
 
@@ -38,36 +40,37 @@ final class LogService
         $this->monolog->pushHandler($handler);
     }
 
-    public function info($message, $sourceObject)
+    public function info($message, $sourceObject = null)
     {
         $logObject = $this->prepareObject($sourceObject);
 
         $this->monolog->info($message, $logObject);
     }
 
-    public function exception(AbstractMundipaggCoreException $exception)
+    public function exception(\Exception $exception)
     {
         $logObject = $this->prepareObject($exception);
 
         $this->monolog->error($exception->getMessage(), $logObject);
     }
 
-    private function prepareObject($sourceObject)
+    protected function prepareObject($sourceObject)
     {
         $logObjectFactory = new LogObjectFactory;
 
         $versionService = new VersionService();
+        $debugStep = $this->stackTraceDepth;
 
         $baseObject = $logObjectFactory->createFromLogger(
-            debug_backtrace()[2],
+            debug_backtrace()[$debugStep],
             $sourceObject,
-            $versionService->getVersionPair()
+            $versionService->getVersionInfo()
         );
         $baseObject = json_encode($baseObject);
         return json_decode($baseObject, true);
     }
 
-    private function setFileName()
+    protected function setFileName()
     {
         $base = 'Mundipagg_PaymentModule_' . date('Y-m-d');
         $fileName = $this->path . DIRECTORY_SEPARATOR . $base;

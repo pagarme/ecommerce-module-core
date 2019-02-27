@@ -3,10 +3,19 @@
 namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Services\OrderLogService;
+use Mundipagg\Core\Kernel\ValueObjects\OrderState;
+use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 
 abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 {
     protected $platformOrder;
+    private $logService;
+
+    public function __construct()
+    {
+        $this->logService = new OrderLogService();
+    }
 
     public function addHistoryComment($message)
     {
@@ -22,6 +31,53 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
     public function setPlatformOrder($platformOrder)
     {
         $this->platformOrder = $platformOrder;
+    }
+
+    public function setStatus(OrderStatus $status)
+    {
+        $currentStatus = '';
+        try {
+            $currentStatus = $this->getStatus();
+        }catch(\Throwable $e)
+        {
+        }
+
+        $statusInfo = (object)[
+            "from" => $currentStatus,
+            "to" => $status,
+
+        ];
+       $this->logService->orderInfo(
+           $this->getCode(),
+           'Status Change',
+           $statusInfo
+       );
+
+       $this->setStatusAfterLog($status);
+    }
+
+    public function setState(OrderState $state)
+    {
+        $currentState = '';
+        try {
+            $currentState = $this->getState();
+        }catch(\Throwable $e)
+        {
+
+        }
+
+        $stateInfo = (object)[
+            "from" => $currentState,
+            "to" => $state,
+
+        ];
+        $this->logService->orderInfo(
+            $this->getCode(),
+            'State Change',
+            $stateInfo
+        );
+
+        $this->setStateAfterLog($state);
     }
 
     public function payAmount($amount)
@@ -105,4 +161,6 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
     }
 
     abstract protected function addMPHistoryComment($message);
+    abstract protected function setStatusAfterLog(OrderStatus $status);
+    abstract protected function setStateAfterLog(OrderState $state);
 }
