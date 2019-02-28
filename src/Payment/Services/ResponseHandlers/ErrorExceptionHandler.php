@@ -4,8 +4,8 @@ namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
 
 final class ErrorExceptionHandler extends AbstractResponseHandler
 {
-    public function handle($response)
+    public function handle($error)
     {
-        $a = 1;
+        throw $error;
     }
 }
