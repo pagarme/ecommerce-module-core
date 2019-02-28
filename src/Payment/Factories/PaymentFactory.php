@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
@@ -69,7 +70,7 @@ final class PaymentFactory
 
         $payments = [];
         foreach ($cardsData as $cardData) {
-            $payment = $this->createBaseCardPayment($cardData->identifier);
+            $payment = $this->createBaseCardPayment($cardData);
             if ($payment === null) {
                 continue;
             }
@@ -113,8 +114,9 @@ final class PaymentFactory
      * @param $identifier
      * @return AbstractCreditCardPayment|null
      */
-    private function createBaseCardPayment($identifier)
+    private function createBaseCardPayment($data)
     {
+        $identifier = $data->identifier;
         try {
             $cardToken = new CardToken($identifier);
             $payment =  new NewCreditCardPayment();
@@ -130,6 +132,8 @@ final class PaymentFactory
             $cardId = new CardId($identifier);
             $payment =  new SavedCreditCardPayment();
             $payment->setIdentifier($cardId);
+            $owner = new CustomerId($data->customerId);
+            $payment->setOwner($owner);
 
             return $payment;
         } catch (\Throwable $e)

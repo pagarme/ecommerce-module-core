@@ -188,8 +188,9 @@ final class OrderService
         $user->setType(CustomerType::individual());
 
         $order = new PaymentOrder();
-        $payments = $platformOrder->getPaymentMethodCollection();
+        $order->setCustomer($platformOrder->getCustomer());
 
+        $payments = $platformOrder->getPaymentMethodCollection();
         foreach ($payments as $payment) {
             $order->addPayment($payment);
         }
@@ -202,7 +203,6 @@ final class OrderService
         $order->setCode($platformOrder->getCode());
         //@todo get antfraud config from module configuration
         $order->setAntifraudEnabled(false);
-        $order->setCustomer($platformOrder->getCustomer());
 
         $shipping = $platformOrder->getShipping();
         if ($shipping !== null) {

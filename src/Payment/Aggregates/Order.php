@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 
 final class Order extends AbstractEntity
@@ -88,7 +89,47 @@ final class Order extends AbstractEntity
 
     public function addPayment(AbstractPayment $payment)
     {
+        $this->validate($payment);
+
         $this->payments[] = $payment;
+
+    }
+
+    private function validate(AbstractPayment $payment)
+    {
+        $paymentClass = get_class($payment);
+        $paymentClass = explode ('\\', $paymentClass);
+        $paymentClass = end($paymentClass);
+        $paymentValidator = "validate$paymentClass";
+        if (method_exists($this, $paymentValidator)) {
+            $this->$paymentValidator($payment);
+        }
+    }
+
+    private function validateSavedCreditCardPayment(SavedCreditCardPayment $payment)
+    {
+        if ($this->customer === null) {
+            throw new \Exception(
+                'To use a saved credit card payment in an order ' .
+                'you must add a customer to it.',
+                400
+            );
+        }
+
+        $customerId = $this->customer->getMundipaggId();
+        if ($customerId === null) {
+            throw new \Exception(
+                'You can\'t use a saved credit card of a fresh new customer',
+                400
+            );
+        }
+
+        if (!$customerId->equals($payment->getOwner())) {
+            throw new \Exception(
+                'The saved credit card informed doesn\'t belong to the informed customer.',
+                400
+            );
+        }
     }
 
     /**
