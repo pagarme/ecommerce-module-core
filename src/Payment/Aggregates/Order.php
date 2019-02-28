@@ -5,10 +5,12 @@ namespace Mundipagg\Core\Payment\Aggregates;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 
 final class Order extends AbstractEntity
 {
+    use WithAmountTrait;
     use WithCustomerTrait;
 
     /** @var string */
@@ -92,17 +94,29 @@ final class Order extends AbstractEntity
         $this->validate($payment);
 
         $this->payments[] = $payment;
-
     }
 
     private function validate(AbstractPayment $payment)
     {
+        //validate invariants of each payment method.
         $paymentClass = get_class($payment);
         $paymentClass = explode ('\\', $paymentClass);
         $paymentClass = end($paymentClass);
         $paymentValidator = "validate$paymentClass";
         if (method_exists($this, $paymentValidator)) {
             $this->$paymentValidator($payment);
+        }
+
+        //validate amount
+        $currentAmount = $payment->getAmount();
+        foreach ($this->payments as $currentPayment) {
+            $currentAmount += $currentPayment->getAmount();
+        }
+
+        if ($currentAmount > $this->amount) {
+            throw new \Exception(
+                'The sum of payment amounts is bigger than the amount of the order!'
+            );
         }
     }
 

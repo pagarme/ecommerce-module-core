@@ -4,6 +4,8 @@ namespace Mundipagg\Core\Payment\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Services\InstallmentService;
+use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
@@ -74,16 +76,46 @@ final class PaymentFactory
             if ($payment === null) {
                 continue;
             }
+            $brand = $cardData->brand;
+            $payment->setBrand(CardBrand::$brand());
 
             $payment->setCapture($capture);
             $payment->setAmount($cardData->amount);
             $payment->setInstallments($cardData->installments);
+
+            //setting amount with interest
+            $payment->setAmount(
+                $this->getAmountWithInterestForCreditCard($payment)
+            );
+
             $payment->setStatementDescriptor($this->cardStatementDescriptor);
+
 
             $payments[] = $payment;
         }
 
         return $payments;
+    }
+
+    private function getAmountWithInterestForCreditCard(
+        AbstractCreditCardPayment $payment
+    )
+    {
+        $installmentService = new InstallmentService();
+
+        $validInstallments = $installmentService->getInstallmentsFor(
+            null,
+            $payment->getBrand(),
+            $payment->getAmount()
+        );
+
+        foreach ($validInstallments as $validInstallment) {
+            if ($validInstallment->getTimes() === $payment->getInstallments()) {
+                return $validInstallment->getTotal();
+            }
+        }
+
+        throw new \Exception('Invalid installment number!');
     }
 
     private function createBoletoPayments($data)

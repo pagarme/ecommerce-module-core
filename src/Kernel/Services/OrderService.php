@@ -184,10 +184,17 @@ final class OrderService
         PlatformOrderInterface $platformOrder
     )
     {
+        $moneyService = new MoneyService();
+
         $user = new Customer();
         $user->setType(CustomerType::individual());
 
         $order = new PaymentOrder();
+        $order->setAmount(
+            $moneyService->floatToCents(
+                $platformOrder->getGrandTotal()
+            )
+        );
         $order->setCustomer($platformOrder->getCustomer());
 
         $payments = $platformOrder->getPaymentMethodCollection();

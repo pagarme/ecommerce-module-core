@@ -2,14 +2,18 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Kernel\Services\InstallmentService;
+use Mundipagg\Core\Kernel\Services\MoneyService;
+use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 abstract class AbstractCreditCardPayment extends AbstractPayment
 {
+    /** @var CardBrand */
+    protected $brand;
     /** @var int */
     protected $installments;
     /** @var string */
@@ -45,7 +49,63 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
                 $installments
             );
         }
+
+        //@todo if installments are disabled, any installment after 1 is not permited.
+
+        //amount defined?
+        if ($this->amount === null) {
+            throw new \Exception(
+                "Amount must be defined before adding installments",
+                400
+            );
+        }
+
+        //brand added?
+        if ($this->brand === null) {
+            throw new \Exception(
+                "Card brand must be defined before adding installments",
+                400
+            );
+        }
+
+        //check if the installment is applicable to brand, value and (@todo) order;
+        $this->validateIfIsRealInstallment($installments);
+
         $this->installments = $installments;
+    }
+    /**
+     * @return bool
+     */
+    private function validateIfIsRealInstallment($installments)
+    {
+        //get valid installments for this brand.
+        $installmentService = new InstallmentService();
+        $validInstallments = $installmentService->getInstallmentsFor(
+            null,
+            $this->brand,
+            $this->amount
+        );
+
+        //check each installemnt
+        foreach ($validInstallments as $validInstallment) {
+            if ($validInstallment->getTimes() === $installments) {
+                return;
+            }
+        }
+
+        //invalid installment
+        $moneyService = new MoneyService();
+        $exception = "The card brand '%s' or the amount %.2f doesn't allow the %dx installments!";
+        $exception = sprintf(
+            $exception,
+            $this->brand->getName(),
+            $moneyService->centsToFloat($this->amount),
+            $installments
+        );
+        throw new InvalidParamException(
+            $exception,
+            $installments
+        );
     }
 
     /**
@@ -88,11 +148,29 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
         return $this->identifier;
     }
 
+    /**
+     * @return CardBrand
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param CardBrand $brand
+     */
+    public function setBrand(CardBrand $brand)
+    {
+        //@todo A inactive card brand should be a valid brand for this agg?
+        $this->brand = $brand;
+    }
+
     public function jsonSerialize()
     {
         $obj =  parent::jsonSerialize();
 
         $obj->installments = $this->installments;
+        $obj->brand = $this->brand;
         $obj->statementDescriptor = $this->statementDescriptor;
         $obj->capture = $this->capture;
         $obj->identifier = $this->identifier;
