@@ -132,7 +132,44 @@ final class OrderHandler extends AbstractResponseHandler
 
     private function handleOrderStatusFailed(Order $order)
     {
-        $a = 1;
-    }
+        $charges = $order->getCharges();
 
+        $acquirerMessages = '';
+        $historyData = [];
+        foreach ($charges as $charge) {
+            $lastTransaction = $charge->getLastTransaction();
+            $acquirerMessages .=
+                "{$charge->getMundipaggId()->getValue()} => '{$lastTransaction->getAcquirerMessage()}', ";
+            $historyData[$charge->getMundipaggId()->getValue()] = $lastTransaction->getAcquirerMessage();
+
+        }
+        $acquirerMessages = rtrim($acquirerMessages, ', ') ;
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Order creation Failed: $acquirerMessages"
+        );
+
+        $i18n = new LocalizationService();
+        $historyComment = $i18n->getDashboard('Order payment failed');
+        $historyComment .= '<br />';
+
+        foreach ($historyData as $chargeId => $acquirerMessage) {
+            $historyComment .= "$chargeId => $acquirerMessage<br />";
+        }
+
+        $order->getPlatformOrder()->addHistoryComment(
+            $historyComment
+        );
+
+        //@todo cancel order should be extracted to a service.
+        $order->setStatus(OrderStatus::canceled());
+
+        $orderRepository = new OrderRepository();
+        $orderRepository->save($order);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
+        return "One or more charges weren't authorized. Please try again.";
+    }
 }

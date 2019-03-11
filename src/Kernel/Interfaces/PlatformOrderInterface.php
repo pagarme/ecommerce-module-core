@@ -36,6 +36,7 @@ interface PlatformOrderInterface
     public function refundAmount($amountToRefund);
     public function cancelAmount($amountToRefund);
     public function getGrandTotal();
+    public function getBaseTaxAmount();
     public function getTotalPaid();
     public function getTotalDue();
     public function setTotalPaid($amount);

@@ -14,6 +14,7 @@ use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use mysql_xdevapi\Exception;
 
 final class OrderService
 {
@@ -161,7 +162,11 @@ final class OrderService
         $response = $apiService->createOrder($order);
 
         $handler = $this->getResponseHandler($response);
-        $handler->handle($response);
+        $handleResult = $handler->handle($response);
+
+        if ($handleResult !== true) {
+            throw new \Exception($handleResult, 400);
+        }
 
         return [$response];
     }
@@ -202,13 +207,19 @@ final class OrderService
             $order->addPayment($payment);
         }
 
+        if (!$order->isPaymentSumCorrect()) {
+            throw new \Exception(
+                'The sum of payments is different than the order amount!'
+            );
+        }
+
         $items = $platformOrder->getItemCollection();
         foreach ($items as $item) {
             $order->addItem($item);
         }
 
         $order->setCode($platformOrder->getCode());
-        //@todo get antfraud config from module configuration
+
         $order->setAntifraudEnabled(false);
 
         $shipping = $platformOrder->getShipping();

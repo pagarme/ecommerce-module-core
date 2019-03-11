@@ -91,23 +91,41 @@ final class Order extends AbstractEntity
 
     public function addPayment(AbstractPayment $payment)
     {
-        $this->validate($payment);
+        $this->validatePaymentInvariants($payment);
+        $this->blockOverPaymentAttempt($payment);
 
         $this->payments[] = $payment;
     }
 
-    private function validate(AbstractPayment $payment)
+    /**
+     * @return bool
+     */
+    public function isPaymentSumCorrect()
     {
-        //validate invariants of each payment method.
-        $paymentClass = get_class($payment);
-        $paymentClass = explode ('\\', $paymentClass);
-        $paymentClass = end($paymentClass);
-        $paymentValidator = "validate$paymentClass";
-        if (method_exists($this, $paymentValidator)) {
-            $this->$paymentValidator($payment);
+        if (
+            $this->amount === null ||
+            empty($this->payments)
+        ) {
+            return false;
         }
 
-        //validate amount
+        $sum = 0;
+        foreach ($this->payments as $payment)
+        {
+            $sum += $payment->getAmount();
+        }
+
+        return $this->amount === $sum;
+    }
+
+    /**
+     *  Blocks any overpayment attempt.
+     *
+     * @param AbstractPayment $payment
+     * @throws \Exception
+     */
+    private function blockOverPaymentAttempt(AbstractPayment $payment)
+    {
         $currentAmount = $payment->getAmount();
         foreach ($this->payments as $currentPayment) {
             $currentAmount += $currentPayment->getAmount();
@@ -117,6 +135,23 @@ final class Order extends AbstractEntity
             throw new \Exception(
                 'The sum of payment amounts is bigger than the amount of the order!'
             );
+        }
+    }
+
+    /**
+     * Calls the invariant validator method of each payment method, if applicable.
+     *
+     * @param AbstractPayment $payment
+     * @throws \Exception
+     */
+    private function validatePaymentInvariants(AbstractPayment $payment)
+    {
+        $paymentClass = get_class($payment);
+        $paymentClass = explode ('\\', $paymentClass);
+        $paymentClass = end($paymentClass);
+        $paymentValidator = "validate$paymentClass";
+        if (method_exists($this, $paymentValidator)) {
+            $this->$paymentValidator($payment);
         }
     }
 
