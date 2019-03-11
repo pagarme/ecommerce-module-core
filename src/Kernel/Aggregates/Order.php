@@ -3,8 +3,6 @@
 namespace Mundipagg\Core\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 

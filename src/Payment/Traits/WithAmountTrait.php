@@ -4,6 +4,9 @@ namespace Mundipagg\Core\Payment\Traits;
 
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 
+//@todo There are many object that should have this same business rule
+//      for the amount. Modify all these object to use this trait
+//      instead of implementing the behavior for the amount by itself.
 trait WithAmountTrait
 {
     /** @var int */

@@ -152,19 +152,19 @@ final class OrderHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $historyComment = $i18n->getDashboard('Order payment failed');
-        $historyComment .= '<br />';
+        $historyComment .= ': ';
 
         foreach ($historyData as $chargeId => $acquirerMessage) {
-            $historyComment .= "$chargeId => $acquirerMessage<br />";
+            $historyComment .= "$chargeId => $acquirerMessage; ";
         }
-
+        $historyComment = rtrim($historyComment, '; ');
         $order->getPlatformOrder()->addHistoryComment(
             $historyComment
         );
 
-        //@todo cancel order should be extracted to a service.
-        //@fixme currently, the canceling is depending on webhook. fix it.
         $order->setStatus(OrderStatus::canceled());
+        $order->getPlatformOrder()->setState(OrderState::canceled());
+        $order->getPlatformOrder()->save();
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
