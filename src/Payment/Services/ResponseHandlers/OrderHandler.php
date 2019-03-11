@@ -163,6 +163,7 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         //@todo cancel order should be extracted to a service.
+        //@fixme currently, the canceling is depending on webhook. fix it.
         $order->setStatus(OrderStatus::canceled());
 
         $orderRepository = new OrderRepository();
