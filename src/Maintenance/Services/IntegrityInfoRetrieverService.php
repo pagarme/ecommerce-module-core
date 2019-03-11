@@ -69,8 +69,8 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         foreach ($validInstallTypes as $installTypeClass) {
             /**
              *
- * @var InstallDataSourceInterface $install 
-*/
+            * @var InstallDataSourceInterface $install
+            */
             $install = new $installTypeClass;
             $integrityFilePath = $install->getIntegrityFilePath();
             if ($integrityFilePath !== null) {
