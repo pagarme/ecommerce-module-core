@@ -15,4 +15,18 @@ final class OrderLogService extends LogService
         $orderMessage = "Order #$orderCode : $message";
         parent::info($orderMessage, $sourceObject);
     }
+
+    public function orderException($exception, $orderCode)
+    {
+        $exceptionMessage = $exception->getMessage();
+        $exceptionMessage = "Order #$orderCode : $exceptionMessage";
+
+        $reflection = new \ReflectionClass($exception);
+        $property = $reflection->getProperty('message');
+        $property->setAccessible(true);
+        $property->setValue($exception, $exceptionMessage);
+        $property->setAccessible(false);
+
+        parent::exception($exception);
+    }
 }

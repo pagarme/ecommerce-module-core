@@ -31,7 +31,8 @@ class PTBR extends AbstractI18NTable
             "with %.2f%% of interest" => "com %.2f%% de juros",
             "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
             "Order payment failed" => "Pagamento do pedido falhou",
-            "The order will be canceled" => "O pedido será cancelado"
+            "The order will be canceled" => "O pedido será cancelado",
+            "An error occurred when trying to create the order. Please try again." => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente.'
         ];
     }
 }

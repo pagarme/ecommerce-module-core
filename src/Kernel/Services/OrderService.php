@@ -14,7 +14,6 @@ use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use mysql_xdevapi\Exception;
 
 final class OrderService
 {
@@ -167,7 +166,7 @@ final class OrderService
         $response = $apiService->createOrder($order);
 
         $handler = $this->getResponseHandler($response);
-        $handleResult = $handler->handle($response);
+        $handleResult = $handler->handle($response, $order);
 
         if ($handleResult !== true) {
             throw new \Exception($handleResult, 400);

@@ -12,28 +12,29 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
 {
     /**
-     * @param Order $order
+     * @param Order $createdOrder
      * @return mixed
      */
-    public function handle($order)
+    public function handle($createdOrder, PaymentOrder $paymentOrder = null)
     {
-        $orderStatus = ucfirst($order->getStatus()->getStatus());
+        $orderStatus = ucfirst($createdOrder->getStatus()->getStatus());
         $statusHandler = 'handleOrderStatus' . $orderStatus;
 
         $this->logService->orderInfo(
-            $order->getCode(),
+            $createdOrder->getCode(),
             "Handling order status: $orderStatus"
         );
 
         $orderRepository = new OrderRepository();
-        $orderRepository->save($order);
+        $orderRepository->save($createdOrder);
 
-        return $this->$statusHandler($order);
+        return $this->$statusHandler($createdOrder);
     }
 
     private function handleOrderStatusProcessing(Order $order)

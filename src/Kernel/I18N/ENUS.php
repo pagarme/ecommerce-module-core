@@ -31,7 +31,8 @@ class ENUS extends AbstractI18NTable
             "with %.2f%% of interest" => null,
             "%dx of %s %s (Total: %s)" => null,
             "Order payment failed" => null,
-            "The order will be canceled" => null
+            "The order will be canceled" => null,
+            "An error occurred when trying to create the order. Please try again." => null
         ];
     }
 }
