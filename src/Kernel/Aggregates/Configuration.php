@@ -86,6 +86,9 @@ final class Configuration extends AbstractEntity
      */
     private $antifraudMinAmount;
 
+    /** @var bool */
+    private $installmentsEnabled;
+
     public function __construct()
     {
         $this->cardConfigs = [];
@@ -363,6 +366,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return bool
+     */
+    public function isInstallmentsEnabled()
+    {
+        return $this->installmentsEnabled;
+    }
+
+    /**
+     * @param bool $installmentsEnabled
+     */
+    public function setInstallmentsEnabled($installmentsEnabled)
+    {
+        $this->installmentsEnabled = $installmentsEnabled;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -384,6 +403,7 @@ final class Configuration extends AbstractEntity
             "hubInstallId" => $this->isHubEnabled() ? $this->hubInstallId->getValue() : null,
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
+            "installmentsEnabled" => $this->isInstallmentsEnabled(),
             "cardConfigs" => $this->getCardConfigs()
         ];
     }

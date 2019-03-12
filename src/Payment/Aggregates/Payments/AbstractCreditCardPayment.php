@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Services\InstallmentService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
@@ -50,7 +50,15 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
             );
         }
 
-        //@todo if installments are disabled, any installment after 1 is not permited.
+        $installmentsEnabled = MPSetup::getModuleConfiguration()
+            ->isInstallmentsEnabled();
+
+        if (!$installmentsEnabled && $installments > 1) {
+            throw new InvalidParamException(
+                "Trying to set installment number greater than 1 when installments is disabled!",
+                $installments
+            );
+        }
 
         //amount defined?
         if ($this->amount === null) {

@@ -188,7 +188,6 @@ final class OrderService
         return new $responseClass;
     }
 
-    /** @Todo do the validations */
     private function extractPaymentOrderFromPlatformOrder(
         PlatformOrderInterface $platformOrder
     )

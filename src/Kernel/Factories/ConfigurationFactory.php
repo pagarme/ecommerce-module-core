@@ -78,6 +78,12 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
+        $isInstallmentsEnabled = false;
+        if (isset($data->installmentsEnabled)) {
+            $isInstallmentsEnabled = $data->installmentsEnabled;
+        }
+        $config->setInstallmentsEnabled($isInstallmentsEnabled);
+
         if (isset($data->enabled)) {
             $config->setEnabled($data->enabled);
         }
