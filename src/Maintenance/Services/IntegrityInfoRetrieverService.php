@@ -102,24 +102,10 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
         $integrityData = $this->loadIntegrityData($itegrityFilePath);
 
         $altered = [];
-        $removed = [];
-        $added = [];
-        $processedFiles = 0;
         foreach ($fileHashs as $file => $hash) {
             $fullPath = $rootDir . $file;
-            $processedFiles++;
 
             if ($fullPath == $itegrityFilePath) {
-                continue;
-            }
-
-            if (!file_exists($fullPath)) {
-                $removed[$file] = $hash;
-                continue;
-            }
-
-            if (!isset($integrityData[$file])) {
-                $added[$file] = $hash;
                 continue;
             }
 
@@ -128,6 +114,9 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
                 continue;
             }
         }
+
+        $removed = array_diff_key($integrityData, $fileHashs);
+        $added = array_diff_key($fileHashs, $integrityData);
 
         $integrityInfo = new \stdClass();
 
@@ -138,7 +127,7 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
             'altered' => count($altered),
             'removed' => count($removed),
             'added' => count($added),
-            'files' => $processedFiles,
+            'files' => count($fileHashs),
             'reference' => count($integrityData),
         ];
         $integrityInfo->files = $fileHashs;
