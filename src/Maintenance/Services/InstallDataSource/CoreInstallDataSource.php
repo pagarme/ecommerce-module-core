@@ -48,4 +48,9 @@ final class CoreInstallDataSource extends AbstractInstallDataSource
 
         return [$currentDir . DIRECTORY_SEPARATOR . 'src'];
     }
+
+    protected function getModuleRoot()
+    {
+        return $this->getInstallDirs()[0];
+    }
 }
