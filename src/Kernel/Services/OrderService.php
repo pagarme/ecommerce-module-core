@@ -55,7 +55,12 @@ final class OrderService
         $platformOrder->setTotalRefunded($refundedAmount);
         $platformOrder->setBaseTotalRefunded($refundedAmount);
 
-        $platformOrder->setStatus($order->getStatus());
+        $orderStatus = $order->getStatus();
+        if ($orderStatus->equals(OrderStatus::paid())) {
+            $orderStatus = OrderStatus::processing();
+        }
+
+        $platformOrder->setStatus($orderStatus);
         //@todo $platformOrder->setState($order->getState());
 
         $platformOrder->save();
