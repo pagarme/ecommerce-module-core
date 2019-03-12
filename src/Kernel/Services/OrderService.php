@@ -193,6 +193,8 @@ final class OrderService
         PlatformOrderInterface $platformOrder
     )
     {
+        $moduleConfig = MPSetup::getModuleConfiguration();
+
         $moneyService = new MoneyService();
 
         $user = new Customer();
@@ -224,7 +226,7 @@ final class OrderService
 
         $order->setCode($platformOrder->getCode());
 
-        $order->setAntifraudEnabled(false);
+        $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
 
         $shipping = $platformOrder->getShipping();
         if ($shipping !== null) {

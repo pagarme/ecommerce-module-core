@@ -75,6 +75,12 @@ final class Configuration extends AbstractEntity
      */
     private $cardConfigs;
 
+
+    /**
+     * @var bool
+     */
+    private $antifraudEnabled;
+
     public function __construct()
     {
         $this->cardConfigs = [];
@@ -312,9 +318,29 @@ final class Configuration extends AbstractEntity
      */
     public function isCapture()
     {
-        //@todo if antifraud is enabled, this method should always return false;
+        if ($this->isAntifraudEnabled()) {
+            return false;
+        }
+
         return $this->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
     }
+
+    /**
+     * @return bool
+     */
+    public function isAntifraudEnabled()
+    {
+        return $this->antifraudEnabled;
+    }
+
+    /**
+     * @param bool $antifraudEnabled
+     */
+    public function setAntifraudEnabled($antifraudEnabled)
+    {
+        $this->antifraudEnabled = $antifraudEnabled;
+    }
+
 
     /**
      * Specify data which should be serialized to JSON
@@ -328,6 +354,7 @@ final class Configuration extends AbstractEntity
     {
         return [
             "enabled" => $this->enabled,
+            "antifraudEnabled" => $this->isAntifraudEnabled(),
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,

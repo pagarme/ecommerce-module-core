@@ -202,6 +202,7 @@ final class Order extends AbstractEntity
      */
     public function isAntifraudEnabled()
     {
+        //@todo apply rules form min amount of antifraud.
         return $this->antifraudEnabled;
     }
 
