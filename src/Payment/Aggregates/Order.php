@@ -7,6 +7,7 @@ use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 
 final class Order extends AbstractEntity
 {
@@ -202,7 +203,10 @@ final class Order extends AbstractEntity
      */
     public function isAntifraudEnabled()
     {
-        //@todo apply rules form min amount of antifraud.
+        $antifraudMinAmount = MPSetup::getModuleConfiguration()->getAntifraudMinAmount();
+        if ($this->amount < $antifraudMinAmount) {
+            return false;
+        }
         return $this->antifraudEnabled;
     }
 

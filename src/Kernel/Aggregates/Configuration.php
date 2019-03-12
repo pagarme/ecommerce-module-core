@@ -81,6 +81,11 @@ final class Configuration extends AbstractEntity
      */
     private $antifraudEnabled;
 
+    /**
+     * @var int
+     */
+    private $antifraudMinAmount;
+
     public function __construct()
     {
         $this->cardConfigs = [];
@@ -341,6 +346,21 @@ final class Configuration extends AbstractEntity
         $this->antifraudEnabled = $antifraudEnabled;
     }
 
+    /**
+     * @return int
+     */
+    public function getAntifraudMinAmount()
+    {
+        return $this->antifraudMinAmount;
+    }
+
+    /**
+     * @param int $antifraudMinAmount
+     */
+    public function setAntifraudMinAmount(int $antifraudMinAmount)
+    {
+        $this->antifraudMinAmount = $antifraudMinAmount;
+    }
 
     /**
      * Specify data which should be serialized to JSON
@@ -355,6 +375,7 @@ final class Configuration extends AbstractEntity
         return [
             "enabled" => $this->enabled,
             "antifraudEnabled" => $this->isAntifraudEnabled(),
+            "antifraudMinAmount" => $this->getAntifraudMinAmount(),
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,

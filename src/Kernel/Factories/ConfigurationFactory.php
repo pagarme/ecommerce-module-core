@@ -66,10 +66,13 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
         $isAntifraudEnabled = false;
+        $antifraudMinAmount = 0;
         if (isset($data->isAntifraudEnabled)) {
             $isAntifraudEnabled = $data->isAntifraudEnabled;
+            $antifraudMinAmount = $data->antifraudMinAmount;
         }
         $config->setAntifraudEnabled($isAntifraudEnabled);
+        $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
