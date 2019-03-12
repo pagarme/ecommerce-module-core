@@ -67,7 +67,7 @@ final class HubIntegrationService
 
             $url = 'https://hubapi.mundipagg.com/auth/apps/access-tokens';
             $headers = [
-                'PublicAppKey' => '5f826207-5e4e-42c2-be49-e69b8d4da233',
+                'PublicAppKey' => MPSetup::getHubAppPublicAppKey(),
                 'Content-Type' => 'application/json'
             ];
 

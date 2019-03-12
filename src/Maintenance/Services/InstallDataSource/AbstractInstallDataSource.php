@@ -6,6 +6,7 @@ use Mundipagg\Core\Maintenance\Interfaces\InstallDataSourceInterface;
 
 abstract class AbstractInstallDataSource implements InstallDataSourceInterface
 {
+    //@todo $ignoreVendor should be an array of directories to ignore instead of boolean
     protected function scanDirs($dirs, $ignoreVendor = false)
     {
         $files = [];
@@ -17,9 +18,10 @@ abstract class AbstractInstallDataSource implements InstallDataSourceInterface
             $foundFiles = scandir($dir);
             if ($foundFiles !== false) {
                 foreach ($foundFiles as $foundFile) {
-                    if (strlen($foundFile) < 3 
+                    if (strlen($foundFile) < 3
                         || (                        $ignoreVendor 
-                        && strpos($foundFile, 'vendor') !== false)
+                        && (strpos($dir, 'vendor') !== false
+                        || strpos($dir, 'lib') !== false))
                     ) {
                         continue;
                     }
