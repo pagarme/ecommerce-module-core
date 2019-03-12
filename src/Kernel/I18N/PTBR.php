@@ -14,6 +14,7 @@ class PTBR extends AbstractI18NTable
             'Webhook received: %s.%s' => 'Webhook recebido: %s.%s',
             'Order paid.' => 'Pedido pago.',
             'Order created at Mundipagg. Id: %s' => 'Pedido criado na Mundipagg. Id %s',
+            'Order waiting for online retries at Mundipagg.' => 'Pedido aguardando por retentativas online na Mundipagg.',
             'Order canceled.' => 'Pedido cancelado.',
             'Payment received: %.2f' => 'Pagamento recebido: %.2f',
             'Canceled amount: %.2f' => 'Quantia cancelada: %.2f',

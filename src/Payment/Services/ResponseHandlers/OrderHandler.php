@@ -36,6 +36,20 @@ final class OrderHandler extends AbstractResponseHandler
         return $this->$statusHandler($order);
     }
 
+    private function handleOrderStatusProcessing(Order $order)
+    {
+        $platformOrder = $order->getPlatformOrder();
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard(
+                'Order waiting for online retries at Mundipagg.'
+            )
+        );
+
+        return $this->handleOrderStatusPending($order);
+    }
+
     /**
      * @param Order $order
      * @return bool
@@ -127,7 +141,7 @@ final class OrderHandler extends AbstractResponseHandler
 
     private function handleOrderStatusCanceled(Order $order)
     {
-        $a = 1;
+        return $this->handleOrderStatusFailed($order);
     }
 
     private function handleOrderStatusFailed(Order $order)
