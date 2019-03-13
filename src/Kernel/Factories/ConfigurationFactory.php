@@ -6,6 +6,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
@@ -119,6 +120,17 @@ class ConfigurationFactory implements FactoryInterface
         if (!empty($data->secretKey)) {
             $config->setSecretKey(
                 $this->createSecretKey($data->secretKey)
+            );
+        }
+
+        if (isset($data->addressAttributes)) {
+            $config->setAddressAttributes(
+                new AddressAttributes(
+                    $data->addressAttributes->street,
+                    $data->addressAttributes->number,
+                    $data->addressAttributes->neighborhood,
+                    $data->addressAttributes->complement
+                )
             );
         }
 

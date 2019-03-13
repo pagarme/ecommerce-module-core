@@ -6,6 +6,7 @@ use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
@@ -88,6 +89,9 @@ final class Configuration extends AbstractEntity
 
     /** @var bool */
     private $installmentsEnabled;
+
+    /** @var AddressAttributes */
+    private $addressAttributes;
 
     public function __construct()
     {
@@ -382,6 +386,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return AddressAttributes
+     */
+    public function getAddressAttributes()
+    {
+        return $this->addressAttributes;
+    }
+
+    /**
+     * @param AddressAttributes $addressAttributes
+     */
+    public function setAddressAttributes(AddressAttributes $addressAttributes)
+    {
+        $this->addressAttributes = $addressAttributes;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -401,6 +421,7 @@ final class Configuration extends AbstractEntity
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
             "hubInstallId" => $this->isHubEnabled() ? $this->hubInstallId->getValue() : null,
+            "addressAttributes" => $this->getAddressAttributes(),
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
             "installmentsEnabled" => $this->isInstallmentsEnabled(),
