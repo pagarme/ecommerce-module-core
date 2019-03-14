@@ -2,9 +2,11 @@
 
 namespace Mundipagg\Core\Payment\Aggregates;
 
+use MundiAPILib\Models\CreateAddressRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
-final class Address extends AbstractEntity
+final class Address extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     const ADDRESS_LINE_SEPARATOR = ',';
 
@@ -219,5 +221,26 @@ final class Address extends AbstractEntity
         $obj->line2 = $this->getLine2();
         
         return $obj;
+    }
+
+    /**
+     * @return CreateAddressRequest
+     */
+    public function convertToSDKRequest()
+    {
+        $addressRequest = new CreateAddressRequest();
+
+        $addressRequest->city = $this->getCity();
+        $addressRequest->complement = $this->getComplement();
+        $addressRequest->country = $this->getCountry();
+        $addressRequest->line1 = $this->getLine1();
+        $addressRequest->line2 = $this->getLine2();
+        $addressRequest->neighborhood = $this->getNeighborhood();
+        $addressRequest->number = $this->getNumber();
+        $addressRequest->state = $this->getState();
+        $addressRequest->street = $this->getStreet();
+        $addressRequest->zipCode = $this->getZipCode();
+
+        return $addressRequest;
     }
 }

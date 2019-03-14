@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
+use MundiAPILib\Models\CreateCreditCardPaymentRequest;
+use MundiAPILib\Models\CreatePaymentRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Services\InstallmentService;
@@ -195,6 +197,20 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
     static public function getBaseCode()
     {
         return PaymentMethod::creditCard()->getMethod();
+    }
+
+    /**
+     * @return CreateCreditCardPaymentRequest
+     */
+    protected function convertToPrimitivePaymentRequest()
+    {
+        $cardRequest = new CreateCreditCardPaymentRequest();
+
+        $cardRequest->capture = $this->isCapture();
+        $cardRequest->installments = $this->getInstallments();
+        $cardRequest->statementDescriptor = $this->getStatementDescriptor();
+
+        return $cardRequest;
     }
 
 }

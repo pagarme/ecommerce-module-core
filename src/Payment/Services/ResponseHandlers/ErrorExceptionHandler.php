@@ -29,7 +29,8 @@ final class ErrorExceptionHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $frontErrorMessage = $i18n->getDashboard(
-            'An error occurred when trying to create the order. Please try again.'
+            'An error occurred when trying to create the order. Please try again. Error Reference: %s',
+            $paymentOrder->getCode()
         );
 
         return $frontErrorMessage;

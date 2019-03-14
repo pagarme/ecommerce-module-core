@@ -32,7 +32,7 @@ class PTBR extends AbstractI18NTable
             "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
             "Order payment failed" => "Pagamento do pedido falhou",
             "The order will be canceled" => "O pedido será cancelado",
-            "An error occurred when trying to create the order. Please try again." => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente.'
+            "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s'
         ];
     }
 }

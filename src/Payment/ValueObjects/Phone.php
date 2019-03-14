@@ -3,10 +3,12 @@
 namespace Mundipagg\Core\Payment\ValueObjects;
 
 
+use MundiAPILib\Models\CreatePhoneRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
-final class Phone extends AbstractValueObject
+final class Phone extends AbstractValueObject implements ConvertibleToSDKRequestsInterface
 {
     /** @var NumericString */
     private $countryCode;
@@ -95,5 +97,17 @@ final class Phone extends AbstractValueObject
         $obj->number = $this->getNumber();
 
         return $obj;
+    }
+
+    /**
+     * @return CreatePhoneRequest
+     */
+    public function convertToSDKRequest()
+    {
+        return new CreatePhoneRequest(
+            $this->getCountryCode()->getValue(),
+            $this->getNumber()->getValue(),
+            $this->getAreaCode()->getValue()
+        );
     }
 }

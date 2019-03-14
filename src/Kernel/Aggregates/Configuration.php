@@ -330,10 +330,6 @@ final class Configuration extends AbstractEntity
      */
     public function isCapture()
     {
-        if ($this->isAntifraudEnabled()) {
-            return false;
-        }
-
         return $this->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
     }
 
@@ -366,6 +362,12 @@ final class Configuration extends AbstractEntity
      */
     public function setAntifraudMinAmount(int $antifraudMinAmount)
     {
+        if ($antifraudMinAmount < 0) {
+        throw new InvalidParamException(
+            'AntifraudMinAmount should be at least 0!',
+            $antifraudMinAmount
+        );
+    }
         $this->antifraudMinAmount = $antifraudMinAmount;
     }
 

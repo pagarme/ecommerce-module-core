@@ -2,11 +2,13 @@
 
 namespace Mundipagg\Core\Payment\Aggregates;
 
+use MundiAPILib\Models\CreateOrderItemRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 
-final class Item extends AbstractEntity
+final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     use WithAmountTrait;
 
@@ -70,5 +72,19 @@ final class Item extends AbstractEntity
         $obj->quantity = $this->quantity;
 
         return $obj;
+    }
+
+    /**
+     * @return CreateOrderItemRequest
+     */
+    public function convertToSDKRequest()
+    {
+        $itemRequest = new CreateOrderItemRequest();
+
+        $itemRequest->description = $this->getDescription();
+        $itemRequest->amount = $this->getAmount();
+        $itemRequest->quantity = $this->getQuantity();
+
+        return $itemRequest;
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Mundipagg\Core\Payment\ValueObjects;
 
+use MundiAPILib\Models\CreatePhonesRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
-final class CustomerPhones extends AbstractValueObject
+final class CustomerPhones extends AbstractValueObject implements ConvertibleToSDKRequestsInterface
 {
     /** @var Phone */
     private $home;
@@ -88,5 +90,17 @@ final class CustomerPhones extends AbstractValueObject
         $obj->mobile = $this->getMobile();
 
         return $obj;
+    }
+
+    /**
+     * @return CreatePhonesRequest
+     */
+    public function convertToSDKRequest()
+    {
+        $phonesRequest = new CreatePhonesRequest();
+        $phonesRequest->homePhone = $this->getHome()->convertToSDKRequest();
+        $phonesRequest->mobilePhone = $this->getMobile()->convertToSDKRequest();
+
+        return $phonesRequest;
     }
 }

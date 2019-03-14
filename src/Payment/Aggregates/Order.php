@@ -2,14 +2,16 @@
 
 namespace Mundipagg\Core\Payment\Aggregates;
 
+use MundiAPILib\Models\CreateOrderRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 
-final class Order extends AbstractEntity
+final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     use WithAmountTrait;
     use WithCustomerTrait;
@@ -94,6 +96,7 @@ final class Order extends AbstractEntity
     {
         $this->validatePaymentInvariants($payment);
         $this->blockOverPaymentAttempt($payment);
+        $this->setCaptureFlag($payment);
 
         $this->payments[] = $payment;
     }
@@ -134,7 +137,8 @@ final class Order extends AbstractEntity
 
         if ($currentAmount > $this->amount) {
             throw new \Exception(
-                'The sum of payment amounts is bigger than the amount of the order!'
+                'The sum of payment amounts is bigger than the amount of the order!',
+                400
             );
         }
     }
@@ -243,5 +247,54 @@ final class Order extends AbstractEntity
         $obj->antifraudEnabled = $this->isAntifraudEnabled();
 
         return $obj;
+    }
+
+    /**
+     * @return CreateOrderRequest
+     */
+    public function convertToSDKRequest()
+    {
+        $orderRequest = new CreateOrderRequest();
+
+        $orderRequest->antifraudEnabled = $this->isAntifraudEnabled();
+        $orderRequest->closed = $this->isClosed();
+        $orderRequest->code = $this->getCode();
+        $orderRequest->customer = $this->getCustomer()->convertToSDKRequest();
+
+        $orderRequest->payments = [];
+        foreach ($this->getPayments() as $payment) {
+            $orderRequest->payments[] = $payment->convertToSDKRequest();
+        }
+
+        $orderRequest->items = [];
+        foreach ($this->getItems() as $item) {
+            $orderRequest->items[] = $item->convertToSDKRequest();
+        }
+
+        $shipping = $this->getShipping();
+        if ($shipping !== null) {
+            $orderRequest->shipping = $shipping->convertToSDKRequest();
+        }
+
+        return $orderRequest;
+    }
+
+    private function setCaptureFlag(AbstractPayment &$payment)
+    {
+        $antifraudEnabled = $this->isAntifraudEnabled();
+        if ($antifraudEnabled === null) {
+            throw new \Exception(
+                'The antifraudEnabled flag should be set before adding any payment!',
+                400
+            );
+        }
+
+        $capture =
+            !$antifraudEnabled &&
+            MPSetup::getModuleConfiguration()->isCapture();
+
+        if (method_exists($payment, 'setCapture')) {
+            $payment->setCapture($capture);
+        }
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Mundipagg\Core\Payment\Aggregates;
 
+use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
-final class Customer extends AbstractEntity
+final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     /** @var null|string */
     private $code;
@@ -159,5 +161,19 @@ final class Customer extends AbstractEntity
         $obj->address = $this->address;
 
         return $obj;
+    }
+
+    public function convertToSDKRequest()
+    {
+        $customerRequest = new CreateCustomerRequest();
+
+        $customerRequest->name = $this->getName();
+        $customerRequest->email = $this->getEmail();
+        $customerRequest->document = $this->getDocument();
+        $customerRequest->type = $this->getType()->getType();
+        $customerRequest->address = $this->getAddress()->convertToSDKRequest();
+        $customerRequest->phones = $this->getPhones()->convertToSDKRequest();
+
+        return $customerRequest;
     }
 }

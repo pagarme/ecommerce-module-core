@@ -2,11 +2,13 @@
 
 namespace Mundipagg\Core\Payment\Aggregates;
 
+use MundiAPILib\Models\CreateShippingRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\ValueObjects\Phone;
 
-final class Shipping extends AbstractEntity
+final class Shipping extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     use WithAmountTrait;
 
@@ -101,5 +103,23 @@ final class Shipping extends AbstractEntity
         $obj->address = $this->address;
 
         return $obj;
+    }
+
+    /**
+     * @return CreateShippingRequest
+     */
+    public function convertToSDKRequest()
+    {
+        $shippingRequest = new CreateShippingRequest();
+
+        $shippingRequest->amount = $this->getAmount();
+        $shippingRequest->description = $this->getDescription();
+        $shippingRequest->recipientName = $this->getRecipientName();
+        $shippingRequest->recipientPhone = $this->getRecipientPhone()
+            ->getFullNumber();
+
+        $shippingRequest->address = $this->getAddress()->convertToSDKRequest();
+
+        return $shippingRequest;
     }
 }

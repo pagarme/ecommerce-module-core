@@ -11,6 +11,7 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
+use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
@@ -146,33 +147,41 @@ final class OrderService
 
     public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
     {
-        $orderInfo = $this->getOrderInfo($platformOrder);
+        try {
+            $orderInfo = $this->getOrderInfo($platformOrder);
 
-        $this->logService->orderInfo(
-            $platformOrder->getCode(),
-            'Creating order.',
-            $orderInfo
-        );
-        //set pending
-        $platformOrder->setState(OrderState::stateNew());
-        $platformOrder->setStatus(OrderStatus::pending());
-        $platformOrder->save();
+            $this->logService->orderInfo(
+                $platformOrder->getCode(),
+                'Creating order.',
+                $orderInfo
+            );
+            //set pending
+            $platformOrder->setState(OrderState::stateNew());
+            $platformOrder->setStatus(OrderStatus::pending());
+            $platformOrder->save();
 
-        //build PaymentOrder based on platformOrder
-        $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
+            //build PaymentOrder based on platformOrder
+            $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
 
-        //Send through the APIService to mundipagg
-        $apiService = new APIService();
-        $response = $apiService->createOrder($order);
+            //Send through the APIService to mundipagg
+            $apiService = new APIService();
+            $response = $apiService->createOrder($order);
 
-        $handler = $this->getResponseHandler($response);
-        $handleResult = $handler->handle($response, $order);
+            $handler = $this->getResponseHandler($response);
+            $handleResult = $handler->handle($response, $order);
 
-        if ($handleResult !== true) {
-            throw new \Exception($handleResult, 400);
+            if ($handleResult !== true) {
+                throw new \Exception($handleResult, 400);
+            }
+
+            return [$response];
+        } catch(\Exception $e) {
+                $exceptionHandler = new ErrorExceptionHandler;
+                $paymentOrder = new PaymentOrder;
+                $paymentOrder->setCode($platformOrder->getcode());
+                $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
+                throw new \Exception($frontMessage, 400);
         }
-
-        return [$response];
     }
 
     /** @return ResponseHandlerInterface */
@@ -206,6 +215,7 @@ final class OrderService
             )
         );
         $order->setCustomer($platformOrder->getCustomer());
+        $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
 
         $payments = $platformOrder->getPaymentMethodCollection();
         foreach ($payments as $payment) {
@@ -214,7 +224,9 @@ final class OrderService
 
         if (!$order->isPaymentSumCorrect()) {
             throw new \Exception(
-                'The sum of payments is different than the order amount!'
+                'The sum of payments is different than the order amount!',
+                400
+
             );
         }
 
@@ -224,8 +236,6 @@ final class OrderService
         }
 
         $order->setCode($platformOrder->getCode());
-
-        $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
 
         $shipping = $platformOrder->getShipping();
         if ($shipping !== null) {

@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
+use MundiAPILib\Models\CreateBoletoPaymentRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Payment\Aggregates\Customer;
@@ -61,5 +62,18 @@ final class BoletoPayment extends AbstractPayment
     static public function getBaseCode()
     {
         return PaymentMethod::boleto()->getMethod();
+    }
+
+    /**
+     * @return CreateBoletoPaymentRequest
+     */
+    protected function convertToPrimitivePaymentRequest()
+    {
+        $paymentRequest = new CreateBoletoPaymentRequest();
+
+        $paymentRequest->bank = $this->getBank()->getCode();
+        $paymentRequest->instructions = $this->getInstructions();
+
+        return $paymentRequest;
     }
 }

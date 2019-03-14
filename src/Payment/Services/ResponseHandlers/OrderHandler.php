@@ -44,7 +44,8 @@ final class OrderHandler extends AbstractResponseHandler
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Order waiting for online retries at Mundipagg.'
+                'Order waiting for online retries at Mundipagg.' .
+                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
             )
         );
 
@@ -101,7 +102,8 @@ final class OrderHandler extends AbstractResponseHandler
 
             $i18n = new LocalizationService();
             $platformOrder->addHistoryComment(
-                $i18n->getDashboard('Order paid.')
+                $i18n->getDashboard('Order paid.') .
+                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
             );
 
             $orderRepository = new OrderRepository();
@@ -167,7 +169,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $historyComment = $i18n->getDashboard('Order payment failed');
-        $historyComment .= ': ';
+        $historyComment .= ' (' . $order->getMundipaggId()->getValue() . ') : ';
 
         foreach ($historyData as $chargeId => $acquirerMessage) {
             $historyComment .= "$chargeId => $acquirerMessage; ";
@@ -180,6 +182,10 @@ final class OrderHandler extends AbstractResponseHandler
         $order->setStatus(OrderStatus::canceled());
         $order->getPlatformOrder()->setState(OrderState::canceled());
         $order->getPlatformOrder()->save();
+
+        $order->getPlatformOrder()->addHistoryComment(
+            $i18n->getDashboard('Order canceled.')
+        );
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);

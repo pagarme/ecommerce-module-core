@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
+use MundiAPILib\Models\CreateCreditCardPaymentRequest;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 
@@ -24,5 +25,17 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
     public function setCardToken(CardToken $cardToken)
     {
         $this->setIdentifier($cardToken);
+    }
+
+    /**
+     * @return CreateCreditCardPaymentRequest
+     */
+    protected function convertToPrimitivePaymentRequest()
+    {
+        $paymentRequest = parent::convertToPrimitivePaymentRequest();
+
+        $paymentRequest->cardToken = $this->getIdentifier()->getValue();
+
+        return $paymentRequest;
     }
 }

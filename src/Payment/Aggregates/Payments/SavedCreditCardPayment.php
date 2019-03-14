@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
+use MundiAPILib\Models\CreateCreditCardPaymentRequest;
+use MundiAPILib\Models\CreatePaymentRequest;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
@@ -48,5 +50,17 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
     public function setCardId(CardId $cardId)
     {
         $this->setIdentifier($cardId);
+    }
+
+    /**
+     * @return CreateCreditCardPaymentRequest
+     */
+    protected function convertToPrimitivePaymentRequest()
+    {
+        $paymentRequest = parent::convertToPrimitivePaymentRequest();
+
+        $paymentRequest->cardId = $this->getIdentifier()->getValue();
+
+        return $paymentRequest;
     }
 }
