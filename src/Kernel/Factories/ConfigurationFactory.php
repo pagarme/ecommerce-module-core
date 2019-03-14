@@ -134,6 +134,14 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
+        if (isset($data->cardStatementDescriptor)) {
+            $config->setCardStatementDescriptor($data->cardStatementDescriptor);
+        }
+
+        if (isset($data->boletoInstructions)) {
+            $config->setBoletoInstructions($data->boletoInstructions);
+        }
+
         return $config;
     }
 

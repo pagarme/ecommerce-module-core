@@ -209,6 +209,7 @@ final class OrderService
         $user->setType(CustomerType::individual());
 
         $order = new PaymentOrder();
+
         $order->setAmount(
             $moneyService->floatToCents(
                 $platformOrder->getGrandTotal()

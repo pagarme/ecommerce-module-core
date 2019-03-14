@@ -93,6 +93,12 @@ final class Configuration extends AbstractEntity
     /** @var AddressAttributes */
     private $addressAttributes;
 
+    /** @var string */
+    private $cardStatementDescriptor;
+
+    /** @var string */
+    private $boletoInstructions;
+
     public function __construct()
     {
         $this->cardConfigs = [];
@@ -404,6 +410,38 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getCardStatementDescriptor()
+    {
+        return $this->cardStatementDescriptor;
+    }
+
+    /**
+     * @param string $cardStatementDescriptor
+     */
+    public function setCardStatementDescriptor($cardStatementDescriptor)
+    {
+        $this->cardStatementDescriptor = $cardStatementDescriptor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBoletoInstructions()
+    {
+        return $this->boletoInstructions;
+    }
+
+    /**
+     * @param string $boletoInstructions
+     */
+    public function setBoletoInstructions($boletoInstructions)
+    {
+        $this->boletoInstructions = $boletoInstructions;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -427,6 +465,8 @@ final class Configuration extends AbstractEntity
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
             "installmentsEnabled" => $this->isInstallmentsEnabled(),
+            "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
+            "boletoInstructions" => $this->getBoletoInstructions(),
             "cardConfigs" => $this->getCardConfigs()
         ];
     }

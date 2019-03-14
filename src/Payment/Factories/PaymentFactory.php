@@ -40,9 +40,9 @@ final class PaymentFactory
         $this->moduleConfig = AbstractModuleCoreSetup::getModuleConfiguration();
 
         //@todo get these from config.
-        $this->cardStatementDescriptor = 'STATEMENT DESC';
+        $this->cardStatementDescriptor = $this->moduleConfig->getCardStatementDescriptor();
         $this->boletoBank = BoletoBank::itau();
-        $this->boletoInstructions = 'BOLETO instructions';
+        $this->boletoInstructions = $this->moduleConfig->getBoletoInstructions();
     }
 
     public function createFromJson($json)
@@ -89,7 +89,6 @@ final class PaymentFactory
             );
 
             $payment->setStatementDescriptor($this->cardStatementDescriptor);
-
 
             $payments[] = $payment;
         }
