@@ -15,6 +15,7 @@ use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
+use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class OrderHandlerService extends AbstractHandlerService
@@ -32,39 +33,13 @@ final class OrderHandlerService extends AbstractHandlerService
             "code" => 200
         ];
 
-        $invoiceService = new InvoiceService();
-        $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
+        $webhookOrder = $webhook->getEntity();
+        $webhookOrder->setId($order->getId());
+        $orderHandlerService = new OrderHandler();
+        $cantCreateReason = $orderHandlerService->handle($webhookOrder);
+
         $result["message"] .= $cantCreateReason;
-
-        $invoice = $invoiceService->createInvoiceFor($order);
-        if ($invoice !== null) {
-            $invoice->setState(InvoiceState::paid());
-            $invoice->save();
-            $platformOrder = $order->getPlatformOrder();
-
-            $orderService = new OrderService();
-
-            /**
-             *
- * @var Order $webhookOrder 
-*/
-            $webhookOrder = $webhook->getEntity();
-            $orderService->updateAcquirerData($webhookOrder);
-
-            $order->setStatus(OrderStatus::processing());
-            //@todo maybe an Order Aggregate should have a State too.
-            $platformOrder->setState(OrderState::processing());
-
-            $i18n = new LocalizationService();
-            $platformOrder->addHistoryComment(
-                $i18n->getDashboard('Order paid.')
-            );
-
-            $orderRepository = new OrderRepository();
-            $orderRepository->save($order);
-
-            $orderService->syncPlatformWith($order);
-
+        if ($cantCreateReason === true) {
             $result = [
                 "message" => 'Order paid and invoice created.',
                 "code" => 200

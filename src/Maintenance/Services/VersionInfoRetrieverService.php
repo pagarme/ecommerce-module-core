@@ -18,6 +18,7 @@ class VersionInfoRetrieverService implements InfoRetrieverServiceInterface
         $info->platformCoreConcreteClass = MPSetup::get(MPSetup::CONCRETE_MODULE_CORE_SETUP_CLASS);
         $info->moduleVersion = $versionService->getModuleVersion();
         $info->coreVersion = $versionService->getCoreVersion();
+        $info->platformVersion = $versionService->getPlatformVersion();
 
         return $info;
     }

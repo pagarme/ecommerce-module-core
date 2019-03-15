@@ -6,6 +6,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
@@ -65,10 +66,32 @@ class ConfigurationFactory implements FactoryInterface
                 )
             );
         }
+        $isAntifraudEnabled = false;
+        $antifraudMinAmount = 0;
+        if (isset($data->isAntifraudEnabled)) {
+            $isAntifraudEnabled = $data->isAntifraudEnabled;
+            $antifraudMinAmount = $data->antifraudMinAmount;
+        }
+        $config->setAntifraudEnabled($isAntifraudEnabled);
+        $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
+
+        $isInstallmentsEnabled = false;
+        if (isset($data->installmentsEnabled)) {
+            $isInstallmentsEnabled = $data->installmentsEnabled;
+        }
+        $config->setInstallmentsEnabled($isInstallmentsEnabled);
+
+        if (isset($data->enabled)) {
+            $config->setEnabled($data->enabled);
+        }
+
+        if (isset($data->cardOperation)) {
+            $config->setCardOperation($data->cardOperation);
+        }
 
         if ($data->hubInstallId !== null) {
             $config->setHubInstallId(
@@ -98,6 +121,25 @@ class ConfigurationFactory implements FactoryInterface
             $config->setSecretKey(
                 $this->createSecretKey($data->secretKey)
             );
+        }
+
+        if (isset($data->addressAttributes)) {
+            $config->setAddressAttributes(
+                new AddressAttributes(
+                    $data->addressAttributes->street,
+                    $data->addressAttributes->number,
+                    $data->addressAttributes->neighborhood,
+                    $data->addressAttributes->complement
+                )
+            );
+        }
+
+        if (isset($data->cardStatementDescriptor)) {
+            $config->setCardStatementDescriptor($data->cardStatementDescriptor);
+        }
+
+        if (isset($data->boletoInstructions)) {
+            $config->setBoletoInstructions($data->boletoInstructions);
         }
 
         return $config;

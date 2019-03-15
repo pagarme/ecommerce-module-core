@@ -5,13 +5,26 @@ namespace Mundipagg\Core\Kernel\Services;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
+use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
+use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+
+use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
 final class OrderService
 {
+    private $logService;
+
+    public function __construct()
+    {
+        $this->logService = new OrderLogService();
+    }
+
     /**
      *
      * @param Order $order
@@ -42,7 +55,12 @@ final class OrderService
         $platformOrder->setTotalRefunded($refundedAmount);
         $platformOrder->setBaseTotalRefunded($refundedAmount);
 
-        $platformOrder->setStatus($order->getStatus());
+        $orderStatus = $order->getStatus();
+        if ($orderStatus->equals(OrderStatus::paid())) {
+            $orderStatus = OrderStatus::processing();
+        }
+
+        $platformOrder->setStatus($orderStatus);
         //@todo $platformOrder->setState($order->getState());
 
         $platformOrder->save();
@@ -125,5 +143,117 @@ final class OrderService
         if (is_a($order, Order::class)) {
             $this->cancelAtMundipagg($order);
         }
+    }
+
+    public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
+    {
+        try {
+            $orderInfo = $this->getOrderInfo($platformOrder);
+
+            $this->logService->orderInfo(
+                $platformOrder->getCode(),
+                'Creating order.',
+                $orderInfo
+            );
+            //set pending
+            $platformOrder->setState(OrderState::stateNew());
+            $platformOrder->setStatus(OrderStatus::pending());
+            $platformOrder->save();
+
+            //build PaymentOrder based on platformOrder
+            $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
+
+            //Send through the APIService to mundipagg
+            $apiService = new APIService();
+            $response = $apiService->createOrder($order);
+
+            $handler = $this->getResponseHandler($response);
+            $handleResult = $handler->handle($response, $order);
+
+            if ($handleResult !== true) {
+                throw new \Exception($handleResult, 400);
+            }
+
+            return [$response];
+        } catch(\Exception $e) {
+                $exceptionHandler = new ErrorExceptionHandler;
+                $paymentOrder = new PaymentOrder;
+                $paymentOrder->setCode($platformOrder->getcode());
+                $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
+                throw new \Exception($frontMessage, 400);
+        }
+    }
+
+    /** @return ResponseHandlerInterface */
+    private function getResponseHandler($response)
+    {
+        $responseClass = get_class($response);
+        $responseClass = explode('\\', $responseClass);
+
+        $responseClass =
+            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            end($responseClass) . 'Handler';
+
+        return new $responseClass;
+    }
+
+    private function extractPaymentOrderFromPlatformOrder(
+        PlatformOrderInterface $platformOrder
+    )
+    {
+        $moduleConfig = MPSetup::getModuleConfiguration();
+
+        $moneyService = new MoneyService();
+
+        $user = new Customer();
+        $user->setType(CustomerType::individual());
+
+        $order = new PaymentOrder();
+
+        $order->setAmount(
+            $moneyService->floatToCents(
+                $platformOrder->getGrandTotal()
+            )
+        );
+        $order->setCustomer($platformOrder->getCustomer());
+        $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
+
+        $payments = $platformOrder->getPaymentMethodCollection();
+        foreach ($payments as $payment) {
+            $order->addPayment($payment);
+        }
+
+        if (!$order->isPaymentSumCorrect()) {
+            throw new \Exception(
+                'The sum of payments is different than the order amount!',
+                400
+
+            );
+        }
+
+        $items = $platformOrder->getItemCollection();
+        foreach ($items as $item) {
+            $order->addItem($item);
+        }
+
+        $order->setCode($platformOrder->getCode());
+
+        $shipping = $platformOrder->getShipping();
+        if ($shipping !== null) {
+            $order->setShipping($shipping);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param PlatformOrderInterface $platformOrder
+     * @return \stdClass
+     */
+    private function getOrderInfo(PlatformOrderInterface $platformOrder)
+    {
+        $orderInfo = new \stdClass();
+        $orderInfo->grandTotal = $platformOrder->getGrandTotal();
+        return $orderInfo;
     }
 }

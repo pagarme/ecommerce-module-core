@@ -47,10 +47,14 @@ class TransactionFactory implements FactoryInterface
         }
         $transaction->setTransactionType(TransactionType::$type());
 
-        $transaction->setAmount($postData['amount']);
+        if (isset($postData['amount'])) {
+            $transaction->setAmount($postData['amount']);
+        }
 
         $paidAmountIndex = isset($postData['paid_amount']) ? 'paid_amount' : 'amount';
-        $transaction->setPaidAmount($postData[$paidAmountIndex]);
+        if (isset($postData[$paidAmountIndex])) {
+            $transaction->setPaidAmount($postData[$paidAmountIndex]);
+        }
 
         $acquirerName = '';
         if (isset($postData['acquirer_name'])) {

@@ -6,6 +6,7 @@ use Mundipagg\Core\Maintenance\Interfaces\InstallDataSourceInterface;
 
 abstract class AbstractInstallDataSource implements InstallDataSourceInterface
 {
+
     //@todo $ignoreVendor should be an array of directories to ignore instead of boolean
     protected function scanDirs($dirs, $ignoreVendor = false)
     {
@@ -18,10 +19,12 @@ abstract class AbstractInstallDataSource implements InstallDataSourceInterface
             $foundFiles = scandir($dir);
             if ($foundFiles !== false) {
                 foreach ($foundFiles as $foundFile) {
-                    if (strlen($foundFile) < 3
-                        || (                        $ignoreVendor 
-                        && (strpos($dir, 'vendor') !== false
-                        || strpos($dir, 'lib') !== false))
+                    if (
+                        $this->shouldIgnoreFile(
+                            $foundFile,
+                            $dir,
+                            $ignoreVendor
+                        )
                     ) {
                         continue;
                     }
@@ -48,5 +51,20 @@ abstract class AbstractInstallDataSource implements InstallDataSourceInterface
         return array_values($files);
     }
 
+    protected function shouldIgnoreFile($file, $path, $ignoreVendor)
+    {
+        if (strlen($file) < 3) {
+            return true;
+        }
+        $dir = str_replace($this->getModuleRoot(),'', $path);
+        return
+            $ignoreVendor
+            && (
+                strpos($dir, 'vendor') !== false
+                || strpos($dir, 'lib') !== false
+            );
+    }
+
     abstract protected function getInstallDirs();
+    abstract protected function getModuleRoot();
 }

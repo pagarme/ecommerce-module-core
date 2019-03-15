@@ -51,9 +51,7 @@ final class ComposerInstallDataSource
 
     protected function getInstallDirs()
     {
-        $moduleRoot = explode(DIRECTORY_SEPARATOR, $this->composerJsonFilePath);
-        array_pop($moduleRoot);
-        $moduleRoot = implode(DIRECTORY_SEPARATOR, $moduleRoot);
+        $moduleRoot = $this->getModuleRoot();
 
         $dirs = scandir($moduleRoot);
 
@@ -70,5 +68,14 @@ final class ComposerInstallDataSource
         }
 
         return $finalDirs;
+    }
+
+    protected function getModuleRoot()
+    {
+        $moduleRoot = explode(DIRECTORY_SEPARATOR, $this->composerJsonFilePath);
+        array_pop($moduleRoot);
+        $moduleRoot = implode(DIRECTORY_SEPARATOR, $moduleRoot);
+
+        return $moduleRoot;
     }
 }

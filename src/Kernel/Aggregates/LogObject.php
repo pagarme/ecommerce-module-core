@@ -3,13 +3,13 @@
 namespace Mundipagg\Core\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\VersionPair;
+use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
 
 final class LogObject extends AbstractEntity
 {
     /**
      *
-     * @var VersionPair 
+     * @var VersionInfo
      */
     private $versions;
     private $method;
@@ -70,7 +70,7 @@ final class LogObject extends AbstractEntity
 
     /**
      *
-     * @return VersionPair
+     * @return VersionInfo
      */
     public function getVersions()
     {

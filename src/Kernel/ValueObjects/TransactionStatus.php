@@ -14,6 +14,7 @@ final class TransactionStatus extends AbstractValueObject
     const PARTIAL_VOID = 'partial_void';
     const WITH_ERROR = 'withError';
     const NOT_AUTHORIZED = 'notAuthorized';
+    const FAILED = 'failed';
 
     const GENERATED = 'generated';
     const UNDERPAID = 'underpaid';
@@ -94,6 +95,11 @@ final class TransactionStatus extends AbstractValueObject
     public static function refunded()
     {
         return new self(self::REFUNDED);
+    }
+
+    public static function failed()
+    {
+        return new self(self::FAILED);
     }
 
     /**

@@ -3,31 +3,36 @@
 namespace Mundipagg\Core\Kernel\Factories;
 
 use Mundipagg\Core\Kernel\Aggregates\LogObject;
-use Mundipagg\Core\Kernel\ValueObjects\VersionPair;
+use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
 
 class LogObjectFactory
 {
     /**
      *
      * @param  array       $callerBacktrace
-     * @param  mixed       $sourceObject
-     * @param  VersionPair $versions
+     * @param  mixed       $baseSourceObject
+     * @param  VersionInfo $versions
      * @return LogObject
      */
     public function createFromLogger(
         $callerBacktrace,
-        $sourceObject,
-        VersionPair $versions
+        $baseSourceObject,
+        VersionInfo $versions
     ) {
         $baseObject = new LogObject();
         $baseObject->setVersions($versions);
 
         $backTrace = $callerBacktrace;
-        $method = $backTrace['class'] . '::';
+        $method = $backTrace['file'] . ':';
+        $method .= $backTrace['line'] . ' -> ';
+        $method .= $backTrace['class'] . '::';
         $method .= $backTrace['function'];
-        $method .= ':' . $backTrace['line'];
         $baseObject->setMethod($method);
 
+        $sourceObject = [];
+        if ($baseSourceObject !== null) {
+            $sourceObject = $baseSourceObject;
+        }
         $baseObject->setData($sourceObject);
 
         return $baseObject;
@@ -42,9 +47,10 @@ class LogObjectFactory
     {
         $baseObject = new LogObject();
         $baseObject->setVersions(
-            new VersionPair(
+            new VersionInfo(
                 $data['versions']['moduleVersion'],
-                $data['versions']['coreVersion']
+                $data['versions']['coreVersion'],
+                $data['versions']['platformVersion']
             )
         );
 
