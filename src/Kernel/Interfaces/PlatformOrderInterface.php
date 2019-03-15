@@ -5,16 +5,20 @@ namespace Mundipagg\Core\Kernel\Interfaces;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Aggregates\Item;
+use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 
 interface PlatformOrderInterface
 {
     public function save();
-    public function setState(OrderState $state);
     /**
      *
      * @return OrderState
      */
     public function getState();
+    public function setState(OrderState $state);
     public function setStatus(OrderStatus $status);
     public function getStatus();
     public function loadByIncrementId($incrementId);
@@ -25,12 +29,14 @@ interface PlatformOrderInterface
     public function canUnhold();
     public function isPaymentReview();
     public function isCanceled();
+    public function setPlatformOrder($platformOrder);
     public function getPlatformOrder();
     public function getIncrementId();
     public function payAmount($amount);
     public function refundAmount($amountToRefund);
     public function cancelAmount($amountToRefund);
     public function getGrandTotal();
+    public function getBaseTaxAmount();
     public function getTotalPaid();
     public function getTotalDue();
     public function setTotalPaid($amount);
@@ -58,4 +64,13 @@ interface PlatformOrderInterface
     public function getTransactionCollection();
     public function getPaymentCollection();
 
+    /** @return Customer */
+    public function getCustomer();
+    /** @return Item[] */
+    public function getItemCollection();
+
+    /** @return AbstractPayment[] */
+    public function getPaymentMethodCollection();
+    /** @return null|Shipping */
+    public function getShipping();
 }

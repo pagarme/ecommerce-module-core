@@ -3,10 +3,13 @@
 namespace Mundipagg\Core\Maintenance\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
+use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class InfoBuilderService
 {
+
     /**
      *
      * @param  array $query

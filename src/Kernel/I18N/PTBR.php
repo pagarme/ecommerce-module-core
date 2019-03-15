@@ -13,6 +13,8 @@ class PTBR extends AbstractI18NTable
             'Invoice canceled: #%s.' => 'Invoice cancelada: #%s',
             'Webhook received: %s.%s' => 'Webhook recebido: %s.%s',
             'Order paid.' => 'Pedido pago.',
+            'Order created at Mundipagg. Id: %s' => 'Pedido criado na Mundipagg. Id %s',
+            'Order waiting for online retries at Mundipagg.' => 'Pedido aguardando por retentativas online na Mundipagg.',
             'Order canceled.' => 'Pedido cancelado.',
             'Payment received: %.2f' => 'Pagamento recebido: %.2f',
             'Canceled amount: %.2f' => 'Quantia cancelada: %.2f',
@@ -29,7 +31,8 @@ class PTBR extends AbstractI18NTable
             "with %.2f%% of interest" => "com %.2f%% de juros",
             "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
             "Order payment failed" => "Pagamento do pedido falhou",
-            "The order will be canceled" => "O pedido será cancelado"
+            "The order will be canceled" => "O pedido será cancelado",
+            "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s'
         ];
     }
 }

@@ -13,6 +13,8 @@ class ENUS extends AbstractI18NTable
             'Invoice canceled: #%s.' => null,
             'Webhook received: %s.%s' => null,
             'Order paid.' => null,
+            'Order created at Mundipagg. Id: %s' => null,
+            'Order waiting for online retries at Mundipagg.' => null,
             'Order canceled.' => null,
             'Payment received: %.2f' => null,
             'Canceled amount: %.2f' => null,
@@ -29,8 +31,8 @@ class ENUS extends AbstractI18NTable
             "with %.2f%% of interest" => null,
             "%dx of %s %s (Total: %s)" => null,
             "Order payment failed" => null,
-            "Order payment failed" => null,
-            "The order will be canceled" => null
+            "The order will be canceled" => null,
+            "An error occurred when trying to create the order. Please try again. Error Reference: %s." => null
         ];
     }
 }

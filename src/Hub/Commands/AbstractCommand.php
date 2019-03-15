@@ -2,7 +2,8 @@
 
 namespace Mundipagg\Core\Hub\Commands;
 
-use Mundipagg\Core\Kernel\CommandInterface;
+
+use Mundipagg\Core\Kernel\Interfaces\CommandInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\AccountId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;

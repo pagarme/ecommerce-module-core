@@ -2,9 +2,9 @@
 
 namespace Mundipagg\Core\Hub\Commands;
 
-use Mundipagg\ValueObject\ValueObject;
+use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
-final class CommandType implements ValueObject
+final class CommandType extends AbstractValueObject
 {
     const SANDBOX = 'Sandbox';
     const PRODUCTION = 'Production';
@@ -60,8 +60,20 @@ final class CommandType implements ValueObject
      *
      * @var static $object 
      */
-    public function equals($object)
+    public function isEqual($object)
     {
         return $this->value === $object->getValue();
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }

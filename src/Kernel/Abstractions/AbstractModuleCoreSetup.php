@@ -22,6 +22,7 @@ abstract class AbstractModuleCoreSetup
     const CONCRETE_FORMAT_SERVICE = 1000;
 
     protected static $moduleVersion;
+    protected static $platformVersion;
     protected static $logPath;
     protected static $instance;
     protected static $config;
@@ -63,6 +64,7 @@ abstract class AbstractModuleCoreSetup
             static::$instance = new static();
             static::$instance->setConfig();
             static::$instance->setModuleVersion();
+            static::$instance->setPlatformVersion();
             static::$instance->setLogPath();
             static::$config[self::CONCRETE_MODULE_CORE_SETUP_CLASS] = static::class;
 
@@ -137,6 +139,11 @@ abstract class AbstractModuleCoreSetup
         return self::$moduleVersion;
     }
 
+    public static function getPlatformVersion()
+    {
+        return self::$platformVersion;
+    }
+
     public static function getLogPath()
     {
         return self::$logPath;
@@ -184,6 +191,7 @@ abstract class AbstractModuleCoreSetup
     abstract protected static function setConfig();
     abstract protected static function loadModuleConfiguration();
     abstract protected static function setModuleVersion();
+    abstract protected static function setPlatformVersion();
     abstract protected static function setLogPath();
     abstract public static function getDatabaseAccessObject();
     /**

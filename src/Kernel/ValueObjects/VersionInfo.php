@@ -4,7 +4,7 @@ namespace Mundipagg\Core\Kernel\ValueObjects;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
-final class VersionPair extends AbstractValueObject
+final class VersionInfo extends AbstractValueObject
 {
     /**
      *
@@ -17,10 +17,16 @@ final class VersionPair extends AbstractValueObject
      */
     private $coreVersion;
 
-    public function __construct($moduleVersion, $coreVersion)
+    /**
+     * @var string
+     */
+    private $platformVersion;
+
+    public function __construct($moduleVersion, $coreVersion, $platformVersion)
     {
         $this->setModuleVersion($moduleVersion);
         $this->setCoreVersion($coreVersion);
+        $this->setPlatformVersion($platformVersion);
     }
 
     /**
@@ -35,7 +41,7 @@ final class VersionPair extends AbstractValueObject
     /**
      *
      * @param  string $moduleVersion
-     * @return VersionPair
+     * @return VersionInfo
      */
     private function setModuleVersion($moduleVersion)
     {
@@ -55,7 +61,7 @@ final class VersionPair extends AbstractValueObject
     /**
      *
      * @param  string $coreVersion
-     * @return VersionPair
+     * @return VersionInfo
      */
     private function setCoreVersion($coreVersion)
     {
@@ -64,10 +70,26 @@ final class VersionPair extends AbstractValueObject
     }
 
     /**
+     * @return string
+     */
+    public function getPlatformVersion()
+    {
+        return $this->platformVersion;
+    }
+
+    /**
+     * @param string $platformVersion
+     */
+    private function setPlatformVersion($platformVersion)
+    {
+        $this->platformVersion = $platformVersion;
+    }
+
+    /**
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
-     * @param  VersionPair $object
+     * @param  VersionInfo $object
      * @return bool
      */
     protected function isEqual($object)
@@ -91,6 +113,7 @@ final class VersionPair extends AbstractValueObject
 
         $obj->moduleVersion = $this->getModuleVersion();
         $obj->coreVersion = $this->getCoreVersion();
+        $obj->platformVersion = $this->getPlatformVersion();
 
         return $obj ;
     }
