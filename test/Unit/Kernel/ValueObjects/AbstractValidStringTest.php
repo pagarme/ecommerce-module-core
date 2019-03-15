@@ -17,7 +17,7 @@ class AbstractValidStringTest extends TestCase
      *
      * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
-    public function AStringShouldBeValidateable()
+    public function aValidStringShouldBeValidateable()
     {
         $mock = new ValidStringMock(ValidStringMock::VALID1);
         $this->assertEquals(ValidStringMock::VALID1, $mock->getValue());
