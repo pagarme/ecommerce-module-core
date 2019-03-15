@@ -1,5 +1,6 @@
 {
     "name": "mundipagg/ecommerce-module-core",
+    "description": "Core component for Mundipagg e-commerce platforms modules.",
     "license": "MIT",
     "version": "1.4.0",
     "authors":[
@@ -13,10 +14,14 @@
         "monolog/monolog": "~1.6",
         "mundipagg/mundiapi": "^3.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^7"
+    },
     "autoload": {
         "psr-4": {
             "Mundipagg\\Core\\": "src",
-            "Mundipagg\\Core\\Test\\": "tests"
+            "Mundipagg\\Core\\Test\\": "test",
+            "Mundipagg\\Core\\Test\\Mock\\": "test\\mock"
         }
     }
 }
