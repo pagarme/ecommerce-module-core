@@ -109,6 +109,10 @@ class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
                 continue;
             }
 
+            if (!isset($integrityData[$file])) {
+                continue;
+            }
+
             if($integrityData[$file] != $fileHashs[$file] ) {
                 $altered[$file] = $hash;
                 continue;
