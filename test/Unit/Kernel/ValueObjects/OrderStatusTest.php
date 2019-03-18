@@ -119,6 +119,4 @@ class OrderStatusTest extends TestCase
 
         $this->assertTrue($pendingPayment->equals($pending));
     }
-
-
 }
