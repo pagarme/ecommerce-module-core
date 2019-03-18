@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Test\Unit\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +13,8 @@ class NumericStringTest extends TestCase
 
     const INVALID = '13notanumber45';
 
+    use ValidStringTestTrait;
+
     /**
      * @test
      *
@@ -24,15 +25,6 @@ class NumericStringTest extends TestCase
      */
     public function aNumericStringShouldAcceptOnlyNumbers()
     {
-        $numericString = new NumericString(self::VALID1);
-        $this->assertEquals(self::VALID1, $numericString->getValue());
-
-        $numericString = new NumericString(self::VALID2);
-        $this->assertEquals(self::VALID2, $numericString->getValue());
-
-
-        $this->expectException(InvalidParamException::class);
-        $numericString = new NumericString(self::INVALID);
+        $this->doValidStringTest();
     }
-
 }

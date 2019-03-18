@@ -29,8 +29,8 @@ class VersionInfoTest extends TestCase
      */
     public function aVersionInfoShouldBeComparable()
     {
-        $versionInfo11 = new VersionInfo(1,1,1);
-        $versionInfo12 = new VersionInfo(1,1,1);
+        $versionInfo11 = new VersionInfo(1,2,3);
+        $versionInfo12 = new VersionInfo(1,2,3);
 
         $versionInfo2 = new VersionInfo(1,2,1);
 
