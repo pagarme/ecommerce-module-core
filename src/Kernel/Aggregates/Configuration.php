@@ -99,6 +99,11 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
+    /**
+     * @var int
+     */
+    private $storeId = 0;
+
     public function __construct()
     {
         $this->cardConfigs = [];
@@ -365,15 +370,16 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param int $antifraudMinAmount
+     * @throws InvalidParamException
      */
     public function setAntifraudMinAmount(int $antifraudMinAmount)
     {
         if ($antifraudMinAmount < 0) {
-        throw new InvalidParamException(
-            'AntifraudMinAmount should be at least 0!',
-            $antifraudMinAmount
-        );
-    }
+            throw new InvalidParamException(
+                'AntifraudMinAmount should be at least 0!',
+                $antifraudMinAmount
+            );
+        }
         $this->antifraudMinAmount = $antifraudMinAmount;
     }
 
@@ -467,7 +473,24 @@ final class Configuration extends AbstractEntity
             "installmentsEnabled" => $this->isInstallmentsEnabled(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
-            "cardConfigs" => $this->getCardConfigs()
+            "cardConfigs" => $this->getCardConfigs(),
+            "storeId" => $this->storeId
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        return intval($this->storeId);
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function setStoreId($storeId)
+    {
+        $this->storeId = $storeId;
     }
 }

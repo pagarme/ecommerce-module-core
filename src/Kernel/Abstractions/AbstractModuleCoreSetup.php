@@ -80,9 +80,8 @@ abstract class AbstractModuleCoreSetup
 
         static::$instance->loadModuleConfiguration();
 
-        $config = $configurationRepository->find(1);
-        if ($config !== null) {
-            static::$moduleConfig->setId(1);
+        if (static::$moduleConfig->getId() !== null) {
+            return true;
         }
 
         $configurationRepository->save(static::$moduleConfig);

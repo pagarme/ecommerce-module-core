@@ -44,6 +44,8 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($postData['payment_mundipagg_boletoCreditCard_status']);
         $config->setTwoCreditCardsEnabled($postData['payment_mundipagg_credit_card_two_credit_cards_enabled']);
 
+        $config->setStoreId($postData['payment_mundipagg_store_id']);
+
         return $config;
     }
 
@@ -78,6 +80,9 @@ class ConfigurationFactory implements FactoryInterface
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
+        $config->setDisabled($data->disabled);
+
+        $config->setStoreId($data->storeId);
 
         $isInstallmentsEnabled = false;
         if (isset($data->installmentsEnabled)) {
