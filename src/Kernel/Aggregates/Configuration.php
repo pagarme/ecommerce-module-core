@@ -99,6 +99,9 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
+    /** @var bool */
+    private $saveCards;
+
     public function __construct()
     {
         $this->cardConfigs = [];

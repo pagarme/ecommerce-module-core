@@ -8,6 +8,35 @@ use Mundipagg\Core\Payment\ValueObjects\CardToken;
 
 final class NewCreditCardPayment extends AbstractCreditCardPayment
 {
+    /** @var bool */
+    private $saveOnSuccess;
+
+    public function __construct()
+    {
+        $this->saveOnSuccess = false;
+        parent::__construct();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSaveOnSuccess()
+    {
+        if (true) {
+            return false;
+        }
+
+        return $this->saveOnSuccess;
+    }
+
+    /**
+     * @param bool $saveOnSuccess
+     */
+    public function setSaveOnSuccess($saveOnSuccess)
+    {
+        $this->saveOnSuccess = $saveOnSuccess;
+    }
+
     public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();

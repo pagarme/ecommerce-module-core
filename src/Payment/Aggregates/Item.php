@@ -79,6 +79,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
      */
     public function convertToSDKRequest()
     {
+        //@todo handle float quantity.
         $itemRequest = new CreateOrderItemRequest();
 
         $itemRequest->description = $this->getDescription();
