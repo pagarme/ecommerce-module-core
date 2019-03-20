@@ -103,8 +103,9 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
         return (($this->quantity * 100) % 100) > 0;
     }
 
-    private function roundUp ( $value, $precision ) {
-        $pow = pow ( 10, $precision );
-        return ( ceil ( $pow * $value ) + ceil ( $pow * $value - ceil ( $pow * $value ) ) ) / $pow;
+    private function roundUp ($value, $precision)
+    {
+        $pow = pow(10, $precision);
+        return (ceil($pow*$value)+ceil($pow*$value-ceil($pow*$value)))/$pow;
     }
 }
