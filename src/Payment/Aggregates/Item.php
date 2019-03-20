@@ -45,7 +45,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
      * @param int $quantity
      * @throws InvalidParamException
      */
-    public function setQuantity(int $quantity)
+    public function setQuantity($quantity)
     {
         if ($quantity <= 0) {
             throw new InvalidParamException(
@@ -81,10 +81,30 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     {
         $itemRequest = new CreateOrderItemRequest();
 
-        $itemRequest->description = $this->getDescription();
-        $itemRequest->amount = $this->getAmount();
-        $itemRequest->quantity = $this->getQuantity();
+        $amount = $this->getAmount();
+        $quantity = $this->getQuantity();
+        $description = $this->getDescription();
+
+        if ($this->isQuantityFloat()) {
+            $description .= " ($quantity * $amount)";
+            $amount = ($this->roundUp(($amount/100) * $quantity, 2)) * 100;
+            $quantity = 1;
+        }
+
+        $itemRequest->description = $amount;
+        $itemRequest->amount = $quantity;
+        $itemRequest->quantity = $description;
 
         return $itemRequest;
+    }
+
+    private function isQuantityFloat()
+    {
+        return (($this->quantity * 100) % 100) > 0;
+    }
+
+    private function roundUp ( $value, $precision ) {
+        $pow = pow ( 10, $precision );
+        return ( ceil ( $pow * $value ) + ceil ( $pow * $value - ceil ( $pow * $value ) ) ) / $pow;
     }
 }
