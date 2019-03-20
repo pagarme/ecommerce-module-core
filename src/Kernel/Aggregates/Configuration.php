@@ -25,6 +25,8 @@ final class Configuration extends AbstractEntity
     const CARD_OPERATION_AUTH_ONLY = 'auth_only';
     const CARD_OPERATION_AUTH_AND_CAPTURE = 'auth_and_capture';
 
+    const DEFAULT_STORE = 0;
+
     /**
      *
      * @var bool 
@@ -99,14 +101,19 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
-    /**
-     * @var int
-     */
-    private $storeId = 0;
+    /** @var int */
+    private $storeId = self::DEFAULT_STORE;
+
+    /** @var Configuration */
+    private $defaultConfiguration;
+
+    /** @var array */
+    private $defaultAttributes;
 
     public function __construct()
     {
         $this->cardConfigs = [];
+        $this->defaultAttibutes = [];
 
         $this->keys = [
             self::KEY_SECRET => null,
@@ -116,7 +123,24 @@ final class Configuration extends AbstractEntity
         $this->testMode = true;
     }
 
-    public function isEnabled()
+    public function setDefaultAttributes($attributes)
+    {
+        $this->defaultAttributes = $attributes;
+    }
+
+    public function addDefaultAttributes($attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            if (!$value) {
+                continue;
+            }
+            $this->defaultAttributes[] = $key;
+        }
+
+    }
+
+
+    protected  function isEnabled()
     {
         return $this->enabled;
     }
@@ -129,12 +153,12 @@ final class Configuration extends AbstractEntity
         );
     }
 
-    public function getPublicKey()
+    protected  function getPublicKey()
     {
         return $this->keys[self::KEY_PUBLIC];
     }
 
-    public function getSecretKey()
+    protected  function getSecretKey()
     {
         return $this->keys[self::KEY_SECRET];
     }
@@ -172,7 +196,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isTestMode()
+    protected  function isTestMode()
     {
         return $this->testMode;
     }
@@ -181,7 +205,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isHubEnabled()
+    protected  function isHubEnabled()
     {
         if ($this->hubInstallId === null) {
             return false;
@@ -194,7 +218,7 @@ final class Configuration extends AbstractEntity
         $this->hubInstallId = $hubInstallId;
     }
 
-    public function getHubInstallId()
+    protected  function getHubInstallId()
     {
         return $this->hubInstallId;
     }
@@ -259,7 +283,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isBoletoEnabled()
+    protected  function isBoletoEnabled()
     {
         return $this->boletoEnabled;
     }
@@ -268,7 +292,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isCreditCardEnabled()
+    protected  function isCreditCardEnabled()
     {
         return $this->creditCardEnabled;
     }
@@ -277,7 +301,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isTwoCreditCardsEnabled()
+    protected  function isTwoCreditCardsEnabled()
     {
         return $this->twoCreditCardsEnabled;
     }
@@ -286,7 +310,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    public function isBoletoCreditCardEnabled()
+    protected  function isBoletoCreditCardEnabled()
     {
         return $this->boletoCreditCardEnabled;
     }
@@ -315,7 +339,7 @@ final class Configuration extends AbstractEntity
      *
      * @return CardConfig[]
      */
-    public function getCardConfigs()
+    protected  function getCardConfigs()
     {
         return $this->cardConfigs !== null ? $this->cardConfigs : [];
     }
@@ -323,7 +347,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return string
      */
-    public function getCardOperation()
+    protected  function getCardOperation()
     {
         return $this->cardOperation;
     }
@@ -339,7 +363,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
-    public function isCapture()
+    protected  function isCapture()
     {
         return $this->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
     }
@@ -347,7 +371,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
-    public function isAntifraudEnabled()
+    protected  function isAntifraudEnabled()
     {
         return $this->antifraudEnabled;
     }
@@ -363,7 +387,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return int
      */
-    public function getAntifraudMinAmount()
+    protected  function getAntifraudMinAmount()
     {
         return $this->antifraudMinAmount;
     }
@@ -386,7 +410,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
-    public function isInstallmentsEnabled()
+    protected  function isInstallmentsEnabled()
     {
         return $this->installmentsEnabled;
     }
@@ -402,7 +426,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return AddressAttributes
      */
-    public function getAddressAttributes()
+    protected  function getAddressAttributes()
     {
         return $this->addressAttributes;
     }
@@ -418,7 +442,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return string
      */
-    public function getCardStatementDescriptor()
+    protected  function getCardStatementDescriptor()
     {
         return $this->cardStatementDescriptor;
     }
@@ -434,7 +458,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return string
      */
-    public function getBoletoInstructions()
+    protected  function getBoletoInstructions()
     {
         return $this->boletoInstructions;
     }
@@ -474,14 +498,16 @@ final class Configuration extends AbstractEntity
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
             "cardConfigs" => $this->getCardConfigs(),
-            "storeId" => $this->storeId
+            "storeId" => $this->storeId,
+            "defaultAttributes" => $this->defaultAttributes,
+            "defaultConfiguration" => $this->defaultConfiguration
         ];
     }
 
     /**
      * @return int
      */
-    public function getStoreId()
+    protected  function getStoreId()
     {
         return intval($this->storeId);
     }
@@ -492,5 +518,45 @@ final class Configuration extends AbstractEntity
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * @return Configuration
+     */
+    protected function getDefaultConfiguration()
+    {
+        return $this->defaultConfiguration;
+    }
+
+    /**
+     * @param Configuration $defaultConfiguration
+     */
+    public function setDefaultConfiguration(Configuration $defaultConfiguration)
+    {
+        if ($this->storeId != self::DEFAULT_STORE) {
+            $this->defaultConfiguration = $defaultConfiguration;
+        }
+    }
+
+
+    public function __call($name, $arguments)
+    {
+        $methodSplited = explode(
+            "_",
+            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $name)
+        );
+
+        $class = $this;
+
+        $actions = ['is', 'get'];
+        $useDefault = in_array($name, $this->defaultAttributes);
+
+        if (in_array($methodSplited[0], $actions) && $useDefault) {
+            if (isset($this->defaultConfiguration)) {
+                $class = $this->defaultConfiguration;
+            }
+        }
+
+        return call_user_func([$class, $name], $arguments);
     }
 }

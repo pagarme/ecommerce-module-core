@@ -80,7 +80,13 @@ class ConfigurationFactory implements FactoryInterface
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
-        $config->setDisabled($data->disabled);
+
+        $config->setDefaultAttributes($data->defaultAttributes);
+
+        if (isset($data->defaultConfiguration) && $data->storeId !== Configuration::DEFAULT_STORE) {
+            $configDefault = self::createFromJsonData(json_encode($data->defaultConfiguration));
+            $config->setDefaultConfiguration($configDefault);
+        }
 
         $config->setStoreId($data->storeId);
 
