@@ -10,6 +10,7 @@ abstract class AbstractDatabaseDecorator
     const TABLE_CHARGE = 3;
     const TABLE_TRANSACTION = 4;
     const TABLE_HUB_INSTALL_TOKEN = 5;
+    const TABLE_SAVED_CARD = 6;
 
     protected $db;
     protected $tablePrefix;

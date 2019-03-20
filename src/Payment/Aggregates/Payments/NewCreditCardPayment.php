@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 
@@ -22,11 +23,29 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
      */
     public function isSaveOnSuccess()
     {
-        if (true) {
+        $order = $this->getOrder();
+        if ($order === null) {
             return false;
         }
 
-        return $this->saveOnSuccess;
+        if (MPSetup::getModuleConfiguration()->isSaveCards()) {
+            return false;
+        }
+
+        $customer = $this->getCustomer();
+
+        if ($customer === null) {
+            return false;
+        }
+
+        $mpId = $customer->getMundipaggId();
+        if ($mpId === null) {
+            return false;
+        }
+
+        return
+            $this->saveOnSuccess &&
+            $order->getCustomer()->getMundipaggId()->equals($mpId);
     }
 
     /**

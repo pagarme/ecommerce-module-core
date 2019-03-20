@@ -5,13 +5,18 @@ namespace Mundipagg\Core\Payment\Aggregates\Payments;
 use MundiAPILib\Models\CreatePaymentRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Mundipagg\Core\Payment\Interfaces\HaveOrderInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Payment\Traits\WithOrderTrait;
 
-abstract class AbstractPayment extends AbstractEntity implements ConvertibleToSDKRequestsInterface
+abstract class AbstractPayment
+    extends AbstractEntity
+    implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
 {
     use WithAmountTrait;
     use WithCustomerTrait;
+    use WithOrderTrait;
 
     public function jsonSerialize()
     {
