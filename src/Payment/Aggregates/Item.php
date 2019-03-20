@@ -92,9 +92,9 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
             $quantity = 1;
         }
 
-        $itemRequest->description = $amount;
-        $itemRequest->amount = $quantity;
-        $itemRequest->quantity = $description;
+        $itemRequest->description = $description;
+        $itemRequest->amount = $amount;
+        $itemRequest->quantity = $quantity;
 
         return $itemRequest;
     }
