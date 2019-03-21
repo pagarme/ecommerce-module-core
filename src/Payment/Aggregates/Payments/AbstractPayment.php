@@ -48,10 +48,16 @@ abstract class AbstractPayment
         $newPayment->$primitive = $this->convertToPrimitivePaymentRequest();
         $newPayment->paymentMethod = $this->cammel2SnakeCase($primitive);
 
+        $newPayment->metadata = static::getMetadata();
         return $newPayment;
     }
 
     abstract protected function convertToPrimitivePaymentRequest();
+
+    protected function getMetadata()
+    {
+        return null;
+    }
 
     private function cammel2SnakeCase($cammelCaseString)
     {

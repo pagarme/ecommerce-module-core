@@ -5,9 +5,12 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 
 final class Order extends AbstractEntity
 {
+    use WithCustomerTrait;
+
     /**
      *
      * @var PlatformOrderInterface 
@@ -160,6 +163,7 @@ final class Order extends AbstractEntity
         $obj->amount = $this->getAmount();
         $obj->status = $this->getStatus();
         $obj->charges = $this->getCharges();
+        $obj->customer = $this->getCustomer();
 
         return $obj;
     }

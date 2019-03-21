@@ -13,6 +13,10 @@ use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Payment\Factories\SavedCardFactory;
+use Mundipagg\Core\Payment\Repositories\CustomerRepository;
+use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -33,6 +37,10 @@ final class OrderHandler extends AbstractResponseHandler
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($createdOrder);
+
+        $this->saveCustomer($createdOrder);
+        //@todo DEBUG: remove this. save only on paid or pending.
+        $this->saveCards($createdOrder);
 
         return $this->$statusHandler($createdOrder);
     }
@@ -71,6 +79,8 @@ final class OrderHandler extends AbstractResponseHandler
             )
         );
 
+        $this->saveCards($order);
+
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
@@ -93,17 +103,11 @@ final class OrderHandler extends AbstractResponseHandler
 
             $this->completePayment($order, $invoice);
 
-            $this->saveCards();
+            $this->saveCards($order);
 
             return true;
         }
         return $cantCreateReason;
-    }
-
-    private function saveCards()
-    {
-        //@todo do card saving;
-        $a = 1;
     }
 
     /**
@@ -212,5 +216,51 @@ final class OrderHandler extends AbstractResponseHandler
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
         return "One or more charges weren't authorized. Please try again.";
+    }
+
+    /**
+     * @param PaymentOrder $paymentOrder
+     */
+    private function saveCustomer(Order $createdOrder)
+    {
+        $customer = $createdOrder->getCustomer();
+
+        //save only registered customers;
+        if($customer->getCode() === null) {
+            return;
+        }
+
+        $customerRepository = new CustomerRepository();
+        if (
+            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
+        ) {
+            $customerRepository->save($customer);
+        }
+    }
+
+    private function saveCards(Order $order)
+    {
+        //@todo save only cards that are marked to save and belongs to Order customer.
+        $savedCardFactory = new SavedCardFactory();
+        $savedCardRepository = new SavedCardRepository();
+        $charges = $order->getCharges();
+
+        $lastTransaction = $charges[0]->getLastTransaction();
+        if (!empty($lastTransaction->getPostData()->card)) {
+            $postData = $lastTransaction->getPostData()->card;
+            $postData->owner = $order->getCustomer()->getMundipaggId()->getValue();
+            $savedCard = $savedCardFactory->createFromPostData($postData);
+            if (
+                $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
+            ) {
+                $savedCardRepository->save($savedCard);
+                $this->logService->orderInfo(
+                    $order->getCode(),
+                    "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
+                );
+
+            }
+        }
+
     }
 }

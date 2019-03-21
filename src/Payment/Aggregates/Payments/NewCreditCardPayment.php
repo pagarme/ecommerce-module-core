@@ -28,7 +28,7 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
             return false;
         }
 
-        if (MPSetup::getModuleConfiguration()->isSaveCards()) {
+        if (!MPSetup::getModuleConfiguration()->isSaveCards()) {
             return false;
         }
 
@@ -85,5 +85,14 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
         $paymentRequest->cardToken = $this->getIdentifier()->getValue();
 
         return $paymentRequest;
+    }
+
+    protected function getMetadata()
+    {
+        $newCardMetadata = new \stdClass;
+
+        $newCardMetadata->saveOnSuccess = $this->isSaveOnSuccess();
+
+        return $newCardMetadata;
     }
 }

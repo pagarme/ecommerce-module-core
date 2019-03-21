@@ -103,6 +103,8 @@ class TransactionFactory implements FactoryInterface
             $transaction->setInstallments($installments);
         }
 
+        $transaction->setPostData(json_decode(json_encode($postData)));
+
         return $transaction;
     }
 

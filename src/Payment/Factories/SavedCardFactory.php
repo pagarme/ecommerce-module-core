@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Factories;
 
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
+use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 use Mundipagg\Core\Payment\Aggregates\SavedCard;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
@@ -24,7 +25,7 @@ class SavedCardFactory implements FactoryInterface
         );
 
         $savedCard->setOwnerId(
-            new CustomerId('')
+            new CustomerId($postData->owner)
         );
 
         $brand = strtolower($postData->brand);
@@ -46,6 +47,25 @@ class SavedCardFactory implements FactoryInterface
      */
     public function createFromDbData($dbData)
     {
+        $savedCard = new SavedCard();
 
+        $savedCard->setMundipaggId(
+            new CardId($dbData['mundipagg_id'])
+        );
+
+        $savedCard->setOwnerId(
+            new CustomerId($dbData['owner_id'])
+        );
+
+        $brand = strtolower($dbData['brand']);
+        $savedCard->setBrand(CardBrand::$brand());
+        $savedCard->setFirstSixDigits(
+            new NumericString($dbData['first_six_digits'])
+        );
+        $savedCard->setLastFourDigits(
+            new NumericString($dbData['last_four_digits'])
+        );
+
+        return $savedCard;
     }
 }

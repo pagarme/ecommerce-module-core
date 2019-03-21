@@ -55,6 +55,8 @@ final class Charge extends AbstractEntity
      */
     private $transactions;
 
+    private $metadata;
+
     /**
      *
      * @return OrderId
@@ -359,6 +361,22 @@ final class Charge extends AbstractEntity
     }
 
     /**
+     * @return mixed
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param mixed $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -380,7 +398,6 @@ final class Charge extends AbstractEntity
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
         $obj->transactions = $this->getTransactions();
-        //$obj->lastTransaction = $this->getLastTransaction();
 
         return $obj;
     }

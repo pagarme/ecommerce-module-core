@@ -54,6 +54,11 @@ class ChargeFactory implements FactoryInterface
         }
         $charge->setStatus(ChargeStatus::$status());
 
+        if (!empty($postData['metadata'])) {
+            $metadata = json_decode(json_encode($postData['metadata']));
+            $charge->setMetadata($metadata);
+        }
+
         return $charge;
     }
 

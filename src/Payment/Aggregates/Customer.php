@@ -159,6 +159,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         $obj->document = $this->document;
         $obj->type = $this->type;
         $obj->address = $this->address;
+        $obj->mundipaggId = $this->getMundipaggId();
 
         return $obj;
     }
@@ -167,12 +168,14 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
     {
         $customerRequest = new CreateCustomerRequest();
 
+        $customerRequest->code = $this->getCode();
         $customerRequest->name = $this->getName();
         $customerRequest->email = $this->getEmail();
         $customerRequest->document = $this->getDocument();
         $customerRequest->type = $this->getType()->getType();
         $customerRequest->address = $this->getAddress()->convertToSDKRequest();
         $customerRequest->phones = $this->getPhones()->convertToSDKRequest();
+
 
         return $customerRequest;
     }

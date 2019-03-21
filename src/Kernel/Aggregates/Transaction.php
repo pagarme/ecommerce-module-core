@@ -81,6 +81,8 @@ final class Transaction extends AbstractEntity
      */
     private $installments;
 
+    private $postData;
+
     /**
      *
      * @return TransactionType
@@ -348,6 +350,21 @@ final class Transaction extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getPostData()
+    {
+        return $this->postData;
+    }
+
+    /**
+     * @param mixed $postData
+     */
+    public function setPostData($postData)
+    {
+        $this->postData = $postData;
+    }
 
     /**
      * Specify data which should be serialized to JSON
