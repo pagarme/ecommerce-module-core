@@ -12,6 +12,22 @@ use Mundipagg\Core\Payment\Factories\CustomerFactory;
 
 final class CustomerRepository extends AbstractRepository
 {
+    public function findByCode($customerCode)
+    {
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
+        $query = "SELECT * FROM $table WHERE code = '$customerCode'";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows > 0) {
+            $factory = new CustomerFactory();
+            $customer = $factory->createFromDbData($result->row);
+
+            return $customer;
+        }
+        return null;
+    }
+
     /** @param Customer $object */
     protected function create(AbstractEntity &$object)
     {

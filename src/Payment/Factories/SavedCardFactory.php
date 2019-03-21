@@ -49,6 +49,8 @@ class SavedCardFactory implements FactoryInterface
     {
         $savedCard = new SavedCard();
 
+        $savedCard->setId($dbData['id']);
+
         $savedCard->setMundipaggId(
             new CardId($dbData['mundipagg_id'])
         );

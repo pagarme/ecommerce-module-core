@@ -7,11 +7,33 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\Aggregates\SavedCard;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 
 final class SavedCardRepository extends AbstractRepository
 {
+    /**
+     * @param CustomerId $customerId
+     * @return Savedcard[]
+     * @throws \Exception
+     */
+    public function findByOwnerId(CustomerId $customerId)
+    {
+        $id = $customerId->getValue();
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
+        $query = "SELECT * FROM $table WHERE owner_id = '$id'";
+
+        $result = $this->db->fetch($query);
+
+        $factory = new SavedCardFactory();
+        $savedCards = [];
+        foreach ($result->rows as $row) {
+            $savedCards[] = $factory->createFromDbData($row);
+        }
+        return $savedCards;
+    }
+
     /** @param SavedCard $object */
     protected function create(AbstractEntity &$object)
     {
