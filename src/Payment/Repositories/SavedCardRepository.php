@@ -82,7 +82,18 @@ final class SavedCardRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        // TODO: Implement find() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
+        $query = "SELECT * FROM $table WHERE id = '$objectId'";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows > 0) {
+            $factory = new SavedCardFactory();
+            $savedCard = $factory->createFromDbData($result->row);
+
+            return $savedCard;
+        }
+        return null;
     }
 
     public function findByMundipaggId(AbstractValidString $mundipaggId)
