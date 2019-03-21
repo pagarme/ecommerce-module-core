@@ -22,6 +22,7 @@ abstract class AbstractPayment
     {
         $obj = new \stdClass();
 
+        $obj->orderCode = $this->order->getCode();
         $obj->paymentMethod = static::getBaseCode();
         $obj->amount = $this->getAmount();
 

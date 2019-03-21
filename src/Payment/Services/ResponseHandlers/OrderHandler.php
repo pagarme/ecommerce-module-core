@@ -90,30 +90,49 @@ final class OrderHandler extends AbstractResponseHandler
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
         $invoice = $invoiceService->createInvoiceFor($order);
         if ($invoice !== null) {
-            $invoice->setState(InvoiceState::paid());
-            $invoice->save();
-            $platformOrder = $order->getPlatformOrder();
 
-            $this->createCaptureTransaction($order);
+            $this->completePayment($order, $invoice);
 
-            $order->setStatus(OrderStatus::processing());
-            //@todo maybe an Order Aggregate should have a State too.
-            $platformOrder->setState(OrderState::processing());
+            $this->saveCards();
 
-            $i18n = new LocalizationService();
-            $platformOrder->addHistoryComment(
-                $i18n->getDashboard('Order paid.') .
-                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
-            );
-
-            $orderRepository = new OrderRepository();
-            $orderRepository->save($order);
-
-            $orderService = new OrderService();
-            $orderService->syncPlatformWith($order);
             return true;
         }
         return $cantCreateReason;
+    }
+
+    private function saveCards()
+    {
+        //@todo do card saving;
+        $a = 1;
+    }
+
+    /**
+     * @param Order $order
+     * @param $invoice
+     */
+    private function completePayment(Order $order, $invoice)
+    {
+        $invoice->setState(InvoiceState::paid());
+        $invoice->save();
+        $platformOrder = $order->getPlatformOrder();
+
+        $this->createCaptureTransaction($order);
+
+        $order->setStatus(OrderStatus::processing());
+        //@todo maybe an Order Aggregate should have a State too.
+        $platformOrder->setState(OrderState::processing());
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard('Order paid.') .
+            ' MundipaggId: ' . $order->getMundipaggId()->getValue()
+        );
+
+        $orderRepository = new OrderRepository();
+        $orderRepository->save($order);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
     }
 
     private function createCaptureTransaction(Order $order)
