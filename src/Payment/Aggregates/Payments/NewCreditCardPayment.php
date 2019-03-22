@@ -53,7 +53,7 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
      */
     public function setSaveOnSuccess($saveOnSuccess)
     {
-        $this->saveOnSuccess = $saveOnSuccess;
+        $this->saveOnSuccess = boolval($saveOnSuccess);
     }
 
     public function jsonSerialize()

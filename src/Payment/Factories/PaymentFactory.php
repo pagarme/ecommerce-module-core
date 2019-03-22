@@ -153,6 +153,9 @@ final class PaymentFactory
             $payment =  new NewCreditCardPayment();
             $payment->setIdentifier($cardToken);
 
+            if (isset($data->saveOnSuccess)) {
+                $payment->setSaveOnSuccess($data->saveOnSuccess);
+            }
             return $payment;
         } catch (\Throwable $e)
         {

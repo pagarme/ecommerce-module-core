@@ -100,6 +100,10 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
 
         $payment->setOrder($this);
 
+        if ($payment->getCustomer() === null) {
+            $payment->setCustomer($this->getCustomer());
+        }
+
         $this->payments[] = $payment;
     }
 
