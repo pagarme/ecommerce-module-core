@@ -12,6 +12,7 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
@@ -260,26 +261,47 @@ final class OrderHandler extends AbstractResponseHandler
     private function saveCards(Order $order)
     {
         //@todo save only cards that are marked to save and belongs to Order customer.
+
+
         $savedCardFactory = new SavedCardFactory();
         $savedCardRepository = new SavedCardRepository();
         $charges = $order->getCharges();
 
-        $lastTransaction = $charges[0]->getLastTransaction();
-        if (!empty($lastTransaction->getPostData()->card)) {
-            $postData = $lastTransaction->getPostData()->card;
-            $postData->owner = $order->getCustomer()->getMundipaggId()->getValue();
-            $savedCard = $savedCardFactory->createFromPostData($postData);
+        foreach ($charges as $charge) {
+            $lastTransaction = $charge->getLastTransaction();
+            if ($lastTransaction === null) {
+                continue;
+            }
             if (
-                $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
+                !$lastTransaction->getTransactionType()->equals(
+                    TransactionType::creditCard()
+                )
             ) {
-                $savedCardRepository->save($savedCard);
-                $this->logService->orderInfo(
-                    $order->getCode(),
-                    "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
-                );
+                continue; //save only credit card transactions;
+            }
 
+            $metadata = $charge->getMetadata();
+            $saveOnSuccess =
+                isset($metadata->saveOnSuccess) &&
+                $metadata->saveOnSuccess === true;
+
+            $saveOnSuccess = true; //@todo for debug purposes, it is always true. Remove it.
+
+            if ($saveOnSuccess && !empty($lastTransaction->getPostData()->card)) {
+                $postData = $lastTransaction->getPostData()->card;
+                $postData->owner = $order->getCustomer()->getMundipaggId()->getValue();
+                $savedCard = $savedCardFactory->createFromPostData($postData);
+                if (
+                    $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
+                ) {
+                    $savedCardRepository->save($savedCard);
+                    $this->logService->orderInfo(
+                        $order->getCode(),
+                        "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
+                    );
+
+                }
             }
         }
-
     }
 }
