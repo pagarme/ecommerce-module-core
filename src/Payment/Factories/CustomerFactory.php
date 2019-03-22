@@ -5,14 +5,13 @@ namespace Mundipagg\Core\Payment\Factories;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\SavedCard;
 
 class CustomerFactory implements FactoryInterface
 {
     /**
      *
      * @param  \stdClass $postData
-     * @return SavedCard
+     * @return Customer
      */
     public function createFromPostData($postData)
     {
@@ -32,7 +31,7 @@ class CustomerFactory implements FactoryInterface
     /**
      *
      * @param  array $dbData
-     * @return SavedCard
+     * @return Customer
      */
     public function createFromDbData($dbData)
     {

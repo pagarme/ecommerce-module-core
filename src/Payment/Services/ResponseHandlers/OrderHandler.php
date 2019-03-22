@@ -13,7 +13,6 @@ use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
@@ -144,12 +143,22 @@ final class OrderHandler extends AbstractResponseHandler
         $dataServiceClass =
             MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
 
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Creating Capture Transaction..."
+        );
+
         /**
          *
          * @var AbstractDataService $dataService
          */
         $dataService = new $dataServiceClass();
         $dataService->createCaptureTransaction($order);
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Capture Transaction created."
+        );
     }
 
     private function createAuthorizationTransaction(Order $order)
@@ -157,12 +166,22 @@ final class OrderHandler extends AbstractResponseHandler
         $dataServiceClass =
             MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
 
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Creating Authorization Transaction..."
+        );
+
         /**
          *
          * @var AbstractDataService $dataService
          */
         $dataService = new $dataServiceClass();
         $dataService->createAuthorizationTransaction($order);
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Authorization Transaction created."
+        );
     }
 
     private function handleOrderStatusCanceled(Order $order)
