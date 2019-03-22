@@ -7,9 +7,12 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 
 final class Charge extends AbstractEntity
 {
+    use WithCustomerTrait;
+
     /**
      *
      * @var OrderId 

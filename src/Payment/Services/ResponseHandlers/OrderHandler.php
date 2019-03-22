@@ -260,9 +260,6 @@ final class OrderHandler extends AbstractResponseHandler
 
     private function saveCards(Order $order)
     {
-        //@todo save only cards that are marked to save and belongs to Order customer.
-
-
         $savedCardFactory = new SavedCardFactory();
         $savedCardRepository = new SavedCardRepository();
         $charges = $order->getCharges();
@@ -287,9 +284,17 @@ final class OrderHandler extends AbstractResponseHandler
 
             $saveOnSuccess = true; //@todo for debug purposes, it is always true. Remove it.
 
-            if ($saveOnSuccess && !empty($lastTransaction->getPostData()->card)) {
+            if (
+                !empty($lastTransaction->getPostData()->card) &&
+                $saveOnSuccess &&
+                $order->getCustomer()->getMundipaggId()->equals(
+                    $charge->getCustomer()->getMundipaggId()
+                )
+            ) {
                 $postData = $lastTransaction->getPostData()->card;
-                $postData->owner = $order->getCustomer()->getMundipaggId()->getValue();
+                $postData->owner =
+                    $charge->getCustomer()->getMundipaggId()->getValue();
+
                 $savedCard = $savedCardFactory->createFromPostData($postData);
                 if (
                     $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null

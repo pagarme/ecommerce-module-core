@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Throwable;
 use Zend\Console\Prompt\Char;
 
@@ -57,6 +58,12 @@ class ChargeFactory implements FactoryInterface
         if (!empty($postData['metadata'])) {
             $metadata = json_decode(json_encode($postData['metadata']));
             $charge->setMetadata($metadata);
+        }
+
+        if (!empty($postData['customer'])) {
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+            $charge->setCustomer($customer);
         }
 
         return $charge;

@@ -48,6 +48,10 @@ abstract class AbstractPayment
         $newPayment->$primitive = $this->convertToPrimitivePaymentRequest();
         $newPayment->paymentMethod = $this->cammel2SnakeCase($primitive);
 
+        if ($this->getCustomer() !== null) {
+            $newPayment->customer = $this->getCustomer()->convertToSDKRequest();
+        }
+
         $newPayment->metadata = static::getMetadata();
         return $newPayment;
     }
