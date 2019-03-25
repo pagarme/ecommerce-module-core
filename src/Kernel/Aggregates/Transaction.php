@@ -81,6 +81,9 @@ final class Transaction extends AbstractEntity
      */
     private $installments;
 
+    /** @var string */
+    private $boletoUrl;
+
     private $postData;
 
     /**
@@ -351,6 +354,22 @@ final class Transaction extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getBoletoUrl()
+    {
+        return $this->boletoUrl;
+    }
+
+    /**
+     * @param string $boletoUrl
+     */
+    public function setBoletoUrl($boletoUrl)
+    {
+        $this->boletoUrl = $boletoUrl;
+    }
+
+    /**
      * @return mixed
      */
     public function getPostData()
@@ -365,6 +384,8 @@ final class Transaction extends AbstractEntity
     {
         $this->postData = $postData;
     }
+
+
 
     /**
      * Specify data which should be serialized to JSON
@@ -393,6 +414,7 @@ final class Transaction extends AbstractEntity
         $obj->createdAt = $this->getCreatedAt()->format('Y-m-d H:i:s');
         $obj->brand = $this->getBrand();
         $obj->installments = $this->getInstallments();
+        $obj->boletoUrl = $this->getBoletoUrl();
 
         return $obj;
     }
