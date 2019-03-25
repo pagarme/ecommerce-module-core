@@ -23,7 +23,9 @@ class CustomerFactory implements FactoryInterface
             new CustomerId($postData->id)
         );
 
-        $customer->setCode($postData->code);
+        if (!empty($postData->code)) {
+            $customer->setCode($postData->code);
+        }
 
         return $customer;
     }
