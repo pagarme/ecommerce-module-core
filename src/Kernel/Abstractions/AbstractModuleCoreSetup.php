@@ -30,17 +30,17 @@ abstract class AbstractModuleCoreSetup
     protected static $moduleConcreteDir;
     /**
      *
-     * @var Configuration 
+     * @var Configuration
      */
     protected static $moduleConfig;
     /**
      *
-     * @var string 
+     * @var string
      */
     protected static $dashboardLanguage;
     /**
      *
-     * @var string 
+     * @var string
      */
     protected static $storeLanguage;
 
@@ -84,8 +84,32 @@ abstract class AbstractModuleCoreSetup
             return true;
         }
 
+        if (!self::isDefaultConfigSave()) {
+            static::$moduleConfig->setStoreId(static::getDefaultStoreId());
+            $configurationRepository->save(static::$moduleConfig);
+            static::$moduleConfig->setStoreId(static::getCurrentStoreId());
+            static::$moduleConfig->setId(null);
+        }
+
+        if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
+            static::$moduleConfig->setParentId(static::getDefaultStoreId());
+        }
+
         $configurationRepository->save(static::$moduleConfig);
     }
+
+    /**
+     * @return bool
+     */
+    private static function isDefaultConfigSave()
+    {
+        $configurationRepository = new ConfigurationRepository;
+
+        return $configurationRepository->findByStore(
+            static::getDefaultStoreId()
+        ) !== null;
+    }
+
 
     /**
      *
@@ -134,7 +158,7 @@ abstract class AbstractModuleCoreSetup
     }
 
     public static function getModuleVersion()
-    {   
+    {
         return self::$moduleVersion;
     }
 
@@ -195,11 +219,14 @@ abstract class AbstractModuleCoreSetup
     abstract public static function getDatabaseAccessObject();
     /**
      *
-     * @return string 
+     * @return string
      **/
     abstract protected static function getPlatformHubAppPublicAppKey();
     abstract protected static function _getDashboardLanguage();
     abstract protected static function _getStoreLanguage();
     abstract protected static function _formatToCurrency($price);
+
+    abstract protected static function getCurrentStoreId();
+    abstract protected static function getDefaultStoreId();
 }
 

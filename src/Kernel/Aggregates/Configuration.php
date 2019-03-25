@@ -25,8 +25,6 @@ final class Configuration extends AbstractEntity
     const CARD_OPERATION_AUTH_ONLY = 'auth_only';
     const CARD_OPERATION_AUTH_AND_CAPTURE = 'auth_and_capture';
 
-    const DEFAULT_STORE = 0;
-
     /**
      *
      * @var bool 
@@ -102,18 +100,21 @@ final class Configuration extends AbstractEntity
     private $boletoInstructions;
 
     /** @var int */
-    private $storeId = self::DEFAULT_STORE;
+    private $storeId;
 
     /** @var Configuration */
-    private $defaultConfiguration;
+    private $parentConfiguration;
+
+    /** @var int */
+    private $parentId;
 
     /** @var array */
-    private $defaultAttributes;
+    private $methodsInherited;
 
     public function __construct()
     {
         $this->cardConfigs = [];
-        $this->defaultAttibutes = [];
+        $this->methodsInherited = [];
 
         $this->keys = [
             self::KEY_SECRET => null,
@@ -122,23 +123,6 @@ final class Configuration extends AbstractEntity
 
         $this->testMode = true;
     }
-
-    public function setDefaultAttributes($attributes)
-    {
-        $this->defaultAttributes = $attributes;
-    }
-
-    public function addDefaultAttributes($attributes)
-    {
-        foreach ($attributes as $key => $value) {
-            if (!$value) {
-                continue;
-            }
-            $this->defaultAttributes[] = $key;
-        }
-
-    }
-
 
     protected  function isEnabled()
     {
@@ -498,9 +482,9 @@ final class Configuration extends AbstractEntity
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
             "cardConfigs" => $this->getCardConfigs(),
-            "storeId" => $this->storeId,
-            "defaultAttributes" => $this->defaultAttributes,
-            "defaultConfiguration" => $this->defaultConfiguration
+            "storeId" => $this->getStoreId(),
+            "methodsInherited" => $this->getMethodsInherited(),
+            "parentId" => $this->getParentId()
         ];
     }
 
@@ -523,40 +507,69 @@ final class Configuration extends AbstractEntity
     /**
      * @return Configuration
      */
-    protected function getDefaultConfiguration()
+    protected function getParentConfiguration()
     {
-        return $this->defaultConfiguration;
+        return $this->parentConfiguration;
     }
 
     /**
-     * @param Configuration $defaultConfiguration
+     * @param Configuration $parentConfiguration
      */
-    public function setDefaultConfiguration(Configuration $defaultConfiguration)
+    public function setParentConfiguration(Configuration $parentConfiguration)
     {
-        if ($this->storeId != self::DEFAULT_STORE) {
-            $this->defaultConfiguration = $defaultConfiguration;
-        }
+        $this->parentConfiguration = $parentConfiguration;
     }
 
+    /**
+     * @return int
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
 
-    public function __call($name, $arguments)
+    /**
+     * @param int $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+    }
+
+    /**
+     * @param array $methods
+     */
+    public function setMethodsInherited($methods)
+    {
+        $this->methodsInherited = $methods;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethodsInherited()
+    {
+        return $this->methodsInherited;
+    }
+
+    public function __call($method, $arguments)
     {
         $methodSplited = explode(
             "_",
-            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $name)
+            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $method)
         );
 
-        $class = $this;
+        $targetObject = $this;
 
         $actions = ['is', 'get'];
-        $useDefault = in_array($name, $this->defaultAttributes);
+        $useDefault = in_array($method, $this->getMethodsInherited());
 
         if (in_array($methodSplited[0], $actions) && $useDefault) {
-            if (isset($this->defaultConfiguration)) {
-                $class = $this->defaultConfiguration;
+            if (!is_null($this->parentId)) {
+                $targetObject = $this->getParentConfiguration();
             }
         }
 
-        return call_user_func([$class, $name], $arguments);
+        return call_user_func([$targetObject, $method], $arguments);
     }
 }
