@@ -39,8 +39,6 @@ final class OrderHandler extends AbstractResponseHandler
         $orderRepository->save($createdOrder);
 
         $this->saveCustomer($createdOrder);
-        //@todo DEBUG: remove this. save only on paid or pending.
-        $this->saveCards($createdOrder);
 
         return $this->$statusHandler($createdOrder);
     }
@@ -280,9 +278,7 @@ final class OrderHandler extends AbstractResponseHandler
             $metadata = $charge->getMetadata();
             $saveOnSuccess =
                 isset($metadata->saveOnSuccess) &&
-                $metadata->saveOnSuccess === true;
-
-            $saveOnSuccess = true; //@todo for debug purposes, it is always true. Remove it.
+                $metadata->saveOnSuccess === "true";
 
             if (
                 !empty($lastTransaction->getPostData()->card) &&

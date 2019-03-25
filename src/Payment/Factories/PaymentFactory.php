@@ -39,7 +39,6 @@ final class PaymentFactory
 
         $this->moduleConfig = AbstractModuleCoreSetup::getModuleConfiguration();
 
-        //@todo get these from config.
         $this->cardStatementDescriptor = $this->moduleConfig->getCardStatementDescriptor();
         $this->boletoBank = BoletoBank::itau();
         $this->boletoInstructions = $this->moduleConfig->getBoletoInstructions();
