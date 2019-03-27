@@ -77,7 +77,10 @@ final class SavedCardRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        // TODO: Implement delete() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
+        $query = "DELETE FROM $table where id = {$object->getId()}";
+
+        $this->db->query($query);
     }
 
     public function find($objectId)
