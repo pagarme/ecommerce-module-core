@@ -43,7 +43,7 @@ final class SavedCardRepository extends AbstractRepository
 
         if ($object->getOwnerId() === null) {
             throw new InvalidParamException('
-            You can\'t save a card withou an onwer!' , null
+            You can\'t save a card without an onwer!' , null
             );
         }
 
