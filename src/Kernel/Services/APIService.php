@@ -58,7 +58,7 @@ class APIService
             $response = $orderController->createOrder($orderRequest);
             $this->logService->orderInfo(
                 $order->getCode(),
-                'Order Response',
+                'Create order Response',
                 $response
             );
             $stdClass = json_decode(json_encode($response), true);

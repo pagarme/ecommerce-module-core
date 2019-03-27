@@ -98,6 +98,12 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         $this->blockOverPaymentAttempt($payment);
         $this->setCaptureFlag($payment);
 
+        $payment->setOrder($this);
+
+        if ($payment->getCustomer() === null) {
+            $payment->setCustomer($this->getCustomer());
+        }
+
         $this->payments[] = $payment;
     }
 

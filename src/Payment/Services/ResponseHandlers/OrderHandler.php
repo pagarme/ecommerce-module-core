@@ -12,7 +12,11 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Mundipagg\Core\Payment\Factories\SavedCardFactory;
+use Mundipagg\Core\Payment\Repositories\CustomerRepository;
+use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -33,6 +37,8 @@ final class OrderHandler extends AbstractResponseHandler
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($createdOrder);
+
+        $this->saveCustomer($createdOrder);
 
         return $this->$statusHandler($createdOrder);
     }
@@ -71,6 +77,8 @@ final class OrderHandler extends AbstractResponseHandler
             )
         );
 
+        $this->saveCards($order);
+
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
@@ -90,30 +98,43 @@ final class OrderHandler extends AbstractResponseHandler
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
         $invoice = $invoiceService->createInvoiceFor($order);
         if ($invoice !== null) {
-            $invoice->setState(InvoiceState::paid());
-            $invoice->save();
-            $platformOrder = $order->getPlatformOrder();
 
-            $this->createCaptureTransaction($order);
+            $this->completePayment($order, $invoice);
 
-            $order->setStatus(OrderStatus::processing());
-            //@todo maybe an Order Aggregate should have a State too.
-            $platformOrder->setState(OrderState::processing());
+            $this->saveCards($order);
 
-            $i18n = new LocalizationService();
-            $platformOrder->addHistoryComment(
-                $i18n->getDashboard('Order paid.') .
-                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
-            );
-
-            $orderRepository = new OrderRepository();
-            $orderRepository->save($order);
-
-            $orderService = new OrderService();
-            $orderService->syncPlatformWith($order);
             return true;
         }
         return $cantCreateReason;
+    }
+
+    /**
+     * @param Order $order
+     * @param $invoice
+     */
+    private function completePayment(Order $order, $invoice)
+    {
+        $invoice->setState(InvoiceState::paid());
+        $invoice->save();
+        $platformOrder = $order->getPlatformOrder();
+
+        $this->createCaptureTransaction($order);
+
+        $order->setStatus(OrderStatus::processing());
+        //@todo maybe an Order Aggregate should have a State too.
+        $platformOrder->setState(OrderState::processing());
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard('Order paid.') .
+            ' MundipaggId: ' . $order->getMundipaggId()->getValue()
+        );
+
+        $orderRepository = new OrderRepository();
+        $orderRepository->save($order);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
     }
 
     private function createCaptureTransaction(Order $order)
@@ -121,12 +142,22 @@ final class OrderHandler extends AbstractResponseHandler
         $dataServiceClass =
             MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
 
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Creating Capture Transaction..."
+        );
+
         /**
          *
          * @var AbstractDataService $dataService
          */
         $dataService = new $dataServiceClass();
         $dataService->createCaptureTransaction($order);
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Capture Transaction created."
+        );
     }
 
     private function createAuthorizationTransaction(Order $order)
@@ -134,12 +165,22 @@ final class OrderHandler extends AbstractResponseHandler
         $dataServiceClass =
             MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
 
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Creating Authorization Transaction..."
+        );
+
         /**
          *
          * @var AbstractDataService $dataService
          */
         $dataService = new $dataServiceClass();
         $dataService->createAuthorizationTransaction($order);
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Authorization Transaction created."
+        );
     }
 
     private function handleOrderStatusCanceled(Order $order)
@@ -193,5 +234,75 @@ final class OrderHandler extends AbstractResponseHandler
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
         return "One or more charges weren't authorized. Please try again.";
+    }
+
+    /**
+     * @param PaymentOrder $paymentOrder
+     */
+    private function saveCustomer(Order $createdOrder)
+    {
+        $customer = $createdOrder->getCustomer();
+
+        //save only registered customers;
+        if($customer->getCode() === null) {
+            return;
+        }
+
+        $customerRepository = new CustomerRepository();
+        if (
+            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
+        ) {
+            $customerRepository->save($customer);
+        }
+    }
+
+    private function saveCards(Order $order)
+    {
+        $savedCardFactory = new SavedCardFactory();
+        $savedCardRepository = new SavedCardRepository();
+        $charges = $order->getCharges();
+
+        foreach ($charges as $charge) {
+            $lastTransaction = $charge->getLastTransaction();
+            if ($lastTransaction === null) {
+                continue;
+            }
+            if (
+                !$lastTransaction->getTransactionType()->equals(
+                    TransactionType::creditCard()
+                )
+            ) {
+                continue; //save only credit card transactions;
+            }
+
+            $metadata = $charge->getMetadata();
+            $saveOnSuccess =
+                isset($metadata->saveOnSuccess) &&
+                $metadata->saveOnSuccess === "true";
+
+            if (
+                !empty($lastTransaction->getPostData()->card) &&
+                $saveOnSuccess &&
+                $order->getCustomer()->getMundipaggId()->equals(
+                    $charge->getCustomer()->getMundipaggId()
+                )
+            ) {
+                $postData = $lastTransaction->getPostData()->card;
+                $postData->owner =
+                    $charge->getCustomer()->getMundipaggId()->getValue();
+
+                $savedCard = $savedCardFactory->createFromPostData($postData);
+                if (
+                    $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
+                ) {
+                    $savedCardRepository->save($savedCard);
+                    $this->logService->orderInfo(
+                        $order->getCode(),
+                        "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
+                    );
+
+                }
+            }
+        }
     }
 }

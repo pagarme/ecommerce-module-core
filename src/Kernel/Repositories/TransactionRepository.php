@@ -56,7 +56,8 @@ final class TransactionRepository extends AbstractRepository
                 acquirer_message,
                 type,
                 status,
-                created_at
+                created_at,
+                boleto_url
             )
           VALUES 
         ";
@@ -73,7 +74,8 @@ final class TransactionRepository extends AbstractRepository
                 '{$simpleObject->acquirerMessage}',
                 '{$simpleObject->type}',
                 '{$simpleObject->status}',
-                '{$simpleObject->createdAt}'
+                '{$simpleObject->createdAt}',
+                '{$simpleObject->boletoUrl}'
             );
         ";
 

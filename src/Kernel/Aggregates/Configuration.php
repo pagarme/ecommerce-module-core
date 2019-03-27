@@ -99,8 +99,12 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
+    /** @var bool */
+    private $saveCards;
+
     public function __construct()
     {
+        $this->saveCards = false;
         $this->cardConfigs = [];
 
         $this->keys = [
@@ -442,6 +446,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return bool
+     */
+    public function isSaveCards()
+    {
+        return $this->saveCards;
+    }
+
+    /**
+     * @param bool $saveCards
+     */
+    public function setSaveCards($saveCards)
+    {
+        $this->saveCards = $saveCards;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -457,6 +477,7 @@ final class Configuration extends AbstractEntity
             "antifraudMinAmount" => $this->getAntifraudMinAmount(),
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
+            "saveCards" => $this->isSaveCards(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,

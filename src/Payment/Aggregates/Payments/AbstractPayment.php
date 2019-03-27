@@ -5,18 +5,24 @@ namespace Mundipagg\Core\Payment\Aggregates\Payments;
 use MundiAPILib\Models\CreatePaymentRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Mundipagg\Core\Payment\Interfaces\HaveOrderInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Payment\Traits\WithOrderTrait;
 
-abstract class AbstractPayment extends AbstractEntity implements ConvertibleToSDKRequestsInterface
+abstract class AbstractPayment
+    extends AbstractEntity
+    implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
 {
     use WithAmountTrait;
     use WithCustomerTrait;
+    use WithOrderTrait;
 
     public function jsonSerialize()
     {
         $obj = new \stdClass();
 
+        $obj->orderCode = $this->order->getCode();
         $obj->paymentMethod = static::getBaseCode();
         $obj->amount = $this->getAmount();
 
@@ -42,10 +48,20 @@ abstract class AbstractPayment extends AbstractEntity implements ConvertibleToSD
         $newPayment->$primitive = $this->convertToPrimitivePaymentRequest();
         $newPayment->paymentMethod = $this->cammel2SnakeCase($primitive);
 
+        if ($this->getCustomer() !== null) {
+            $newPayment->customer = $this->getCustomer()->convertToSDKRequest();
+        }
+
+        $newPayment->metadata = static::getMetadata();
         return $newPayment;
     }
 
     abstract protected function convertToPrimitivePaymentRequest();
+
+    protected function getMetadata()
+    {
+        return null;
+    }
 
     private function cammel2SnakeCase($cammelCaseString)
     {
