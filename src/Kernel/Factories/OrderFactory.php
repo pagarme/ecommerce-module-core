@@ -12,6 +12,7 @@ use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Throwable;
 
 class OrderFactory implements FactoryInterface
@@ -56,6 +57,10 @@ class OrderFactory implements FactoryInterface
             $newCharge = $chargeFactory->createFromPostData($charge);
             $order->addCharge($newCharge);
         }
+
+        $customerFactory = new CustomerFactory();
+        $customer = $customerFactory->createFromPostData($postData['customer']);
+        $order->setCustomer($customer);
 
         return $order;
     }

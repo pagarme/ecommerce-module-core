@@ -39,7 +39,6 @@ final class PaymentFactory
 
         $this->moduleConfig = AbstractModuleCoreSetup::getModuleConfiguration();
 
-        //@todo get these from config.
         $this->cardStatementDescriptor = $this->moduleConfig->getCardStatementDescriptor();
         $this->boletoBank = BoletoBank::itau();
         $this->boletoInstructions = $this->moduleConfig->getBoletoInstructions();
@@ -153,6 +152,9 @@ final class PaymentFactory
             $payment =  new NewCreditCardPayment();
             $payment->setIdentifier($cardToken);
 
+            if (isset($data->saveOnSuccess)) {
+                $payment->setSaveOnSuccess($data->saveOnSuccess);
+            }
             return $payment;
         } catch (\Throwable $e)
         {

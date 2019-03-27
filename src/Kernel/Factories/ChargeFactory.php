@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Throwable;
 use Zend\Console\Prompt\Char;
 
@@ -53,6 +54,17 @@ class ChargeFactory implements FactoryInterface
             );
         }
         $charge->setStatus(ChargeStatus::$status());
+
+        if (!empty($postData['metadata'])) {
+            $metadata = json_decode(json_encode($postData['metadata']));
+            $charge->setMetadata($metadata);
+        }
+
+        if (!empty($postData['customer'])) {
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+            $charge->setCustomer($customer);
+        }
 
         return $charge;
     }
@@ -111,6 +123,7 @@ class ChargeFactory implements FactoryInterface
             );
             $tranAcquirerName = explode(',', $dbData['tran_acquirer_name']);
             $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
+            $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
 
             foreach ($tranId as $index => $id) {
                 $transaction = [
@@ -126,7 +139,8 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_nsu' => $tranAcquirerNsu[$index],
                     'acquirer_auth_code' => $tranAcquirerAuthCode[$index],
                     'acquirer_message' => $tranAcquirerMessage[$index],
-                    'created_at' => $tranCreatedAt[$index]
+                    'created_at' => $tranCreatedAt[$index],
+                    'boleto_url' => $tranBoletoUrl[$index]
                 ];
                 $transactions[] = $transaction;
             }
