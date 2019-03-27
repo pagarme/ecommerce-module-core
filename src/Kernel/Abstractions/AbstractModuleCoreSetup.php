@@ -226,7 +226,14 @@ abstract class AbstractModuleCoreSetup
     abstract protected static function _getStoreLanguage();
     abstract protected static function _formatToCurrency($price);
 
+    /**
+     * @since 1.5.1
+     */
     abstract protected static function getCurrentStoreId();
+
+    /**
+     * @since 1.5.1
+     */
     abstract protected static function getDefaultStoreId();
 }
 
