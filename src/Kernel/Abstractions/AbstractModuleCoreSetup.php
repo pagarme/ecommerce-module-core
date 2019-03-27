@@ -88,11 +88,11 @@ abstract class AbstractModuleCoreSetup
             static::$moduleConfig->setStoreId(static::getDefaultStoreId());
             $configurationRepository->save(static::$moduleConfig);
             static::$moduleConfig->setStoreId(static::getCurrentStoreId());
-            static::$moduleConfig->setId(null);
         }
 
         if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
             static::$moduleConfig->setParentId(static::getDefaultStoreId());
+            static::$moduleConfig->setId(null);
         }
 
         $configurationRepository->save(static::$moduleConfig);
