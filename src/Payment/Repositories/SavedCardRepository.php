@@ -41,8 +41,7 @@ final class SavedCardRepository extends AbstractRepository
 
         $obj = json_decode(json_encode($object));
 
-        if ($object->getOwnerId() === null)
-        {
+        if ($object->getOwnerId() === null) {
             throw new InvalidParamException('
             You can\'t save a card withou an onwer!' , null
             );

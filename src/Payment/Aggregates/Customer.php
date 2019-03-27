@@ -176,7 +176,6 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         $customerRequest->address = $this->getAddress()->convertToSDKRequest();
         $customerRequest->phones = $this->getPhones()->convertToSDKRequest();
 
-
         return $customerRequest;
     }
 }
