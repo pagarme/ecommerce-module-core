@@ -3,7 +3,6 @@
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
-use MundiAPILib\Models\CreatePaymentRequest;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardId;

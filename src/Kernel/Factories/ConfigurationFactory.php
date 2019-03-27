@@ -158,6 +158,10 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoInstructions($data->boletoInstructions);
         }
 
+        if (isset($data->saveCards)) {
+            $config->setSaveCards($data->saveCards);
+        }
+
         return $config;
     }
 

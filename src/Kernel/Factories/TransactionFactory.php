@@ -103,6 +103,12 @@ class TransactionFactory implements FactoryInterface
             $transaction->setInstallments($installments);
         }
 
+        if (isset($postData['pdf'])) {
+            $transaction->setBoletoUrl($postData['pdf']);
+        }
+
+        $transaction->setPostData(json_decode(json_encode($postData)));
+
         return $transaction;
     }
 
@@ -158,6 +164,10 @@ class TransactionFactory implements FactoryInterface
 
         $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $dbData['created_at']);
         $transaction->setCreatedAt($createdAt);
+
+        if (isset($dbData['boleto_url'])) {
+            $transaction->setBoletoUrl($dbData['boleto_url']);
+        }
 
         return $transaction;
     }

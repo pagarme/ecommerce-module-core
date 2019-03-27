@@ -3,11 +3,59 @@
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 
 final class NewCreditCardPayment extends AbstractCreditCardPayment
 {
+    /** @var bool */
+    private $saveOnSuccess;
+
+    public function __construct()
+    {
+        $this->saveOnSuccess = false;
+        parent::__construct();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSaveOnSuccess()
+    {
+        $order = $this->getOrder();
+        if ($order === null) {
+            return false;
+        }
+
+        if (!MPSetup::getModuleConfiguration()->isSaveCards()) {
+            return false;
+        }
+
+        $customer = $this->getCustomer();
+
+        if ($customer === null) {
+            return false;
+        }
+
+        $mpId = $customer->getMundipaggId();
+        if ($mpId === null) {
+            return false;
+        }
+
+        return
+            $this->saveOnSuccess &&
+            $order->getCustomer()->getMundipaggId()->equals($mpId);
+    }
+
+    /**
+     * @param bool $saveOnSuccess
+     */
+    public function setSaveOnSuccess($saveOnSuccess)
+    {
+        $this->saveOnSuccess = boolval($saveOnSuccess);
+    }
+
     public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
@@ -37,5 +85,14 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
         $paymentRequest->cardToken = $this->getIdentifier()->getValue();
 
         return $paymentRequest;
+    }
+
+    protected function getMetadata()
+    {
+        $newCardMetadata = new \stdClass;
+
+        $newCardMetadata->saveOnSuccess = $this->isSaveOnSuccess();
+
+        return $newCardMetadata;
     }
 }

@@ -35,7 +35,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.acquirer_auth_code) as tran_acquirer_auth_code,                
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
-                GROUP_CONCAT(t.created_at) as tran_created_at
+                GROUP_CONCAT(t.created_at) as tran_created_at,
+                GROUP_CONCAT(t.boleto_url) as tran_boleto_url
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
@@ -171,7 +172,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.acquirer_auth_code) as tran_acquirer_auth_code,                
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
-                GROUP_CONCAT(t.created_at) as tran_created_at
+                GROUP_CONCAT(t.created_at) as tran_created_at,
+                GROUP_CONCAT(t.boleto_url) as tran_boleto_url
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  

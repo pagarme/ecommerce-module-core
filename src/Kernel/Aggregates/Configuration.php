@@ -10,11 +10,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 
 final class Configuration extends AbstractEntity
@@ -99,6 +95,7 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
+
     /** @var int */
     private $storeId;
 
@@ -111,8 +108,13 @@ final class Configuration extends AbstractEntity
     /** @var array */
     private $methodsInherited;
 
+    /** @var bool */
+    private $saveCards;
+
+
     public function __construct()
     {
+        $this->saveCards = false;
         $this->cardConfigs = [];
         $this->methodsInherited = [];
 
@@ -456,6 +458,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return bool
+     */
+    public function isSaveCards()
+    {
+        return $this->saveCards;
+    }
+
+    /**
+     * @param bool $saveCards
+     */
+    public function setSaveCards($saveCards)
+    {
+        $this->saveCards = $saveCards;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -471,6 +489,7 @@ final class Configuration extends AbstractEntity
             "antifraudMinAmount" => $this->getAntifraudMinAmount(),
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
+            "saveCards" => $this->isSaveCards(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
