@@ -2,23 +2,22 @@
 
 This is the repository of Mundipagg's payment module core for all supported e-commerce platfforms.
 
-# Compatibility
-- [Mundipagg Magento payment module for Magento 2.1+](https://github.com/mundipagg/magento2).
-- [Mundipagg Magento payment module for Magento 1.9.3+](https://github.com/mundipagg/magento).
-- [Mundipagg OpenCart payment module for OpenCart 3.0+](https://github.com/mundipagg/magento2).
+## Compatibility
+-   [Mundipagg Magento payment module for Magento 2.1+](https://github.com/mundipagg/magento2).
+-   [Mundipagg Magento payment module for Magento 1.9.3+](https://github.com/mundipagg/magento).
+-   [Mundipagg OpenCart payment module for OpenCart 3.0+](https://github.com/mundipagg/magento2).
 
+## Dependencies
+*   ``PHP`` Version 5.6+
 
-# Dependencies
-* ```PHP``` Version 5.6+
-
-# Install
+## Install
 Require by composer
 
 ```bash
 composer require mundipagg/ecommerce-module-core
 ```
 
-# Update
+## Update
 
 ```bash
 composer update mundipagg/ecommerce-module-core
@@ -30,14 +29,13 @@ Coming soon
 
 ## API Reference
 
-http://docs.mundipagg.com
+[http://docs.mundipagg.com](http://docs.mundipagg.com)
 
-# How can I contribute?
+## Contributting
 Please, refer to [CONTRIBUTING](CONTRIBUTING.md)
 
-# Found something strange or need a new feature?
+## Issues and new features
 Open a new Issue following our issue template [ISSUE-TEMPLATE](ISSUE-TEMPLATE.md)
 
-# Changelog
+## Changelog
 See in [releases](https://github.com/mundipagg/ecommerce-module-core/releases)
-
