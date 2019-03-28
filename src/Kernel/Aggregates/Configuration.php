@@ -102,9 +102,13 @@ final class Configuration extends AbstractEntity
     /** @var bool */
     private $saveCards;
 
+    /** @var bool */
+    private $multiBuyer;
+
     public function __construct()
     {
         $this->saveCards = false;
+        $this->multiBuyer = false;
         $this->cardConfigs = [];
 
         $this->keys = [
@@ -462,6 +466,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return bool
+     */
+    public function isMultiBuyer()
+    {
+        return $this->multiBuyer;
+    }
+
+    /**
+     * @param bool $multiBuyer
+     */
+    public function setMultiBuyer($multiBuyer)
+    {
+        $this->multiBuyer = $multiBuyer;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -478,6 +498,7 @@ final class Configuration extends AbstractEntity
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "saveCards" => $this->isSaveCards(),
+            "multiBuyer" => $this->isMultiBuyer(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
