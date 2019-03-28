@@ -1,6 +1,6 @@
-# Mundipagg/E-commerce module core
-
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32e40b5efbc2419eaf78881dd6687dcd)](https://app.codacy.com/app/mundipagg/ecommerce-module-core?utm_source=github.com&utm_medium=referral&utm_content=mundipagg/ecommerce-module-core&utm_campaign=Badge_Grade_Settings)
+
+# Mundipagg/E-commerce module core
 
 This is the repository of Mundipagg's payment module core for all supported e-commerce platfforms.
 
