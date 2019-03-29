@@ -45,15 +45,15 @@ class CustomerFactory implements FactoryInterface
         $customer->setType(CustomerType::individual());
 
         $homePhone = new Phone(
-            '55',
             substr($data->homePhone, 0, 2),
-            substr($data->homePhone, 2)
+            substr($data->homePhone, 2, 2),
+            substr($data->homePhone, 4)
         );
 
         $mobilePhone = new Phone(
-            '55',
-            substr($data->mobilePhone, 0, 2),
-            substr($data->mobilePhone, 2)
+            substr($data->homePhone, 0, 2),
+            substr($data->mobilePhone, 2, 2),
+            substr($data->mobilePhone, 4)
         );
 
         $customer->setPhones(
