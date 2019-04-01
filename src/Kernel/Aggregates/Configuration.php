@@ -96,7 +96,7 @@ final class Configuration extends AbstractEntity
     private $boletoInstructions;
 
 
-    /** @var int */
+    /** @var string */
     private $storeId;
 
     /** @var Configuration */
@@ -508,15 +508,15 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @return int
+     * @return string
      */
     protected function getStoreId()
     {
-        return intval($this->storeId);
+        return $this->storeId;
     }
 
     /**
-     * @param int $storeId
+     * @param string $storeId
      */
     public function setStoreId($storeId)
     {

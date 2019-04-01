@@ -110,7 +110,6 @@ abstract class AbstractModuleCoreSetup
         ) !== null;
     }
 
-
     /**
      *
      * @return Configuration

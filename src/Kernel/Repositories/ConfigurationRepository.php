@@ -62,7 +62,7 @@ class ConfigurationRepository extends AbstractRepository
         return $factory->createFromJsonData($result->row['data']);
     }
 
-    public function findByStore($storeId = 0)
+    public function findByStore($storeId)
     {
         if ($storeId === null) {
             return null;
