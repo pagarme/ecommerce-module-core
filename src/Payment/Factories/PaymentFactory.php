@@ -2,11 +2,12 @@
 
 namespace Mundipagg\Core\Payment\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Services\InstallmentService;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
+use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
@@ -14,6 +15,7 @@ use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
+use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 
 final class PaymentFactory
 {
@@ -37,7 +39,7 @@ final class PaymentFactory
             'createBoletoPayments'
         ];
 
-        $this->moduleConfig = AbstractModuleCoreSetup::getModuleConfiguration();
+        $this->moduleConfig = MPSetup::getModuleConfiguration();
 
         $this->cardStatementDescriptor = $this->moduleConfig->getCardStatementDescriptor();
         $this->boletoBank = BoletoBank::itau();
@@ -72,9 +74,16 @@ final class PaymentFactory
         $payments = [];
         foreach ($cardsData as $cardData) {
             $payment = $this->createBaseCardPayment($cardData);
+
             if ($payment === null) {
                 continue;
             }
+
+            $customer = $this->createCustomer($cardData);
+            if ($customer !== null) {
+                $payment->setCustomer($customer);
+            }
+
             $brand = $cardData->brand;
             $payment->setBrand(CardBrand::$brand());
 
@@ -93,6 +102,18 @@ final class PaymentFactory
         }
 
         return $payments;
+    }
+
+    private function createCustomer($paymentData)
+    {
+        $multibuyerEnabled = MPSetup::getModuleConfiguration()->isMultiBuyer();
+        if (empty($paymentData->customer) || !$multibuyerEnabled) {
+            return null;
+        }
+
+        $customerFactory = new CustomerFactory();
+
+        return $customerFactory->createFromJson(json_encode($paymentData->customer));
     }
 
     private function getAmountWithInterestForCreditCard(
@@ -129,6 +150,11 @@ final class PaymentFactory
         $payments = [];
         foreach ($boletosData as $boletoData) {
             $payment = new BoletoPayment();
+
+            $customer = $this->createCustomer($boletoData);
+            if ($customer !== null) {
+                $payment->setCustomer($customer);
+            }
 
             $payment->setAmount($boletoData->amount);
             $payment->setBank($this->boletoBank);
