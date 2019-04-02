@@ -233,6 +233,6 @@ abstract class AbstractModuleCoreSetup
     /**
      * @since 1.5.1
      */
-    abstract protected static function getDefaultStoreId();
+    abstract public static function getDefaultStoreId();
 }
 
