@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
@@ -44,6 +45,8 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($postData['payment_mundipagg_boletoCreditCard_status']);
         $config->setTwoCreditCardsEnabled($postData['payment_mundipagg_credit_card_two_credit_cards_enabled']);
 
+        $config->setStoreId($postData['payment_mundipagg_store_id']);
+
         return $config;
     }
 
@@ -79,6 +82,24 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
+        if (isset($data->methodsInherited)) {
+            $config->setMethodsInherited($data->methodsInherited);
+        }
+
+        if (isset($data->inheritAll)) {
+            $config->setInheritAll($data->inheritAll);
+        }
+
+        if ($data->storeId !== null) {
+            $config->setStoreId($data->storeId);
+        }
+
+        if (isset($data->parentId)) {
+            $configurationRepository = new ConfigurationRepository();
+            $configDefault = $configurationRepository->find($data->parentId);
+            $config->setParentConfiguration($configDefault);
+        }
+
         $isInstallmentsEnabled = false;
         if (isset($data->installmentsEnabled)) {
             $isInstallmentsEnabled = $data->installmentsEnabled;
@@ -110,7 +131,7 @@ class ConfigurationFactory implements FactoryInterface
                 $data->secretKey = $data->keys->$index;
             }
         }
-        
+
         if (!empty($data->publicKey)) {
             $config->setPublicKey(
                 $this->createPublicKey($data->publicKey)
