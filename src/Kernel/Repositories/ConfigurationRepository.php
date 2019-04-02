@@ -49,7 +49,7 @@ class ConfigurationRepository extends AbstractRepository
     {
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
 
-        $query = "SELECT data FROM `$configTable` WHERE id = 1;";
+        $query = "SELECT data, id FROM `$configTable` WHERE id = {$objectId};";
 
         $result = $this->db->fetch($query);
 
@@ -59,7 +59,10 @@ class ConfigurationRepository extends AbstractRepository
             return null;
         }
 
-        return $factory->createFromJsonData($result->row['data']);
+        $config =  $factory->createFromJsonData($result->row['data']);
+        $config->setId($result->row['id']);
+
+        return $config;
     }
 
     public function findByStore($storeId)

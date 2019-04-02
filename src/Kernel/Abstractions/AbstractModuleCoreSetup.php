@@ -84,14 +84,14 @@ abstract class AbstractModuleCoreSetup
             return true;
         }
 
-        if (!self::isDefaultConfigSave()) {
+        if (self::getDefaultConfigSaved() === null) {
             static::$moduleConfig->setStoreId(static::getDefaultStoreId());
             $configurationRepository->save(static::$moduleConfig);
             static::$moduleConfig->setStoreId(static::getCurrentStoreId());
         }
 
         if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
-            static::$moduleConfig->setParentId(static::getDefaultStoreId());
+            static::$moduleConfig->setParentConfiguration(self::getDefaultConfigSaved());
             static::$moduleConfig->setId(null);
         }
 
@@ -99,15 +99,15 @@ abstract class AbstractModuleCoreSetup
     }
 
     /**
-     * @return bool
+     * @return Configuration|null
      */
-    private static function isDefaultConfigSave()
+    private static function getDefaultConfigSaved()
     {
         $configurationRepository = new ConfigurationRepository;
 
         return $configurationRepository->findByStore(
             static::getDefaultStoreId()
-        ) !== null;
+        );
     }
 
     /**

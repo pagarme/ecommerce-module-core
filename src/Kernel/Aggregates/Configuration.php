@@ -102,9 +102,6 @@ final class Configuration extends AbstractEntity
     /** @var Configuration */
     private $parentConfiguration;
 
-    /** @var int */
-    private $parentId;
-
     /** @var array */
     private $methodsInherited;
 
@@ -525,7 +522,8 @@ final class Configuration extends AbstractEntity
             "cardConfigs" => $this->getCardConfigs(),
             "storeId" => $this->getStoreId(),
             "methodsInherited" => $this->getMethodsInherited(),
-            "parentId" => $this->getParentId()
+            "parentId" => $this->getParentId(),
+            "parent" => $this->parentConfiguration
         ];
     }
 
@@ -546,14 +544,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @return Configuration
-     */
-    protected function getParentConfiguration()
-    {
-        return $this->parentConfiguration;
-    }
-
-    /**
      * @param Configuration $parentConfiguration
      */
     public function setParentConfiguration(Configuration $parentConfiguration)
@@ -566,15 +556,10 @@ final class Configuration extends AbstractEntity
      */
     public function getParentId()
     {
-        return $this->parentId;
-    }
-
-    /**
-     * @param int $parentId
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
+        if ($this->parentConfiguration === null) {
+            return null;
+        }
+        return $this->parentConfiguration->getId();
     }
 
     /**
@@ -590,6 +575,9 @@ final class Configuration extends AbstractEntity
      */
     public function getMethodsInherited()
     {
+        if ($this->parentConfiguration === null) {
+            return [];
+        }
         return $this->methodsInherited;
     }
 
@@ -606,8 +594,8 @@ final class Configuration extends AbstractEntity
         $useDefault = in_array($method, $this->getMethodsInherited());
 
         if (in_array($methodSplited[0], $actions) && $useDefault) {
-            if (!is_null($this->parentId)) {
-                $targetObject = $this->getParentConfiguration();
+            if ($this->parentConfiguration !== null) {
+                $targetObject = $this->parentConfiguration;
             }
         }
 

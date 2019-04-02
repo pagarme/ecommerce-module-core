@@ -86,14 +86,10 @@ class ConfigurationFactory implements FactoryInterface
         $config->setStoreId($data->storeId);
 
         if (isset($data->parentId)) {
-            $config->setParentId($data->parentId);
             $configurationRepository = new ConfigurationRepository();
-            $configDefault = self::createFromJsonData(
-                json_encode($configurationRepository->findByStore($data->parentId))
-            );
+            $configDefault = $configurationRepository->find($data->parentId);
             $config->setParentConfiguration($configDefault);
         }
-
 
         $isInstallmentsEnabled = false;
         if (isset($data->installmentsEnabled)) {
