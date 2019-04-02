@@ -13,6 +13,10 @@ class ConfigurationRepository extends AbstractRepository
     protected function create(AbstractEntity &$object)
     {
         $jsonEncoded = json_encode($object);
+        $preparedObject = json_decode($jsonEncoded);
+        $preparedObject->parent = null;
+        $jsonEncoded = json_encode($preparedObject);
+
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
         
         $query = "INSERT INTO `$configTable` (data, store_id) VALUES ('$jsonEncoded', {$object->getStoreId()})";
@@ -32,6 +36,10 @@ class ConfigurationRepository extends AbstractRepository
         }
 
         $jsonEncoded = json_encode($object);
+        $preparedObject = json_decode($jsonEncoded);
+        $preparedObject->parent = null;
+        $jsonEncoded = json_encode($preparedObject);
+
         $query = "
             UPDATE `$configTable` set data = '{$jsonEncoded}'
             WHERE id = {$object->getId()};

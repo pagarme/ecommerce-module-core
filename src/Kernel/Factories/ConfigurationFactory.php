@@ -82,8 +82,17 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
-        $config->setMethodsInherited($data->methodsInherited);
-        $config->setStoreId($data->storeId);
+        if (isset($data->methodsInherited)) {
+            $config->setMethodsInherited($data->methodsInherited);
+        }
+
+        if (isset($data->inheritAll)) {
+            $config->setInheritAll($data->inheritAll);
+        }
+
+        if ($data->storeId !== null) {
+            $config->setStoreId($data->storeId);
+        }
 
         if (isset($data->parentId)) {
             $configurationRepository = new ConfigurationRepository();

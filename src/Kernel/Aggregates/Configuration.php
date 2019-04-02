@@ -106,6 +106,9 @@ final class Configuration extends AbstractEntity
     private $methodsInherited;
 
     /** @var bool */
+    private $inheritAll;
+
+    /** @var bool */
     private $saveCards;
 
 
@@ -126,6 +129,7 @@ final class Configuration extends AbstractEntity
         ];
 
         $this->testMode = true;
+        $this->inheritAll = false;
     }
 
     protected function isEnabled()
@@ -523,14 +527,15 @@ final class Configuration extends AbstractEntity
             "storeId" => $this->getStoreId(),
             "methodsInherited" => $this->getMethodsInherited(),
             "parentId" => $this->getParentId(),
-            "parent" => $this->parentConfiguration
+            "parent" => $this->parentConfiguration,
+            "inheritAll" => $this->isInheritedAll()
         ];
     }
 
     /**
      * @return string
      */
-    protected function getStoreId()
+    public function getStoreId()
     {
         return $this->storeId;
     }
@@ -581,6 +586,26 @@ final class Configuration extends AbstractEntity
         return $this->methodsInherited;
     }
 
+    /**
+     * @return bool
+     */
+    public function isInheritedAll()
+    {
+        if ($this->parentConfiguration === null) {
+            return false;
+        }
+
+        return $this->inheritAll;
+    }
+
+    /**
+     * @param bool $inheritAll
+     */
+    public function setInheritAll($inheritAll)
+    {
+        $this->inheritAll = $inheritAll;
+    }
+
     public function __call($method, $arguments)
     {
         $methodSplited = explode(
@@ -593,7 +618,7 @@ final class Configuration extends AbstractEntity
         $actions = ['is', 'get'];
         $useDefault = in_array($method, $this->getMethodsInherited());
 
-        if (in_array($methodSplited[0], $actions) && $useDefault) {
+        if ((in_array($methodSplited[0], $actions) && $useDefault) || $this->isInheritedAll()) {
             if ($this->parentConfiguration !== null) {
                 $targetObject = $this->parentConfiguration;
             }

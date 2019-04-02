@@ -92,6 +92,7 @@ abstract class AbstractModuleCoreSetup
 
         if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
             static::$moduleConfig->setParentConfiguration(self::getDefaultConfigSaved());
+            static::$moduleConfig->setInheritAll(true);
             static::$moduleConfig->setId(null);
         }
 
