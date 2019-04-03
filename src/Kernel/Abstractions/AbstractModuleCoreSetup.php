@@ -30,17 +30,17 @@ abstract class AbstractModuleCoreSetup
     protected static $moduleConcreteDir;
     /**
      *
-     * @var Configuration 
+     * @var Configuration
      */
     protected static $moduleConfig;
     /**
      *
-     * @var string 
+     * @var string
      */
     protected static $dashboardLanguage;
     /**
      *
-     * @var string 
+     * @var string
      */
     protected static $storeLanguage;
 
@@ -80,12 +80,35 @@ abstract class AbstractModuleCoreSetup
 
         static::$instance->loadModuleConfiguration();
 
-        $config = $configurationRepository->find(1);
-        if ($config !== null) {
-            static::$moduleConfig->setId(1);
+        if (static::$moduleConfig->getId() !== null) {
+            return true;
+        }
+
+        if (self::getDefaultConfigSaved() === null) {
+            static::$moduleConfig->setStoreId(static::getDefaultStoreId());
+            $configurationRepository->save(static::$moduleConfig);
+            static::$moduleConfig->setStoreId(static::getCurrentStoreId());
+        }
+
+        if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
+            static::$moduleConfig->setParentConfiguration(self::getDefaultConfigSaved());
+            static::$moduleConfig->setInheritAll(true);
+            static::$moduleConfig->setId(null);
         }
 
         $configurationRepository->save(static::$moduleConfig);
+    }
+
+    /**
+     * @return Configuration|null
+     */
+    private static function getDefaultConfigSaved()
+    {
+        $configurationRepository = new ConfigurationRepository;
+
+        return $configurationRepository->findByStore(
+            static::getDefaultStoreId()
+        );
     }
 
     /**
@@ -135,7 +158,7 @@ abstract class AbstractModuleCoreSetup
     }
 
     public static function getModuleVersion()
-    {   
+    {
         return self::$moduleVersion;
     }
 
@@ -196,11 +219,21 @@ abstract class AbstractModuleCoreSetup
     abstract public static function getDatabaseAccessObject();
     /**
      *
-     * @return string 
+     * @return string
      **/
     abstract protected static function getPlatformHubAppPublicAppKey();
     abstract protected static function _getDashboardLanguage();
     abstract protected static function _getStoreLanguage();
     abstract protected static function _formatToCurrency($price);
+
+    /**
+     * @since 1.6.1
+     */
+    abstract protected static function getCurrentStoreId();
+
+    /**
+     * @since 1.6.1
+     */
+    abstract public static function getDefaultStoreId();
 }
 

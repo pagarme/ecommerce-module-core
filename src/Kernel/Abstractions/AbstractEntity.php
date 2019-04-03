@@ -41,7 +41,7 @@ abstract class AbstractEntity implements JsonSerializable
      * @param  string $id
      * @return AbstractEntity
      */
-    public function setId(int $id)
+    public function setId($id)
     {
         $this->id = $id;
         return $this;

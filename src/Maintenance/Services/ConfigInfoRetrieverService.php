@@ -21,6 +21,11 @@ class ConfigInfoRetrieverService implements InfoRetrieverServiceInterface
         $skAttr = Configuration::KEY_SECRET;
         $obfuscated->keys->$skAttr = $this->obfuscate($obfuscated->keys->$skAttr);
 
+        if ($obfuscated->parent !== null) {
+            $obfuscated->parent->hubInstallId = $this->obfuscate($obfuscated->parent->hubInstallId);
+            $obfuscated->parent->keys->$skAttr = $this->obfuscate($obfuscated->parent->keys->$skAttr);
+        }
+
         return $obfuscated;
     }
 

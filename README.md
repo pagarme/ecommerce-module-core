@@ -25,10 +25,6 @@ composer require mundipagg/ecommerce-module-core
 composer update mundipagg/ecommerce-module-core
 ```
 
-## Magento Marketplace
-
-Coming soon
-
 ## API Reference
 
 [http://docs.mundipagg.com](http://docs.mundipagg.com)
