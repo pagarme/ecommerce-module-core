@@ -51,7 +51,8 @@ class LogService
     {
         $logObject = $this->prepareObject($exception);
 
-        $this->monolog->error($exception->getMessage(), $logObject);
+        $code = ' | Exception code: ' . $exception->getCode();
+        $this->monolog->error($exception->getMessage() . $code, $logObject);
     }
 
     protected function prepareObject($sourceObject)
