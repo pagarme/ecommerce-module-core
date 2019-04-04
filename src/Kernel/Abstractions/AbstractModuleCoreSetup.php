@@ -78,7 +78,15 @@ abstract class AbstractModuleCoreSetup
     {
         $configurationRepository = new ConfigurationRepository;
 
-        static::$instance->loadModuleConfiguration();
+        static::loadSavedConfiguration();
+
+        if (static::$moduleConfig !== null) {
+            return true;
+        }
+
+        static::$instance->loadModuleConfigurationFromPlatform();
+
+        static::$moduleConfig->setStoreId(static::getCurrentStoreId());
 
         if (static::$moduleConfig->getId() !== null) {
             return true;
@@ -97,6 +105,21 @@ abstract class AbstractModuleCoreSetup
         }
 
         $configurationRepository->save(static::$moduleConfig);
+    }
+
+    protected static function loadSavedConfiguration()
+    {
+        $store = static::getCurrentStoreId();
+
+        $configurationRepository = new ConfigurationRepository;
+
+        $savedConfig = $configurationRepository->findByStore($store);
+        if ($savedConfig !== null) {
+            self::$moduleConfig = $savedConfig;
+            self::$moduleConfig->setStoreId(static::getCurrentStoreId());
+
+            return;
+        }
     }
 
     /**
@@ -212,7 +235,7 @@ abstract class AbstractModuleCoreSetup
     }
 
     abstract protected static function setConfig();
-    abstract protected static function loadModuleConfiguration();
+    abstract public static function loadModuleConfigurationFromPlatform();
     abstract protected static function setModuleVersion();
     abstract protected static function setPlatformVersion();
     abstract protected static function setLogPath();
@@ -229,7 +252,7 @@ abstract class AbstractModuleCoreSetup
     /**
      * @since 1.6.1
      */
-    abstract protected static function getCurrentStoreId();
+    abstract public static function getCurrentStoreId();
 
     /**
      * @since 1.6.1
