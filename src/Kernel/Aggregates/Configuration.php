@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\Recurrence;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
@@ -111,10 +112,11 @@ final class Configuration extends AbstractEntity
     /** @var bool */
     private $saveCards;
 
-
     /** @var bool */
     private $multiBuyer;
 
+    /** @var Recurrence */
+    private $recurrenceConfig;
 
     public function __construct()
     {
@@ -130,6 +132,22 @@ final class Configuration extends AbstractEntity
 
         $this->testMode = true;
         $this->inheritAll = false;
+    }
+
+    /**
+     * @return Recurrence
+     */
+    public function getRecurrenceConfig()
+    {
+        return $this->recurrenceConfig;
+    }
+
+    /**
+     * @param Recurrence $recurrenceConfig
+     */
+    public function setRecurrenceConfig(Recurrence $recurrenceConfig)
+    {
+        $this->recurrenceConfig = $recurrenceConfig;
     }
 
     protected function isEnabled()
@@ -528,7 +546,8 @@ final class Configuration extends AbstractEntity
             "methodsInherited" => $this->getMethodsInherited(),
             "parentId" => $this->getParentId(),
             "parent" => $this->parentConfiguration,
-            "inheritAll" => $this->isInheritedAll()
+            "inheritAll" => $this->isInheritedAll(),
+            "recurrenceConfig" => $this->getRecurrenceConfig()
         ];
     }
 
