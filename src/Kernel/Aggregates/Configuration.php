@@ -8,7 +8,7 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\Recurrence;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
@@ -115,7 +115,7 @@ final class Configuration extends AbstractEntity
     /** @var bool */
     private $multiBuyer;
 
-    /** @var Recurrence */
+    /** @var RecurrenceConfig */
     private $recurrenceConfig;
 
     public function __construct()
@@ -135,7 +135,7 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @return Recurrence
+     * @return RecurrenceConfig
      */
     public function getRecurrenceConfig()
     {
@@ -143,9 +143,9 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param Recurrence $recurrenceConfig
+     * @param RecurrenceConfig $recurrenceConfig
      */
-    public function setRecurrenceConfig(Recurrence $recurrenceConfig)
+    public function setRecurrenceConfig(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
     }
