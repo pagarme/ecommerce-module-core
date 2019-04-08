@@ -51,7 +51,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param mixed $planSubscription
      */
-    public function setPlanSubscription($planSubscription)
+    private function setPlanSubscription($planSubscription)
     {
         $this->planSubscription = $planSubscription;
     }
@@ -67,7 +67,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param bool $singleSubscription
      */
-    public function setSingleSubscription($singleSubscription)
+    private function setSingleSubscription($singleSubscription)
     {
         $this->singleSubscription = $singleSubscription;
     }
@@ -83,7 +83,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param bool $paymentUpdateCustomer
      */
-    public function setPaymentUpdateCustomer($paymentUpdateCustomer)
+    private function setPaymentUpdateCustomer($paymentUpdateCustomer)
     {
         $this->paymentUpdateCustomer = $paymentUpdateCustomer;
     }
@@ -99,7 +99,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param bool $creditCardUpdateCustomer
      */
-    public function setCreditCardUpdateCustomer($creditCardUpdateCustomer)
+    private function setCreditCardUpdateCustomer($creditCardUpdateCustomer)
     {
         $this->creditCardUpdateCustomer = $creditCardUpdateCustomer;
     }
@@ -115,7 +115,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param bool $subscriptionInstallment
      */
-    public function setSubscriptionInstallment($subscriptionInstallment)
+    private function setSubscriptionInstallment($subscriptionInstallment)
     {
         $this->subscriptionInstallment = $subscriptionInstallment;
     }
@@ -131,7 +131,7 @@ final class Recurrence extends AbstractValueObject
     /**
      * @param string $checkoutConflitMessage
      */
-    public function setCheckoutConflitMessage($checkoutConflitMessage)
+    private function setCheckoutConflitMessage($checkoutConflitMessage)
     {
         $this->checkoutConflitMessage = $checkoutConflitMessage;
     }
