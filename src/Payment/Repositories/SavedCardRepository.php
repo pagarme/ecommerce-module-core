@@ -51,7 +51,8 @@ final class SavedCardRepository extends AbstractRepository
           INSERT INTO $table 
             (
                 mundipagg_id, 
-                owner_id, 
+                owner_id,
+                owner_name,
                 first_six_digits, 
                 last_four_digits,
                 brand
@@ -60,6 +61,7 @@ final class SavedCardRepository extends AbstractRepository
             (
                 '{$obj->mundipaggId}',
                 '{$obj->ownerId}',
+                '{$obj->ownerName}',
                 '{$obj->firstSixDigits}',
                 '{$obj->lastFourDigits}',
                 '{$obj->brand}'        
