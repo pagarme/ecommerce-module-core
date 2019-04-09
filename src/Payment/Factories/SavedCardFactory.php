@@ -30,6 +30,7 @@ class SavedCardFactory implements FactoryInterface
 
         $brand = strtolower($postData->brand);
         $savedCard->setBrand(CardBrand::$brand());
+        $savedCard->setOwnerName($postData->holder_name);
         $savedCard->setFirstSixDigits(
             new NumericString($postData->first_six_digits)
         );
@@ -60,6 +61,7 @@ class SavedCardFactory implements FactoryInterface
         );
 
         $brand = strtolower($dbData['brand']);
+        $savedCard->setOwnerName($dbData['owner_name']);
         $savedCard->setBrand(CardBrand::$brand());
         $savedCard->setFirstSixDigits(
             new NumericString($dbData['first_six_digits'])
