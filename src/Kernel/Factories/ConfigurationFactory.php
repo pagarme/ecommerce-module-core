@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
@@ -169,6 +170,19 @@ class ConfigurationFactory implements FactoryInterface
 
         if (isset($data->multiBuyer)) {
             $config->setMultiBuyer($data->multiBuyer);
+        }
+
+        if (isset($data->recurrenceConfig)) {
+            $config->setRecurrenceConfig(
+                new RecurrenceConfig(
+                    $data->recurrenceConfig->planSubscription,
+                    $data->recurrenceConfig->singleSubscription,
+                    $data->recurrenceConfig->paymentUpdateCustomer,
+                    $data->recurrenceConfig->creditCardUpdateCustomer,
+                    $data->recurrenceConfig->subscriptionInstallment,
+                    $data->recurrenceConfig->checkoutConflitMessage
+                )
+            );
         }
 
         return $config;
