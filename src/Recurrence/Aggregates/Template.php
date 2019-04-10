@@ -320,7 +320,7 @@ class Template extends AbstractEntity
 
         return [
             "id" => $this->getId(),
-            "isDisabled" => $this->isDisabled,
+            "isEnabled" => $this->isEnabled,
             "acceptBoleto" => $this->isAcceptBoleto(),
             "acceptCreditCard" => $this->isAcceptCreditCard(),
             "allowInstallments" => $this->isAllowInstallments(),

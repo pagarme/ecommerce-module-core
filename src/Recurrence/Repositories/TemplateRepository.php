@@ -78,7 +78,16 @@ class TemplateRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        // TODO: Implement delete() method.
+        $templateTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TEMPLATE);
+
+        $query = "
+            UPDATE `" . $templateTable . "` SET
+                `is_enabled` = false
+             WHERE `id` = " . $object->getId() . "
+        ";
+        $this->db->query($query);
+
+        return true;
     }
 
     public function find($objectId)
