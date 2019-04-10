@@ -132,4 +132,65 @@ class TemplateFactory implements FactoryInterface
 
         return $template;
     }
+
+    public function createFromJson($jsonData)
+    {
+        $data = json_decode(utf8_decode($jsonData));
+        if (json_last_error() == JSON_ERROR_NONE) {
+            $template = new Template();
+
+            $installments = [];
+            if (isset($data->installments)) {
+                $installments = json_decode($data->installments);
+            }
+            if (!is_array($installments)) {
+                $installments = explode(",", $data->installments);
+            }
+
+            $trial = 0;
+            if (!empty($data->trial)) {
+                $trial = $data->trial;
+            }
+
+            $template
+                ->setName($data->name)
+                ->setDescription($data->description)
+                ->setIsSingle($data->isSingle)
+                ->setAcceptBoleto($data->acceptBoleto)
+                ->setAcceptCreditCard($data->acceptCreditCard)
+                ->setAllowInstallments($data->allowInstallments)
+                ->setTrial($trial)
+                ->addInstallments($installments)
+            ;
+
+            if (isset($data->id)) {
+                $template->setId($data->id);
+            }
+
+            $dueAt = new DueValueObject();
+            $dueAt
+                ->setType($data->dueAt->type)
+                ->setValue($data->dueAt->value)
+            ;
+
+            foreach ($data->repetitions as $repetition) {
+                $_repetition = new RepetitionValueObject();
+                $_repetition
+                    ->setCycles($repetition->cycles)
+                    ->setFrequency($repetition->frequency)
+                    ->setIntervalType($repetition->intervalType);
+                if ($repetition->discountType) {
+                    $_repetition
+                        ->setDiscountType($repetition->discountType)
+                        ->setDiscountValue($repetition->discountValue);
+                }
+                $template->addRepetition($_repetition);
+            }
+
+            $template->setDueAt($dueAt);
+
+            return $template;
+        }
+        throw new \Exception('Invalid json data!');
+    }
 }

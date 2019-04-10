@@ -254,7 +254,7 @@ class Template extends AbstractEntity
 
     /**
      * @param DueValueObject $dueAt
-     * @return TemplateRoot
+     * @return Template
      */
     public function setDueAt($dueAt)
     {
@@ -272,7 +272,7 @@ class Template extends AbstractEntity
 
     /**
      * @param RepetitionValueObject $repetitions
-     * @return TemplateRoot
+     * @return Template
      */
     public function addRepetition($repetition)
     {

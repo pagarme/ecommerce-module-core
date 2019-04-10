@@ -155,15 +155,15 @@ class TemplateRepository extends AbstractRepository
 
         $result = $this->db->fetch($query . ";");
 
-        $templateRootFactory = new TemplateFactory();
-        $templateRoots = [];
+        $templateFactory = new TemplateFactory();
+        $templates = [];
 
         foreach ($result->rows as $row) {
-            $templateRoot = $templateRootFactory->createFromDBData($row);
-            $templateRoots[] = $templateRoot;
+            $template = $templateFactory->createFromDBData($row);
+            $templates[] = $template;
         }
 
-        return $templateRoots;
+        return $templates;
     }
 
     protected function createTemplateRepetitions($template)
