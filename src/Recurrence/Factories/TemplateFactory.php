@@ -10,11 +10,11 @@ use Mundipagg\Core\Recurrence\ValueObjects\RepetitionValueObject;
 
 class TemplateFactory implements FactoryInterface
 {
-
     /**
      *
      * @param  array $postData
      * @return AbstractEntity
+     * @throws \Exception
      */
     public function createFromPostData($postData)
     {
@@ -82,9 +82,54 @@ class TemplateFactory implements FactoryInterface
      *
      * @param  array $dbData
      * @return AbstractEntity
+     * @throws \Exception
      */
     public function createFromDbData($dbData)
     {
-        // TODO: Implement createFromDbData() method.
+        $template = new Template();
+
+        $template
+            ->setId($dbData['id'])
+            ->setName($dbData['name'])
+            ->setDescription($dbData['description'])
+            ->setIsSingle($dbData['is_single'])
+            ->setAcceptBoleto($dbData['accept_boleto'])
+            ->setAcceptCreditCard($dbData['accept_credit_card'])
+            ->setAllowInstallments($dbData['allow_installments'])
+            ->setTrial($dbData['trial'])
+            ->addInstallments(json_decode($dbData['installments'], true))
+        ;
+
+        $dueAt = new DueValueObject();
+        $dueAt
+            ->setType($dbData['due_type'])
+            ->setValue($dbData['due_value'])
+        ;
+
+        $discountTypes = explode(',', $dbData['discount_type']);
+        $discountValues = explode(',', $dbData['discount_value']);
+        $intervalTypes = explode(',', $dbData['interval_type']);
+        $frequencies = explode(',', $dbData['frequency']);
+        $cycles = explode(',', $dbData['cycles']);
+
+        foreach ($discountValues as $index => $discountValue) {
+            $repetition = new RepetitionValueObject();
+            $repetition
+                ->setIntervalType($intervalTypes[$index])
+                ->setFrequency($frequencies[$index])
+                ->setCycles($cycles[$index]);
+
+            if ($discountValue > 0) {
+                $repetition
+                    ->setDiscountType($discountTypes[$index])
+                    ->setDiscountValue($discountValues[$index]);
+            }
+
+            $template->addRepetition($repetition);
+        }
+
+        $template->setDueAt($dueAt);
+
+        return $template;
     }
 }
