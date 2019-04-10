@@ -91,7 +91,7 @@ class ConfigurationFactory implements FactoryInterface
             $config->setInheritAll($data->inheritAll);
         }
 
-        if ($data->storeId !== null) {
+        if (isset($data->storeId) && $data->storeId !== null) {
             $config->setStoreId($data->storeId);
         }
 
