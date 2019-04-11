@@ -43,8 +43,7 @@ class Template extends AbstractEntity
 
         $this->isEnabled = true;
 
-        $this->trial =
-            0;
+        $this->trial = 0;
 
         $this->installments = [];
     }
