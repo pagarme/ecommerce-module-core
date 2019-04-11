@@ -21,6 +21,7 @@ class PTBR extends AbstractI18NTable
             'Refunded amount: %.2f' => 'Quantia estornada: %.2f',
             'Partial Payment' => 'Pagamento Parcial',
             'Charge canceled.' => 'Cobrança cancelada.',
+            'Charge not found' => 'Cobrança não encontrada',
             'Creditmemo created: #%s.' => 'Creditmemo criado: #%s.',
             'until now' => 'até agora',
             'Extra amount paid: %.2f' => "Quantia extra paga: %.2f",
@@ -32,7 +33,8 @@ class PTBR extends AbstractI18NTable
             "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
             "Order payment failed" => "Pagamento do pedido falhou",
             "The order will be canceled" => "O pedido será cancelado",
-            "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s'
+            "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s',
+            "Can't cancel current order. Please cancel it by Mundipagg panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Mundipagg."
         ];
     }
 }

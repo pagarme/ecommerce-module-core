@@ -21,6 +21,7 @@ class ENUS extends AbstractI18NTable
             'Refunded amount: %.2f' => null,
             'Partial Payment' => null,
             'Charge canceled.' => null,
+            'Charge not found' => null,
             'Creditmemo created: #%s.' => null,
             'until now' => null,
             'Extra amount paid: %.2f' => null,
@@ -32,7 +33,8 @@ class ENUS extends AbstractI18NTable
             "%dx of %s %s (Total: %s)" => null,
             "Order payment failed" => null,
             "The order will be canceled" => null,
-            "An error occurred when trying to create the order. Please try again. Error Reference: %s." => null
+            "An error occurred when trying to create the order. Please try again. Error Reference: %s." => null,
+            "Can't cancel current order. Please cancel it by Mundipagg panel" => null
         ];
     }
 }
