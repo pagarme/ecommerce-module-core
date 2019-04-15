@@ -4,12 +4,21 @@ namespace Mundipagg\Core\Recurrence\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Aggregates\Template;
+use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\DueValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\RepetitionValueObject;
+use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class TemplateFactory implements FactoryInterface
 {
+    private function snake2Camel($snake)
+    {
+        return  lcfirst(
+            str_replace('_', '', ucwords($snake, '_'))
+        );
+    }
+
     /**
      *
      * @param  array $postData
@@ -19,7 +28,6 @@ class TemplateFactory implements FactoryInterface
     public function createFromPostData($postData)
     {
         $template = new Template();
-
 
         $template
             ->setName($postData['name'])
@@ -52,23 +60,24 @@ class TemplateFactory implements FactoryInterface
             }
         }
 
-        $dueAt = new DueValueObject();
-        $dueAt
-            ->setType($postData['expiry_type'])
-            ->setValue($postData['expiry_date'])
-        ;
+        $typeMethod = $postData['expiry_type'];
+        $typeMethod = $this->snake2Camel($typeMethod);
+        $dueAt = DueValueObject::$typeMethod($postData['expiry_date']);
 
         foreach ($postData['intervals'] as $interval) {
-            $repetition = new RepetitionValueObject();
+
+            $intervalMethod = $interval['type'];
+            $intervalValueObject = IntervalValueObject::$intervalMethod($interval['frequency']);
+
+            $repetition = new Repetition();
             $repetition
-                ->setFrequency($interval['frequency'])
-                ->setIntervalType($interval['type'])
+                ->setInterval($intervalValueObject)
                 ->setCycles($interval['cycles']);
 
             if (isset($interval['discountValue'])) {
-                $repetition
-                    ->setDiscountValue($interval['discountValue'])
-                    ->setDiscountType($interval['discountType']);
+                $discountMethod = $interval['discountType'];
+                $discount = DiscountValueObject::$discountMethod($interval['discountValue']);
+                $repetition->setDiscount($discount);
             }
             $template->addRepetition($repetition);
         }
@@ -100,11 +109,9 @@ class TemplateFactory implements FactoryInterface
             ->addInstallments(json_decode($dbData['installments'], true))
         ;
 
-        $dueAt = new DueValueObject();
-        $dueAt
-            ->setType($dbData['due_type'])
-            ->setValue($dbData['due_value'])
-        ;
+        $typeMethod = $dbData['due_type'];
+        $typeMethod = $this->snake2Camel($typeMethod);
+        $dueAt = DueValueObject::$typeMethod($dbData['due_value']);
 
         $discountTypes = explode(',', $dbData['discount_type']);
         $discountValues = explode(',', $dbData['discount_value']);
@@ -113,16 +120,19 @@ class TemplateFactory implements FactoryInterface
         $cycles = explode(',', $dbData['cycles']);
 
         foreach ($discountValues as $index => $discountValue) {
-            $repetition = new RepetitionValueObject();
+
+            $intervalMethod = $intervalTypes[$index];
+            $interval = IntervalValueObject::$intervalMethod($frequencies[$index]);
+
+            $repetition = new Repetition();
             $repetition
-                ->setIntervalType($intervalTypes[$index])
-                ->setFrequency($frequencies[$index])
+                ->setInterval($interval)
                 ->setCycles($cycles[$index]);
 
             if ($discountValue > 0) {
-                $repetition
-                    ->setDiscountType($discountTypes[$index])
-                    ->setDiscountValue($discountValues[$index]);
+                $discountMethod = $discountTypes[$index];
+                $discount = DiscountValueObject::$discountMethod($discountValues[$index]);
+                $repetition->setDiscount($discount);
             }
 
             $template->addRepetition($repetition);
@@ -167,22 +177,25 @@ class TemplateFactory implements FactoryInterface
                 $template->setId($data->id);
             }
 
-            $dueAt = new DueValueObject();
-            $dueAt
-                ->setType($data->dueAt->type)
-                ->setValue($data->dueAt->value)
-            ;
+            $typeMethod = $data->dueAt->type;
+            $typeMethod = $this->snake2Camel($typeMethod);
+            $dueAt = DueValueObject::$typeMethod($data->dueAt->value);
 
             foreach ($data->repetitions as $repetition) {
-                $_repetition = new RepetitionValueObject();
+
+                $intervalMethod = $repetition->intervalType;
+                $interval = IntervalValueObject::$intervalMethod($repetition->frequency);
+
+                $_repetition = new Repetition();
                 $_repetition
                     ->setCycles($repetition->cycles)
-                    ->setFrequency($repetition->frequency)
-                    ->setIntervalType($repetition->intervalType);
+                    ->setInterval($interval);
+
                 if ($repetition->discountType) {
+                    $discountMethod = $repetition->discountType;
+                    $discount = DiscountValueObject::$discountMethod($repetition->discountValue);
                     $_repetition
-                        ->setDiscountType($repetition->discountType)
-                        ->setDiscountValue($repetition->discountValue);
+                        ->setDiscount($discount);
                 }
                 $template->addRepetition($_repetition);
             }

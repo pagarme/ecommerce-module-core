@@ -3,48 +3,46 @@
 namespace Mundipagg\Core\Recurrence\ValueObjects;
 
 use Exception;
+use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
-class DueValueObject
+class DueValueObject extends AbstractValueObject
 {
-    const TYPE_EXACT = 'X';
-    const TYPE_PREPAID = 'E';
-    const TYPE_POSTPAID = 'O';
+    const TYPE_EXACT = "exact_day";
+    const TYPE_PREPAID = "prepaid";
+    const TYPE_POSTPAID = "postpaid";
+
+    const LABEL_EXACT = "Every day";
+    const LABEL_PREPAID = "Pre paid";
+    const LABEL_POSTPAID = "Post paid";
 
     /** @var string */
     protected $type;
     /** @var int */
     protected $value;
+    /** @var string */
+    protected $label;
 
-    /**
-     * @TODO to respect the immutability of a value object, this block of code
-     * @TODO should be uncommented, and the system should be adapted to it.
-     *
-     * Examples of use:
-     *
-     * $foo = DueValueObject::exact(20);
-     * $bar = DueValueObject::prePaid();
-     * $baz = DueValueObject::postPaid();
-     */
-    /*protected function __construct($type, $value)
+    protected function __construct($type, $value, $label)
     {
         $this->setType($type);
         $this->setValue($value);
+        $this->setLabel($label);
     }
 
-    public static function exact($day)
+    public static function exactDay($day)
     {
-        return new DueValueObject(self::TYPE_EXACT, $day);
+        return new DueValueObject(self::TYPE_EXACT, $day, self::LABEL_EXACT);
     }
 
-    public static function prePaid()
+    public static function prepaid()
     {
-        return new DueValueObject(self::TYPE_PREPAID, 0);
+        return new DueValueObject(self::TYPE_PREPAID, 0, self::LABEL_PREPAID);
     }
 
-    public static function postPaid()
+    public static function postpaid()
     {
-        return new DueValueObject(self::TYPE_POSTPAID, 0);
-    }*/
+        return new DueValueObject(self::TYPE_POSTPAID, 0, self::LABEL_POSTPAID);
+    }
 
     /**
      * @return string
@@ -59,12 +57,9 @@ class DueValueObject
      * @return DueValueObject
      * @throws Exception
      */
-    public function setType($type)
+    protected function setType($type)
     {
-        if (!in_array($type, self::getValidTypes())) {
-            throw new Exception("Invalid Due Type: $type! ");
-        }
-        $this->type = $type;
+       $this->type = $type;
         return $this;
     }
 
@@ -81,58 +76,80 @@ class DueValueObject
      * @return DueValueObject
      * @throws Exception
      */
-    public function setValue($value)
+    protected function setValue($value)
     {
         $intValue = intval($value);
-        if ($intValue <= 0) {
+        if ($intValue <= 0 && $this->getType() === self::TYPE_EXACT) {
             throw new Exception("Due value should be greater than 0: $value!");
         }
         $this->value = $intValue;
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     */
+    protected function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
     public function getDueLabel()
     {
-        switch ($this->type) {
-            case self::TYPE_EXACT:
-                return "Todo dia %d";
-            case self::TYPE_PREPAID:
-                return "Pré-pago";
-            case self::TYPE_POSTPAID:
-                return "Pós-pago";
-            default: return "Error: %d : " . $this->type;
-        }
+        return $this->getLabel();
     }
 
     public function getDueApiValue()
     {
-        switch ($this->type) {
-            case self::TYPE_EXACT:
-                return "exact_day";
-            case self::TYPE_PREPAID:
-                return "prepaid";
-            case self::TYPE_POSTPAID:
-                return "postpaid";
-            default:
-                return "";
-        }
+       return $this->getType();
     }
 
     public static function getTypesArray()
     {
         return [
-            ['code' => self::TYPE_EXACT, 'name' => "Dia exato"],
-            ['code' => self::TYPE_PREPAID, 'name' => "Pré-pago"],
-            ['code' => self::TYPE_POSTPAID, 'name' => "Pós-pago"]
+            ['code' => self::TYPE_EXACT, 'name' => self::LABEL_EXACT],
+            ['code' => self::TYPE_PREPAID, 'name' => self::LABEL_PREPAID],
+            ['code' => self::TYPE_POSTPAID, 'name' => self::LABEL_POSTPAID]
         ];
     }
 
-    public static function getValidTypes()
+    /**
+     * To check the structural equality of value objects,
+     * this method should be implemented in this class children.
+     *
+     * @param DueValueObject $object
+     * @return bool
+     */
+    protected function isEqual($object)
+    {
+        return
+            $this->getType() === $object->getType() &&
+            $this->getValue() === $object->getValue() &&
+            $this->getLabel() === $object->getLabel();
+
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
     {
         return [
-            self::TYPE_EXACT,
-            self::TYPE_PREPAID,
-            self::TYPE_POSTPAID
+          'type' => $this->getType(),
+          'value' => $this->getValue(),
+          'label' => $this->getLabel(),
         ];
     }
 }
