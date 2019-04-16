@@ -45,10 +45,17 @@ class APIService
 
         $orderRequest = $order->convertToSDKRequest();
         $orderRequest->metadata = $this->getOrderMetaData();
+        $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
+
+        $message =
+            'Create order Request from ' .
+            $publicKey .
+            ' to ' .
+            $endpoint;
 
         $this->logService->orderInfo(
             $order->getCode(),
-            'Create order Request to ' . $endpoint,
+            $message,
             $orderRequest
         );
 
