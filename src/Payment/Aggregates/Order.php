@@ -287,17 +287,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
 
     private function setCaptureFlag(AbstractPayment &$payment)
     {
-        $antifraudEnabled = $this->isAntifraudEnabled();
-        if ($antifraudEnabled === null) {
-            throw new \Exception(
-                'The antifraudEnabled flag should be set before adding any payment!',
-                400
-            );
-        }
-
-        $capture =
-            !$antifraudEnabled &&
-            MPSetup::getModuleConfiguration()->isCapture();
+        $capture = MPSetup::getModuleConfiguration()->isCapture();
 
         if (method_exists($payment, 'setCapture')) {
             $payment->setCapture($capture);
