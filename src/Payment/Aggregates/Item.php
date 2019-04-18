@@ -16,6 +16,21 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     private $description;
     /** @var integer */
     private $quantity;
+    /** @var string */
+    private $code;
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    public function setCode($code)
+    {
+        $this->code = $code;
+    }
 
        /**
      * @return string
@@ -81,6 +96,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     {
         $itemRequest = new CreateOrderItemRequest();
 
+        $code = $this->getCode();
         $amount = $this->getAmount();
         $quantity = $this->getQuantity();
         $description = $this->getDescription();
@@ -94,6 +110,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
         $itemRequest->description = $description;
         $itemRequest->amount = $amount;
         $itemRequest->quantity = $quantity;
+        $itemRequest->code = $code;
 
         return $itemRequest;
     }
