@@ -12,6 +12,8 @@ abstract class AbstractDatabaseDecorator
     const TABLE_HUB_INSTALL_TOKEN = 5;
     const TABLE_SAVED_CARD = 6;
     const TABLE_CUSTOMER = 7;
+    const TABLE_TEMPLATE = 8;
+    const TABLE_TEMPLATE_REPETITION = 9;
 
     protected $db;
     protected $tablePrefix;
