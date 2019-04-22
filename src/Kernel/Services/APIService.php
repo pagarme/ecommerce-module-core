@@ -44,7 +44,8 @@ class APIService
     {
         try {
             $chargeId = $charge->getMundipaggId()->getValue();
-            $request = new CreateCaptureChargeRequest($chargeId, $amount);
+            $request = new CreateCaptureChargeRequest;
+            $request->amount = $amount;
 
             $chargeController = $this->getChargeController();
             $result = $chargeController->captureCharge($chargeId, $request);
