@@ -34,7 +34,8 @@ class PTBR extends AbstractI18NTable
             "Order payment failed" => "Pagamento do pedido falhou",
             "The order will be canceled" => "O pedido será cancelado",
             "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s',
-            "Can't cancel current order. Please cancel it by Mundipagg panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Mundipagg."
+            "Can't cancel current order. Please cancel it by Mundipagg panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Mundipagg.",
+            "Charge canceled with success" => "Charge cancelada com sucesso"
         ];
     }
 }

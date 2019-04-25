@@ -4,82 +4,121 @@ namespace Mundipagg\Core\Kernel\Services;
 
 use MundiAPILib\Models\GetChargeResponse;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Responses\ServiceResponse;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
 use Mundipagg\Core\Webhook\Services\ChargeHandlerService;
+use Unirest\Exception;
 
 class ChargeService
 {
-    protected $charge;
-
+    /** @var LogService  */
     protected $logService;
 
-    protected $order;
-
-    public function __construct(Charge $charge)
+    public function __construct()
     {
-        $this->charge = $charge;
-
-        $this->order = (new OrderRepository)->findByMundipaggId(
-            new OrderId($this->charge->getOrderId()->getValue())
-        );
         $this->logService = new LogService(
             'ChargeService',
             true
         );
     }
 
-    public function capture($amount = 0)
+    public function captureById($chargeId, $amount = 0)
     {
+        try {
+
+            $chargeRepository = new ChargeRepository();
+            $charge = $chargeRepository->findByMundipaggId(
+                new ChargeId($chargeId)
+            );
+
+            if ($charge === null) {
+                throw new Exception("Charge not found");
+            }
+
+            return $this->capture($charge, $amount);
+
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function cancelById($chargeId, $amount = 0)
+    {
+        try {
+
+            $chargeRepository = new ChargeRepository();
+            $charge = $chargeRepository->findByMundipaggId(
+                new ChargeId($chargeId)
+            );
+
+            if ($charge === null) {
+                throw new Exception("Charge not found");
+            }
+
+            return $this->cancel($charge, $amount);
+
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function capture(Charge $charge, $amount = 0)
+    {
+        $order = (new OrderRepository)->findByMundipaggId(
+            new OrderId($charge->getOrderId()->getValue())
+        );
+
         $this->logService->info("Charge capture");
         $orderRepository = new OrderRepository();
         $orderService = new OrderService();
         $chargeHandlerService = new ChargeHandlerService();
 
-        $platformOrder = $this->order->getPlatformOrder();
+        $platformOrder = $order->getPlatformOrder();
 
         $apiService = new APIService();
         $this->logService->info(
-            "Capturing charge on Mundipagg - " . $this->charge->getMundipaggId()->getValue()
+            "Capturing charge on Mundipagg - " . $charge->getMundipaggId()->getValue()
         );
 
-        $resultApi = $apiService->captureCharge($this->charge, $amount);
+        $resultApi = $apiService->captureCharge($charge, $amount);
 
         if ($resultApi instanceof GetChargeResponse) {
 
-            if (!$this->charge->getStatus()->equals(ChargeStatus::paid())) {
+            if (!$charge->getStatus()->equals(ChargeStatus::paid())) {
                 $this->logService->info(
-                    "Pay charge - " . $this->charge->getMundipaggId()->getValue()
+                    "Pay charge - " . $charge->getMundipaggId()->getValue()
                 );
-                $this->charge->pay($amount);
+                $charge->pay($amount);
             }
 
-            if ($this->charge->getPaidAmount() == 0) {
-                $this->charge->setPaidAmount($amount);
+            if ($charge->getPaidAmount() == 0) {
+                $charge->setPaidAmount($amount);
             }
 
             $this->logService->info("Update Charge on Order");
-            $this->order->updateCharge($this->charge);
-            $orderRepository->save($this->order);
+            $order->updateCharge($charge);
+            $orderRepository->save($order);
 
             $this->logService->info("Adding history on Order");
-            $history = $chargeHandlerService->prepareHistoryComment($this->charge);
+            $history = $chargeHandlerService->prepareHistoryComment($charge);
             $platformOrder->addHistoryComment($history);
 
             $this->logService->info("Synchronizing with platform Order");
-            $orderService->syncPlatformWith($this->order);
+            $orderService->syncPlatformWith($order);
 
             $this->logService->info("Change Order status");
-            $this->order->setStatus(OrderStatus::paid());
+            $order->setStatus(OrderStatus::paid());
             $orderHandlerService = new OrderHandler();
-            $orderHandlerService->handle($this->order);
+            $orderHandlerService->handle($order);
 
-            $message = $chargeHandlerService->prepareReturnMessage($this->charge);
+            $message = $chargeHandlerService->prepareReturnMessage($charge);
 
             return new ServiceResponse(true, $message);
         }
@@ -87,8 +126,13 @@ class ChargeService
         return new ServiceResponse(false, $resultApi);
     }
 
-    public function cancel($amount = 0)
+    public function cancel(Charge $charge, $amount = 0)
     {
+
+        $order = (new OrderRepository)->findByMundipaggId(
+            new OrderId($charge->getOrderId()->getValue())
+        );
+
         $this->logService->info("Charge cancel");
 
         $orderRepository = new OrderRepository();
@@ -97,24 +141,27 @@ class ChargeService
         $chargeHandlerService = new ChargeHandlerService();
         $i18n = new LocalizationService();
 
-        $platformOrder = $this->order->getPlatformOrder();
+        $platformOrder = $order->getPlatformOrder();
 
         $apiService = new APIService();
         $this->logService->info(
-            "Cancel charge on Mundipagg - " . $this->charge->getMundipaggId()->getValue()
+            "Cancel charge on Mundipagg - " . $charge->getMundipaggId()->getValue()
         );
 
-        $resultApi = $apiService->cancelCharge($this->charge, $amount);
+        $resultApi = $apiService->cancelCharge($charge, $amount);
 
         if ($resultApi === null) {
 
-            $this->order->updateCharge($this->charge);
+            $this->logService->info("Update Charge on Order");
+            $order->updateCharge($charge);
+            $orderRepository->save($order);
+            $history = $chargeHandlerService->prepareHistoryComment($charge);
 
-            $orderRepository->save($this->order);
-            $history = $chargeHandlerService->prepareHistoryComment($this->charge);
+            $this->logService->info("Adding history on Order");
+            $order->getPlatformOrder()->addHistoryComment($history);
 
-            $this->order->getPlatformOrder()->addHistoryComment($history);
-            $orderService->syncPlatformWith($this->order);
+            $this->logService->info("Synchronizing with platform Order");
+            $orderService->syncPlatformWith($order);
 
             $platformOrderGrandTotal = $moneyService->floatToCents(
                 $platformOrder->getGrandTotal()
@@ -132,20 +179,19 @@ class ChargeService
             ) {
                 $this->logService->info("Change Order status");
 
-                $this->order->setStatus(OrderStatus::canceled());
-                $this->order->getPlatformOrder()->setState(OrderState::canceled());
-                $this->order->getPlatformOrder()->save();
+                $order->setStatus(OrderStatus::canceled());
+                $order->getPlatformOrder()->setState(OrderState::canceled());
+                $order->getPlatformOrder()->save();
 
-                $this->order->getPlatformOrder()->addHistoryComment(
+                $order->getPlatformOrder()->addHistoryComment(
                     $i18n->getDashboard('Order canceled.')
                 );
 
-                $orderRepository->save($this->order);
-
-                $orderService->syncPlatformWith($this->order);
+                $orderRepository->save($order);
+                $orderService->syncPlatformWith($order);
             }
 
-            $message = "Charge canceled with success";
+            $message = $i18n->getDashboard("Charge canceled with success");
             return new ServiceResponse(true, $message);
         }
 
