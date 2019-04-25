@@ -29,6 +29,7 @@ class APIService
         try {
             $chargeId = $charge->getMundipaggId()->getValue();
             $request = new CreateCancelChargeRequest();
+            $request->amount = $amount;
 
             $chargeController = $this->getChargeController();
             $result = $chargeController->cancelCharge($chargeId, $request);
