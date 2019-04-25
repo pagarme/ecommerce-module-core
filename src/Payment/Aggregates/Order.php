@@ -213,7 +213,14 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
      */
     public function isAntifraudEnabled()
     {
+        $payments = $this->getPayments();
+
+        foreach ($payments as $payment) {
+            $payment;
+        }
+
         $antifraudMinAmount = MPSetup::getModuleConfiguration()->getAntifraudMinAmount();
+
         if ($this->amount < $antifraudMinAmount) {
             return false;
         }

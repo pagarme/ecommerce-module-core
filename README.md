@@ -7,7 +7,7 @@ This is the repository of Mundipagg's payment module core for all supported e-co
 ## Compatibility
 -   [Mundipagg Magento payment module for Magento 2.1+](https://github.com/mundipagg/magento2).
 -   [Mundipagg Magento payment module for Magento 1.9.3+](https://github.com/mundipagg/magento).
--   [Mundipagg OpenCart payment module for OpenCart 3.0+](https://github.com/mundipagg/magento2).
+-   [Mundipagg OpenCart payment module for OpenCart 3.0+](https://github.com/mundipagg/opencart).
 
 ## Dependencies
 *   ``PHP`` Version 5.6+

@@ -35,7 +35,8 @@ class ENUS extends AbstractI18NTable
             "The order will be canceled" => null,
             "An error occurred when trying to create the order. Please try again. Error Reference: %s." => null,
             "Can't cancel current order. Please cancel it by Mundipagg panel" => null,
-            "Charge canceled with success" => null
+            "Charge canceled with success" => null,
+            'Invalid address. Please fill the street lines and try again.' => null
         ];
     }
 }
