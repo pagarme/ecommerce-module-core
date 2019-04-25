@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Kernel\Responses;
 
-
 final class ServiceResponse
 {
 

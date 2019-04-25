@@ -15,7 +15,6 @@ use Mundipagg\Core\Webhook\Services\ChargeHandlerService;
 
 class ChargeService
 {
-
     protected $charge;
 
     protected $logService;
