@@ -73,4 +73,7 @@ interface PlatformOrderInterface
     public function getPaymentMethodCollection();
     /** @return null|Shipping */
     public function getShipping();
+
+    /** @since  1.6.5 */
+    public function getTotalCanceled();
 }

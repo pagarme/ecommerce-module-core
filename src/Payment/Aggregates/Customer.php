@@ -47,6 +47,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
     public function getName()
     {
         return $this->name;
+
     }
 
     /**
@@ -54,7 +55,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = substr($name, 0, 64);
     }
 
     /**

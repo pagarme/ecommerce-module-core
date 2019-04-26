@@ -26,10 +26,14 @@ final class ErrorExceptionHandler extends AbstractResponseHandler
         }
 
         $this->logService->$exceptionLogMethod($error, $orderCode);
+        $message =
+            'An error occurred when trying to create the order. ' .
+            'Please try again. Error Reference: %s';
 
         $i18n = new LocalizationService();
+
         $frontErrorMessage = $i18n->getDashboard(
-            'An error occurred when trying to create the order. Please try again. Error Reference: %s',
+            $message,
             $paymentOrder->getCode()
         );
 

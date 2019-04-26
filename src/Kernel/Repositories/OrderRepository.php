@@ -91,6 +91,24 @@ final class OrderRepository extends AbstractRepository
         return $factory->createFromDbData($result->row);
     }
 
+    public function findByPlatformId($platformID)
+    {
+        $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
+
+        $query = "SELECT * FROM `$orderTable` ";
+        $query .= "WHERE code = '{$platformID}';";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new OrderFactory();
+
+        return $factory->createFromDbData($result->row);
+    }
+
     public function listEntities($limit, $listDisabled)
     {
         // TODO: Implement listEntities() method.
