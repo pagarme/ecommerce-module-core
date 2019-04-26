@@ -244,7 +244,7 @@ final class OrderHandler extends AbstractResponseHandler
         $customer = $createdOrder->getCustomer();
 
         //save only registered customers;
-        if($customer->getCode() === null) {
+        if(empty($customer) || $customer->getCode() === null) {
             return;
         }
 

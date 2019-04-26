@@ -273,7 +273,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         $this->order = $order;
     }
 
-    private function prepareHistoryComment(Charge $charge)
+    public function prepareHistoryComment(Charge $charge)
     {
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
@@ -342,7 +342,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $history;
     }
 
-    private function prepareReturnMessage(Charge $charge)
+    public function prepareReturnMessage(Charge $charge)
     {
         $moneyService = new MoneyService();
 

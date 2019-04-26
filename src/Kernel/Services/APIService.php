@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Services;
 use MundiAPILib\APIException;
 use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
+use MundiAPILib\Models\CreateCaptureChargeRequest;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
@@ -23,17 +24,34 @@ class APIService
         $this->logService = new OrderLogService(2);
     }
 
-    public function cancelCharge(Charge &$charge)
+    public function cancelCharge(Charge &$charge, $amount = 0)
     {
         try {
             $chargeId = $charge->getMundipaggId()->getValue();
             $request = new CreateCancelChargeRequest();
+            $request->amount = $amount;
 
             $chargeController = $this->getChargeController();
             $result = $chargeController->cancelCharge($chargeId, $request);
-            $charge->cancel();
+            $charge->cancel($amount);
 
             return null;
+        } catch (APIException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function captureCharge(Charge &$charge, $amount = 0)
+    {
+        try {
+            $chargeId = $charge->getMundipaggId()->getValue();
+            $request = new CreateCaptureChargeRequest;
+            $request->amount = $amount;
+
+            $chargeController = $this->getChargeController();
+            $result = $chargeController->captureCharge($chargeId, $request);
+
+            return $result;
         } catch (APIException $e) {
             return $e->getMessage();
         }
