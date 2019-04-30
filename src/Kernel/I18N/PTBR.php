@@ -36,7 +36,10 @@ class PTBR extends AbstractI18NTable
             "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s',
             "Can't cancel current order. Please cancel it by Mundipagg panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Mundipagg.",
             "Charge canceled with success" => "Charge cancelada com sucesso",
-            'Invalid address. Please fill the street lines and try again.' => 'Endereço inválido. Preencha rua, número e bairro e tente novamente.'
+            'Invalid address. Please fill the street lines and try again.' => 'Endereço inválido. Preencha rua, número e bairro e tente novamente.',
+            "The informed card couldn't be deleted." => "O cartão informado não pode ser deletado.",
+            "The card '%s' was deleted." => "O cartão '%s' foi deletado.",
+            "The card '%s' couldn't be deleted." => "O cartão '%s' não pôde ser deletado."
         ];
     }
 }
