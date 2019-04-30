@@ -9,6 +9,8 @@ use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 
 final class SavedCard extends AbstractEntity
 {
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+
     /** @var CustomerId */
     private $ownerId;
 
@@ -144,7 +146,7 @@ final class SavedCard extends AbstractEntity
         $obj->createdAt = $this->getCreatedAt();
 
         if ($obj->createdAt !== null) {
-            $obj->createdAt = $obj->createdAt->format('Y-m-d H:i:s');
+            $obj->createdAt = $obj->createdAt->format(self::DATE_FORMAT);
         }
 
         return $obj;

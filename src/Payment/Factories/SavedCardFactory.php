@@ -77,8 +77,12 @@ class SavedCardFactory implements FactoryInterface
             new NumericString($dbData['last_four_digits'])
         );
 
-        if (isset($dbData['created_at'])) {
-            $a = 1;
+        if (!empty($dbData['created_at'])) {
+            $createdAt = \Datetime::createFromFormat(
+                SavedCard::DATE_FORMAT,
+                $dbData['created_at']
+            );
+            $savedCard->setCreatedAt($createdAt);
         }
 
         return $savedCard;
