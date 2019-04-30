@@ -80,16 +80,15 @@ abstract class AbstractModuleCoreSetup
 
         static::loadSavedConfiguration();
 
-        if (static::$moduleConfig !== null) {
-            return true;
-        }
-
+        $savedConfig = static::$moduleConfig;
         static::$instance->loadModuleConfigurationFromPlatform();
-
         static::$moduleConfig->setStoreId(static::getCurrentStoreId());
 
-        if (static::$moduleConfig->getId() !== null) {
-            return true;
+        if (
+            $savedConfig !== null &&
+            ($savedConfigId = $savedConfig->getId()) !== null
+        ) {
+            static::$moduleConfig->setid($savedConfigId);
         }
 
         if (self::getDefaultConfigSaved() === null) {
