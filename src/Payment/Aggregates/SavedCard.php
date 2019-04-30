@@ -24,6 +24,9 @@ final class SavedCard extends AbstractEntity
     /** @var CardBrand */
     private $brand;
 
+    /** @var \DateTime */
+    private $createdAt;
+
     /**
      * @return CustomerId
      */
@@ -104,6 +107,21 @@ final class SavedCard extends AbstractEntity
         $this->brand = $brand;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
 
     /**
      * Specify data which should be serialized to JSON
@@ -123,6 +141,11 @@ final class SavedCard extends AbstractEntity
         $obj->firstSixDigits = $this->getFirstSixDigits();
         $obj->lastFourDigits = $this->getLastFourDigits();
         $obj->brand = $this->getBrand();
+        $obj->createdAt = $this->getCreatedAt();
+
+        if ($obj->createdAt !== null) {
+            $obj->createdAt = $obj->createdAt->format('Y-m-d H:i:s');
+        }
 
         return $obj;
     }

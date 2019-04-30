@@ -257,5 +257,22 @@ abstract class AbstractModuleCoreSetup
      * @since 1.6.1
      */
     abstract public static function getDefaultStoreId();
+
+    /**
+     * @since 1.7.1
+     *
+     * @return \DateTimeZone
+     */
+    public static function getStoreTimezone()
+    {
+        return self::$instance->getPlatformStoreTimezone();
+    }
+
+    /**
+     * @since 1.7.1
+     *
+     * @return \DateTimeZone
+     */
+    abstract protected function getPlatformStoreTimezone();
 }
 

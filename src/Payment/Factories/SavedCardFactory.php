@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Payment\Factories;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
@@ -38,6 +39,12 @@ class SavedCardFactory implements FactoryInterface
             new NumericString($postData->last_four_digits)
         );
 
+        if (isset($postData->created_at)) {
+            $createdAt = new \Datetime($postData->created_at);
+            $createdAt->setTimezone(MPSetup::getStoreTimezone());
+            $savedCard->setCreatedAt($createdAt);
+        }
+
         return $savedCard;
     }
 
@@ -69,6 +76,10 @@ class SavedCardFactory implements FactoryInterface
         $savedCard->setLastFourDigits(
             new NumericString($dbData['last_four_digits'])
         );
+
+        if (isset($dbData['created_at'])) {
+            $a = 1;
+        }
 
         return $savedCard;
     }
