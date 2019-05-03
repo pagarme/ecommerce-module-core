@@ -59,4 +59,9 @@ abstract class AbstractValidString extends AbstractValueObject
     {
         return $this->getValue();
     }
+
+    public function __toString()
+    {
+        return $this->getValue();
+    }
 }
