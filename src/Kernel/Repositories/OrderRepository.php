@@ -72,6 +72,11 @@ final class OrderRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
+    /**
+     * @param AbstractValidString $mundipaggId
+     * @return Order|null
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
         $id = $mundipaggId->getValue();

@@ -35,6 +35,11 @@ final class OrderHandlerService extends AbstractHandlerService
 
         $webhookOrder = $webhook->getEntity();
         $webhookOrder->setId($order->getId());
+
+        foreach ($order->getCharges() as $charge) {
+            $webhookOrder->updateCharge($charge);
+        }
+
         $orderHandlerService = new OrderHandler();
         $cantCreateReason = $orderHandlerService->handle($webhookOrder);
 
