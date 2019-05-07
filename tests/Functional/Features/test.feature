@@ -14,6 +14,6 @@ Feature: Test
     And I wait for text "Mundipagg" to appear, for 15 seconds
 
   @javascript
-  #I go to Mundipagg
-  Scenario: I go to Mundipagg
-    Given I go to Mundipagg
+  #I call a partial scenario
+  Scenario: I call a partial scenario
+    Given I call a partial scenario
