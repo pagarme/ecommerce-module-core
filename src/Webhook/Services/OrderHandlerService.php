@@ -181,15 +181,17 @@ final class OrderHandlerService extends AbstractHandlerService
 
     private function canBePaid($order)
     {
+        $unpayableChargeStatuses = [
+            ChargeStatus::PENDING,
+            ChargeStatus::PROCESSING
+        ];
+
         $canBePaid = true;
         $chargesStatuses = [];
         foreach ($order->getCharges() as $charge) {
             $chargeStatus = $charge->getStatus()->getStatus();
             $chargesStatuses[$charge->getMundipaggId()->getValue()] = $chargeStatus;
-            if (in_array(
-                $chargeStatus,
-                [ChargeStatus::PENDING, ChargeStatus::PROCESSING]
-            )) {
+            if (in_array($chargeStatus, $unpayableChargeStatuses)) {
                 $canBePaid = false;
             }
         }
