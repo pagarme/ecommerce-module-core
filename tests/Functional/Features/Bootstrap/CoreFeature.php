@@ -1,31 +1,31 @@
 <?php
 
+namespace Mundipagg\Core\Test\Functional\Features\Bootstrap;
+
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Exception\ResponseTextException;
 use Behat\MinkExtension\Context\MinkContext;
 
-
-
 /**
  * Features context.
  */
-class FeatureContext extends MinkContext
+class CoreFeature extends MinkContext
 {
     /**
      *
      * @var Behat\Gherkin\Node\StepNode
      */
-    private $currentStep = null;
-    private $scenarioTokens = null;
-    private static $featureHash = null;
-    private $screenshotDir = DIRECTORY_SEPARATOR . 'tmp';
+    protected $currentStep = null;
+    protected $scenarioTokens = null;
+    protected static $featureHash = null;
+    protected $screenshotDir = DIRECTORY_SEPARATOR . 'tmp';
 
     /**
      *
      * @AfterStep
      * @param     $event
      */
-    public function afterStepFailureScreenshot($event)
+    protected function afterStepFailureScreenshot($event)
     {
         $e = $event->getTestResult()->getCallResult()->getException();
         if ($e) {
@@ -40,11 +40,12 @@ class FeatureContext extends MinkContext
         }
     }
 
+
     /**
      *
      * @BeforeFeature
      */
-    public static function beforeFeature($event)
+    protected static function beforeFeature($event)
     {
         self::$featureHash = null;
         $requestTime = $_SERVER['REQUEST_TIME'];
@@ -53,11 +54,12 @@ class FeatureContext extends MinkContext
         self::$featureHash = substr($hash, 0, 16);
     }
 
+
     /**
      *
      * @BeforeScenario
      */
-    public function beforeScenario($event)
+    protected function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
             throw new PendingException(
@@ -78,7 +80,7 @@ class FeatureContext extends MinkContext
      *
      * @BeforeStep
      */
-    public function beforeStep($event)
+    protected function beforeStep($event)
     {
         $this->currentStep  = $event->getStep();
     }
@@ -89,7 +91,7 @@ class FeatureContext extends MinkContext
      * @param int   $remaning Amount in seconds remaing on wait.
      * @param float $interval in seconds to update animation frame.
      */
-    private function spinAnimation($remaining = null, $interval = 0.1)
+    protected function spinAnimation($remaining = null, $interval = 0.1)
     {
         static $frameId = null;
         $currentTime = microtime(true);
@@ -142,7 +144,7 @@ class FeatureContext extends MinkContext
      * @return bool
      * @throws Exception
      */
-    private function spin(callable $lambda, $wait = 60)
+    protected function spin(callable $lambda, $wait = 60)
     {
         $startTime = time();
         do{
@@ -161,6 +163,7 @@ class FeatureContext extends MinkContext
             "Timeout: $wait seconds."
         );
     }
+
 
 
     /**
@@ -223,7 +226,7 @@ class FeatureContext extends MinkContext
         }
     }
 
-    private function replacePlaceholdersByTokens($element)
+    public function replacePlaceholdersByTokens($element)
     {
         if (is_array($this->scenarioTokens)) {
             foreach ($this->scenarioTokens as $key => $value) {
@@ -240,7 +243,7 @@ class FeatureContext extends MinkContext
      * @param  $element
      * @throws \Exception
      */
-    public function iWaitForElementToAppear($element)
+    protected function iWaitForElementToAppear($element)
     {
         $this->spin(
             function (FeatureContext $context) use ($element) {
@@ -263,7 +266,7 @@ class FeatureContext extends MinkContext
      * @param  $wait
      * @throws \Exception
      */
-    public function iWaitForElementToAppearForNSeconds($element,$wait)
+    protected function iWaitForElementToAppearForNSeconds($element,$wait)
     {
         $this->spin(
             function (FeatureContext $context) use ($element) {
@@ -286,7 +289,7 @@ class FeatureContext extends MinkContext
      * @param  $wait
      * @throws \Exception
      */
-    public function iWaitForNSeconds($wait)
+    protected function iWaitForNSeconds($wait)
     {
         return sleep($wait);
     }
@@ -297,7 +300,7 @@ class FeatureContext extends MinkContext
      * @param  $element
      * @throws \Exception
      */
-    public function iWaitForElementToBecomeVisible($element)
+    protected function iWaitForElementToBecomeVisible($element)
     {
         $session = $this->getSession();
 
@@ -321,6 +324,33 @@ class FeatureContext extends MinkContext
         );
     }
 
+
+
+
+
+    /**
+     *
+     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
+     * @param  $text
+     * @param  $wait
+     * @throws \Exception
+     */
+    public function iWaitForTextToAppearForNSeconds($text, $wait)
+    {
+        $this->spin(
+            function ($context) use ($text) {
+                try {
+                    $context->assertPageContainsText($text);
+                    return true;
+                }
+                catch(ResponseTextException $e) {
+                    // NOOP
+                }
+                return false;
+            }, $wait
+        );
+    }
+
     /**
      *
      * @when /^(?:|I )follow the element "(?P<element>(?:[^"]|\\")*)" href$/
@@ -340,52 +370,6 @@ class FeatureContext extends MinkContext
         $this->visit($href);
     }
 
-    /**
-     *
-     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear$/
-     * @Then   /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" appear$/
-     * @param  $text
-     * @throws \Exception
-     */
-    public function iWaitForTextToAppear($text)
-    {
-        $this->spin(
-            function (FeatureContext $context) use ($text) {
-                try {
-                    $context->assertPageContainsText($text);
-                    return true;
-                }
-                catch(ResponseTextException $e) {
-                    // NOOP
-                }
-                return false;
-            }
-        );
-    }
-
-
-    /**
-     *
-     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
-     * @param  $text
-     * @param  $wait
-     * @throws \Exception
-     */
-    public function iWaitForTextToAppearForNSeconds($text,$wait)
-    {
-        $this->spin(
-            function (FeatureContext $context) use ($text) {
-                try {
-                    $context->assertPageContainsText($text);
-                    return true;
-                }
-                catch(ResponseTextException $e) {
-                    // NOOP
-                }
-                return false;
-            }, $wait
-        );
-    }
 
     /**
      *
@@ -417,6 +401,33 @@ class FeatureContext extends MinkContext
         $value = self::$featureHash . "@test.com";
         $this->getSession()->getPage()->fillField($field, $value);
     }
+
+
+
+    /**
+     *
+     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear$/
+     * @Then   /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" appear$/
+     * @param  $text
+     * @throws \Exception
+     */
+    public function iWaitForTextToAppear($text)
+    {
+        $this->spin(
+            function (FeatureContext $context) use ($text) {
+                try {
+                    $context->assertPageContainsText($text);
+                    return true;
+                }
+                catch(ResponseTextException $e) {
+                    // NOOP
+                }
+                return false;
+            }
+        );
+    }
+
+
 
 
     /**
@@ -495,6 +506,4 @@ class FeatureContext extends MinkContext
         fwrite($file, $data);
         fclose($file);
     }
-
-
 }
