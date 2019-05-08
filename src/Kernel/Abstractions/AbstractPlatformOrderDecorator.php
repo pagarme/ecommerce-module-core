@@ -3,6 +3,8 @@
 namespace Mundipagg\Core\Kernel\Abstractions;
 
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderLogService;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
@@ -158,6 +160,30 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $platformOrder->setBaseTotalRefunded($totalRefunded);
 
         return $amountInCurrency;
+    }
+
+    public function getTotalPaidFromCharges()
+    {
+        $mpOrderId = $this->getMundipaggId();
+        $grandTotal = $this->getGrandTotal();
+        if ($mpOrderId === null) {
+            return $grandTotal;
+        }
+
+        $orderRepository = new OrderRepository();
+        $mpOrder = $orderRepository->findByMundipaggId($mpOrderId);
+        if ($mpOrder === null) {
+            return $grandTotal;
+        }
+
+        $grandTotal = 0;
+        foreach ($mpOrder->getCharges() as $charge) {
+            $grandTotal += $charge->getPaidAmount();
+        }
+        $moneyService = new MoneyService();
+        $grandTotal = $moneyService->centsToFloat($grandTotal);
+
+        return $grandTotal;
     }
 
     abstract protected function addMPHistoryComment($message);

@@ -137,28 +137,6 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    //@todo handleProcessing
-    protected function handleProcessing_TODO(Webhook $webhook)
-    {
-        //@todo
-        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
-    }
-
-    //@todo handlePaymentFailed
-    protected function handlePaymentFailed_TODO(Webhook $webhook)
-    {
-        //@todo
-        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
-        //ocurrs in the next case of the simulator too.
-
-        //When this webhook is received, the order wasn't created on magento, so
-        // no further action is needed.
-    }
-
     protected function handleOverpaid(Webhook $webhook)
     {
         return $this->handlePaid($webhook);
@@ -167,18 +145,6 @@ final class ChargeHandlerService extends AbstractHandlerService
     protected function handleUnderpaid(Webhook $webhook)
     {
         return $this->handlePaid($webhook);
-    }
-
-    //@todo handleCreated
-    protected function handleCreated_TODO(Webhook $webhook)
-    {
-        //@todo, but not with priority,
-    }
-
-    //@todo handlePending
-    protected function handlePending_TODO(Webhook $webhook)
-    {
-        //@todo, but not with priority,
     }
 
     protected function handleRefunded(Webhook $webhook)
@@ -237,6 +203,40 @@ final class ChargeHandlerService extends AbstractHandlerService
         return $result;
     }
 
+    //@todo handleProcessing
+    protected function handleProcessing_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
+    }
+
+    //@todo handlePaymentFailed
+    protected function handlePaymentFailed_TODO(Webhook $webhook)
+    {
+        //@todo
+        //In simulator, Occurs with values between 1.051,72 and 1.262,06, auth
+        // only and auth and capture.
+        //AcquirerMessage = Simulator|Transação de simulação negada por falta de crédito, utilizado para realizar simulação de autorização parcial
+        //ocurrs in the next case of the simulator too.
+
+        //When this webhook is received, the order wasn't created on magento, so
+        // no further action is needed.
+    }
+
+    //@todo handleCreated
+    protected function handleCreated_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
+    //@todo handlePending
+    protected function handlePending_TODO(Webhook $webhook)
+    {
+        //@todo, but not with priority,
+    }
+
     /**
      *
      * @param  Webhook $webhook
@@ -247,7 +247,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         $orderRepository = new OrderRepository();
         /**
          *
- * @var Charge $charge 
+ * @var Charge $charge
 */
         $charge = $webhook->getEntity();
         $order = $orderRepository->findByMundipaggId($charge->getOrderId());

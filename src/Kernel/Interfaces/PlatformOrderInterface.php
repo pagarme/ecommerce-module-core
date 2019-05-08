@@ -76,4 +76,7 @@ interface PlatformOrderInterface
 
     /** @since  1.6.5 */
     public function getTotalCanceled();
+
+    /** @since  1.7.2 */
+    public function getTotalPaidFromCharges();
 }
