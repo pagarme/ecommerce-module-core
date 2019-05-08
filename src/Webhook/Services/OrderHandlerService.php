@@ -11,12 +11,14 @@ use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Mundipagg\Core\Webhook\Exceptions\UnprocessableWebhookException;
 
 final class OrderHandlerService extends AbstractHandlerService
 {
@@ -33,8 +35,18 @@ final class OrderHandlerService extends AbstractHandlerService
             "code" => 200
         ];
 
+        //check if all the charges are in a state that order can be paid.
+        //@todo since this is a business rule related to order payment,
+        //      it should be moved to a more fitting place.
+       $this->canBePaid($order);
+
         $webhookOrder = $webhook->getEntity();
         $webhookOrder->setId($order->getId());
+
+        foreach ($order->getCharges() as $charge) {
+            $webhookOrder->updateCharge($charge);
+        }
+
         $orderHandlerService = new OrderHandler();
         $cantCreateReason = $orderHandlerService->handle($webhookOrder);
 
@@ -165,5 +177,30 @@ final class OrderHandlerService extends AbstractHandlerService
         }
 
         $this->order = $order;
+    }
+
+    private function canBePaid($order)
+    {
+        $unpayableChargeStatuses = [
+            ChargeStatus::PENDING,
+            ChargeStatus::PROCESSING
+        ];
+
+        $canBePaid = true;
+        $chargesStatuses = [];
+        foreach ($order->getCharges() as $charge) {
+            $chargeStatus = $charge->getStatus()->getStatus();
+            $chargesStatuses[$charge->getMundipaggId()->getValue()] = $chargeStatus;
+            if (in_array($chargeStatus, $unpayableChargeStatuses)) {
+                $canBePaid = false;
+            }
+        }
+
+        if ($canBePaid === false) {
+            $chargesStatuses = json_encode($chargesStatuses);
+            throw new UnprocessableWebhookException(
+                "One or more charges of the order are in a state that is not compatible with an paid order. Charge Statuses: $chargesStatuses"
+            );
+        }
     }
 }

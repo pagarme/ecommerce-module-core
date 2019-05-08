@@ -39,7 +39,8 @@ class PTBR extends AbstractI18NTable
             'Invalid address. Please fill the street lines and try again.' => 'Endereço inválido. Preencha rua, número e bairro e tente novamente.',
             "The informed card couldn't be deleted." => "O cartão informado não pode ser deletado.",
             "The card '%s' was deleted." => "O cartão '%s' foi deletado.",
-            "The card '%s' couldn't be deleted." => "O cartão '%s' não pôde ser deletado."
+            "The card '%s' couldn't be deleted." => "O cartão '%s' não pôde ser deletado.",
+            "This invoice was paid with a value different than the order grand total. Paid value: %.2f" => "Esta Invoice foi paga com um valor diferente do Grand Total do pedido. Valor pago: %.2f"
         ];
     }
 }

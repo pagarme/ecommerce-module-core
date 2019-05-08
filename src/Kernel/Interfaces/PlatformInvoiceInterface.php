@@ -16,4 +16,9 @@ interface PlatformInvoiceInterface
     public function canRefund();
     public function isCanceled();
 
+    /**
+     * @since 1.7.2
+     */
+    public function addComment($comment);
+
 }

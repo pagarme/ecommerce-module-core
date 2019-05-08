@@ -17,4 +17,18 @@ abstract class AbstractInvoiceDecorator implements PlatformInvoiceInterface
     {
         return $this->platformInvoice;
     }
+
+    /**
+     * @since 1.7.2
+     */
+    public function addComment($comment)
+    {
+        $comment = 'MP - ' . $comment;
+        $this->addMPComment($comment);
+    }
+
+    /**
+     * @since 1.7.2
+     */
+    abstract protected function addMPComment($comment);
 }

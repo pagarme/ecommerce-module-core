@@ -39,7 +39,8 @@ class ENUS extends AbstractI18NTable
             'Invalid address. Please fill the street lines and try again.' => null,
             "The informed card couldn't be deleted." => null,
             "The card '%s' was deleted." => null,
-            "The card '%s' couldn't be deleted." => null
+            "The card '%s' couldn't be deleted." => null,
+            "This invoice was paid with a value different than the order grand total. Paid value: %.2f" => null
         ];
     }
 }
