@@ -62,9 +62,9 @@ class CoreFeature extends MinkContext
     protected function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
-            throw new PendingException(
+            /*throw new PendingException(
                 'This is a partial @smartStep Scenario and should not be isolatedly executed.'
-            );
+            );*/
         }
 
         $this->scenarioTokens = null;
