@@ -18,8 +18,3 @@ Feature: Test
     #And I fill in "login" with "@teste123"
     #And I click in element "button"
     #And I wait for text "Mundipagg" to appear, for 15 seconds
-
-  @javascript
-  #I call a partial scenario
-  Scenario: I call a partial scenario
-    Given I call a partial scenario
