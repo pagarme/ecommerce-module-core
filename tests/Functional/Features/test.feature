@@ -22,4 +22,4 @@ Feature: Test
   @javascript
   #I call a partial scenario
   Scenario: I call a partial scenario
-    #Given I call a partial scenario
+    Given I call a partial scenario
