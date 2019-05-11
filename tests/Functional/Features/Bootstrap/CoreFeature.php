@@ -326,13 +326,12 @@ class CoreFeature extends MinkContext
     }
 
 
-
     /**
      *
      * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
      * @param  $text
      * @param  $wait
-     * @throws \Exception
+     * @throws Exception
      */
     public function iWaitForTextToAppearForNSeconds($text, $wait)
     {
@@ -342,7 +341,7 @@ class CoreFeature extends MinkContext
                     $context->assertPageContainsText($text);
                     return true;
                 }
-                catch(ResponseTextException $e) {
+                catch(\Exception $e) {
                     // NOOP
                 }
                 return false;
