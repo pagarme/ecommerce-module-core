@@ -10,11 +10,15 @@ Feature: Test
 
   @javascript
   Scenario: Login into Magento 2
-    Given I am on "http://127.0.0.1/admin"
+    Given I am on "http://127.0.0.1/admin
     Then I wait for text "Username" to appear, for 20 seconds
-    #Given I am on "http://google.com"
-    #Then I wait for text "Google" to appear, for 20 seconds
+    #Given I am on "http://127.0.0.1/admin"
     #And I fill in "username" with "admin"
     #And I fill in "login" with "@teste123"
     #And I click in element "button"
     #And I wait for text "Mundipagg" to appear, for 15 seconds
+
+  @javascript
+  #I call a partial scenario
+  Scenario: I call a partial scenario
+    Given I call a partial scenario
