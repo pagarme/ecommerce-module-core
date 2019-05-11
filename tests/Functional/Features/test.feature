@@ -10,7 +10,7 @@ Feature: Test
 
   @javascript
   Scenario: Login into Magento 2
-    Given I am on "http://127.0.0.1/admin"
+    Given I am on "/admin"
     And I fill in "username" with "admin"
     #And I fill in "login" with "@teste123"
     #And I click in element "button"
