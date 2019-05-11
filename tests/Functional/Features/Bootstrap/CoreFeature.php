@@ -324,8 +324,6 @@ class CoreFeature extends MinkContext
             }
         );
     }
-
-
     /**
      *
      * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
