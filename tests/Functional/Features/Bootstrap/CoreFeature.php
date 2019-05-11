@@ -11,5 +11,12 @@ use Behat\MinkExtension\Context\MinkContext;
  */
 class CoreFeature extends MinkContext
 {
-
+    /**
+     *
+     * @var Behat\Gherkin\Node\StepNode
+     */
+    protected $currentStep = null;
+    protected $scenarioTokens = null;
+    protected static $featureHash = null;
+    protected $screenshotDir = DIRECTORY_SEPARATOR . 'tmp';
 }
