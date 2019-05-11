@@ -12,7 +12,6 @@ Feature: Test
   Scenario: Login into Magento 2
     Given I am on "http://127.0.0.1/admin"
     Then I wait for text "Username" to appear, for 20 seconds
-    #Given I am on "http://127.0.0.1/admin"
     #And I fill in "username" with "admin"
     #And I fill in "login" with "@teste123"
     #And I click in element "button"
