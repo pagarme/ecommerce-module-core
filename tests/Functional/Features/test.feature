@@ -10,9 +10,9 @@ Feature: Test
 
   @javascript
   Scenario: Login into Magento 2
-    Given I am on "http://google.com
-    Then I wait for text "Google" to appear, for 20 seconds
-    #Given I am on "http://127.0.0.1/admin"
+    #Given I am on "http://google.com"
+    #Then I wait for text "Google" to appear, for 20 seconds
+    Given I am on "http://127.0.0.1/admin"
     #Then I wait for text "Username" to appear, for 20 seconds
     #And I fill in "username" with "admin"
     #And I fill in "login" with "@teste123"
