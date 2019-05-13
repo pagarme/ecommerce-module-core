@@ -11,4 +11,4 @@ Feature: Buy Using Credit Card
   @javascript
   Scenario: Buying a product using a credit card
     Given I am on "/admin"
-    And I wait for text "username" to appear, for 15 seconds
+    And I add a product to shopping cart
