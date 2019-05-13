@@ -165,8 +165,6 @@ class CoreFeature extends MinkContext
         );
     }
 
-
-
     /**
      *
      * @When /^(?:|I )click in element "(?P<element>(?:[^"]|\\")*)"$/
@@ -398,8 +396,6 @@ class CoreFeature extends MinkContext
         $this->getSession()->getPage()->fillField($field, $value);
     }
 
-
-
     /**
      *
      * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear$/
@@ -468,8 +464,6 @@ class CoreFeature extends MinkContext
         }
     }
 
-
-
     /**
      *
      * @Given /^a new session$/
@@ -501,5 +495,4 @@ class CoreFeature extends MinkContext
         fwrite($file, $data);
         fclose($file);
     }
-
 }
