@@ -5,7 +5,6 @@ use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Exception\ResponseTextException;
 use Behat\MinkExtension\Context\MinkContext;
 
-
 /**
  * Features context.
  */
@@ -62,9 +61,6 @@ class CoreFeature extends MinkContext
     {
         if ($event->getScenario()->hasTag('smartStep')) {
             return;
-            /*throw new PendingException(
-                'This is a partial @smartStep Scenario and should not be isolatedly executed.'
-            );*/
         }
 
         $this->scenarioTokens = null;
@@ -135,7 +131,6 @@ class CoreFeature extends MinkContext
         print "$frame             \r";
         flush();
     }
-
 
     /**
      * Based on example from http://docs.behat.org/en/v2.5/cookbook/using_spin_functions.html
@@ -322,6 +317,7 @@ class CoreFeature extends MinkContext
             }
         );
     }
+
     /**
      *
      * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
