@@ -10,4 +10,4 @@ Feature: Buy Using Credit Card
 
   @javascript
   Scenario: Buying a product using a credit card
-    Given I am on "/admin"
+    Given I am on "/admin" 
