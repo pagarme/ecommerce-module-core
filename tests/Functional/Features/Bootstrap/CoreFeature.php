@@ -7,7 +7,7 @@ use Behat\MinkExtension\Context\MinkContext;
 
 /**
  * Features context.
- */ 
+ */
 class CoreFeature extends MinkContext
 {
     /**
@@ -467,7 +467,7 @@ class CoreFeature extends MinkContext
     public function newSession()
     {
         $this->getSession()->reset();
-        //throw new Exception("as");
+        //throw new Exception("");
     }
 
     /**
