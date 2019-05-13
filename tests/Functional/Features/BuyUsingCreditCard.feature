@@ -10,5 +10,4 @@ Feature: Buy Using Credit Card
 
   @javascript
   Scenario: Buying a product using a credit card
-    Given I am on "/admin"
-    And I add a product to shopping cart
+    And I am on admin page
