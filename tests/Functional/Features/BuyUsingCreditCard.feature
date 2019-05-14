@@ -11,4 +11,4 @@ Feature: Buy Using Credit Card
   @javascript
   Scenario: Buying a product using a credit card
     Given I am on "/admin"
-    When I add a Aviator Sunglasses to cart and go to checkout
+    When I add a product to cart and go to checkout
