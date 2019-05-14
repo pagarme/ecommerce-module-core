@@ -55,7 +55,8 @@ final class SavedCardRepository extends AbstractRepository
                 owner_name,
                 first_six_digits, 
                 last_four_digits,
-                brand
+                brand,
+                created_at
             )
           VALUES 
             (
@@ -64,7 +65,8 @@ final class SavedCardRepository extends AbstractRepository
                 '{$obj->ownerName}',
                 '{$obj->firstSixDigits}',
                 '{$obj->lastFourDigits}',
-                '{$obj->brand}'        
+                '{$obj->brand}',
+                '{$obj->createdAt}'
             )          
         ";
 

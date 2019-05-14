@@ -80,16 +80,15 @@ abstract class AbstractModuleCoreSetup
 
         static::loadSavedConfiguration();
 
-        if (static::$moduleConfig !== null) {
-            return true;
-        }
-
+        $savedConfig = static::$moduleConfig;
         static::$instance->loadModuleConfigurationFromPlatform();
-
         static::$moduleConfig->setStoreId(static::getCurrentStoreId());
 
-        if (static::$moduleConfig->getId() !== null) {
-            return true;
+        if (
+            $savedConfig !== null &&
+            ($savedConfigId = $savedConfig->getId()) !== null
+        ) {
+            static::$moduleConfig->setid($savedConfigId);
         }
 
         if (self::getDefaultConfigSaved() === null) {
@@ -258,5 +257,22 @@ abstract class AbstractModuleCoreSetup
      * @since 1.6.1
      */
     abstract public static function getDefaultStoreId();
+
+    /**
+     * @since 1.7.1
+     *
+     * @return \DateTimeZone
+     */
+    public static function getStoreTimezone()
+    {
+        return self::$instance->getPlatformStoreTimezone();
+    }
+
+    /**
+     * @since 1.7.1
+     *
+     * @return \DateTimeZone
+     */
+    abstract protected function getPlatformStoreTimezone();
 }
 

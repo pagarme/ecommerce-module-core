@@ -77,8 +77,6 @@ final class OrderHandler extends AbstractResponseHandler
             )
         );
 
-        $this->saveCards($order);
-
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
