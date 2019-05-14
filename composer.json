@@ -1,7 +1,7 @@
 {
     "name": "mundipagg/ecommerce-module-core",
     "license": "MIT",
-    "version": "1.7.2",
+    "version": "1.8.0",
     "authors":[
         {
             "name":"MundiPagg Embeddables Team",
@@ -18,5 +18,18 @@
             "Mundipagg\\Core\\": "src",
             "Mundipagg\\Core\\Test\\": "tests"
         }
-    }
+    },
+    "require-dev": {
+        "behat/behat": "^3.3",
+        "behat/mink-extension": "^2.2",
+        "dmore/behat-chrome-extension": "^1.0",
+        "squizlabs/php_codesniffer": "^3.0",
+        "knplabs/friendly-contexts": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/aitboudad/FriendlyContexts.git"
+        }
+    ]
 }
