@@ -20,6 +20,13 @@
             "Mundipagg\\Core\\Test\\": "tests"
         }
     },
+    "require-dev": {
+        "behat/behat": "3.4.3",
+        "behat/mink-extension": "2.3.1",
+        "dmore/behat-chrome-extension": "1.2",
+        "squizlabs/php_codesniffer": "^3.0",
+        "knplabs/friendly-contexts": "@dev"
+    },
     "repositories": [
         {
             "type": "vcs",
