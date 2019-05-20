@@ -165,6 +165,30 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         return $obj;
     }
 
+    public function getTypeValue()
+    {
+        if ($this->getType() !== null) {
+            return $this->getType()->getType();
+        }
+        return null;
+    }
+
+    public function getAddressToSDK()
+    {
+        if ($this->getAddress() !== null) {
+         return $this->getAddress()->convertToSDKRequest();
+        }
+        return null;
+    }
+
+    public function getPhonesToSDK()
+    {
+        if ($this->getPhones() !== null) {
+         return $this->getPhones()->convertToSDKRequest();
+        }
+        return null;
+    }
+
     public function convertToSDKRequest()
     {
         $customerRequest = new CreateCustomerRequest();
@@ -173,9 +197,9 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         $customerRequest->name = $this->getName();
         $customerRequest->email = $this->getEmail();
         $customerRequest->document = $this->getDocument();
-        $customerRequest->type = $this->getType()->getType();
-        $customerRequest->address = $this->getAddress()->convertToSDKRequest();
-        $customerRequest->phones = $this->getPhones()->convertToSDKRequest();
+        $customerRequest->type = $this->getTypeValue();
+        $customerRequest->address = $this->getAddressToSDK();
+        $customerRequest->phones = $this->getPhonesToSDK();
 
         return $customerRequest;
     }
