@@ -236,7 +236,7 @@ abstract class AbstractModuleCoreSetup
         }
     }
 
-    abstract protected static function setConfig();
+    abstract protected function setConfig();
     abstract public static function loadModuleConfigurationFromPlatform();
     abstract protected static function setModuleVersion();
     abstract protected static function setPlatformVersion();
