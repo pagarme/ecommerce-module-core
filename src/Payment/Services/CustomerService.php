@@ -28,6 +28,7 @@ class CustomerService
 
         if ($customer->getMundipaggId() !== null) {
             $this->logService->info("Update customer at Mundipagg: [{$customer->getMundipaggId()}]");
+            $this->logService->info("Customer request", $customer);
             $apiService = new ApiService();
             $apiService->updateCustomer($customer);
         }
