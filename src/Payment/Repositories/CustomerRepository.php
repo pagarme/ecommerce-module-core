@@ -59,7 +59,7 @@ final class CustomerRepository extends AbstractRepository
     public function deleteByCode($customerCode)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
-        $query = "DELETE FROM $table WHERE code = " . $customerCode;
+        $query = "DELETE FROM $table WHERE code = '$customerCode'";
 
         return $this->db->query($query);
     }
