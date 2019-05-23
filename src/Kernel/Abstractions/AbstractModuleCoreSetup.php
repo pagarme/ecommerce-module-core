@@ -131,9 +131,18 @@ abstract class AbstractModuleCoreSetup
     {
         $configurationRepository = new ConfigurationRepository;
 
-        return $configurationRepository->findByStore(
+        $defaultSavedConfiguration = $configurationRepository->findByStore(
             static::getDefaultStoreId()
         );
+
+        while (
+            $defaultSavedConfiguration !== null &&
+            ($parentId = $defaultSavedConfiguration->getParentId()) !== null
+        ) {
+            $defaultSavedConfiguration = $configurationRepository->find($parentId);
+        }
+
+        return $defaultSavedConfiguration;
     }
 
     /**
