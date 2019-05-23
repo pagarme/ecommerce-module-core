@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderLogService;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Exception;
 
 abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 {
@@ -40,7 +41,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentStatus = '';
         try {
             $currentStatus = $this->getStatus();
-        }catch(\Throwable $e)
+        }catch(\Exception $e)
         {
         }
 
@@ -63,7 +64,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentState = '';
         try {
             $currentState = $this->getState();
-        }catch(\Throwable $e)
+        }catch(\Exception $e)
         {
 
         }
