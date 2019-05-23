@@ -237,19 +237,19 @@ abstract class AbstractModuleCoreSetup
     }
 
     abstract protected function setConfig();
-    abstract public static function loadModuleConfigurationFromPlatform();
-    abstract protected static function setModuleVersion();
-    abstract protected static function setPlatformVersion();
-    abstract protected static function setLogPath();
+    abstract public function loadModuleConfigurationFromPlatform();
+    abstract protected function setModuleVersion();
+    abstract protected function setPlatformVersion();
+    abstract protected function setLogPath();
     abstract public static function getDatabaseAccessObject();
     /**
      *
      * @return string
      **/
     abstract protected static function getPlatformHubAppPublicAppKey();
-    abstract protected static function _getDashboardLanguage();
-    abstract protected static function _getStoreLanguage();
-    abstract protected static function _formatToCurrency($price);
+    abstract protected function _getDashboardLanguage();
+    abstract protected function _getStoreLanguage();
+    abstract protected function _formatToCurrency($price);
 
     /**
      * @since 1.6.1
