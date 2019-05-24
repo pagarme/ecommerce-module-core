@@ -195,6 +195,9 @@ class ConfigurationFactory implements FactoryInterface
         try {
             return new TestPublicKey($key);
         } catch(\Exception $e) {
+
+        } catch(\Throwable $e) {
+
         }
 
         return new PublicKey($key);
@@ -205,11 +208,17 @@ class ConfigurationFactory implements FactoryInterface
         try {
             return new TestSecretKey($key);
         } catch(\Exception $e) {
+
+        } catch(\Throwable $e) {
+
         }
 
         try {
             return new SecretKey($key);
         } catch(\Exception $e) {
+
+        } catch(\Throwable $e) {
+
         }
 
         return new HubAccessTokenKey($key);
