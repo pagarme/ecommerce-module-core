@@ -247,6 +247,11 @@ final class OrderHandler extends AbstractResponseHandler
         }
 
         $customerRepository = new CustomerRepository();
+
+        if ($customerRepository->findByCode($customer->getCode()) !== null) {
+            $customerRepository->deleteByCode($customer->getCode());
+        }
+
         if (
             $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
         ) {

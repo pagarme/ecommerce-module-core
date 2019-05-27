@@ -6,6 +6,7 @@ use Mundipagg\Core\Kernel\Interfaces\PlatformCustomerInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 
 class CustomerService
 {
@@ -27,8 +28,18 @@ class CustomerService
 
         if ($customer->getMundipaggId() !== null) {
             $this->logService->info("Update customer at Mundipagg: [{$customer->getMundipaggId()}]");
+            $this->logService->info("Customer request", $customer);
             $apiService = new ApiService();
             $apiService->updateCustomer($customer);
         }
+    }
+
+    public function deleteCustomerOnPlatform(PlatformCustomerInterface $platformCustomer)
+    {
+        $customerFactory = new CustomerFactory();
+        $customer = $customerFactory->createFromPlatformData($platformCustomer);
+
+        $customerRepository = new CustomerRepository();
+        $customerRepository->deleteByCode($customer->getCode());
     }
 }

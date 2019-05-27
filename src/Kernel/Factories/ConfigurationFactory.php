@@ -16,6 +16,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestSecretKey;
+use Exception;
 
 class ConfigurationFactory implements FactoryInterface
 {
@@ -193,7 +194,10 @@ class ConfigurationFactory implements FactoryInterface
     {
         try {
             return new TestPublicKey($key);
+        } catch(\Exception $e) {
+
         } catch(\Throwable $e) {
+
         }
 
         return new PublicKey($key);
@@ -203,12 +207,18 @@ class ConfigurationFactory implements FactoryInterface
     {
         try {
             return new TestSecretKey($key);
+        } catch(\Exception $e) {
+
         } catch(\Throwable $e) {
+
         }
 
         try {
             return new SecretKey($key);
+        } catch(\Exception $e) {
+
         } catch(\Throwable $e) {
+
         }
 
         return new HubAccessTokenKey($key);

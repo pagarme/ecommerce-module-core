@@ -97,7 +97,10 @@ abstract class AbstractModuleCoreSetup
             static::$moduleConfig->setStoreId(static::getCurrentStoreId());
         }
 
-        if(static::$moduleConfig->getStoreId() != static::getDefaultStoreId()) {
+        if(
+            static::$moduleConfig->getStoreId() != static::getDefaultStoreId() &&
+            $savedConfig === null
+        ) {
             static::$moduleConfig->setParentConfiguration(self::getDefaultConfigSaved());
             static::$moduleConfig->setInheritAll(true);
             static::$moduleConfig->setId(null);
@@ -128,9 +131,18 @@ abstract class AbstractModuleCoreSetup
     {
         $configurationRepository = new ConfigurationRepository;
 
-        return $configurationRepository->findByStore(
+        $defaultSavedConfiguration = $configurationRepository->findByStore(
             static::getDefaultStoreId()
         );
+
+        while (
+            $defaultSavedConfiguration !== null &&
+            ($parentId = $defaultSavedConfiguration->getParentId()) !== null
+        ) {
+            $defaultSavedConfiguration = $configurationRepository->find($parentId);
+        }
+
+        return $defaultSavedConfiguration;
     }
 
     /**
@@ -233,20 +245,20 @@ abstract class AbstractModuleCoreSetup
         }
     }
 
-    abstract protected static function setConfig();
-    abstract public static function loadModuleConfigurationFromPlatform();
-    abstract protected static function setModuleVersion();
-    abstract protected static function setPlatformVersion();
-    abstract protected static function setLogPath();
+    abstract protected function setConfig();
+    abstract public function loadModuleConfigurationFromPlatform();
+    abstract protected function setModuleVersion();
+    abstract protected function setPlatformVersion();
+    abstract protected function setLogPath();
     abstract public static function getDatabaseAccessObject();
     /**
      *
      * @return string
      **/
     abstract protected static function getPlatformHubAppPublicAppKey();
-    abstract protected static function _getDashboardLanguage();
-    abstract protected static function _getStoreLanguage();
-    abstract protected static function _formatToCurrency($price);
+    abstract protected function _getDashboardLanguage();
+    abstract protected function _getStoreLanguage();
+    abstract protected function _formatToCurrency($price);
 
     /**
      * @since 1.6.1
