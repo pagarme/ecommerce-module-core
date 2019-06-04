@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
@@ -24,6 +25,14 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
     private $type;
     /** @var Address */
     private $address;
+
+    /** @var LocalizationService */
+    protected $i18n;
+
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+    }
 
     /**
      * @return string|null
@@ -68,10 +77,24 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
 
     /**
      * @param string $email
+     * @return Customer
+     * @throws \Exception
      */
     public function setEmail($email)
     {
         $this->email = $email;
+
+        if (empty($this->email)) {
+
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                "email"
+            );
+
+            throw new \Exception($message,400);
+        }
+
+        return $this;
     }
 
     /**
@@ -100,10 +123,25 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
 
     /**
      * @param string $document
+     * @return Customer
+     * @throws \Exception
      */
     public function setDocument($document)
     {
         $this->document = $document;
+
+        if (empty($this->document)) {
+
+            $inputName = $this->i18n->getDashboard('document');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message,400);
+        }
+
+        return $this;
     }
 
     /**
