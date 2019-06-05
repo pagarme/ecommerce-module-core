@@ -79,7 +79,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -114,7 +114,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -149,7 +149,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -216,7 +216,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -247,7 +247,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -293,7 +293,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;

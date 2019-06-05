@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Payment\Services;
 
-
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 
 class ValidationService

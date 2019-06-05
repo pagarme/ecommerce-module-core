@@ -40,7 +40,7 @@ class ENUS extends AbstractI18NTable
             "The informed card couldn't be deleted." => null,
             "The card '%s' was deleted." => null,
             "The card '%s' couldn't be deleted." => null,
-            "This invoice was paid with a value different than the order grand total. Paid value: %.2f" => null,
+            "Different paid amount for this invoice. Paid value: %.2f" => null,
             "The %s should not be empty!" => null,
             "street" => null,
             "number" => null,

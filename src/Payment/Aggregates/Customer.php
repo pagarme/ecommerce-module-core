@@ -91,7 +91,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
                 "email"
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
@@ -138,7 +138,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
                 $inputName
             );
 
-            throw new \Exception($message,400);
+            throw new \Exception($message, 400);
         }
 
         return $this;
