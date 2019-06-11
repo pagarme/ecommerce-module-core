@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateAddressRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
 final class Address extends AbstractEntity implements ConvertibleToSDKRequestsInterface
@@ -41,6 +42,14 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
     /** @var string */
     private $state;
 
+    /** @var LocalizationService */
+    protected $i18n;
+
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+    }
+
     /**
      * @return string
      */
@@ -51,6 +60,8 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $number
+     * @return Address
+     * @throws \Exception
      */
     public function setNumber($number)
     {
@@ -59,6 +70,19 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             '',
             $number
         );
+
+        if (empty($this->number)) {
+
+            $inputName = $this->i18n->getDashboard('number');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -71,6 +95,8 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $street
+     * @return Address
+     * @throws \Exception
      */
     public function setStreet($street)
     {
@@ -79,6 +105,19 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             '',
             $street
         );
+
+        if (empty($this->street)) {
+
+            $inputName = $this->i18n->getDashboard('street');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -91,6 +130,8 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $neighborhood
+     * @return Address
+     * @throws \Exception
      */
     public function setNeighborhood($neighborhood)
     {
@@ -99,6 +140,19 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             '',
             $neighborhood
         );
+
+        if (empty($this->neighborhood)) {
+
+            $inputName = $this->i18n->getDashboard('neighborhood');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -111,10 +165,12 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $complement
+     * @return Address
      */
     public function setComplement($complement)
     {
         $this->complement = $complement;
+        return $this;
     }
 
     /**
@@ -127,10 +183,12 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $zipCode
+     * @return Address
      */
     public function setZipCode($zipCode)
     {
         $this->zipCode = $zipCode;
+        return $this;
     }
 
     /**
@@ -143,10 +201,25 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $city
+     * @return Address
+     * @throws \Exception
      */
     public function setCity($city)
     {
         $this->city = $city;
+
+        if (empty($this->city)) {
+
+            $inputName = $this->i18n->getDashboard('city');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -159,10 +232,25 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
 
     /**
      * @param string $country
+     * @return Address
+     * @throws \Exception
      */
     public function setCountry($country)
     {
         $this->country = $country;
+
+        if (empty($this->country)) {
+
+            $inputName = $this->i18n->getDashboard('country');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     public function getLine1()
@@ -191,10 +279,23 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
     /**
      * @param string $state
      * @return Address
+     * @throws \Exception
      */
     public function setState($state)
     {
         $this->state = $state;
+
+        if (empty($this->state)) {
+
+            $inputName = $this->i18n->getDashboard('state');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
         return $this;
     }
 
