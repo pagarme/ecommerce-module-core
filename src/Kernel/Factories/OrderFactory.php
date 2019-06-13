@@ -42,10 +42,6 @@ class OrderFactory implements FactoryInterface
 
         $order->setStatus(OrderStatus::$status());
 
-        $order->setPlatformOrder(
-            $this->getPlatformOrder($postData['code'])
-        );
-
         $charges = $postData['charges'];
 
         $chargeFactory = new ChargeFactory();

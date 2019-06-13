@@ -158,7 +158,6 @@ final class OrderService
             //set pending
             $platformOrder->setState(OrderState::stateNew());
             $platformOrder->setStatus(OrderStatus::pending());
-            $platformOrder->save();
 
             //build PaymentOrder based on platformOrder
             $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
@@ -167,12 +166,15 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
+            $response->setPlatformOrder($platformOrder);
+
             $handler = $this->getResponseHandler($response);
             $handleResult = $handler->handle($response, $order);
 
             if ($handleResult !== true) {
                 throw new \Exception($handleResult, 400);
             }
+            $platformOrder->save();
 
             return [$response];
         } catch(\Exception $e) {
