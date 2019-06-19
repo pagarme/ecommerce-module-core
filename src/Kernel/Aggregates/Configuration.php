@@ -406,15 +406,20 @@ final class Configuration extends AbstractEntity
      * @param int $antifraudMinAmount
      * @throws InvalidParamException
      */
-    public function setAntifraudMinAmount(int $antifraudMinAmount)
+    public function setAntifraudMinAmount($antifraudMinAmount)
     {
-        if ($antifraudMinAmount < 0) {
+        $numbers = '/([^0-9])/i';
+        $replace = '';
+
+        $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount);
+
+        if ($minAmount < 0) {
             throw new InvalidParamException(
                 'AntifraudMinAmount should be at least 0!',
-                $antifraudMinAmount
+                $minAmount
             );
         }
-        $this->antifraudMinAmount = $antifraudMinAmount;
+        $this->antifraudMinAmount = $minAmount;
     }
 
     /**
