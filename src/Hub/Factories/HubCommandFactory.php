@@ -36,10 +36,10 @@ class HubCommandFactory
         $command = new $commandClass();
 
         $command->setAccessToken(
-            new HubAccessTokenKey($object->accessToken)
+            new HubAccessTokenKey($object->access_token)
         );
         $command->setAccountId(
-            new AccountId($object->accountId)
+            new AccountId($object->account_id)
         );
 
         $type = $object->type;
@@ -53,15 +53,15 @@ class HubCommandFactory
         }
 
         $command->setAccountPublicKey(
-            new $publicKeyClass($object->accountPublicKey)
+            new $publicKeyClass($object->account_public_key)
         );
 
         $command->setInstallId(
-            new GUID($object->installId)
+            new GUID($object->install_id)
         );
 
         $command->setMerchantId(
-            new MerchantId($object->merchantId)
+            new MerchantId($object->merchant_id)
         );
 
         return $command;
