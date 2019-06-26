@@ -42,6 +42,10 @@ class OrderFactory implements FactoryInterface
 
         $order->setStatus(OrderStatus::$status());
 
+        $order->setPlatformOrder(
+            $this->getPlatformOrder($postData['code'])
+        );
+
         $charges = $postData['charges'];
 
         $chargeFactory = new ChargeFactory();
@@ -57,6 +61,7 @@ class OrderFactory implements FactoryInterface
         $customerFactory = new CustomerFactory();
         $customer = $customerFactory->createFromPostData($postData['customer']);
         $order->setCustomer($customer);
+
 
         return $order;
     }

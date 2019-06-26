@@ -13,6 +13,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
@@ -166,14 +167,23 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
+            if (isset($response['status']) && $response['status'] == 'failed') {
+                $message = 'Não foi possível criar o pedido';
+
+                throw new \Exception($message, 400);
+            }
+
+            $platformOrder->save();
+
+            $stdClass = json_decode(json_encode($response), true);
+            $orderFactory = new OrderFactory();
+            $response = $orderFactory->createFromPostData($stdClass);
+
             $response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
             $handleResult = $handler->handle($response, $order);
 
-            if ($handleResult !== true) {
-                throw new \Exception($handleResult, 400);
-            }
             $platformOrder->save();
 
             return [$response];
