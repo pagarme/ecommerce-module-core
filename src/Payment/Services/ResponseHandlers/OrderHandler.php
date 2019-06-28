@@ -91,8 +91,6 @@ final class OrderHandler extends AbstractResponseHandler
      */
     private function handleOrderStatusPaid(Order $order)
     {
-        $this->handleOrderStatusPending($order);
-
         $invoiceService = new InvoiceService();
 
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
