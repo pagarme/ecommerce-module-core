@@ -62,7 +62,6 @@ class OrderFactory implements FactoryInterface
         $customer = $customerFactory->createFromPostData($postData['customer']);
         $order->setCustomer($customer);
 
-
         return $order;
     }
 
