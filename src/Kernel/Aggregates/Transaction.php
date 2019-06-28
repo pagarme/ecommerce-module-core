@@ -86,6 +86,9 @@ final class Transaction extends AbstractEntity
 
     private $postData;
 
+    /** @var string */
+    private $cardData;
+
     /**
      *
      * @return TransactionType
@@ -415,7 +418,26 @@ final class Transaction extends AbstractEntity
         $obj->brand = $this->getBrand();
         $obj->installments = $this->getInstallments();
         $obj->boletoUrl = $this->getBoletoUrl();
+        $obj->cardData = $this->getCardData();
 
         return $obj;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardData()
+    {
+        return $this->cardData;
+    }
+
+    /**
+     * @param string $cardData
+     * @return Transaction
+     */
+    public function setCardData($cardData)
+    {
+        $this->cardData = $cardData;
+        return $this;
     }
 }
