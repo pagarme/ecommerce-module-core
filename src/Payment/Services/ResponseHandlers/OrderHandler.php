@@ -231,6 +231,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
         return "One or more charges weren't authorized. Please try again.";
     }
 

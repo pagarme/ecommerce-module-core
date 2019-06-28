@@ -48,7 +48,8 @@ class ENUS extends AbstractI18NTable
             "city" => null,
             "country" => null,
             "state" => null,
-            "document" => null
+            "document" => null,
+            "Can't create order." => null
         ];
     }
 }

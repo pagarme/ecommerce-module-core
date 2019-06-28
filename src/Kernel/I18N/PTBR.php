@@ -49,6 +49,7 @@ class PTBR extends AbstractI18NTable
             "country" => "país",
             "state" => "estado",
             "document" => "CPF",
+            "Can't create order." => "Não foi possível criar o pedido"
         ];
     }
 }

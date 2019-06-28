@@ -87,9 +87,8 @@ class APIService
                 'Create order Response',
                 $response
             );
-            $stdClass = json_decode(json_encode($response), true);
-            $orderFactory = new OrderFactory();
-            return $orderFactory->createFromPostData($stdClass);
+
+            return json_decode(json_encode($response), true);
 
         } catch (ErrorException $e) {
             $this->logService->exception($e);
