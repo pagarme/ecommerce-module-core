@@ -168,16 +168,16 @@ final class OrderService
             $response = $apiService->createOrder($order);
 
             if (isset($response['status']) && $response['status'] == 'failed') {
-                $message = 'Não foi possível criar o pedido';
+                $i18n = new LocalizationService();
+                $message = $i18n->getDashboard("Can't create order");
 
                 throw new \Exception($message, 400);
             }
 
             $platformOrder->save();
 
-            $stdClass = json_decode(json_encode($response), true);
             $orderFactory = new OrderFactory();
-            $response = $orderFactory->createFromPostData($stdClass);
+            $response = $orderFactory->createFromPostData($response);
 
             $response->setPlatformOrder($platformOrder);
 
@@ -239,7 +239,6 @@ final class OrderService
             throw new \Exception(
                 'The sum of payments is different than the order amount!',
                 400
-
             );
         }
 
