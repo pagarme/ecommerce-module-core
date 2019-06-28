@@ -284,7 +284,6 @@ final class OrderHandler extends AbstractResponseHandler
                 isset($metadata->saveOnSuccess) &&
                 $metadata->saveOnSuccess === "true";
 
-
             if (
                 !empty($lastTransaction->getCardData()) &&
                 $saveOnSuccess &&

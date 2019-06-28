@@ -182,7 +182,7 @@ final class OrderService
             $response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
-            $handleResult = $handler->handle($response, $order);
+            $handler->handle($response, $order);
 
             $platformOrder->save();
 
