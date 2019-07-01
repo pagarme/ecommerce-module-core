@@ -60,6 +60,8 @@ final class Charge extends AbstractEntity
 
     private $metadata;
 
+    private $customerId;
+
     /**
      *
      * @return OrderId
@@ -379,6 +381,14 @@ final class Charge extends AbstractEntity
         $this->metadata = $metadata;
     }
 
+    public function getCustomerId()
+    {
+        if (empty($this->getCustomer())) {
+            return null;
+        }
+        return $this->getCustomer()->getMundipaggId();
+    }
+
     /**
      * Specify data which should be serialized to JSON
      *
@@ -401,6 +411,8 @@ final class Charge extends AbstractEntity
         $obj->code = $this->getCode();
         $obj->status = $this->getStatus();
         $obj->transactions = $this->getTransactions();
+        $obj->metadata = $this->getMetadata();
+        $obj->customerId = $this->getCustomerId();
 
         return $obj;
     }

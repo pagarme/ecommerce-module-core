@@ -87,4 +87,72 @@ class SavedCardFactory implements FactoryInterface
 
         return $savedCard;
     }
+
+    /**
+     *
+     * @param  array $transactionData
+     * @return SavedCard
+     */
+    public function createFromTransactionData($data)
+    {
+        $savedCard = new SavedCard();
+
+        $savedCard->setMundipaggId(
+            new CardId($data['id'])
+        );
+
+        $brand = strtolower($data['brand']);
+        $savedCard->setOwnerName($data['holder_name']);
+        $savedCard->setBrand(CardBrand::$brand());
+        $savedCard->setFirstSixDigits(
+            new NumericString($data['first_six_digits'])
+        );
+        $savedCard->setLastFourDigits(
+            new NumericString($data['last_four_digits'])
+        );
+
+        if (!empty($data['created_at'])) {
+            $createdAt = new \Datetime($data['created_at']);
+            $savedCard->setCreatedAt($createdAt);
+        }
+
+        return $savedCard;
+    }
+
+    /**
+     *
+     * @param  array $transactionData
+     * @return SavedCard
+     */
+    public function createFromTransactionJson($cardObj)
+    {
+        $savedCard = new SavedCard();
+
+        $savedCard->setMundipaggId(
+            new CardId($cardObj->mundipaggId)
+        );
+
+        if (!empty($cardObj->owner)) {
+            $savedCard->setOwnerId(
+                new CustomerId($cardObj->owner)
+            );
+        }
+
+        $brand = strtolower($cardObj->brand);
+        $savedCard->setOwnerName($cardObj->ownerName);
+        $savedCard->setBrand(CardBrand::$brand());
+        $savedCard->setFirstSixDigits(
+            new NumericString($cardObj->firstSixDigits)
+        );
+        $savedCard->setLastFourDigits(
+            new NumericString($cardObj->lastFourDigits)
+        );
+
+        if (!empty($cardObj->createdAt)) {
+            $createdAt = new \Datetime($cardObj->createdAt);
+            $savedCard->setCreatedAt($createdAt);
+        }
+
+        return $savedCard;
+    }
 }
