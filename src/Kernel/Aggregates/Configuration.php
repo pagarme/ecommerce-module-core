@@ -118,6 +118,9 @@ final class Configuration extends AbstractEntity
     /** @var RecurrenceConfig */
     private $recurrenceConfig;
 
+    /** @var bool */
+    private $installmentsDefaultConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -132,6 +135,7 @@ final class Configuration extends AbstractEntity
 
         $this->testMode = true;
         $this->inheritAll = false;
+        $this->installmentsDefaultConfig = false;
     }
 
     /**
@@ -544,6 +548,7 @@ final class Configuration extends AbstractEntity
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
             "installmentsEnabled" => $this->isInstallmentsEnabled(),
+            "installmentsDefaultConfig" => $this->isInstallmentsDefaultConfig(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
             "cardConfigs" => $this->getCardConfigs(),
@@ -628,6 +633,24 @@ final class Configuration extends AbstractEntity
     public function setInheritAll($inheritAll)
     {
         $this->inheritAll = $inheritAll;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInstallmentsDefaultConfig()
+    {
+        return $this->installmentsDefaultConfig;
+    }
+
+    /**
+     * @param bool $installmentsDefaultConfig
+     * @return Configuration
+     */
+    public function setInstallmentsDefaultConfig($installmentsDefaultConfig)
+    {
+        $this->installmentsDefaultConfig = $installmentsDefaultConfig;
+        return $this;
     }
 
     public function __call($method, $arguments)

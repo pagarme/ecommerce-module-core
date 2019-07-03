@@ -13,7 +13,6 @@ class ValidationService
     {
         try {
             $order->getCustomer();
-
         } catch (\Exception $exception) {
             $this->addError($exception->getMessage());
         } catch (\Throwable $throwable) {
