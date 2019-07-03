@@ -186,6 +186,12 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
+        if (isset($data->installmentsDefaultConfig)) {
+            $config->setInstallmentsDefaultConfig(
+                $data->installmentsDefaultConfig
+            );
+        }
+
         return $config;
     }
 
