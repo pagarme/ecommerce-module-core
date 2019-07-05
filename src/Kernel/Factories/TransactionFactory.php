@@ -179,7 +179,7 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setPostData(json_decode(json_encode($dbData)));
 
-        if (isset($dbData['card_data'])) {
+        if (!empty($dbData['card_data']) && $dbData['card_data'] !== "null") {
             $cardData = json_decode($dbData['card_data']);
             $cardFactory = new SavedCardFactory();
             $card = $cardFactory->createFromTransactionJson($cardData);
