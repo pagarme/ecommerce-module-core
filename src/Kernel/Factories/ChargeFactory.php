@@ -110,7 +110,10 @@ class ChargeFactory implements FactoryInterface
             $customer = $customerRepository->findByMundipaggId(
                 new CustomerId($dbData['customer_id'])
             );
-            $charge->setCustomer($customer);
+
+            if ($customer) {
+                $charge->setCustomer($customer);
+            }
         }
 
         return $charge;
