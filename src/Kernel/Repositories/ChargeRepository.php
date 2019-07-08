@@ -36,7 +36,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
-                GROUP_CONCAT(t.boleto_url) as tran_boleto_url
+                GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
@@ -83,10 +84,14 @@ final class ChargeRepository extends AbstractRepository
                 paid_amount,
                 canceled_amount,
                 refunded_amount,
-                status
+                status,
+                metadata,
+                customer_id
             )
           VALUES 
         ";
+
+        $metadata = json_encode($simpleObject->metadata);
 
         $query .= "
             (
@@ -97,7 +102,9 @@ final class ChargeRepository extends AbstractRepository
                 {$simpleObject->paidAmount},
                 {$simpleObject->canceledAmount},
                 {$simpleObject->refundedAmount},
-                '{$simpleObject->status}'
+                '{$simpleObject->status}',
+                '{$metadata}',
+                '{$simpleObject->customerId}'
             );
         ";
 
@@ -115,13 +122,17 @@ final class ChargeRepository extends AbstractRepository
         $charge = json_decode(json_encode($object));
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
 
+        $metadata = json_encode($charge->metadata);
+
         $query = "
             UPDATE $chargeTable SET
               amount = {$charge->amount},
               paid_amount = {$charge->paidAmount},                         
               refunded_amount = {$charge->refundedAmount},                         
               canceled_amount = {$charge->canceledAmount},
-              status = '{$charge->status}'
+              status = '{$charge->status}',
+              metadata = '{$metadata}',
+              customer_id = '{$charge->customerId}'
             WHERE id = {$charge->id}
         ";
 
@@ -173,7 +184,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.type) as tran_type,
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
-                GROUP_CONCAT(t.boleto_url) as tran_boleto_url
+                GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  

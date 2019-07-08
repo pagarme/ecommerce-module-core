@@ -231,6 +231,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
         return "One or more charges weren't authorized. Please try again.";
     }
 
@@ -284,17 +285,18 @@ final class OrderHandler extends AbstractResponseHandler
                 $metadata->saveOnSuccess === "true";
 
             if (
-                !empty($lastTransaction->getPostData()->card) &&
+                !empty($lastTransaction->getCardData()) &&
                 $saveOnSuccess &&
                 $order->getCustomer()->getMundipaggId()->equals(
                     $charge->getCustomer()->getMundipaggId()
                 )
             ) {
-                $postData = $lastTransaction->getPostData()->card;
+                $postData =
+                    json_decode(json_encode($lastTransaction->getCardData()));
                 $postData->owner =
-                    $charge->getCustomer()->getMundipaggId()->getValue();
+                    $charge->getCustomer()->getMundipaggId();
 
-                $savedCard = $savedCardFactory->createFromPostData($postData);
+                $savedCard = $savedCardFactory->createFromTransactionJson($postData);
                 if (
                     $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
                 ) {

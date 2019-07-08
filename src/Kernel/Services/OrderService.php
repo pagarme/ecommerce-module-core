@@ -13,6 +13,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
 
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 
@@ -158,7 +159,6 @@ final class OrderService
             //set pending
             $platformOrder->setState(OrderState::stateNew());
             $platformOrder->setStatus(OrderStatus::pending());
-            $platformOrder->save();
 
             //build PaymentOrder based on platformOrder
             $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
@@ -167,12 +167,24 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            $handler = $this->getResponseHandler($response);
-            $handleResult = $handler->handle($response, $order);
+            if (isset($response['status']) && $response['status'] == 'failed') {
+                $i18n = new LocalizationService();
+                $message = $i18n->getDashboard("Can't create order");
 
-            if ($handleResult !== true) {
-                throw new \Exception($handleResult, 400);
+                throw new \Exception($message, 400);
             }
+
+            $platformOrder->save();
+
+            $orderFactory = new OrderFactory();
+            $response = $orderFactory->createFromPostData($response);
+
+            $response->setPlatformOrder($platformOrder);
+
+            $handler = $this->getResponseHandler($response);
+            $handler->handle($response, $order);
+
+            $platformOrder->save();
 
             return [$response];
         } catch(\Exception $e) {
@@ -227,7 +239,6 @@ final class OrderService
             throw new \Exception(
                 'The sum of payments is different than the order amount!',
                 400
-
             );
         }
 
