@@ -45,17 +45,8 @@ class CustomerFactory implements FactoryInterface
         $customer->setDocument($data->document);
         $customer->setType(CustomerType::individual());
 
-        $homePhone = new Phone(
-            substr($data->homePhone, 0, 2),
-            substr($data->homePhone, 2, 2),
-            substr($data->homePhone, 4)
-        );
-
-        $mobilePhone = new Phone(
-            substr($data->mobilePhone, 0, 2),
-            substr($data->mobilePhone, 2, 2),
-            substr($data->mobilePhone, 4)
-        );
+        $homePhone = new Phone($data->homePhone);
+        $mobilePhone = new Phone($data->mobilePhone);
 
         $customer->setPhones(
             CustomerPhones::create([$homePhone, $mobilePhone])
