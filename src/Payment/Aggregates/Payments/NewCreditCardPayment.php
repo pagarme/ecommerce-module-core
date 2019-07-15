@@ -38,14 +38,7 @@ final class NewCreditCardPayment extends AbstractCreditCardPayment
             return false;
         }
 
-        $mpId = $customer->getMundipaggId();
-        if ($mpId === null) {
-            return false;
-        }
-
-        return
-            $this->saveOnSuccess &&
-            $order->getCustomer()->getMundipaggId()->equals($mpId);
+        return $this->saveOnSuccess;
     }
 
     /**
