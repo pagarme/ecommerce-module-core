@@ -49,7 +49,8 @@ class ENUS extends AbstractI18NTable
             "country" => null,
             "state" => null,
             "document" => null,
-            "Can't create order." => null
+            "Can't create order." => null,
+            'Invalid address configuration. Please fill the address configuration on admin panel.' => null
         ];
     }
 }
