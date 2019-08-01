@@ -32,6 +32,10 @@ class APIService
             $request = new CreateCancelChargeRequest();
             $request->amount = $amount;
 
+            if (empty($amount)) {
+                $request->amount = $charge->getAmount();
+            }
+
             $chargeController = $this->getChargeController();
             $result = $chargeController->cancelCharge($chargeId, $request);
             $charge->cancel($amount);

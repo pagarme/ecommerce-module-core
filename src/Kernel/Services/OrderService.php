@@ -98,7 +98,7 @@ final class OrderService
         $charges = $order->getCharges();
         $results = [];
         foreach ($charges as $charge) {
-            $result = $APIService->cancelCharge($charge, $charge->getAmount());
+            $result = $APIService->cancelCharge($charge);
             if ($result !== null) {
                 $results[$charge->getMundipaggId()->getValue()] = $result;
             }
