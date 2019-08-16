@@ -145,7 +145,7 @@ final class Charge extends AbstractEntity
      * @param  int $amount
      * @return Charge
      */
-    public function setAmount(int $amount)
+    public function setAmount($amount)
     {
         if ($amount < 0) {
             throw new InvalidParamException("Amount should be greater or equal to 0!", $amount);
@@ -172,7 +172,7 @@ final class Charge extends AbstractEntity
      * @param  int $paidAmount
      * @return Charge
      */
-    public function setPaidAmount(int $paidAmount)
+    public function setPaidAmount($paidAmount)
     {
         if ($paidAmount < 0) {
             $paidAmount = 0;
@@ -199,7 +199,7 @@ final class Charge extends AbstractEntity
      * @param  int $canceledAmount
      * @return Charge
      */
-    public function setCanceledAmount(int $canceledAmount)
+    public function setCanceledAmount($canceledAmount)
     {
         if ($canceledAmount < 0) {
             $canceledAmount = 0;
@@ -231,7 +231,7 @@ final class Charge extends AbstractEntity
      * @param  int $refundedAmount
      * @return Charge
      */
-    public function setRefundedAmount(int $refundedAmount)
+    public function setRefundedAmount($refundedAmount)
     {
         if ($refundedAmount < 0) {
             $refundedAmount = 0;

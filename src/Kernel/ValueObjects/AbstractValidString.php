@@ -13,7 +13,7 @@ abstract class AbstractValidString extends AbstractValueObject
      */
     protected $value;
 
-    public function __construct(string $value)
+    public function __construct($value)
     {
         $this->setValue($value);
     }
@@ -23,7 +23,7 @@ abstract class AbstractValidString extends AbstractValueObject
         return $this->value;
     }
 
-    protected function setValue(string $value)
+    protected function setValue($value)
     {
         if ($this->validateValue($value)) {
             $this->value = $value;

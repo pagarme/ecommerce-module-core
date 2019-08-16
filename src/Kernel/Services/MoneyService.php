@@ -9,7 +9,7 @@ final class MoneyService
      * @param  int $amount
      * @return float
      */
-    public function centsToFloat(int $amount)
+    public function centsToFloat($amount)
     {
         return round($amount / 100, 2);
     }
@@ -19,7 +19,7 @@ final class MoneyService
      * @param  float $amount
      * @return int
      */
-    public function floatToCents(float $amount)
+    public function floatToCents($amount)
     {
         return intval(round($amount * 100));
     }
