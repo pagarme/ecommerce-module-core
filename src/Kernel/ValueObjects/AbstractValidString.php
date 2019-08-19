@@ -15,6 +15,10 @@ abstract class AbstractValidString extends AbstractValueObject
 
     public function __construct($value)
     {
+        if (!is_string($value)) {
+            throw new InvalidParamException("Value should be a string!", $value);
+        }
+
         $this->setValue($value);
     }
 
@@ -25,6 +29,10 @@ abstract class AbstractValidString extends AbstractValueObject
 
     protected function setValue($value)
     {
+        if (!is_string($value)) {
+            throw new InvalidParamException("Value should be a string!", $value);
+        }
+
         if ($this->validateValue($value)) {
             $this->value = $value;
             return $this;

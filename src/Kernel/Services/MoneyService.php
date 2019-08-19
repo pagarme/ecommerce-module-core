@@ -11,6 +11,10 @@ final class MoneyService
      */
     public function centsToFloat($amount)
     {
+        if (!is_numeric($amount)) {
+            throw new InvalidParamException("Amount should be an integer!", $amount);
+        }
+
         return round($amount / 100, 2);
     }
 
@@ -21,6 +25,10 @@ final class MoneyService
      */
     public function floatToCents($amount)
     {
+        if (!is_float($amount)) {
+            throw new InvalidParamException("Amount should be a float!", $amount);
+        }
+
         return intval(round($amount * 100));
     }
 }

@@ -85,6 +85,7 @@ final class Charge extends AbstractEntity
     /**
      *
      * @param int $amount
+     * @throws InvalidParamException
      */
     public function pay($amount)
     {
@@ -108,6 +109,7 @@ final class Charge extends AbstractEntity
     /**
      *
      * @param int $amount
+     * @throws InvalidParamException
      */
     public function cancel($amount = 0)
     {
@@ -142,11 +144,16 @@ final class Charge extends AbstractEntity
 
     /**
      *
-     * @param  int $amount
+     * @param int $amount
      * @return Charge
+     * @throws InvalidParamException
      */
     public function setAmount($amount)
     {
+        if (!is_numeric($amount)) {
+            throw new InvalidParamException("Amount should be an integer!", $amount);
+        }
+
         if ($amount < 0) {
             throw new InvalidParamException("Amount should be greater or equal to 0!", $amount);
         }
@@ -169,11 +176,16 @@ final class Charge extends AbstractEntity
 
     /**
      *
-     * @param  int $paidAmount
+     * @param int $paidAmount
      * @return Charge
+     * @throws InvalidParamException
      */
     public function setPaidAmount($paidAmount)
     {
+        if (!is_numeric($paidAmount)) {
+            throw new InvalidParamException("Amount should be an integer!", $paidAmount);
+        }
+
         if ($paidAmount < 0) {
             $paidAmount = 0;
         }
@@ -196,11 +208,16 @@ final class Charge extends AbstractEntity
 
     /**
      *
-     * @param  int $canceledAmount
+     * @param int $canceledAmount
      * @return Charge
+     * @throws InvalidParamException
      */
     public function setCanceledAmount($canceledAmount)
     {
+        if (!is_numeric($canceledAmount)) {
+            throw new InvalidParamException("Amount should be an integer!", $canceledAmount);
+        }
+
         if ($canceledAmount < 0) {
             $canceledAmount = 0;
         }
@@ -228,11 +245,16 @@ final class Charge extends AbstractEntity
 
     /**
      *
-     * @param  int $refundedAmount
+     * @param int $refundedAmount
      * @return Charge
+     * @throws InvalidParamException
      */
     public function setRefundedAmount($refundedAmount)
     {
+        if (!is_numeric($refundedAmount)) {
+            throw new InvalidParamException("Amount should be an integer!", $refundedAmount);
+        }
+
         if ($refundedAmount < 0) {
             $refundedAmount = 0;
         }
