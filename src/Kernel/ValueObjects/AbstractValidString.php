@@ -15,6 +15,8 @@ abstract class AbstractValidString extends AbstractValueObject
 
     public function __construct($value)
     {
+        $value = (string) $value;
+
         if (!is_string($value)) {
             throw new InvalidParamException("Value should be a string!", $value);
         }
