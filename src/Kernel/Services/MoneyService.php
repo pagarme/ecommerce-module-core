@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Kernel\Services;
 
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+
 final class MoneyService
 {
     /**
