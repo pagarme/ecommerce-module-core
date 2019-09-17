@@ -169,8 +169,8 @@ class ConfigurationFactory implements FactoryInterface
             $config->setSaveCards($data->saveCards);
         }
 
-        if (isset($data->multiBuyer)) {
-            $config->setMultiBuyer($data->multiBuyer);
+        if (isset($data->multibuyer)) {
+            $config->setMultiBuyer($data->multibuyer);
         }
 
         if (isset($data->recurrenceConfig)) {
