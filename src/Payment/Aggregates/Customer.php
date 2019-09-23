@@ -47,7 +47,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = substr($code, 0, 52);
     }
 
     /**
@@ -82,7 +82,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->email = substr($email, 0, 64);
 
         if (empty($this->email)) {
 
@@ -128,7 +128,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setDocument($document)
     {
-        $this->document = $document;
+        $this->document = substr($document, 0, 16);
 
         if (empty($this->document)) {
 

@@ -49,7 +49,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = substr($code, 0, 52);
     }
 
     /**

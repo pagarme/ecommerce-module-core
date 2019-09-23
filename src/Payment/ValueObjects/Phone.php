@@ -27,7 +27,7 @@ final class Phone extends AbstractValueObject implements ConvertibleToSDKRequest
 
         $this->countryCode = new NumericString(55);
         $this->areaCode = new NumericString(substr($phone, 0, 2));
-        $this->number = new NumericString(substr($phone, 2));
+        $this->number = new NumericString(substr($phone, 2, 12));
     }
 
     /**
