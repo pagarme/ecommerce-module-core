@@ -15,6 +15,10 @@ use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Throwable;
 
+/**
+ * Class ChargeFactory
+ * @package Mundipagg\Core\Kernel\Factories
+ */
 class ChargeFactory implements FactoryInterface
 {
     /**
@@ -119,6 +123,10 @@ class ChargeFactory implements FactoryInterface
         return $charge;
     }
 
+    /**
+     * @param $dbData
+     * @return array
+     */
     private function extractTransactionsFromDbData($dbData)
     {
         $transactions = [];
@@ -143,6 +151,8 @@ class ChargeFactory implements FactoryInterface
             $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
             $tranCardData = explode('---', $dbData['tran_card_data']);
 
+            $tranCardData = [null];
+
             foreach ($tranId as $index => $id) {
                 $transaction = [
                     'id' => $id,
@@ -158,8 +168,8 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_auth_code' => $tranAcquirerAuthCode[$index],
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
-                    'boleto_url' => $tranBoletoUrl[$index],
-                    'card_data' => $tranCardData[$index]
+                    'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
+                    'card_data' => $this->treatCardData($tranCardData, $index)
                 ];
                 $transactions[] = $transaction;
             }
@@ -168,4 +178,29 @@ class ChargeFactory implements FactoryInterface
         return $transactions;
     }
 
+    /**
+     * @param array $carData
+     * @param int $index
+     * @return string|null
+     */
+    private function treatCardData(array $tranCardData, $index)
+    {
+        if (!isset($tranCardData[$index])) {
+            return null;
+        }
+        return $tranCardData[$index];
+    }
+
+    /**
+     * @param array $tranBoletoUrl
+     * @param int $index
+     * @return string|null
+     */
+    private function treatBoletoUrl(array $tranBoletoUrl, $index)
+    {
+        if (!isset($tranBoletoUrl[$index])) {
+            return null;
+        }
+        return $tranBoletoUrl[$index];
+    }
 }
