@@ -1,9 +1,9 @@
 | Questions     | Answers
 | ------------- | -------------------------------------------------------
-| :bookmark_tabs: **Card**         | https://mundipagg.atlassian.net/browse/MOD-{ISSUE-NUMBER}
-| :star2: **What?**         | Describe in an objective way what has been done.
-| :exclamation: **Why?**          | Why do you need this implementation/fix?
-| :pencil2: **How?**          | How did you solve the problem? What are the main flows? Any technical information regarding infrastructure or architecture?
+| **Card**         | https://mundipagg.atlassian.net/browse/MOD-{ISSUE-NUMBER}
+| **What?**         | Describe in an objective way what has been done.
+| **Why?**          | Why do you need this implementation/fix?
+| **How?**          | How did you solve the problem? What are the main flows? Any technical information regarding infrastructure or architecture?
 
 <!-- Click the form's "Preview button" to make sure the table is functional in GitHub. Thank you! -->
 
