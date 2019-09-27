@@ -151,8 +151,6 @@ class ChargeFactory implements FactoryInterface
             $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
             $tranCardData = explode('---', $dbData['tran_card_data']);
 
-            $tranCardData = [null];
-
             foreach ($tranId as $index => $id) {
                 $transaction = [
                     'id' => $id,
