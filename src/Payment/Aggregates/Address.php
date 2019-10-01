@@ -65,11 +65,13 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setNumber($number)
     {
-        $this->number = str_replace(
+        $numberWithoutComma = str_replace(
             self::ADDRESS_LINE_SEPARATOR,
             '',
             $number
         );
+
+        $this->number = substr($numberWithoutComma, 0, 15);
 
         if (empty($this->number)) {
 
@@ -100,11 +102,13 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setStreet($street)
     {
-        $this->street = str_replace(
+        $streetWithoutComma = str_replace(
             self::ADDRESS_LINE_SEPARATOR,
             '',
             $street
         );
+
+        $this->street = substr($streetWithoutComma, 0, 64);
 
         if (empty($this->street)) {
 
@@ -135,11 +139,13 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setNeighborhood($neighborhood)
     {
-        $this->neighborhood = str_replace(
+        $neighborhoodWithoutComma = str_replace(
             self::ADDRESS_LINE_SEPARATOR,
             '',
             $neighborhood
         );
+
+        $this->neighborhood = substr($neighborhoodWithoutComma, 0, 64);
 
         if (empty($this->neighborhood)) {
 
@@ -169,7 +175,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setComplement($complement)
     {
-        $this->complement = $complement;
+        $this->complement = substr($complement, 0, 64);
         return $this;
     }
 
@@ -187,7 +193,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setZipCode($zipCode)
     {
-        $this->zipCode = $zipCode;
+        $this->zipCode = substr($zipCode, 0, 16);
         return $this;
     }
 
@@ -206,7 +212,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setCity($city)
     {
-        $this->city = $city;
+        $this->city = substr($city, 0, 64);
 
         if (empty($this->city)) {
 
@@ -237,7 +243,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setCountry($country)
     {
-        $this->country = $country;
+        $this->country = substr($country, 0, 2);
 
         if (empty($this->country)) {
 
@@ -283,7 +289,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setState($state)
     {
-        $this->state = $state;
+        $this->state = substr($state, 0, 2);
 
         if (empty($this->state)) {
 

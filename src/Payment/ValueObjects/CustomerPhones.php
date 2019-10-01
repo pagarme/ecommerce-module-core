@@ -26,7 +26,7 @@ final class CustomerPhones extends AbstractValueObject implements ConvertibleToS
 
     private function setMobile(Phone $mobile)
     {
-        $this->mobile = $mobile;
+        $this->mobile =  $mobile;
     }
 
     /**

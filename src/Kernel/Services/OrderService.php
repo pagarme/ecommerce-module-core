@@ -167,9 +167,9 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            if (isset($response['status']) && $response['status'] == 'failed') {
+            if ($this->checkResponseStatus($response)) {
                 $i18n = new LocalizationService();
-                $message = $i18n->getDashboard("Can't create order");
+                $message = $i18n->getDashboard("Can't create order.");
 
                 throw new \Exception($message, 400);
             }
@@ -266,5 +266,28 @@ final class OrderService
         $orderInfo = new \stdClass();
         $orderInfo->grandTotal = $platformOrder->getGrandTotal();
         return $orderInfo;
+    }
+
+    /**
+     * @param $response
+     * @return boolean
+     */
+    private function checkResponseStatus($response)
+    {
+        if (
+            !isset($response['status']) ||
+            !isset($response['charges']) ||
+            $response['status'] == 'failed'
+        ) {
+            return false;
+        }
+
+        foreach ($response['charges'] as $charge) {
+            if (isset($charge['status']) && $charge['status'] == 'failed') {
+                return false;
+            }
+        }
+
+        return;
     }
 }

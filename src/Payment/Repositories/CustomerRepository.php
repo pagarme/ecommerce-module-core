@@ -84,7 +84,7 @@ final class CustomerRepository extends AbstractRepository
 
         if ($result->num_rows > 0) {
             $factory = new CustomerFactory();
-            $customer = $factory->createFromDbData($result->row);
+            $customer = $factory->createFromDbData(end($result->rows));
 
             return $customer;
         }
