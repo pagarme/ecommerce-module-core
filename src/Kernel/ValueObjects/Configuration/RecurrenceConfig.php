@@ -7,6 +7,9 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 final class RecurrenceConfig extends AbstractValueObject
 {
     /** @var bool */
+    private $enabled;
+
+    /** @var bool */
     private $planSubscription;
 
     /** @var bool */
@@ -22,22 +25,24 @@ final class RecurrenceConfig extends AbstractValueObject
     private $subscriptionInstallment;
 
     /** @var string */
-    private $checkoutConflitMessage;
+    private $checkoutConflictMessage;
 
     public function __construct(
-        $planSubscription,
-        $singleSubscription,
-        $paymentUpdateCustomer,
-        $creditCardUpdateCustomer,
-        $subscriptionInstallment,
-        $checkoutConflitMessage
+        $enabled = false,
+        $checkoutConflictMessage = "",
+        $planSubscription = false,
+        $singleSubscription = false,
+        $paymentUpdateCustomer = false,
+        $creditCardUpdateCustomer = false,
+        $subscriptionInstallment = false
     ) {
-        $this->setPlanSubscription($planSubscription);
-        $this->setSingleSubscription($singleSubscription);
-        $this->setPaymentUpdateCustomer($paymentUpdateCustomer);
-        $this->setCreditCardUpdateCustomer($creditCardUpdateCustomer);
-        $this->setSubscriptionInstallment($subscriptionInstallment);
-        $this->setCheckoutConflitMessage($checkoutConflitMessage);
+        $this->setEnabled($enabled);
+        $this->setPlanSubscriptionEnabled($planSubscription);
+        $this->setSingleSubscriptionEnabled($singleSubscription);
+        $this->setPaymentUpdateCustomerEnabled($paymentUpdateCustomer);
+        $this->setCreditCardUpdateCustomerEnabled($creditCardUpdateCustomer);
+        $this->setSubscriptionInstallmentEnabled($subscriptionInstallment);
+        $this->setCheckoutConflictMessage($checkoutConflictMessage);
     }
 
     /**
@@ -50,10 +55,12 @@ final class RecurrenceConfig extends AbstractValueObject
 
     /**
      * @param mixed $planSubscription
+     * @return RecurrenceConfig
      */
-    private function setPlanSubscription($planSubscription)
+    private function setPlanSubscriptionEnabled($planSubscription)
     {
         $this->planSubscription = $planSubscription;
+        return $this;
     }
 
     /**
@@ -66,10 +73,12 @@ final class RecurrenceConfig extends AbstractValueObject
 
     /**
      * @param bool $singleSubscription
+     * @return RecurrenceConfig
      */
-    private function setSingleSubscription($singleSubscription)
+    private function setSingleSubscriptionEnabled($singleSubscription)
     {
         $this->singleSubscription = $singleSubscription;
+        return $this;
     }
 
     /**
@@ -82,10 +91,12 @@ final class RecurrenceConfig extends AbstractValueObject
 
     /**
      * @param bool $paymentUpdateCustomer
+     * @return RecurrenceConfig
      */
-    private function setPaymentUpdateCustomer($paymentUpdateCustomer)
+    private function setPaymentUpdateCustomerEnabled($paymentUpdateCustomer)
     {
         $this->paymentUpdateCustomer = $paymentUpdateCustomer;
+        return $this;
     }
 
     /**
@@ -98,10 +109,12 @@ final class RecurrenceConfig extends AbstractValueObject
 
     /**
      * @param bool $creditCardUpdateCustomer
+     * @return RecurrenceConfig
      */
-    private function setCreditCardUpdateCustomer($creditCardUpdateCustomer)
+    private function setCreditCardUpdateCustomerEnabled($creditCardUpdateCustomer)
     {
         $this->creditCardUpdateCustomer = $creditCardUpdateCustomer;
+        return $this;
     }
 
     /**
@@ -114,26 +127,48 @@ final class RecurrenceConfig extends AbstractValueObject
 
     /**
      * @param bool $subscriptionInstallment
+     * @return RecurrenceConfig
      */
-    private function setSubscriptionInstallment($subscriptionInstallment)
+    private function setSubscriptionInstallmentEnabled($subscriptionInstallment)
     {
         $this->subscriptionInstallment = $subscriptionInstallment;
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getCheckoutConflitMessage()
+    public function getCheckoutConflictMessage()
     {
-        return $this->checkoutConflitMessage;
+        return $this->checkoutConflictMessage;
     }
 
     /**
-     * @param string $checkoutConflitMessage
+     * @param string $checkoutConflictMessage
+     * @return RecurrenceConfig
      */
-    private function setCheckoutConflitMessage($checkoutConflitMessage)
+    private function setCheckoutConflictMessage($checkoutConflictMessage)
     {
-        $this->checkoutConflitMessage = $checkoutConflitMessage;
+        $this->checkoutConflictMessage = $checkoutConflictMessage;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return RecurrenceConfig
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
     }
 
     /**
@@ -146,12 +181,13 @@ final class RecurrenceConfig extends AbstractValueObject
     protected function isEqual($object)
     {
         return
+            $this->enabled === $object->isEnabled() &&
             $this->planSubscription === $object->isPlanSubscriptionEnabled() &&
             $this->singleSubscription === $object->isSingleSubscriptionEnabled() &&
             $this->paymentUpdateCustomer === $object->isPaymentUpdateCustomerEnabled() &&
             $this->creditCardUpdateCustomer === $object->isCreditCardUpdateCustomerEnabled() &&
             $this->subscriptionInstallment === $object->isSubscriptionInstallmentEnabled() &&
-            $this->checkoutConflitMessage === $object->getCheckoutConflitMessage();
+            $this->checkoutConflictMessage === $object->getCheckoutConflictMessage();
     }
 
     /**
@@ -165,12 +201,13 @@ final class RecurrenceConfig extends AbstractValueObject
     {
         $obj = new \stdClass();
 
+        $obj->enabled = $this->isEnabled();
         $obj->planSubscription = $this->isPlanSubscriptionEnabled();
         $obj->singleSubscription = $this->isSingleSubscriptionEnabled();
         $obj->paymentUpdateCustomer = $this->isPaymentUpdateCustomerEnabled();
         $obj->creditCardUpdateCustomer = $this->isCreditCardUpdateCustomerEnabled();
         $obj->subscriptionInstallment = $this->isSubscriptionInstallmentEnabled();
-        $obj->checkoutConflitMessage = $this->getCheckoutConflitMessage();
+        $obj->checkoutConflictMessage = $this->getCheckoutConflictMessage();
 
         return $obj;
     }
