@@ -4,6 +4,8 @@ namespace Mundipagg\Core\Kernel\ValueObjects;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
+/** @todo there is a way to make the enumeration behavior of classes like this abstract.
+ */
 final class CardBrand extends AbstractValueObject
 {
     CONST NO_BRAND = "noBrand";

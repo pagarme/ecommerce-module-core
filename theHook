@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+
+<?php
+
+require_once 'vendor/autoload.php';
+
+if (!defined('CROOK_PROJECT_ROOT')) {
+    define('CROOK_PROJECT_ROOT', __DIR__ . '/');
+}
+
+$hookPath = explode('/', $argv[0]);                                              
+$hookType = array_pop($hookPath);
+
+$app = new Crook\Application(new Crook\Config, $hookType);
+
+try {
+    $result = $app->run();
+} catch (\Exception $e) {
+    exit(23);
+}
+
+echo $result['message'];
+exit($result['code']);

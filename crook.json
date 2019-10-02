@@ -1,0 +1,4 @@
+{
+    "pre-commit": "phpunit",
+    "phpunit": "/vendor/bin/phpunit"
+}

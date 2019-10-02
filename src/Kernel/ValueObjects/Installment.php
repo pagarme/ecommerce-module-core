@@ -26,12 +26,13 @@ final class Installment extends AbstractValueObject
     /**
      * Installment constructor.
      *
-     * @param int   $times
-     * @param float $value
-     * @param float $interest  This should be expressed in real float value, not percentual value.
-     * @param int   $baseTotal
+     * @param int $times
+     * @param int $baseTotal
+     * @param float $interest This should be expressed in real float value, not percentual value.
+     *
+     * @throws InvalidParamException
      */
-    public function __construct($times, $baseTotal, $interest)
+    public function __construct(int $times, int $baseTotal, float $interest)
     {
         $this->setTimes($times);
         $this->setBaseTotal($baseTotal);
