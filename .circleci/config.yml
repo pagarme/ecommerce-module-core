@@ -26,6 +26,14 @@ jobs:
           name: Check PHP sintax
           command: find . -name \*.php -exec php -l "{}" \;
       - run:
+          name: Download composer
+          command: |
+            php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
+            php composer-setup.php
+      - run:
+          name: Install dependecy-composer
+          command: php composer.phar install
+      - run:
           name: Run PHPUnit
           command: vendor/bin/phpunit
       - persist_to_workspace:
