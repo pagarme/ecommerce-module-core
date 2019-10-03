@@ -30,7 +30,7 @@ class ChargeTests extends TestCase
         $this->assertInstanceOf(OrderId::class, $charge->getOrderId());
     }
 
-    public function test_amount_should_be_greater_or_equal_to_zero()
+    public function testAmountShouldBeGreaterOrEqualToZero()
     {
         $charge = new Charge();
         $charge->setAmount(10);
