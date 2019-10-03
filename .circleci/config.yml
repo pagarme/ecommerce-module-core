@@ -48,7 +48,3 @@ workflows:
   build_publish_deploy:
     jobs:
       - build
-      - publish:
-          context: DockerRegistry
-          requires:
-            - build
