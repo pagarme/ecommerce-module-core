@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class ChargeTests extends TestCase
 {
-    public function test_charge_should_be_created()
+    public function testChargeShouldBeCreated()
     {
         $charge = new Charge();
         $this->assertTrue($charge !== null);
