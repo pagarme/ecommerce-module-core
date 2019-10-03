@@ -16,7 +16,7 @@ jobs:
           command: |
             docker-php-ext-install pdo
             docker-php-ext-install zip
-            docker-php-ext-install xdebug
+            docker-php-xdebug
       - run:
           name: Display PHP information
           command: |
