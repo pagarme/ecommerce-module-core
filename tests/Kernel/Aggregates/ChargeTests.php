@@ -20,7 +20,7 @@ class ChargeTests extends TestCase
         $this->assertTrue($charge !== null);
     }
 
-    public function test_expected_an_object_orderid_to_set_order_id()
+    public function testExpectedAnObjectOrderidToSetOrderId()
     {
         $charge = new Charge();
         $orderId = Mockery::mock(OrderId::class);
