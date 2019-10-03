@@ -1,37 +1,42 @@
-# PHP CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-php/ for more details
-#
 version: 2
 jobs:
   build:
+    working_directory: /app
     docker:
-      # specify the version you desire here
-      - image: circleci/php:7.1.5-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mysql:9.4
-
-    working_directory: ~/repo
-
+      - image: php:7.1-apache
+        environment:
+          APP_ENV: test
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: composer install -n --prefer-dist
-
-      - save_cache:
+      - run:
+          name: Install system packages
+          command: apt-get update && apt-get -y install zip git zlib1g-dev wget
+      - run:
+          name: Install PHP extensions
+          command: |
+            docker-php-ext-install pdo
+            docker-php-ext-install zip
+            docker-php-ext-install xdebug
+      - run:
+          name: Display PHP information
+          command: |
+            php -v
+      - run:
+          name: Check PHP sintax
+          command: find . -name \*.php -exec php -l "{}" \;
+      - run:
+          name: Run PHPUnit
+          command: vendor/bin/phpunit
+      - persist_to_workspace:
+          root: /
           paths:
-            - ./vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
-
-      # run tests!
-      - run: phpunit
+            - app
+workflows:
+  version: 2
+  build_publish_deploy:
+    jobs:
+      - build
+      - publish:
+          context: DockerRegistry
+          requires:
+            - build
