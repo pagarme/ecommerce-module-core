@@ -3,7 +3,7 @@
 
 echo "Running tests... ";
 
-exec('vendor/bin/phpunit', $output, $returnCode);
+exec('vendor/bin/phpunit --colors=always', $output, $returnCode);
 
 if ($returnCode !== 0) {  
   echo PHP_EOL . implode($output, PHP_EOL) . PHP_EOL;
