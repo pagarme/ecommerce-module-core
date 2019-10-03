@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Kernel\Services;
 
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+
 final class MoneyService
 {
     /**
@@ -9,8 +11,12 @@ final class MoneyService
      * @param  int $amount
      * @return float
      */
-    public function centsToFloat(int $amount)
+    public function centsToFloat($amount)
     {
+        if (!is_numeric($amount)) {
+            throw new InvalidParamException("Amount should be an integer!", $amount);
+        }
+
         return round($amount / 100, 2);
     }
 
@@ -19,8 +25,13 @@ final class MoneyService
      * @param  float $amount
      * @return int
      */
-    public function floatToCents(float $amount)
+    public function floatToCents($amount)
     {
+        $amount = (float) $amount;
+        if (!is_float($amount)) {
+            throw new InvalidParamException("Amount should be a float!", $amount);
+        }
+
         return intval(round($amount * 100));
     }
 }

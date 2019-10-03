@@ -19,18 +19,15 @@ final class Phone extends AbstractValueObject implements ConvertibleToSDKRequest
 
     /**
      * Phone constructor.
-     * @param string $countryCode
-     * @param string $areaCode
-     * @param string $number
+     * @param string $phone
      */
-    public function __construct($countryCode, $areaCode, $number)
+    public function __construct($phone)
     {
-        $this->countryCode =
-            new NumericString(preg_replace('/(?!\d)./', '', $countryCode));
-        $this->areaCode =
-            new NumericString(preg_replace('/(?!\d)./', '', $areaCode));
-        $this->number =
-            new NumericString(preg_replace('/(?!\d)./', '', $number));
+        $phone = preg_replace('/(?!\d)./', '', $phone);
+
+        $this->countryCode = new NumericString(55);
+        $this->areaCode = new NumericString(substr($phone, 0, 2));
+        $this->number = new NumericString(substr($phone, 2, 12));
     }
 
     /**

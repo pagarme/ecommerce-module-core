@@ -9,11 +9,16 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 //use Mundipagg\Core\Kernel\Factories\TransactionFactory;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Throwable;
-use Zend\Console\Prompt\Char;
 
+/**
+ * Class ChargeFactory
+ * @package Mundipagg\Core\Kernel\Factories
+ */
 class ChargeFactory implements FactoryInterface
 {
     /**
@@ -92,6 +97,11 @@ class ChargeFactory implements FactoryInterface
         $status = $dbData['status'];
         $charge->setStatus(ChargeStatus::$status());
 
+        if (!empty($dbData['metadata'])) {
+            $metadata = json_decode($dbData['metadata']);
+            $charge->setMetadata($metadata);
+        }
+
         $transactionFactory = new TransactionFactory();
         $transactions = $this->extractTransactionsFromDbData($dbData);
         foreach ($transactions as $transaction) {
@@ -99,9 +109,24 @@ class ChargeFactory implements FactoryInterface
             $charge->addTransaction($newTransaction);
         }
 
+        if (!empty($dbData['customer_id'])) {
+            $customerRepository = new CustomerRepository();
+            $customer = $customerRepository->findByMundipaggId(
+                new CustomerId($dbData['customer_id'])
+            );
+
+            if ($customer) {
+                $charge->setCustomer($customer);
+            }
+        }
+
         return $charge;
     }
 
+    /**
+     * @param $dbData
+     * @return array
+     */
     private function extractTransactionsFromDbData($dbData)
     {
         $transactions = [];
@@ -124,6 +149,7 @@ class ChargeFactory implements FactoryInterface
             $tranAcquirerName = explode(',', $dbData['tran_acquirer_name']);
             $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
             $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
+            $tranCardData = explode('---', $dbData['tran_card_data']);
 
             foreach ($tranId as $index => $id) {
                 $transaction = [
@@ -140,7 +166,8 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_auth_code' => $tranAcquirerAuthCode[$index],
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
-                    'boleto_url' => $tranBoletoUrl[$index]
+                    'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
+                    'card_data' => $this->treatCardData($tranCardData, $index)
                 ];
                 $transactions[] = $transaction;
             }
@@ -149,4 +176,29 @@ class ChargeFactory implements FactoryInterface
         return $transactions;
     }
 
+    /**
+     * @param array $carData
+     * @param int $index
+     * @return string|null
+     */
+    private function treatCardData(array $tranCardData, $index)
+    {
+        if (!isset($tranCardData[$index])) {
+            return null;
+        }
+        return $tranCardData[$index];
+    }
+
+    /**
+     * @param array $tranBoletoUrl
+     * @param int $index
+     * @return string|null
+     */
+    private function treatBoletoUrl(array $tranBoletoUrl, $index)
+    {
+        if (!isset($tranBoletoUrl[$index])) {
+            return null;
+        }
+        return $tranBoletoUrl[$index];
+    }
 }

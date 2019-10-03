@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
@@ -25,6 +26,14 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
     /** @var Address */
     private $address;
 
+    /** @var LocalizationService */
+    protected $i18n;
+
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+    }
+
     /**
      * @return string|null
      */
@@ -38,7 +47,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = substr($code, 0, 52);
     }
 
     /**
@@ -68,10 +77,24 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
 
     /**
      * @param string $email
+     * @return Customer
+     * @throws \Exception
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->email = substr($email, 0, 64);
+
+        if (empty($this->email)) {
+
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                "email"
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -100,10 +123,25 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
 
     /**
      * @param string $document
+     * @return Customer
+     * @throws \Exception
      */
     public function setDocument($document)
     {
-        $this->document = $document;
+        $this->document = substr($document, 0, 16);
+
+        if (empty($this->document)) {
+
+            $inputName = $this->i18n->getDashboard('document');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
+            );
+
+            throw new \Exception($message, 400);
+        }
+
+        return $this;
     }
 
     /**
@@ -165,6 +203,30 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         return $obj;
     }
 
+    public function getTypeValue()
+    {
+        if ($this->getType() !== null) {
+            return $this->getType()->getType();
+        }
+        return null;
+    }
+
+    public function getAddressToSDK()
+    {
+        if ($this->getAddress() !== null) {
+         return $this->getAddress()->convertToSDKRequest();
+        }
+        return null;
+    }
+
+    public function getPhonesToSDK()
+    {
+        if ($this->getPhones() !== null) {
+         return $this->getPhones()->convertToSDKRequest();
+        }
+        return null;
+    }
+
     public function convertToSDKRequest()
     {
         $customerRequest = new CreateCustomerRequest();
@@ -173,9 +235,9 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         $customerRequest->name = $this->getName();
         $customerRequest->email = $this->getEmail();
         $customerRequest->document = $this->getDocument();
-        $customerRequest->type = $this->getType()->getType();
-        $customerRequest->address = $this->getAddress()->convertToSDKRequest();
-        $customerRequest->phones = $this->getPhones()->convertToSDKRequest();
+        $customerRequest->type = $this->getTypeValue();
+        $customerRequest->address = $this->getAddressToSDK();
+        $customerRequest->phones = $this->getPhonesToSDK();
 
         return $customerRequest;
     }

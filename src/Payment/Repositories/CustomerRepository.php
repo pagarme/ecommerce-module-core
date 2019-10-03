@@ -56,6 +56,14 @@ final class CustomerRepository extends AbstractRepository
         // TODO: Implement update() method.
     }
 
+    public function deleteByCode($customerCode)
+    {
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
+        $query = "DELETE FROM $table WHERE code = '$customerCode'";
+
+        return $this->db->query($query);
+    }
+
     public function delete(AbstractEntity $object)
     {
         // TODO: Implement delete() method.
@@ -76,7 +84,7 @@ final class CustomerRepository extends AbstractRepository
 
         if ($result->num_rows > 0) {
             $factory = new CustomerFactory();
-            $customer = $factory->createFromDbData($result->row);
+            $customer = $factory->createFromDbData(end($result->rows));
 
             return $customer;
         }

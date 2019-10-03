@@ -113,15 +113,18 @@ final class Configuration extends AbstractEntity
     private $saveCards;
 
     /** @var bool */
-    private $multiBuyer;
+    private $multibuyer;
 
     /** @var RecurrenceConfig */
     private $recurrenceConfig;
 
+    /** @var bool */
+    private $installmentsDefaultConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
-        $this->multiBuyer = false;
+        $this->multibuyer = false;
         $this->cardConfigs = [];
         $this->methodsInherited = [];
 
@@ -132,6 +135,7 @@ final class Configuration extends AbstractEntity
 
         $this->testMode = true;
         $this->inheritAll = false;
+        $this->installmentsDefaultConfig = false;
     }
 
     /**
@@ -406,15 +410,20 @@ final class Configuration extends AbstractEntity
      * @param int $antifraudMinAmount
      * @throws InvalidParamException
      */
-    public function setAntifraudMinAmount(int $antifraudMinAmount)
+    public function setAntifraudMinAmount($antifraudMinAmount)
     {
-        if ($antifraudMinAmount < 0) {
+        $numbers = '/([^0-9])/i';
+        $replace = '';
+
+        $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount);
+
+        if ($minAmount < 0) {
             throw new InvalidParamException(
                 'AntifraudMinAmount should be at least 0!',
-                $antifraudMinAmount
+                $minAmount
             );
         }
-        $this->antifraudMinAmount = $antifraudMinAmount;
+        $this->antifraudMinAmount = $minAmount;
     }
 
     /**
@@ -502,15 +511,15 @@ final class Configuration extends AbstractEntity
      */
     public function isMultiBuyer()
     {
-        return $this->multiBuyer;
+        return $this->multibuyer;
     }
 
     /**
-     * @param bool $multiBuyer
+     * @param bool $multibuyer
      */
-    public function setMultiBuyer($multiBuyer)
+    public function setMultiBuyer($multibuyer)
     {
-        $this->multiBuyer = $multiBuyer;
+        $this->multibuyer = $multibuyer;
     }
 
     /**
@@ -530,7 +539,7 @@ final class Configuration extends AbstractEntity
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "saveCards" => $this->isSaveCards(),
-            "multiBuyer" => $this->isMultiBuyer(),
+            "multibuyer" => $this->isMultiBuyer(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
@@ -539,6 +548,7 @@ final class Configuration extends AbstractEntity
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
             "installmentsEnabled" => $this->isInstallmentsEnabled(),
+            "installmentsDefaultConfig" => $this->isInstallmentsDefaultConfig(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
             "cardConfigs" => $this->getCardConfigs(),
@@ -623,6 +633,24 @@ final class Configuration extends AbstractEntity
     public function setInheritAll($inheritAll)
     {
         $this->inheritAll = $inheritAll;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInstallmentsDefaultConfig()
+    {
+        return $this->installmentsDefaultConfig;
+    }
+
+    /**
+     * @param bool $installmentsDefaultConfig
+     * @return Configuration
+     */
+    public function setInstallmentsDefaultConfig($installmentsDefaultConfig)
+    {
+        $this->installmentsDefaultConfig = $installmentsDefaultConfig;
+        return $this;
     }
 
     public function __call($method, $arguments)
