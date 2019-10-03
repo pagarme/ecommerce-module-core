@@ -31,6 +31,9 @@ jobs:
             php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
             php composer-setup.php
       - run:
+          name: Mock hook-git
+          command: mkdir -p .git/hooks
+      - run:
           name: Install dependecy-composer
           command: php composer.phar install
       - run:
