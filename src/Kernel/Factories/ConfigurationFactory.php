@@ -176,12 +176,8 @@ class ConfigurationFactory implements FactoryInterface
         if (isset($data->recurrenceConfig)) {
             $config->setRecurrenceConfig(
                 new RecurrenceConfig(
-                    $data->recurrenceConfig->planSubscription,
-                    $data->recurrenceConfig->singleSubscription,
-                    $data->recurrenceConfig->paymentUpdateCustomer,
-                    $data->recurrenceConfig->creditCardUpdateCustomer,
-                    $data->recurrenceConfig->subscriptionInstallment,
-                    $data->recurrenceConfig->checkoutConflitMessage
+                    $data->recurrenceConfig->enabled,
+                    $data->recurrenceConfig->checkoutConflictMessage
                 )
             );
         }
