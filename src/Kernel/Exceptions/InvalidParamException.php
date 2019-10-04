@@ -15,7 +15,7 @@ class InvalidParamException extends AbstractMundipaggCoreException
      * @param string $message The exception message.
      * @param string $value   The value that was passed to the setter.
      */
-    public function __construct(string $message, string $value)
+    public function __construct($message, $value)
     {
         $message .= " Passed value: $value";
         parent::__construct($message, 400, null);

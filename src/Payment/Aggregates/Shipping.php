@@ -34,7 +34,7 @@ final class Shipping extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = substr($description, 0, 64);
     }
 
     /**
@@ -50,7 +50,7 @@ final class Shipping extends AbstractEntity implements ConvertibleToSDKRequestsI
      */
     public function setRecipientName($recipientName)
     {
-        $this->recipientName = $recipientName;
+        $this->recipientName = substr($recipientName, 0, 64);
     }
 
     /**

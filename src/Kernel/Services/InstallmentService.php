@@ -32,8 +32,11 @@ final class InstallmentService
             $amount = $value;
         }
 
+        $useDefaultInstallmentsConfig =
+            MPSetup::getModuleConfiguration()->isInstallmentsDefaultConfig();
+
         $baseBrand = CardBrand::nobrand();
-        if ($brand !== null) {
+        if ($brand !== null && !$useDefaultInstallmentsConfig) {
             $baseBrand = $brand;
         }
 

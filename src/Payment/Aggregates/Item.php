@@ -29,7 +29,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
 
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = substr($code, 0, 52);
     }
 
        /**
@@ -45,7 +45,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = substr($description, 0, 256);
     }
 
     /**

@@ -40,7 +40,17 @@ class PTBR extends AbstractI18NTable
             "The informed card couldn't be deleted." => "O cartão informado não pode ser deletado.",
             "The card '%s' was deleted." => "O cartão '%s' foi deletado.",
             "The card '%s' couldn't be deleted." => "O cartão '%s' não pôde ser deletado.",
-            "This invoice was paid with a value different than the order grand total. Paid value: %.2f" => "Esta Invoice foi paga com um valor diferente do Grand Total do pedido. Valor pago: %.2f"
+            "Different paid amount for this invoice. Paid value: %.2f" => "Esta Invoice foi paga com um valor diferente do Grand Total do pedido. Valor pago: %.2f",
+            "The %s should not be empty!" => "O campo %s não deve estar vazio",
+            "street" => "rua",
+            "number" => "número",
+            "neighborhood" => "bairro",
+            "city" => "cidade",
+            "country" => "país",
+            "state" => "estado",
+            "document" => "CPF",
+            "Can't create order." => "Não foi possível criar o pedido",
+            'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
         ];
     }
 }

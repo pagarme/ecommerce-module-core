@@ -11,6 +11,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 
 class APIService
@@ -30,6 +31,10 @@ class APIService
             $chargeId = $charge->getMundipaggId()->getValue();
             $request = new CreateCancelChargeRequest();
             $request->amount = $amount;
+
+            if (empty($amount)) {
+                $request->amount = $charge->getAmount();
+            }
 
             $chargeController = $this->getChargeController();
             $result = $chargeController->cancelCharge($chargeId, $request);
@@ -86,9 +91,8 @@ class APIService
                 'Create order Response',
                 $response
             );
-            $stdClass = json_decode(json_encode($response), true);
-            $orderFactory = new OrderFactory();
-            return $orderFactory->createFromPostData($stdClass);
+
+            return json_decode(json_encode($response), true);
 
         } catch (ErrorException $e) {
             $this->logService->exception($e);
@@ -137,6 +141,15 @@ class APIService
         return $this->apiClient->getOrders();
     }
 
+    /**
+     *
+     * @return \MundiAPILib\Controllers\CustomersController
+     */
+    private function getCustomerController()
+    {
+        return $this->apiClient->getCustomers();
+    }
+
     private function getMundiPaggApiClient()
     {
         $config = MPSetup::getModuleConfiguration();
@@ -152,5 +165,13 @@ class APIService
     private function getAPIBaseEndpoint()
     {
         return \MundiAPILib\Configuration::$BASEURI;
+    }
+
+    public function updateCustomer(Customer $customer)
+    {
+        return $this->getCustomerController()->updateCustomer(
+            $customer->getMundipaggId()->getValue(),
+            $customer->convertToSDKRequest()
+        );
     }
 }

@@ -58,11 +58,11 @@ final class HubIntegrationService
             ];
 
             if ($hubCallbackUrl) {
-                $body['hubCallbackUrl'] = $hubCallbackUrl;
+                $body['hub_callback_url'] = $hubCallbackUrl;
             }
 
             if ($webhookUrl) {
-                $body['webhookUrl'] = $webhookUrl;
+                $body['webhook_url'] = $webhookUrl;
             }
 
             $url = 'https://hubapi.mundipagg.com/auth/apps/access-tokens';

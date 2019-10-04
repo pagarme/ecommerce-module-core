@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
+use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 
 class TransactionFactory implements FactoryInterface
 {
@@ -109,6 +110,13 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setPostData(json_decode(json_encode($postData)));
 
+        if (isset($postData['card'])) {
+            $cardFactory = new SavedCardFactory();
+            $card = $cardFactory->createFromTransactionData($postData['card']);
+
+            $transaction->setCardData($card);
+        }
+
         return $transaction;
     }
 
@@ -167,6 +175,16 @@ class TransactionFactory implements FactoryInterface
 
         if (isset($dbData['boleto_url'])) {
             $transaction->setBoletoUrl($dbData['boleto_url']);
+        }
+
+        $transaction->setPostData(json_decode(json_encode($dbData)));
+
+        if (!empty($dbData['card_data']) && $dbData['card_data'] !== "null") {
+            $cardData = json_decode($dbData['card_data']);
+            $cardFactory = new SavedCardFactory();
+            $card = $cardFactory->createFromTransactionJson($cardData);
+
+            $transaction->setCardData($card);
         }
 
         return $transaction;
