@@ -1,13 +1,13 @@
-FROM php:7.2-cli
+FROM php:5.6-cli
 
-RUN apt-get update
-RUN apt-get install -y libpq-dev git libzip-dev unzip
-RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install mysqli pdo pdo_mysql pdo_pgsql zip
 RUN docker-php-ext-install opcache
 
-RUN pecl install xdebug
+RUN pecl install xdebug-2.5.5
 RUN docker-php-ext-enable xdebug
+
+RUN ["apt-get", "update"]
+RUN ["apt-get", "install", "-y", "zip"]
+RUN ["apt-get", "install", "-y", "unzip"]
 
 RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php
@@ -19,8 +19,3 @@ RUN mkdir -p /.composer && chown -R ${UID}:${GID} /.composer
 
 VOLUME /root/.composer
 VOLUME /.composer
-
-RUN echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/php.ini
-RUN echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/php.ini
-RUN echo 'xdebug.remote_connect_back=1'  >> /usr/local/etc/php/php.ini
-RUN echo 'xdebug.idekey = "IDEA_DEBUG"' >> /usr/local/etc/php/php.ini
