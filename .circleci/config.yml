@@ -1,11 +1,7 @@
-version: 2
-jobs:
+version: 2.1
+
+commands:
   build:
-    working_directory: /app
-    docker:
-      - image: php:7.2-apache
-        environment:
-          APP_ENV: test
     steps:
       - checkout
       - run:
@@ -16,8 +12,8 @@ jobs:
           command: |
             docker-php-ext-install pdo
             docker-php-ext-install zip
-            pecl install xdebug-2.6.0
-            docker-php-ext-enable xdebug
+#            pecl install xdebug-2.6.0
+#            docker-php-ext-enable xdebug
       - run:
           name: Display PHP information
           command: |
@@ -43,8 +39,27 @@ jobs:
           root: /
           paths:
             - app
+jobs:
+  build-php56:
+    working_directory: /app
+    docker:
+      - image: php:5.6-apache
+        environment:
+          APP_ENV: test
+    steps:
+      - build
+
+  build-php72:
+    working_directory: /app
+    docker:
+      - image: php:7.2-apache
+        environment:
+          APP_ENV: test
+    steps:
+      - build
+
 workflows:
-  version: 2
   build_publish_deploy:
     jobs:
-      - build
+      - build-php56
+      - build-php72
