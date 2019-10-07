@@ -2,7 +2,6 @@ version: 2.1
 
 commands:
   build:
-    working_directory: /app
     steps:
       - checkout
       - run:
@@ -41,15 +40,8 @@ commands:
           paths:
             - app
 jobs:
-  build-php56:
-    docker:
-      - image: php:5.6-apache
-        environment:
-          APP_ENV: test
-    steps:
-      - build
-
   build-php72:
+    working_directory: /app
     docker:
       - image: php:7.2-apache
         environment:
@@ -58,7 +50,6 @@ jobs:
       - build
 
 workflows:
-  version: 2
   build_publish_deploy:
     jobs:
-      - build
+      - build-php72
