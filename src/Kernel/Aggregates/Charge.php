@@ -374,7 +374,7 @@ final class Charge extends AbstractEntity
         foreach ($transactions as &$transaction) {
             if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId())) {
                 $transactionId = $transaction->getId();
-                $transaction = $updatedTransaction; // neste momento ele esta atualizando toda a transaction pois está sendo passada por referencia
+                $transaction = $updatedTransaction;
                 if ($overwriteId) {
                     $transaction->setId($transactionId);
                 }

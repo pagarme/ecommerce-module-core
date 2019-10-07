@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class InstallmentTest extends TestCase
 {
-
     /**
      * @test
      *
@@ -66,7 +65,6 @@ class InstallmentTest extends TestCase
      */
     public function installmentTimesShouldBeBetween1And12()
     {
-
         for ($times = 1; $times <= 12; $times++) {
             $installment = new Installment(
                 $times,
@@ -161,7 +159,4 @@ class InstallmentTest extends TestCase
         $this->assertEquals(2, $valid->getBaseTotal());
         $this->assertEquals(3, $valid->getInterest());
     }
-    
-    
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Mundipagg\Core\Test\Kernel\ValueObjects;
 
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
@@ -71,7 +70,7 @@ class CardBrandTest extends TestCase
         $cardBrandClass = CardBrand::class;
         $invalidCardBrand = CardBrand::NO_BRAND . CardBrand::NO_BRAND;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$cardBrandClass}::{$invalidCardBrand}()");
 
         $cardBrandVisa = CardBrand::$invalidCardBrand();

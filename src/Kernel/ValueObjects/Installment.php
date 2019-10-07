@@ -32,7 +32,7 @@ final class Installment extends AbstractValueObject
      *
      * @throws InvalidParamException
      */
-    public function __construct(int $times, int $baseTotal, float $interest)
+    public function __construct($times, $baseTotal, $interest)
     {
         $this->setTimes($times);
         $this->setBaseTotal($baseTotal);
