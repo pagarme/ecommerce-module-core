@@ -35,6 +35,6 @@
     "post-update-cmd": [
       "cp 'hooks/pre-commit' '.git/hooks/pre-commit'"
     ],
-    "tests": "vendor/bin/phpunit"
+    "tests": "vendor/bin/phpunit --colors=always"
   }
 }
