@@ -84,7 +84,7 @@ class TransactionTypeTest extends TestCase
         $TransactionTypeClass = TransactionType::class;
         $invalidTransactionType = TransactionType::CREDIT_CARD . TransactionType::CREDIT_CARD;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$TransactionTypeClass}::{$invalidTransactionType}()");
 
         $TransactionTypeCreditCard = TransactionType::$invalidTransactionType();

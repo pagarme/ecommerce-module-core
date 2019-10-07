@@ -86,7 +86,7 @@ class ChargeStatusTest extends TestCase
         $ChargeStatusClass = ChargeStatus::class;
         $invalidChargeStatus = ChargeStatus::PAID . ChargeStatus::PAID;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$ChargeStatusClass}::{$invalidChargeStatus}()");
 
         $ChargeStatusPaid = ChargeStatus::$invalidChargeStatus();
