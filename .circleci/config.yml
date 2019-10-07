@@ -61,4 +61,5 @@ jobs:
 workflows:
   build_publish_deploy:
     jobs:
+      - build-php56
       - build-php72
