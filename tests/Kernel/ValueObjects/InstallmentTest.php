@@ -53,8 +53,7 @@ class InstallmentTest extends TestCase
 
         $this->assertEquals($expected, $json);
     }
-    
-    
+
     /**
      * @test
      *
