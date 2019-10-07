@@ -12,8 +12,8 @@ commands:
           command: |
             docker-php-ext-install pdo
             docker-php-ext-install zip
-            pecl install xdebug-2.6.0
-            docker-php-ext-enable xdebug
+#            pecl install xdebug-2.6.0
+#            docker-php-ext-enable xdebug
       - run:
           name: Display PHP information
           command: |
