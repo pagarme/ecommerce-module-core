@@ -128,7 +128,7 @@ class TransactionStatusTest extends TestCase
         $TransactionStatusClass = TransactionStatus::class;
         $invalidTransactionStatus = TransactionStatus::PAID . TransactionStatus::PAID;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$TransactionStatusClass}::{$invalidTransactionStatus}()");
 
         $TransactionStatusPaid = TransactionStatus::$invalidTransactionStatus();

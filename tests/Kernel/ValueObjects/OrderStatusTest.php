@@ -84,7 +84,7 @@ class OrderStatusTest extends TestCase
         $OrderStatusClass = OrderStatus::class;
         $invalidOrderStatus = OrderStatus::PAID . OrderStatus::PAID;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$OrderStatusClass}::{$invalidOrderStatus}()");
 
         $OrderStatusPaid = OrderStatus::$invalidOrderStatus();

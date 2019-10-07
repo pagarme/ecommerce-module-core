@@ -75,7 +75,7 @@ class InvoiceStateTest extends TestCase
         $InvoiceStateClass = InvoiceState::class;
         $invalidInvoiceState = InvoiceState::PAID . InvoiceState::PAID;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$InvoiceStateClass}::{$invalidInvoiceState}()");
 
         $InvoiceStatePaid = InvoiceState::$invalidInvoiceState();

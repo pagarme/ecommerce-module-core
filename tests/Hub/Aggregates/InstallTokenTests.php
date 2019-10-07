@@ -17,7 +17,7 @@ class InstallTokenTests extends TestCase
      */
     public $hubInstallToken;
 
-    public function setUp(): void
+    public function setUp()
     {
         $token = hash('sha512', '1' . '|' . microtime());
         $this->hubInstallToken = new HubInstallToken($token);
@@ -45,6 +45,32 @@ class InstallTokenTests extends TestCase
 
     public function testInstallTokenMethodIsUsed()
     {
-        $this->assertIsBool($this->installToken->isUsed());
+        $this->assertInternalType('bool', $this->installToken->isUsed());
+    }
+
+    public function testInstallTokenIsExpired()
+    {
+        $this->assertInternalType('bool', $this->installToken->isExpired());
+    }
+
+    public function testInstallTokenGetCreatedAtTimestamp()
+    {
+        $this->assertInternalType('int', $this->installToken->getCreatedAtTimestamp());
+    }
+
+    public function testInstallTokenGetExpireAtTimestamp()
+    {
+        $this->assertInternalType('int', $this->installToken->getExpireAtTimestamp());
+    }
+
+    public function testInstallTokenIsDisabled()
+    {
+        $this->assertInternalType('bool', $this->installToken->isDisabled());
+    }
+
+    public function testInstallTokenJsonSerialize()
+    {
+        $this->assertInternalType('object', $this->installToken->jsonSerialize());
+        $this->assertInstanceOf(\stdClass::class, $this->installToken->jsonSerialize());
     }
 }

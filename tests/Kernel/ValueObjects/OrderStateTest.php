@@ -78,7 +78,7 @@ class OrderStateTest extends TestCase
         $OrderStateClass = OrderState::class;
         $invalidOrderState = OrderState::COMPLETE . OrderState::COMPLETE;
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Call to undefined method {$OrderStateClass}::{$invalidOrderState}()");
 
         $OrderStateComplete = OrderState::$invalidOrderState();
