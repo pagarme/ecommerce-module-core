@@ -11,22 +11,22 @@ final class InstallToken extends AbstractEntity
 
     /**
      *
-     * @var HubInstallToken 
+     * @var HubInstallToken
      */
     private $token;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $used;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $createdAtTimestamp;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $expireAtTimestamp;
 
