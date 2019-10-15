@@ -13,6 +13,22 @@ use JsonSerializable;
 abstract class AbstractValueObject implements JsonSerializable
 {
     /**
+     * @param $name
+     * @param $arguments
+     * @throws \Exception
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        if (!method_exists(static::class, $name)) {
+            throw new \Exception(
+                "Call to undefined method " . static::class .
+                "::{$name}()",
+                400
+            );
+        }
+    }
+
+    /**
      * Compares the object types and call the child structural comparison method.
      *
      * @param  mixed $object The object that will be compared.
