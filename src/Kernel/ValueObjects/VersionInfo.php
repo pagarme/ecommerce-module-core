@@ -96,7 +96,9 @@ final class VersionInfo extends AbstractValueObject
     {
         return
             $this->getCoreVersion() === $object->getCoreVersion() &&
-            $this->getModuleVersion() === $object->getModuleVersion();
+            $this->getModuleVersion() === $object->getModuleVersion() &&
+            $this->getPlatformVersion() === $object->getPlatformVersion()
+            ;
     }
 
     /**
