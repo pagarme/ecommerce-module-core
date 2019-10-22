@@ -21,7 +21,7 @@ class MoneyServiceTests extends TestCase
     /**
      * @throws InvalidParamException
      */
-    public function testsCentsToFloat()
+    public function testCentsToFloat()
     {
         $float = $this->moneyService->centsToFloat(20);
         $this->assertEquals(0.2, $float);
@@ -30,7 +30,7 @@ class MoneyServiceTests extends TestCase
     /**
      * @throws InvalidParamException
      */
-    public function testsCentsToFloatShouldNotBeInstantiable()
+    public function testCentsToFloatShouldNotBeInstantiable()
     {
         $amount = 'abc';
         $this->expectException(InvalidParamException::class);
@@ -39,7 +39,7 @@ class MoneyServiceTests extends TestCase
         $this->moneyService->centsToFloat($amount);
     }
 
-    public function testsFloatToCents()
+    public function testFloatToCents()
     {
         $this->assertEquals(1670, $this->moneyService->floatToCents(16.70));
     }

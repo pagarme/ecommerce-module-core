@@ -17,7 +17,7 @@ class CoreInstallDataSourceTests extends TestCase
         $this->coreInstallDataSource = new CoreInstallDataSource();
     }
 
-    public function testsGetIntegrityFilePath()
+    public function testGetIntegrityFilePath()
     {
         $this->assertContains(
             DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'integrityData',

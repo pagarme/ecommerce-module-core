@@ -17,7 +17,7 @@ class LogObjectTests extends TestCase
         $this->logObject = new LogObject();
     }
 
-    public function testsJsonSerialize()
+    public function testJsonSerialize()
     {
         $this->assertInternalType('object', $this->logObject->jsonSerialize());
         $this->assertInstanceOf(\stdClass::class, $this->logObject->jsonSerialize());

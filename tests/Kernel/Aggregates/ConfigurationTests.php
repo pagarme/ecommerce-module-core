@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Mundipagg\Core\Test\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
@@ -18,14 +17,14 @@ class ConfigurationTests extends TestCase
         $this->configuration = new Configuration();
     }
 
-    public function testsIsEnabled()
+    public function testIsEnabled()
     {
         $this->configuration->setEnabled(true);
         $this->assertInternalType('bool', $this->configuration->isEnabled());
         $this->assertEquals(true, $this->configuration->isEnabled());
     }
 
-    public function testsIsUnabled()
+    public function testIsUnabled()
     {
         $this->configuration->setEnabled(false);
         $this->assertInternalType('bool', $this->configuration->isEnabled());

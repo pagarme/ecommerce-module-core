@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Mundipagg\Core\Test\Payments\Aggregates;
+namespace Mundipagg\Core\Test\Payment\Aggregates;
 
 use Mundipagg\Core\Payment\Aggregates\Address;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +17,7 @@ class AddressTests extends TestCase
         $this->andress = new Address();
     }
 
-    public function testsAddressNumberRemoveComma()
+    public function testAddressNumberRemoveComma()
     {
         $this->andress->setNumber('12,3,4,5,6');
         $this->assertEquals('123456', $this->andress->getNumber());

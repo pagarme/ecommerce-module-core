@@ -17,12 +17,12 @@ class PTBRTests extends TestCase
         $this->ptbr = new PTBR();
     }
 
-    public function testsInfoTableResultWebHookReceived()
+    public function testInfoTableResultWebHookReceived()
     {
         $this->assertEquals('Webhook recebido: %s.%s', $this->ptbr->get('Webhook received: %s.%s'));
     }
 
-    public function testsInfoTableResulInvoicecanceled()
+    public function testInfoTableResulInvoicecanceled()
     {
         $this->assertEquals('Invoice cancelada: #%s', $this->ptbr->get('Invoice canceled: #%s.'));
     }
