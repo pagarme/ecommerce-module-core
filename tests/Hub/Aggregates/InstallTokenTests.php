@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Test\Hub\Aggregates;
 
 use Mundipagg\Core\Hub\Aggregates\InstallToken;
 use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use PHPUnit\Framework\TestCase;
 
 class InstallTokenTests extends TestCase
@@ -17,6 +18,9 @@ class InstallTokenTests extends TestCase
      */
     public $hubInstallToken;
 
+    /**
+     * @throws InvalidParamException
+     */
     public function setUp()
     {
         $token = hash('sha512', '1' . '|' . microtime());
@@ -32,6 +36,7 @@ class InstallTokenTests extends TestCase
         $this->installToken->setCreatedAtTimestamp($createdTime);
         $this->installToken->setExpireAtTimestamp($expireTime);
     }
+
 
     public function testInstallTokenBeCreated()
     {
