@@ -121,6 +121,26 @@ final class SavedCardRepository extends AbstractRepository
 
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        $table =
+            $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
+
+        $query = "SELECT * FROM `$table` as t";
+
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->db->fetch($query . ";");
+
+        $factory = new SavedCardFactory();
+
+        $listSavedCard = [];
+        foreach ($result->rows as $row) {
+            $savedCard = $factory->createFromDBData($row);
+            $listSavedCard[] = $savedCard;
+        }
+
+        return $listSavedCard;
     }
 }
