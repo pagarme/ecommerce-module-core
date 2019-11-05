@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
-use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
@@ -11,166 +10,10 @@ class Repetition extends AbstractEntity
 {
     /** @var DiscountValueObject */
     protected $discount;
-
     /** @var IntervalValueObject */
     protected $interval;
-
     /** @var int */
-    protected $cycles;
-
-
-    public function __construct()
-    {
-        $this->cycles = 0;
-    }
-
-    public function getDiscountValueLabel()
-    {
-        if ($this->getDiscount() === null) {
-            return;
-        }
-
-        switch ($this->getDiscount()->getDiscountType()) {
-            case DiscountValueObject::DISCOUNT_TYPE_FLAT:
-                return "%s%.2f";
-            case DiscountValueObject::DISCOUNT_TYPE_PERCENT:
-                return"%s%.2f%%";
-            default:
-                return "Error: %s : %.2f";
-        }
-    }
-
-    public function getIntervalTypeLabel()
-    {
-        //@todo change to a class formater maybe
-        if ($this->getInterval()->getFrequency() > 1) {
-            return $this->getInterval()->getIntervalType() . "s";
-        }
-        return $this->getInterval()->getIntervalType();
-    }
-
-    public function getIntervalTypeApiValue()
-    {
-        return $this->getInterval()->getIntervalType();
-    }
-
-    public static function getDiscountTypesArray()
-    {
-        //@todo get currency code from platform
-        return [
-            ['code'=>DiscountValueObject::DISCOUNT_TYPE_PERCENT, 'name' => '%'],
-            ['code'=>DiscountValueObject::DISCOUNT_TYPE_FLAT, 'name' => "R$"]
-        ];
-    }
-
-    public static function getIntervalTypesArray()
-    {
-        return [
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_WEEK,
-                'name'=> "Semanal"
-            ],
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_MONTH,
-                'name'=> "Mensal"
-            ],
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_YEAR,
-                'name'=> "Anual"
-            ]
-        ];
-    }
-
-    public static function getValidIntervalTypes()
-    {
-        return [
-            IntervalValueObject::INTERVAL_TYPE_WEEK,
-            IntervalValueObject::INTERVAL_TYPE_MONTH,
-            IntervalValueObject::INTERVAL_TYPE_YEAR
-        ];
-    }
-
-    public static function getValidDiscountTypes()
-    {
-        return [
-            DiscountValueObject::DISCOUNT_TYPE_PERCENT,
-            DiscountValueObject::DISCOUNT_TYPE_FLAT
-        ];
-    }
-
-    /**
-     * @return int
-     */
-    public function getCycles()
-    {
-        return $this->cycles;
-    }
-
-    /**
-     * @param int $cycles
-     * @return RepetitionValueObject
-     * @throws Exception
-     */
-    public function setCycles($cycles)
-    {
-        $newCycles = abs(intval($cycles));
-
-        if ($newCycles < 1) {
-            throw new Exception("The field cycles must be greater than or equal to 1 : $cycles");
-        }
-
-        $this->cycles = $newCycles;
-
-        return $this;
-    }
-
-    public function toArray()
-    {
-        return [
-            'cycles' => $this->getCycles(),
-            'frequency' => $this->getFrequency(),
-            'intervalType' => $this->getIntervalType(),
-            'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType(),
-            'intervalTypeApiValue' => $this->getIntervalTypeApiValue()
-        ];
-    }
-
-    /**
-     * @param int $basePriceInCents
-     * @return float|int
-     */
-    public function getDiscountPriceInCents($basePriceInCents)
-    {
-        if ($this->getDiscount()->getValue() <= 0) {
-            return 0;
-        }
-        $percent = ($basePriceInCents * ($this->getDiscount()->getValue())) / 100;
-        $fixed = $this->getDiscount()->getValue() * 100;
-
-        if ($this->getDiscount()->getDiscountType() === DiscountValueObject::DISCOUNT_TYPE_PERCENT) {
-            return $percent;
-        }
-        return $fixed;
-    }
-
-    /**
-     * @param int $basePrice
-     * @return float|int
-     */
-    public function getDiscountPrice($basePrice)
-    {
-        if ($this->getDiscount()->getValue() <= 0) {
-            return 0;
-        }
-        $percent = ($basePrice * ($this->getDiscount()->getValue())) / 100;
-        $fixed = $this->getDiscount()->getValue();
-
-        if ($this->getDiscount()->getDiscountType() === DiscountValueObject::DISCOUNT_TYPE_PERCENT) {
-            return $percent;
-        }
-        return $fixed;
-    }
+    protected $subscriptionId;
 
     /**
      * @return DiscountValueObject
@@ -208,6 +51,24 @@ class Repetition extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getSubscriptionId()
+    {
+        return $this->subscriptionId;
+    }
+
+    /**
+     * @param int $subscriptionId
+     * @return Repetition
+     */
+    public function setSubscriptionId($subscriptionId)
+    {
+        $this->subscriptionId = $subscriptionId;
+        return $this;
+    }
+
     public function getDiscountType()
     {
         if ($this->getDiscount() !== null) {
@@ -224,13 +85,14 @@ class Repetition extends AbstractEntity
         return null;
     }
 
-    public function getFrequency()
+    public function getIntervalCount()
     {
         if ($this->getInterval() !== null) {
-            return $this->getInterval()->getFrequency();
+            return $this->getInterval()->getIntervalCount();
         }
         return null;
     }
+
     public function getIntervalType()
     {
         if ($this->getInterval() !== null) {
@@ -238,7 +100,6 @@ class Repetition extends AbstractEntity
         }
         return null;
     }
-
 
     /**
      * Specify data which should be serialized to JSON
@@ -250,12 +111,29 @@ class Repetition extends AbstractEntity
     public function jsonSerialize()
     {
         return [
-            'cycles' => $this->getCycles(),
-            'frequency' => $this->getFrequency(),
+            'subscriptionId' => $this->getSubscriptionId(),
+            'intervalCount' => $this->getIntervalCount(),
             'intervalType' => $this->getIntervalType(),
             'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType(),
-            'intervalTypeApiValue' => $this->getIntervalTypeApiValue()
+            'discountType' => $this->getDiscountType()
+        ];
+    }
+
+    public function getIntervalTypeLabel()
+    {
+        //@todo change to a class formater maybe
+        if ($this->getInterval()->getIntervalCount() > 1) {
+            return $this->getInterval()->getIntervalType() . "s";
+        }
+        return $this->getInterval()->getIntervalType();
+    }
+
+    public static function getDiscountTypeSymbols()
+    {
+        //@todo get currency code from platform
+        return [
+            DiscountValueObject::DISCOUNT_TYPE_PERCENT => '%',
+            DiscountValueObject::DISCOUNT_TYPE_FLAT => "R$"
         ];
     }
 }
