@@ -19,9 +19,10 @@ use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class ChargeHandlerService extends AbstractHandlerService
 {
+
     /**
      *
-     * @param  Webhook $webhook
+     * @param Webhook $webhook
      * @return array
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidOperationException
      */
@@ -36,13 +37,13 @@ final class ChargeHandlerService extends AbstractHandlerService
         /**
          *
          * @var Order $order
-        */
+         */
         $order = $this->order;
 
         /**
          *
          * @var Charge $charge
-        */
+         */
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
@@ -154,7 +155,7 @@ final class ChargeHandlerService extends AbstractHandlerService
         $orderService = new OrderService();
 
         $order = $this->order;
-        if($order->getStatus()->equals(OrderStatus::canceled())) {
+        if ($order->getStatus()->equals(OrderStatus::canceled())) {
             $result = [
                 "message" => "It is not possible to refund a charge of an order that was canceled.",
                 "code" => 200
@@ -237,20 +238,13 @@ final class ChargeHandlerService extends AbstractHandlerService
         //@todo, but not with priority,
     }
 
-    /**
-     *
-     * @param  Webhook $webhook
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
-     */
-    protected function loadOrder(Webhook $webhook)
+    protected function loadOrderByCode(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
-        /**
-         *
- * @var Charge $charge
-*/
+
+        /* @var Charge $charge */
         $charge = $webhook->getEntity();
-        $order = $orderRepository->findByMundipaggId($charge->getOrderId());
+        $order = $orderRepository->findByCode($charge->getCode());
 
         if ($order === null) {
             $orderDecoratorClass =
@@ -273,13 +267,60 @@ final class ChargeHandlerService extends AbstractHandlerService
         $this->order = $order;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @param $findByOrderId
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
+    protected function loadOrder(Webhook $webhook)
+    {
+        $orderRepository = new OrderRepository();
+        $recurrence = new ChargeRecurrenceService();
+
+        /** @var Charge $charge */
+        $charge = $webhook->getEntity();
+
+        if ($webhook->getComponent() != 'Recurrence') {
+            $order = $orderRepository->findByMundipaggId($charge->getOrderId());
+        }
+
+        if ($webhook->getComponent() == 'Recurrence') {
+            $order = $orderRepository->findByCode($charge->getCode());
+        }
+
+        if ($order === null) {
+            $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+
+            /**
+             * @var PlatformOrderInterface $order
+             */
+            $order = new $orderDecoratorClass();
+            $order->loadByIncrementId($charge->getCode());
+
+            $orderFactory = new OrderFactory();
+            $order = $orderFactory->createFromPlatformData(
+                $order,
+                $charge->getOrderId()->getValue()
+            );
+        }
+
+
+
+        $this->order = $order;
+
+        if ($webhook->getComponent() == 'Recurrence') {
+            $recurrence->handle($this->order, $webhook);
+            throw new \Exception('dhdhjdgjhdghj');
+        }
+    }
+
     public function prepareHistoryComment(Charge $charge)
     {
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
-            || $charge->getStatus()->equals(ChargeStatus::overpaid()) 
+        if ($charge->getStatus()->equals(ChargeStatus::paid())
+            || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
@@ -292,16 +333,16 @@ final class ChargeHandlerService extends AbstractHandlerService
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
                 $history .= ". " . $i18n->getDashboard(
-                    "Extra amount paid: %.2f",
-                    $moneyService->centsToFloat($extraValue)
-                );
+                        "Extra amount paid: %.2f",
+                        $moneyService->centsToFloat($extraValue)
+                    );
             }
 
             if ($extraValue < 0) {
                 $history .= ". " . $i18n->getDashboard(
-                    "Remaining amount: %.2f",
-                    $moneyService->centsToFloat(abs($extraValue))
-                );
+                        "Remaining amount: %.2f",
+                        $moneyService->centsToFloat(abs($extraValue))
+                    );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
@@ -334,9 +375,9 @@ final class ChargeHandlerService extends AbstractHandlerService
         );
 
         $history .= ' ' . $i18n->getDashboard(
-            'Refunded amount: %.2f',
-            $amountInCurrency
-        );
+                'Refunded amount: %.2f',
+                $amountInCurrency
+            );
         $history .= " (" . $i18n->getDashboard('until now') . ")";
 
         return $history;
@@ -346,8 +387,8 @@ final class ChargeHandlerService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid()) 
-            || $charge->getStatus()->equals(ChargeStatus::overpaid()) 
+        if ($charge->getStatus()->equals(ChargeStatus::paid())
+            || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
             $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
