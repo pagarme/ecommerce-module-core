@@ -3,33 +3,30 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 
 class ProductSubscription extends AbstractEntity
 {
-    const PREPAID = 'prepaid';
+    const DATE_FORMAT = 'Y-m-d H:i:s';
 
     /** @var int */
-    protected $id;
+    protected $id = null;
     /** @var int */
-    protected $productId;
-    /** @var bool */
-    protected $isEnabled;
+    private $productId;
     /** @var boolean */
-    protected $acceptCreditCard = false;
+    private $creditCard = false;
     /** @var boolean */
-    protected $acceptBoleto = false;
+    private $boleto = false;
     /** @var boolean */
-    protected $allowInstallments = false;
+    private $allowInstallments = false;
     /** @var Repetition[] */
-    protected $repetitions;
-    /** @var string */
-    protected $billingType = self::PREPAID;
+    private $repetitions;
     /** @var @var SubProductSubscription[] */
-    protected $items;
+    private $items;
     /** @var @var string */
-    protected $createdAt;
+    private $createdAt;
     /** @var @var string */
-    protected $updatedAt;
+    private $updatedAt;
 
     /**
      * @return int
@@ -86,57 +83,114 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isAcceptCreditCard()
+    public function getCreditCard()
     {
-        return $this->acceptCreditCard;
+        return $this->creditCard;
     }
 
     /**
-     * @param bool $acceptCreditCard
-     * @return Template
+     * @param string $creditCard true or false
      */
-    public function setAcceptCreditCard($acceptCreditCard)
+    public function setCreditCard($creditCard)
     {
-        $this->acceptCreditCard = boolval(intval($acceptCreditCard));
-        return $this;
+        if ($creditCard != '1' && $creditCard != '0') {
+            throw new InvalidParamException(
+                "Credit card should be 1 or 0!",
+                $creditCard
+            );
+        }
+        $this->creditCard = $creditCard;
     }
 
     /**
-     * @return bool
+     * @return string true or false
      */
-    public function isAcceptBoleto()
+    public function getBoleto()
     {
-        return $this->acceptBoleto;
+        return $this->boleto;
     }
 
     /**
-     * @param bool $acceptBoleto
-     * @return Template
+     * @param string $boleto 1 or 0
      */
-    public function setAcceptBoleto($acceptBoleto)
+    public function setBoleto($boleto)
     {
-        $this->acceptBoleto = boolval(intval($acceptBoleto));
-        return $this;
+        if ($boleto != '1' && $boleto != '0') {
+            throw new InvalidParamException(
+                "Boleto should be 1 or 0",
+                $boleto
+            );
+        }
+        $this->boleto = $boleto;
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isAllowInstallments()
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        if (empty($status)) {
+            throw new InvalidParamException(
+                "Status should not be empty!",
+                $status
+            );
+        }
+        $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBillingType()
+    {
+        return $this->billingType;
+    }
+
+    /**
+     * @param string $billingType
+     */
+    public function setBillingType($billingType)
+    {
+        if (empty($billingType)) {
+            throw new InvalidParamException(
+                "Billing type should not be empty!",
+                $billingType
+            );
+        }
+        $this->billingType = $billingType;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAllowInstallments()
     {
         return $this->allowInstallments;
     }
 
     /**
-     * @param bool $allowInstallments
-     * @return Template
+     * @param string $allowInstallments 1 or 0
+     * @throws InvalidParamException
      */
     public function setAllowInstallments($allowInstallments)
     {
-        $this->allowInstallments = boolval(intval($allowInstallments));
-        return $this;
+        if ($allowInstallments != '1' && $allowInstallments != '0') {
+            throw new InvalidParamException(
+                "Allow installments should be 1 or 0!",
+                $allowInstallments
+            );
+        }
+        $this->allowInstallments = $allowInstallments;
     }
 
     /**
@@ -176,6 +230,38 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -184,24 +270,20 @@ class ProductSubscription extends AbstractEntity
      */
     public function jsonSerialize()
     {
-        $repetitions = [];
-        foreach ($this->repetitions as $repetition) {
-            $repetitions[] = [
-                "discountType" => $repetition->getDiscountType(),
-                "discountValue" => $repetition->getDiscountValue(),
-                "intervalCount" => $repetition->getintervalCount(),
-                "intervalType" => $repetition->getIntervalType()
-            ];
-        }
+        $obj = new \stdClass();
 
-        return [
-            "id" => $this->getId(),
-            "isEnabled" => $this->isEnabled(),
-            "acceptBoleto" => $this->isAcceptBoleto(),
-            "acceptCreditCard" => $this->isAcceptCreditCard(),
-            "allowInstallments" => $this->isAllowInstallments(),
-            "trial" => $this->getTrial(),
-            "repetitions" => $repetitions,
-        ];
+        $obj->id = $this->getId();
+        $obj->productId = $this->getProductId();
+        $obj->creditCard = $this->getCreditCard();
+        $obj->boleto = $this->getBoleto();
+        $obj->status = $this->getStatus();
+        $obj->billintType = $this->getBillingType();
+        $obj->allowInstallments = $this->getAllowInstallments();
+        $obj->repetitions = $this->getRepetitions();
+        $obj->items = $this->getItems();
+        $obj->createdAt = $this->getCreatedAt();
+        $obj->updatedAt = $this->getUpdatedAt();
+
+        return $obj;
     }
 }
