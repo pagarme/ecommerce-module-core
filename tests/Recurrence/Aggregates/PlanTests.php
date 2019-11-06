@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Test\Recurrence\Aggregates;
 
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use PHPUnit\Framework\TestCase;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Zend\Db\Sql\Ddl\Column\Datetime;
@@ -25,7 +26,7 @@ class PlanTests extends TestCase
     {
         $id = '1';
         $interval = IntervalValueObject::month(2);
-        $planId = 'plan_abcdefgh';
+        $planId =  new PlanId('plan_45asDadb8Xd95451');
         $productId = '4123';
         $creditCard = true;
         $boleto = false;
@@ -41,8 +42,8 @@ class PlanTests extends TestCase
         $this->plan->setInterval($interval);
         $this->assertEquals($this->plan->getInterval(), $interval);
 
-        $this->plan->setPlanId($planId);
-        $this->assertEquals($this->plan->getPlanId(), $planId);
+        $this->plan->setMundipaggId($planId);
+        $this->assertEquals($this->plan->getMundipaggId(), $planId);
 
         $this->plan->setProductId($productId);
         $this->assertEquals($this->plan->getProductId(), $productId);

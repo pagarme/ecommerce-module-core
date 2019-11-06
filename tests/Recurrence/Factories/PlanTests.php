@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Test\Recurrence;
 
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use PHPUnit\Framework\TestCase;
 use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
@@ -16,7 +17,7 @@ class PlanFactoryTests extends TestCase
 
         $data = [
             'id' => 456654,
-            'plan_id' => 'plan_123456',
+            'plan_id' => new PlanId('plan_45asDadb8Xd95451'),
             'billing_type' => 'PREPAID',
             'credit_card' => false,
             'boleto' => true,
