@@ -97,7 +97,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         }
 
         foreach ($postData['itens'] as $item) {
-            $subProductFactory = new SubProductSubscriptionFactory();
+            $subProductFactory = new SubProductFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
             $this->productSubscription->addItems($subProduct);
         }

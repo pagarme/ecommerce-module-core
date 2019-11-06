@@ -24,6 +24,7 @@ final class Plan extends AbstractEntity
     private $allowInstallments;
     private $createdAt;
     private $updatedAt;
+    private $subProduct;
 
     /**
      * @return int

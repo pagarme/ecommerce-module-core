@@ -7,11 +7,11 @@ namespace Mundipagg\Core\Recurrence\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Aggregates\SubProductSubscription;
+use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
-class SubProductSubscriptionFactory implements FactoryInterface
+class SubProductFactory implements FactoryInterface
 {
     /**
      *
@@ -20,42 +20,42 @@ class SubProductSubscriptionFactory implements FactoryInterface
      */
     public function createFromPostData($postData)
     {
-        $subProductSubscription = new SubProductSubscription();
+        $subProduct = new SubProduct();
 
-        if (!empty($postData['productSubscriptionId'])) {
-            $subProductSubscription->setProductSubscriptionId($postData['productSubscriptionId']);
+        if (!empty($postData['productRecurrenceId'])) {
+            $subProduct->setProductRecurrenceId($postData['productRecurrenceId']);
         }
 
         if (!empty($postData['id'])) {
-            $subProductSubscription->setId($postData['id']);
+            $subProduct->setId($postData['id']);
         }
 
         if (!empty($postData['product_id'])) {
-            $subProductSubscription->setProductId($postData['product_id']);
+            $subProduct->setProductId($postData['product_id']);
         }
 
         if (!empty($postData['name'])) {
-            $subProductSubscription->setName($postData['name']);
+            $subProduct->setName($postData['name']);
         }
 
         if (!empty($postData['description'])) {
-            $subProductSubscription->setDescription($postData['description']);
+            $subProduct->setDescription($postData['description']);
         }
 
         if (!empty($postData['price'])) {
-            $subProductSubscription->setPrice($postData['price']);
+            $subProduct->setPrice($postData['price']);
         }
 
         if (!empty($postData['quantity'])) {
-            $subProductSubscription->setQuantity($postData['quantity']);
+            $subProduct->setQuantity($postData['quantity']);
         }
 
         if (!empty($postData['cycles'])) {
-            $subProductSubscription->setCycles($postData['cycles']);
+            $subProduct->setCycles($postData['cycles']);
         }
 
 
-        return $subProductSubscription;
+        return $subProduct;
     }
 
     /**

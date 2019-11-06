@@ -4,12 +4,12 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 
-class SubProductSubscription extends AbstractEntity
+class SubProduct extends AbstractEntity
 {
     /** @var int */
     protected $id;
     /** @var int */
-    protected $productSubscriptionId;
+    protected $productRecurrenceId;
     /** @var int */
     protected $productId;
     /** @var string */
@@ -37,7 +37,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param int $id
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setId($id)
     {
@@ -48,18 +48,18 @@ class SubProductSubscription extends AbstractEntity
     /**
      * @return int
      */
-    public function getProductSubscriptionId()
+    public function getProductRecurrenceId()
     {
-        return $this->productSubscriptionId;
+        return $this->productRecurrenceId;
     }
 
     /**
-     * @param int $productSubscriptionId
-     * @return SubProductSubscription
+     * @param int $productRecurrenceId
+     * @return SubProduct
      */
-    public function setProductSubscriptionId($productSubscriptionId)
+    public function setProductRecurrenceId($productRecurrenceId)
     {
-        $this->productSubscriptionId = intval($productSubscriptionId);
+        $this->productRecurrenceId = intval($productRecurrenceId);
         return $this;
     }
 
@@ -73,7 +73,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param int $productId
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setProductId($productId)
     {
@@ -137,7 +137,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param int $quantity
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setQuantity($quantity)
     {
@@ -155,7 +155,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param int $cycles
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setCycles($cycles)
     {
@@ -173,7 +173,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param string $createdAt
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setCreatedAt($createdAt)
     {
@@ -191,7 +191,7 @@ class SubProductSubscription extends AbstractEntity
 
     /**
      * @param string $updatedAt
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -210,7 +210,7 @@ class SubProductSubscription extends AbstractEntity
     {
         return [
             "id" => $this->getId(),
-            "productSubscriptionId" => $this->getProductSubscriptionId(),
+            "productRecurrenceId" => $this->getProductRecurrenceId(),
             "productId" => $this->getProductId(),
             "name" => $this->getName(),
             "description" => $this->getDescription(),
@@ -233,7 +233,7 @@ class SubProductSubscription extends AbstractEntity
     /**
      * Price in cents
      * @param int $price
-     * @return SubProductSubscription
+     * @return SubProduct
      */
     public function setPrice($price)
     {

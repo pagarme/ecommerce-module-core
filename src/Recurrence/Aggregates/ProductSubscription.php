@@ -212,7 +212,7 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @return SubProductSubscription[]
+     * @return SubProduct[]
      */
     public function getItems()
     {
@@ -220,10 +220,10 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @param SubProductSubscription $items
+     * @param SubProduct $items
      * @return ProductSubscription
      */
-    public function addItems(SubProductSubscription $items)
+    public function addItems(SubProduct $items)
     {
         $this->items[] = $items;
         return $this;
