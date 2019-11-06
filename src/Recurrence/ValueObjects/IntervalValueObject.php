@@ -16,9 +16,9 @@ class IntervalValueObject extends AbstractValueObject
     /** @var string */
     protected $intervalType;
 
-    protected function __construct($type, $intervalCount)
+    protected function __construct($intervalType, $intervalCount)
     {
-        $this->setIntervalType($type);
+        $this->setIntervalType($intervalType);
         $this->setIntervalCount($intervalCount);
     }
 
@@ -80,11 +80,11 @@ class IntervalValueObject extends AbstractValueObject
     }
 
     /**
-     * @param string $intervalType
+     * @param string $interval
      */
-    private function setIntervalType($intervalType)
+    private function setIntervalType($interval)
     {
-        $this->intervalType = $intervalType;
+        $this->intervalType = $interval;
     }
 
     /**

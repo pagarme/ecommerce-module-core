@@ -112,8 +112,8 @@ class DiscountValueObject extends AbstractValueObject
     public function jsonSerialize()
     {
         return [
-          'type' => $this->getDiscountType(),
-          'value' => $this->getDiscountValue()
+          'discountType' => $this->getDiscountType(),
+          'discountValue' => $this->getDiscountValue()
         ];
     }
 }
