@@ -176,7 +176,7 @@ class PlanFactory implements FactoryInterface
         $this->setCreatedAt($postData);
         $this->setStatus($postData);
         $this->setInterval();
-        $this->setSupProducts($postData);
+        //$this->setSupProducts($postData);
 
         return $this->plan;
     }
