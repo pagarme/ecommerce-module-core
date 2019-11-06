@@ -142,6 +142,14 @@ class PlanFactory implements FactoryInterface
         }
     }
 
+    private function setSubProducts($postData)
+    {
+        if (isset($postData['items'])) {
+            $this->plan->setItems($postData['items']);
+            return;
+        }
+    }
+
     /**
      *
      * @param  array $postData
@@ -168,6 +176,7 @@ class PlanFactory implements FactoryInterface
         $this->setCreatedAt($postData);
         $this->setStatus($postData);
         $this->setInterval();
+        $this->setSupProducts($postData);
 
         return $this->plan;
     }

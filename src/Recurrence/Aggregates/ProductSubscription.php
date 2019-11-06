@@ -24,7 +24,7 @@ class ProductSubscription extends AbstractEntity
     protected $repetitions;
     /** @var string */
     protected $billingType = self::PREPAID;
-    /** @var @var SubProductSubscription[] */
+    /** @var @var SubProduct[] */
     protected $items;
     /** @var @var string */
     protected $createdAt;
@@ -158,7 +158,7 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @return SubProductSubscription[]
+     * @return SubProduct[]
      */
     public function getItems()
     {
@@ -166,10 +166,10 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @param SubProductSubscription $items
+     * @param SubProduct $items
      * @return ProductSubscription
      */
-    public function addItems(SubProductSubscription $items)
+    public function addItems(SubProduct $items)
     {
         $this->items[] = $items;
         return $this;

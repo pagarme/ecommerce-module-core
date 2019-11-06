@@ -107,7 +107,7 @@ class ProductSubscriptionFactory implements FactoryInterface
     protected function setItems(&$productSubscription, $items)
     {
         foreach ($items as $item) {
-            $subProductFactory = new SubProductSubscriptionFactory();
+            $subProductFactory = new SubProductFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
             $productSubscription->addItems($subProduct);
         }
