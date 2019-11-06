@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
 
 class ProductSubscriptionService
 {
@@ -14,8 +15,8 @@ class ProductSubscriptionService
         }
         $productSubscription = $productSubscriptionFactory->createFromPostData($formData);
 
-//         $productSubscriptionRepository = new ProductSubscriptionRepository();
-//         $productSubscriptionRepository->save($productSubscription);
+         $productSubscriptionRepository = new ProductSubscriptionRepository();
+         $productSubscriptionRepository->save($productSubscription);
          return $productSubscription;
     }
 }

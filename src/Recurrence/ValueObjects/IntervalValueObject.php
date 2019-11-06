@@ -64,7 +64,7 @@ class IntervalValueObject extends AbstractValueObject
         $intValue = intval($intervalCount);
         if ($intValue <= 0) {
             throw new Exception(
-                "Interval frequency should be greater than 0: $intervalCount!"
+                "Interval count should be greater than 0: $intervalCount!"
             );
         }
         $this->intervalCount = $intValue;

@@ -14,39 +14,29 @@ use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 class ProductSubscriptionFactory implements FactoryInterface
 {
     /**
+     * @var ProductSubscription
+     */
+    protected $productSubscription;
+
+    public function __construct()
+    {
+        $this->productSubscription = new ProductSubscription();
+    }
+    /**
      *
      * @param array $postData
      * @return AbstractEntity
      */
     public function createFromPostData($postData)
     {
-        $productSubscription = new ProductSubscription();
+        $this->setId($postData);
+        $this->setProductId($postData);
+        $this->setIsEnabled($postData);
+        $this->setPaymentMethods($postData);
+        $this->setRepetitions( $postData);
+        $this->setItems($postData);
 
-        if (!empty($postData['id'])) {
-            $productSubscription->setId($postData['id']);
-        }
-
-        if (!empty($postData['product_bundle_id'])) {
-            $productSubscription->setProductId($postData['product_bundle_id']);
-        }
-
-        if (!empty($postData['enabled'])) {
-            $productSubscription->setIsEnabled($postData['enabled']);
-        }
-
-        if (!empty($postData['payment_methods'])) {
-            $this->setPaymentMethods($productSubscription, $postData);
-        }
-
-        if (!empty($postData['intervals'])) {
-            $this->setRepetitions($productSubscription, $postData['intervals']);
-        }
-
-        if (!empty($postData['itens'])) {
-            $this->setItems($productSubscription, $postData['itens']);
-        }
-
-        return $productSubscription;
+        return $this->productSubscription;
     }
 
     /**
@@ -59,24 +49,32 @@ class ProductSubscriptionFactory implements FactoryInterface
         // TODO: Implement createFromDbData() method.
     }
 
-    protected function setPaymentMethods(&$productSubscription, $postData)
+    protected function setPaymentMethods($postData)
     {
+        if (empty($postData['payment_methods'])) {
+            return;
+        }
+
         if (!empty($postData['payment_methods']['credit_card'])) {
-            $productSubscription->setAcceptCreditCard(true);
+            $this->productSubscription->setAcceptCreditCard(true);
 
             if (!empty($postData['allow_installments'])) {
-                $productSubscription->setAllowInstallments(true);
+                $this->productSubscription->setAllowInstallments(true);
             }
         }
 
         if (!empty($postData['payment_methods']['boleto'])) {
-            $productSubscription->setAcceptBoleto(true);
+            $this->productSubscription->setAcceptBoleto(true);
         }
     }
 
-    protected function setRepetitions(&$productSubscription, $repetitions)
+    protected function setRepetitions($postData)
     {
-        foreach ($repetitions as $repetition) {
+        if (empty($postData['intervals'])) {
+            return;
+        }
+
+        foreach ($postData['intervals'] as $repetition) {
 
             if (
                 empty($repetition['interval_count']) &&
@@ -87,8 +85,8 @@ class ProductSubscriptionFactory implements FactoryInterface
 
             $repetitionEntity = new Repetition();
 
-            if (!empty($productSubscription->getId())) {
-                $repetitionEntity->setSubscriptionId($productSubscription->getId());
+            if (!empty($this->productSubscription->getId())) {
+                $repetitionEntity->setSubscriptionId($this->productSubscription->getId());
             }
 
             $intervalType = $repetition['interval'];
@@ -100,16 +98,41 @@ class ProductSubscriptionFactory implements FactoryInterface
             $repetitionEntity->setInterval($interval);
             $repetitionEntity->setDiscount($discount);
 
-            $productSubscription->addRepetition($repetitionEntity);
+            $this->productSubscription->addRepetition($repetitionEntity);
         }
     }
 
-    protected function setItems(&$productSubscription, $items)
+    protected function setItems($postData)
     {
-        foreach ($items as $item) {
+        if (empty($postData['itens'])) {
+            return;
+        }
+
+        foreach ($postData['itens'] as $item) {
             $subProductFactory = new SubProductSubscriptionFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
-            $productSubscription->addItems($subProduct);
+            $this->productSubscription->addItems($subProduct);
+        }
+    }
+
+    public function setId($postData)
+    {
+        if (!empty($postData['id'])) {
+            $this->productSubscription->setId($postData['id']);
+        }
+    }
+
+    public function setProductId($postData)
+    {
+        if (!empty($postData['product_bundle_id'])) {
+            $this->productSubscription->setProductId($postData['product_bundle_id']);
+        }
+    }
+
+    public function setIsEnabled($postData)
+    {
+        if (!empty($postData['enabled'])) {
+            $this->productSubscription->setIsEnabled($postData['enabled']);
         }
     }
 }
