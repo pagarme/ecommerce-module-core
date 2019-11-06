@@ -3,16 +3,19 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 
 final class Plan extends AbstractEntity
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
 
-    protected $id;
+    protected $id = null;
     private $interval;
-    private $planId;
+    private $name;
+    private $description;
     private $productId;
     private $creditCard;
     private $boleto;
@@ -39,6 +42,38 @@ final class Plan extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
      * @return IntervalValueObject
      */
     public function getInterval()
@@ -55,22 +90,6 @@ final class Plan extends AbstractEntity
     }
 
     /**
-     * @return string
-     */
-    public function getPlanId()
-    {
-        return $this->planId;
-    }
-
-    /**
-     * @param string $planId
-     */
-    public function setPlanId($planId)
-    {
-        $this->planId = $planId;
-    }
-
-    /**
      * @return int
      */
     public function getProductId()
@@ -83,11 +102,17 @@ final class Plan extends AbstractEntity
      */
     public function setProductId($productId)
     {
+        if (!is_numeric($productId)) {
+            throw new InvalidParamException(
+                "Product id should be an integer!",
+                $productId
+            );
+        }
         $this->productId = $productId;
     }
 
     /**
-     * @return boolean
+     * @return string
      */
     public function getCreditCard()
     {
@@ -95,15 +120,21 @@ final class Plan extends AbstractEntity
     }
 
     /**
-     * @param bool $creditCard
+     * @param string $creditCard true or false
      */
     public function setCreditCard($creditCard)
     {
+        if ($creditCard != '1' && $creditCard != '0') {
+            throw new InvalidParamException(
+                "Credit card should be 1 or 0!",
+                $creditCard
+            );
+        }
         $this->creditCard = $creditCard;
     }
 
     /**
-     * @return boolean
+     * @return string true or false
      */
     public function getBoleto()
     {
@@ -111,10 +142,16 @@ final class Plan extends AbstractEntity
     }
 
     /**
-     * @param boolean $boleto
+     * @param string $boleto 1 or 0
      */
     public function setBoleto($boleto)
     {
+        if ($boleto != '1' && $boleto != '0') {
+            throw new InvalidParamException(
+                "Boleto should be 1 or 0",
+                $boleto
+            );
+        }
         $this->boleto = $boleto;
     }
 
@@ -127,10 +164,16 @@ final class Plan extends AbstractEntity
     }
 
     /**
-     * @param mixed $status
+     * @param string $status
      */
     public function setStatus($status)
     {
+        if (empty($status)) {
+            throw new InvalidParamException(
+                "Status should not be empty!",
+                $status
+            );
+        }
         $this->status = $status;
     }
 
@@ -147,11 +190,17 @@ final class Plan extends AbstractEntity
      */
     public function setBillingType($billingType)
     {
+        if (empty($billingType)) {
+            throw new InvalidParamException(
+                "Billing type should not be empty!",
+                $billingType
+            );
+        }
         $this->billingType = $billingType;
     }
 
     /**
-     * @return boolean
+     * @return int
      */
     public function getAllowInstallments()
     {
@@ -159,10 +208,16 @@ final class Plan extends AbstractEntity
     }
 
     /**
-     * @param boolean $allowInstallments
+     * @param string $allowInstallments 1 or 0
      */
     public function setAllowInstallments($allowInstallments)
     {
+        if ($allowInstallments != '1' && $allowInstallments != '0') {
+            throw new InvalidParamException(
+                "Allow installments should be 1 or 0!",
+                $allowInstallments
+            );
+        }
         $this->allowInstallments = $allowInstallments;
     }
 
@@ -198,7 +253,7 @@ final class Plan extends AbstractEntity
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
     }
 
-    protected function getIntervalType()
+    public function getIntervalType()
     {
         if ($this->getInterval() != null) {
             return $this->getInterval()->getIntervalType();
@@ -207,7 +262,7 @@ final class Plan extends AbstractEntity
         return null;
     }
 
-    protected function getIntervalCount()
+    public function getIntervalCount()
     {
         if ($this->getInterval() != null) {
             return $this->getInterval()->getIntervalCount();
@@ -228,7 +283,7 @@ final class Plan extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
-        $obj->planId = $this->getPlanId();
+        $obj->mundipaggId = $this->getMundipaggId();
         $obj->intervalType = $this->getIntervalType();
         $obj->intervalCount = $this->getIntervalCount();
         $obj->productId = $this->getProductId();

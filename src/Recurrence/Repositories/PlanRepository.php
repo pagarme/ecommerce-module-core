@@ -5,67 +5,51 @@ namespace Mundipagg\Core\Recurrence\Repositories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\Aggregates\SavedCard;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
+use Mundipagg\Core\Recurrence\Aggregates\Plan;
+use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 
 final class PlanRepository extends AbstractRepository
 {
-    public function findById()
-    {
-        /*$id = $customerId->getValue();
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "SELECT * FROM $table WHERE owner_id = '$id'";
-
-        $result = $this->db->fetch($query);
-
-        $factory = new SavedCardFactory();
-        $savedCards = [];
-        foreach ($result->rows as $row) {
-            $savedCards[] = $factory->createFromDbData($row);
-        }
-        return $savedCards;*/
-    }
-
-    /** @param SavedCard $object */
+    /** @param Plan $object */
     protected function create(AbstractEntity &$object)
     {
-        /*$table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-
-        $obj = json_decode(json_encode($object));
-
-        if ($object->getOwnerId() === null) {
-            throw new InvalidParamException('
-            You can\'t save a card without an onwer!' , null
-            );
-        }
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
 
         $query = "
           INSERT INTO $table 
             (
-                mundipagg_id, 
-                owner_id,
-                owner_name,
-                first_six_digits, 
-                last_four_digits,
-                brand,
-                created_at
+                interval_type, 
+                interval_count,
+                name,
+                description,
+                plan_id,
+                product_id,
+                credit_card,
+                installments,
+                boleto,
+                billing_type,
+                status
             )
           VALUES 
             (
-                '{$obj->mundipaggId}',
-                '{$obj->ownerId}',
-                '{$obj->ownerName}',
-                '{$obj->firstSixDigits}',
-                '{$obj->lastFourDigits}',
-                '{$obj->brand}',
-                '{$obj->createdAt}'
+                '{$object->getIntervalType()}',
+                '{$object->getIntervalCount()}',
+                '{$object->getName()}',
+                '{$object->getDescription()}',
+                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getProductId()}',
+                '{$object->getCreditCard()}',
+                '{$object->getAllowInstallments()}',
+                '{$object->getBoleto()}',
+                '{$object->getBillingType()}',
+                '{$object->getStatus()}'
             )          
         ";
 
-        $this->db->query($query)*/
+        $this->db->query($query);
     }
 
     protected function update(AbstractEntity &$object)
@@ -73,45 +57,53 @@ final class PlanRepository extends AbstractRepository
         // TODO: Implement update() method.
     }
 
-    public function delete(AbstractEntity $object)
-    {
-    }
-
+    /** @param Plan $object */
     public function find($objectId)
     {
-        /*$table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "SELECT * FROM $table WHERE id = '$objectId'";
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
+        $query = "SELECT * FROM $table WHERE id = '$id' LIMIT 1";
 
         $result = $this->db->fetch($query);
 
         if ($result->num_rows > 0) {
-            $factory = new SavedCardFactory();
-            $savedCard = $factory->createFromDbData($result->row);
+            $factory = new PlanFactory();
+            $plan = $factory->createFromDbData($result->row);
 
-            return $savedCard;
+            return $plan;
         }
-        return null;*/
+        return null;
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    /*public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        /*$id = $mundipaggId->getValue();
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
+        $id = $mundipaggId->getValue();
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
         $query = "SELECT * FROM $table WHERE mundipagg_id = '$id'";
 
         $result = $this->db->fetch($query);
 
         if ($result->num_rows > 0) {
-            $factory = new SavedCardFactory();
-            $savedCard = $factory->createFromDbData($result->row);
+            $factory = new CustomerFactory();
+            $customer = $factory->createFromDbData(end($result->rows));
 
-            return $savedCard;
+            return $customer;
         }
-        return null;*/
-    }
+        return null;
+    }*/
 
     public function listEntities($limit, $listDisabled)
     {
         // TODO: Implement listEntities() method.
+    }
+
+    public function delete(AbstractEntity $object)
+    {
+
+    }
+    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    {
+
     }
 }
