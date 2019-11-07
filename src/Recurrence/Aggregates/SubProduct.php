@@ -9,9 +9,11 @@ class SubProduct extends AbstractEntity
     /** @var int */
     protected $id;
     /** @var int */
-    protected $productRecurrenceId;
-    /** @var int */
     protected $productId;
+    /** @var int */
+    protected $productRecurrenceId;
+    /** @var string */
+    protected $recurrenceType;
     /** @var string */
     protected $name;
     /** @var string */
@@ -212,6 +214,7 @@ class SubProduct extends AbstractEntity
             "id" => $this->getId(),
             "productRecurrenceId" => $this->getProductRecurrenceId(),
             "productId" => $this->getProductId(),
+            "recurrenceType" => $this->getRecurrenceType(),
             "name" => $this->getName(),
             "description" => $this->getDescription(),
             "price" => $this->getPrice(),
@@ -238,6 +241,24 @@ class SubProduct extends AbstractEntity
     public function setPrice($price)
     {
         $this->price = $price;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRecurrenceType()
+    {
+        return $this->recurrenceType;
+    }
+
+    /**
+     * @param string $recurrenceType
+     * @return SubProduct
+     */
+    public function setRecurrenceType($recurrenceType)
+    {
+        $this->recurrenceType = $recurrenceType;
         return $this;
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mundipagg\Core\Recurrence\Factories;
-
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
@@ -14,6 +12,15 @@ use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 class SubProductFactory implements FactoryInterface
 {
     /**
+     * @var SubProduct
+     */
+    protected $subProduct;
+
+    public function __construct()
+    {
+        $this->subProduct = new SubProduct();
+    }
+    /**
      *
      * @param array $postData
      * @return AbstractEntity
@@ -21,41 +28,19 @@ class SubProductFactory implements FactoryInterface
      */
     public function createFromPostData($postData)
     {
-        $subProduct = new SubProduct();
+        $this->setId($postData);
+        $this->setProductId($postData);
+        $this->setProductRecurrenceId($postData);
+        $this->setRecurrenceType($postData);
+        $this->setName($postData);
+        $this->setDescription($postData);
+        $this->setPrice($postData);
+        $this->setQuantity($postData);
+        $this->setCycles($postData);
+        $this->setCreatedAt($postData);
+        $this->setUpdatedAt($postData);
 
-        if (!empty($postData['productRecurrenceId'])) {
-            $subProduct->setProductRecurrenceId($postData['productRecurrenceId']);
-        }
-
-        if (!empty($postData['id'])) {
-            $subProduct->setId($postData['id']);
-        }
-
-        if (!empty($postData['product_id'])) {
-            $subProduct->setProductId($postData['product_id']);
-        }
-
-        if (!empty($postData['name'])) {
-            $subProduct->setName($postData['name']);
-        }
-
-        if (!empty($postData['description'])) {
-            $subProduct->setDescription($postData['description']);
-        }
-
-        if (!empty($postData['price'])) {
-            $subProduct->setPrice($postData['price']);
-        }
-
-        if (!empty($postData['quantity'])) {
-            $subProduct->setQuantity($postData['quantity']);
-        }
-
-        if (!empty($postData['cycles'])) {
-            $subProduct->setCycles($postData['cycles']);
-        }
-
-        return $subProduct;
+        return $this->subProduct;
     }
 
     /**
@@ -65,6 +50,84 @@ class SubProductFactory implements FactoryInterface
      */
     public function createFromDbData($dbData)
     {
+        return $this->createFromPostData($dbData);
         // TODO: Implement createFromDbData() method.
+    }
+
+    public function setId($postData)
+    {
+        if (!empty($postData['id'])) {
+            $this->subProduct->setId($postData['id']);
+        }
+    }
+
+    public function setProductId($postData)
+    {
+        if (!empty($postData['product_id'])) {
+            $this->subProduct->setProductId($postData['product_id']);
+        }
+    }
+
+    public function setProductRecurrenceId($postData)
+    {
+        if (!empty($postData['product_recurrence_id'])) {
+            $this->subProduct->setProductRecurrenceId($postData['product_recurrence_id']);
+        }
+    }
+
+    public function setRecurrenceType($postData)
+    {
+        if (!empty($postData['recurrence_type'])) {
+            $this->subProduct->setRecurrenceType($postData['recurrence_type']);
+        }
+    }
+
+    public function setName($postData)
+    {
+        if (!empty($postData['name'])) {
+            $this->subProduct->setName($postData['name']);
+        }
+    }
+
+    public function setDescription($postData)
+    {
+        if (!empty($postData['description'])) {
+            $this->subProduct->setDescription($postData['description']);
+        }
+    }
+
+    public function setPrice($postData)
+    {
+        if (!empty($postData['price'])) {
+            $this->subProduct->setPrice($postData['price']);
+        }
+    }
+
+    public function setQuantity($postData)
+    {
+        if (!empty($postData['quantity'])) {
+            $this->subProduct->setQuantity($postData['quantity']);
+        }
+    }
+
+    public function setCycles($postData)
+    {
+        if (!empty($postData['cycles'])) {
+            $this->subProduct->setCycles($postData['cycles']);
+        }
+    }
+
+    public function setCreatedAt($postData)
+    {
+        if (!empty($postData['created_at'])) {
+            $this->subProduct->setCreatedAt($postData['created_at']);
+        }
+    }
+
+    public function setUpdatedAt($postData)
+    {
+        if (!empty($postData['updated_at'])) {
+            $this->subProduct->setUpdatedAt($postData['updated_at']);
+        }
     }
 }

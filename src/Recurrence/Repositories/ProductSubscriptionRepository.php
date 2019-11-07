@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Factories\RepetitionFactory;
+use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 
 class ProductSubscriptionRepository extends AbstractRepository
 {
@@ -38,9 +39,7 @@ class ProductSubscriptionRepository extends AbstractRepository
         $object->setId($this->db->getLastId());
 
         $this->saveRepetitions($object);
-
-//        $this->createSubProducts($object);
-
+        $this->saveSubProducts($object);
     }
 
     protected function update(AbstractEntity &$object)
@@ -62,6 +61,7 @@ class ProductSubscriptionRepository extends AbstractRepository
 
         $object->setId($this->db->getLastId());
         $this->saveRepetitions($object);
+        $this->saveSubProducts($object);
 
     }
 
@@ -71,6 +71,16 @@ class ProductSubscriptionRepository extends AbstractRepository
         foreach ($object->getRepetitions() as $repetition) {
             $repetition->setSubscriptionId($object->getId());
             $repetitionRepository->save($repetition);
+        }
+    }
+
+    public function saveSubProducts(AbstractEntity &$object)
+    {
+        $subProductRepository = new SubProductRepository();
+        foreach ($object->getItems() as $subProduct) {
+            $subProduct->setProductRecurrenceId($object->getId());
+            $subProduct->setRecurrenceType($object->getType());
+            $subProductRepository->save($subProduct);
         }
     }
 
@@ -91,14 +101,21 @@ class ProductSubscriptionRepository extends AbstractRepository
             return null;
         }
 
-        $repetitionRepository = new RepetitionRepository();
-        $repetitions = $repetitionRepository->findBySubscriptionId($objectId);
-
         $productSubscriptionFactory = new ProductSubscriptionFactory();
         $productSubscription = $productSubscriptionFactory->createFromDbData($result->row);
 
+        $repetitionRepository = new RepetitionRepository();
+        $repetitions = $repetitionRepository->findBySubscriptionId($objectId);
+
+        $subProductsRepository = new SubProductRepository();
+        $subProducts = $subProductsRepository->findByRecurrence($productSubscription);
+
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
+        }
+
+        foreach ($subProducts as $subProduct) {
+            $productSubscription->addItems($subProduct);
         }
 
         return $productSubscription;

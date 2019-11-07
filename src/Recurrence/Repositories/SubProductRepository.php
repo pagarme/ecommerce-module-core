@@ -7,27 +7,29 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Factories\RepetitionFactory;
+use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
+use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
 
-class RepetitionRepository extends AbstractRepository
+class SubProductRepository extends AbstractRepository
 {
 
     protected function create(AbstractEntity &$object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
 
         $query = "
             INSERT INTO $table (
-                `subscription_id`,
-                `interval`,
-                `interval_count`,
-                `discount_type`,
-                `discount_value`
+                `product_id`,
+                `product_recurrence_id`,
+                `recurrence_type`,
+                `cycles`,
+                `quantity`
             ) VALUES (
-                '{$object->getSubscriptionId()}',
-                '{$object->getIntervalType()}',
-                '{$object->getIntervalCount()}',
-                '{$object->getDiscountType()}',
-                '{$object->getDiscountValue()}'
+                '{$object->getProductId()}',
+                '{$object->getProductRecurrenceId()}',
+                '{$object->getRecurrenceType()}',
+                '{$object->getCycles()}',
+                '{$object->getQuantity()}'
             )
         ";
 
@@ -59,25 +61,27 @@ class RepetitionRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findBySubscriptionId($subscriptionId)
+    public function findByRecurrence(RecurrenceEntityInterface $recurrenceEntity)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
 
-        $query = "SELECT * FROM $table WHERE subscription_id = $subscriptionId";
+        $query = "SELECT * FROM $table" .
+            " WHERE product_recurrence_id = {$recurrenceEntity->getId()}" .
+            " AND recurrence_type = '{$recurrenceEntity->getRecurrenceType()}'";
 
         $result = $this->db->fetch($query);
-        $repetitions = [];
+        $subProducts = [];
 
         if ($result->num_rows === 0) {
-            return $repetitions;
+            return $subProducts;
         }
 
-        $repetitionFactory = new RepetitionFactory();
+        $subProductFactory = new SubProductFactory();
 
         foreach ($result->rows as $row) {
-            $repetitions[] = $repetitionFactory->createFromDbData($row);
+            $subProducts[] = $subProductFactory->createFromDbData($row);
         }
 
-        return $repetitions;
+        return $subProducts;
     }
 }

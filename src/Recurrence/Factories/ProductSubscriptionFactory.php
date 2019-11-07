@@ -87,13 +87,14 @@ class ProductSubscriptionFactory implements FactoryInterface
         foreach ($postData['items'] as $item) {
             $subProductFactory = new SubProductFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
+            $subProduct->setRecurrenceType($this->productSubscription->getType());
             $this->productSubscription->addItems($subProduct);
         }
     }
 
     private function setId($postData)
     {
-        if (isset($postData['id'])) {
+        if (!empty($postData['id'])) {
             $this->productSubscription->setId($postData['id']);
             return;
         }

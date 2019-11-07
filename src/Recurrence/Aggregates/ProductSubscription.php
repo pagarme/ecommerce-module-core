@@ -4,10 +4,12 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
 
-class ProductSubscription extends AbstractEntity
+class ProductSubscription extends AbstractEntity implements RecurrenceEntityInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
+    const RECURRENCE_TYPE = "subscription";
 
     /** @var int */
     protected $id = null;
@@ -267,5 +269,10 @@ class ProductSubscription extends AbstractEntity
         $obj->updatedAt = $this->getUpdatedAt();
 
         return $obj;
+    }
+
+    public function getRecurrenceType()
+    {
+        return self::RECURRENCE_TYPE;
     }
 }
