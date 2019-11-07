@@ -65,24 +65,6 @@ class ProductSubscription extends AbstractEntity
     }
 
     /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->isEnabled;
-    }
-
-    /**
-     * @param bool $isEnabled
-     * @return ProductSubscription
-     */
-    public function setIsEnabled($isEnabled)
-    {
-        $this->isEnabled = boolval($isEnabled);
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getCreditCard()

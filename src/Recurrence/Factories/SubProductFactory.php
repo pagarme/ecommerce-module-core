@@ -17,6 +17,7 @@ class SubProductFactory implements FactoryInterface
      *
      * @param array $postData
      * @return AbstractEntity
+     * @throws \Exception
      */
     public function createFromPostData($postData)
     {
@@ -54,7 +55,6 @@ class SubProductFactory implements FactoryInterface
             $subProduct->setCycles($postData['cycles']);
         }
 
-
         return $subProduct;
     }
 
@@ -66,44 +66,5 @@ class SubProductFactory implements FactoryInterface
     public function createFromDbData($dbData)
     {
         // TODO: Implement createFromDbData() method.
-    }
-
-    protected function setPaymentMethods(&$productSubscription, $postData)
-    {
-        if (!empty($postData['payment_method']['credit_card'])) {
-            $productSubscription->setAcceptCreditCard(true);
-
-            if (!empty($postData['allow_installments'])) {
-                $productSubscription->setAllowInstallments(true);
-            }
-        }
-
-        if (!empty($postData['payment_method']['boleto'])) {
-            $productSubscription->setAcceptBoleto(true);
-        }
-    }
-
-    protected function setRepetitions(&$productSubscription, $repetitions)
-    {
-        foreach ($repetitions as $repetition) {
-            if (!empty($repetition['interval_count'])) {
-                $repetitionEntity = new Repetition();
-
-                if (!empty($productSubscription->getId())) {
-                    $repetitionEntity->setSubscriptionId($productSubscription->getId());
-                }
-
-                $intervalType = $repetition['interval'];
-                $interval = IntervalValueObject::$intervalType($repetition['interval_count']);
-
-                $discountType = $repetition['discount_type'];
-                $discount = DiscountValueObject::$discountType($repetition['discount_value']);
-
-                $repetitionEntity->setInterval($interval);
-                $repetitionEntity->setDiscount($discount);
-
-                $productSubscription->addRepetition($repetitionEntity);
-            }
-        }
     }
 }

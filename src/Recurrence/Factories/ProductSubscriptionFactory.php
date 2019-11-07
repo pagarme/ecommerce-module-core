@@ -53,6 +53,7 @@ class ProductSubscriptionFactory implements FactoryInterface
      */
     public function createFromDbData($dbData)
     {
+        return $this->createFromPostData($dbData);
         // TODO: Implement createFromDbData() method.
     }
 
@@ -63,28 +64,15 @@ class ProductSubscriptionFactory implements FactoryInterface
         }
 
         foreach ($postData['intervals'] as $repetition) {
-
             if (
-                empty($repetition['interval_count']) &&
+                empty($repetition['interval_count']) ||
                 empty($repetition['interval'])
             ) {
                 continue;
             }
 
-            $repetitionEntity = new Repetition();
-
-            if (!empty($this->productSubscription->getId())) {
-                $repetitionEntity->setSubscriptionId($this->productSubscription->getId());
-            }
-
-            $intervalType = $repetition['interval'];
-            $interval = IntervalValueObject::$intervalType($repetition['interval_count']);
-
-            $discountType = $repetition['discount_type'];
-            $discount = DiscountValueObject::$discountType($repetition['discount_value']);
-
-            $repetitionEntity->setInterval($interval);
-            $repetitionEntity->setDiscount($discount);
+            $repetitionFactory = new RepetitionFactory();
+            $repetitionEntity = $repetitionFactory->createFromPostData($repetition);
 
             $this->productSubscription->addRepetition($repetitionEntity);
         }
@@ -92,11 +80,11 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     protected function setItems($postData)
     {
-        if (empty($postData['itens'])) {
+        if (empty($postData['items'])) {
             return;
         }
 
-        foreach ($postData['itens'] as $item) {
+        foreach ($postData['items'] as $item) {
             $subProductFactory = new SubProductFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
             $this->productSubscription->addItems($subProduct);
@@ -118,8 +106,8 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setCreditCard($postData)
     {
-        if (isset($postData['payment_methods']['credit_card'])) {
-            $creditCard = $postData['payment_methods']['credit_card'] == 'true' ? '1' : '0';
+        if (isset($postData['credit_card'])) {
+            $creditCard = !empty($postData['credit_card']) ? '1' : '0';
             $this->productSubscription->setCreditCard($creditCard);
             return;
         }
@@ -127,8 +115,8 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setBoleto($postData)
     {
-        if (isset($postData['payment_methods']['boleto'])) {
-            $boleto = $postData['payment_methods']['boleto'] == 'true' ? '1' : '0';
+        if (isset($postData['boleto'])) {
+            $boleto = !empty($postData['boleto']) ? '1' : '0';
             $this->productSubscription->setBoleto($boleto);
             return;
         }
@@ -136,8 +124,8 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setAllowInstallments($postData)
     {
-        if (isset($postData['allow_installments'])) {
-            $installments = $postData['allow_installments'] == 'true' ? '1' : '0';
+        if (isset($postData['installments'])) {
+            $installments = !empty($postData['installments']) ? '1' : '0';
             $this->productSubscription->setAllowInstallments($installments);
             return;
         }
@@ -145,8 +133,8 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setProductId($postData)
     {
-        if (isset($postData['product_bundle_id'])) {
-            $this->productSubscription->setProductId($postData['product_bundle_id']);
+        if (isset($postData['product_id'])) {
+            $this->productSubscription->setProductId($postData['product_id']);
             return;
         }
     }
