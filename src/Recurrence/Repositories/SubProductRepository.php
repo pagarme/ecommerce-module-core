@@ -76,9 +76,8 @@ class SubProductRepository extends AbstractRepository
             return $subProducts;
         }
 
-        $subProductFactory = new SubProductFactory();
-
         foreach ($result->rows as $row) {
+            $subProductFactory = new SubProductFactory();
             $subProducts[] = $subProductFactory->createFromDbData($row);
         }
 

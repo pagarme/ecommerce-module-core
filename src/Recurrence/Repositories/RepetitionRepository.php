@@ -72,9 +72,8 @@ class RepetitionRepository extends AbstractRepository
             return $repetitions;
         }
 
-        $repetitionFactory = new RepetitionFactory();
-
         foreach ($result->rows as $row) {
+            $repetitionFactory = new RepetitionFactory();
             $repetitions[] = $repetitionFactory->createFromDbData($row);
         }
 
