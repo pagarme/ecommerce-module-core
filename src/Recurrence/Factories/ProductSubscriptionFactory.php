@@ -39,9 +39,10 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setAllowInstallments($postData);
         $this->setBoleto($postData);
         $this->setBillingType($postData);
-        $this->setStatus($postData);
         $this->setRepetitions($postData);
         $this->setItems($postData);
+        $this->setUpdatedAt($postData);
+        $this->setCreatedAt($postData);
 
         return $this->productSubscription;
     }
@@ -87,7 +88,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         foreach ($postData['items'] as $item) {
             $subProductFactory = new SubProductFactory();
             $subProduct = $subProductFactory->createFromPostData($item);
-            $subProduct->setRecurrenceType($this->productSubscription->getType());
+            $subProduct->setRecurrenceType($this->productSubscription->getRecurrenceType());
             $this->productSubscription->addItems($subProduct);
         }
     }
@@ -152,14 +153,6 @@ class ProductSubscriptionFactory implements FactoryInterface
     {
         if (isset($postData['created_at'])) {
             $this->productSubscription->setCreatedAt(new \Datetime($postData['created_at']));
-            return;
-        }
-    }
-
-    private function setStatus($postData)
-    {
-        if (isset($postData['status'])) {
-            $this->productSubscription->setStatus($postData['status']);
             return;
         }
     }

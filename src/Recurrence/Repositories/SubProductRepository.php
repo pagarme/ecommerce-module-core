@@ -38,7 +38,19 @@ class SubProductRepository extends AbstractRepository
 
     protected function update(AbstractEntity &$object)
     {
-        // TODO: Implement update() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
+
+        $query = "
+            UPDATE $table SET
+                `product_id` = '{$object->getProductId()}',
+                `product_recurrence_id` = '{$object->getProductRecurrenceId()}',
+                `recurrence_type` = '{$object->getRecurrenceType()}',
+                `cycles` = '{$object->getCycles()}',
+                `quantity` = '{$object->getQuantity()}'
+            WHERE id = {$object->getId()}
+        ";
+
+        $this->db->query($query);
     }
 
     public function delete(AbstractEntity $object)

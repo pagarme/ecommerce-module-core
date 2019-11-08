@@ -8,12 +8,18 @@ use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class Repetition extends AbstractEntity
 {
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+
     /** @var DiscountValueObject */
     protected $discount;
     /** @var IntervalValueObject */
     protected $interval;
     /** @var int */
     protected $subscriptionId;
+    /** @var string */
+    protected $createdAt;
+    /** @var string */
+    protected $updatedAt;
 
     /**
      * @return DiscountValueObject
@@ -69,6 +75,38 @@ class Repetition extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+    }
+
     public function getDiscountType()
     {
         if ($this->getDiscount() !== null) {
@@ -111,11 +149,14 @@ class Repetition extends AbstractEntity
     public function jsonSerialize()
     {
         return [
+            'id' => $this->getId(),
             'subscriptionId' => $this->getSubscriptionId(),
             'intervalCount' => $this->getIntervalCount(),
             'intervalType' => $this->getIntervalType(),
             'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType()
+            'discountType' => $this->getDiscountType(),
+            "createdAt" => $this->getCreatedAt(),
+            "updatedAt" => $this->getUpdatedAt()
         ];
     }
 

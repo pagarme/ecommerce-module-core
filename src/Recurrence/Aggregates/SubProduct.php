@@ -6,6 +6,8 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 
 class SubProduct extends AbstractEntity
 {
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+
     /** @var int */
     protected $id;
     /** @var int */
@@ -174,13 +176,11 @@ class SubProduct extends AbstractEntity
     }
 
     /**
-     * @param string $createdAt
-     * @return SubProduct
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
-        $this->createdAt = $createdAt;
-        return $this;
+        $this->createdAt = $createdAt->format(self::DATE_FORMAT);
     }
 
     /**
@@ -192,13 +192,11 @@ class SubProduct extends AbstractEntity
     }
 
     /**
-     * @param string $updatedAt
-     * @return SubProduct
+     * @param \DateTime $updatedAt
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt)
     {
-        $this->updatedAt = $updatedAt;
-        return $this;
+        $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
     }
 
     /**

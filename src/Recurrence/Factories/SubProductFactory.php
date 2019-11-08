@@ -28,6 +28,10 @@ class SubProductFactory implements FactoryInterface
      */
     public function createFromPostData($postData)
     {
+        if (!is_array($postData)) {
+            return;
+        }
+
         $this->setId($postData);
         $this->setProductId($postData);
         $this->setProductRecurrenceId($postData);
@@ -120,14 +124,14 @@ class SubProductFactory implements FactoryInterface
     public function setCreatedAt($postData)
     {
         if (!empty($postData['created_at'])) {
-            $this->subProduct->setCreatedAt($postData['created_at']);
+            $this->subProduct->setCreatedAt(new \Datetime($postData['created_at']));
         }
     }
 
     public function setUpdatedAt($postData)
     {
         if (!empty($postData['updated_at'])) {
-            $this->subProduct->setUpdatedAt($postData['updated_at']);
+            $this->subProduct->setUpdatedAt(new \Datetime($postData['updated_at']));
         }
     }
 }

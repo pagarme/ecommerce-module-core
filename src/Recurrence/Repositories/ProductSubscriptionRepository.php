@@ -7,8 +7,6 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
-use Mundipagg\Core\Recurrence\Factories\RepetitionFactory;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 
 class ProductSubscriptionRepository extends AbstractRepository
 {
@@ -22,14 +20,12 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `credit_card`,
                 `installments`,
                 `boleto`,
-                `status`,
                 `billing_type`
             ) VALUES (
                 '{$object->getProductId()}',
                 '{$object->getCreditCard()}',
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
-                '{$object->getStatus()}',
                 '{$object->getBillingType()}'
             )
         ";
@@ -52,17 +48,14 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `credit_card` = '{$object->getCreditCard()}',
                 `installments` = '{$object->getAllowInstallments()}',
                 `boleto` = '{$object->getBoleto()}',
-                `status` = '{$object->getStatus()}',
                 `billing_type` = '{$object->getBillingType()}'
             WHERE id = {$object->getId()}
         ";
 
         $this->db->query($query);
 
-        $object->setId($this->db->getLastId());
         $this->saveRepetitions($object);
         $this->saveSubProducts($object);
-
     }
 
     public function saveRepetitions(AbstractEntity &$object)
@@ -79,7 +72,7 @@ class ProductSubscriptionRepository extends AbstractRepository
         $subProductRepository = new SubProductRepository();
         foreach ($object->getItems() as $subProduct) {
             $subProduct->setProductRecurrenceId($object->getId());
-            $subProduct->setRecurrenceType($object->getType());
+            $subProduct->setRecurrenceType($object->getRecurrenceType());
             $subProductRepository->save($subProduct);
         }
     }

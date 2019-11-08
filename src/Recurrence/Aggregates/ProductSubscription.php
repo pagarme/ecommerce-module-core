@@ -113,28 +113,6 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     /**
      * @return string
      */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param string $status
-     */
-    public function setStatus($status)
-    {
-        if (empty($status)) {
-            throw new InvalidParamException(
-                "Status should not be empty!",
-                $status
-            );
-        }
-        $this->status = $status;
-    }
-
-    /**
-     * @return string
-     */
     public function getBillingType()
     {
         return $this->billingType;
@@ -260,7 +238,6 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
         $obj->productId = $this->getProductId();
         $obj->creditCard = $this->getCreditCard();
         $obj->boleto = $this->getBoleto();
-        $obj->status = $this->getStatus();
         $obj->billintType = $this->getBillingType();
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->repetitions = $this->getRepetitions();
