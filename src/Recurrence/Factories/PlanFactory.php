@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Recurrence\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
+use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 
@@ -142,10 +143,23 @@ class PlanFactory implements FactoryInterface
         }
     }
 
-    private function setSubProducts($postData)
+    private function setItems($postData)
     {
-        if (isset($postData['items'])) {
-            $this->plan->setItems($postData['items']);
+        if (!empty($postData['items'])) {
+            foreach ($postData['items'] as $item) {
+                $subProduct = new SubProduct();
+
+                $subProduct->setProductRecurrenceId($this->plan->getProductId());
+                $subProduct->setName($item['name']);
+                $subProduct->setProductId($item['product_id']);
+                $subProduct->setDescription($item['description']);
+                $subProduct->setPrice($item['price']);
+                $subProduct->setQuantity($item['quantity']);
+                $items[] = $subProduct;
+
+            }
+
+            $this->plan->setItems($items);
             return;
         }
     }
@@ -176,7 +190,7 @@ class PlanFactory implements FactoryInterface
         $this->setCreatedAt($postData);
         $this->setStatus($postData);
         $this->setInterval();
-        //$this->setSupProducts($postData);
+        $this->setItems($postData);
 
         return $this->plan;
     }

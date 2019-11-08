@@ -96,9 +96,7 @@ class SubProduct extends AbstractEntity
      */
     public function setDescription($description)
     {
-        if (preg_match('/[^a-zA-Z0-9 ]+/i', $description)) {
-            throw new \Exception("The field description must not use special characters.");
-        }
+        $description = substr(strip_tags($description), 0, 256);
 
         $this->description = $description;
         return $this;
@@ -123,7 +121,7 @@ class SubProduct extends AbstractEntity
             throw new \Exception("The field name must not use special characters.");
         }
 
-        $this->name = $name;
+        $this->name = substr($name, 0, 256);
         return $this;
     }
 

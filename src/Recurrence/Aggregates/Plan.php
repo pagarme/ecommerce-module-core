@@ -25,6 +25,7 @@ final class Plan extends AbstractEntity
     private $createdAt;
     private $updatedAt;
     private $subProduct;
+    private $items;
 
     /**
      * @return int
@@ -40,6 +41,7 @@ final class Plan extends AbstractEntity
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -56,6 +58,7 @@ final class Plan extends AbstractEntity
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -72,6 +75,7 @@ final class Plan extends AbstractEntity
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -88,6 +92,7 @@ final class Plan extends AbstractEntity
     public function setInterval(IntervalValueObject $interval)
     {
         $this->interval = $interval;
+        return $this;
     }
 
     /**
@@ -110,6 +115,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->productId = $productId;
+        return $this;
     }
 
     /**
@@ -132,6 +138,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->creditCard = $creditCard;
+        return $this;
     }
 
     /**
@@ -154,6 +161,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->boleto = $boleto;
+        return $this;
     }
 
     /**
@@ -176,6 +184,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->status = $status;
+        return $this;
     }
 
     /**
@@ -198,6 +207,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->billingType = $billingType;
+        return $this;
     }
 
     /**
@@ -220,6 +230,7 @@ final class Plan extends AbstractEntity
             );
         }
         $this->allowInstallments = $allowInstallments;
+        return $this;
     }
 
     /**
@@ -236,6 +247,7 @@ final class Plan extends AbstractEntity
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
@@ -252,6 +264,7 @@ final class Plan extends AbstractEntity
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     public function getIntervalType()
@@ -270,6 +283,23 @@ final class Plan extends AbstractEntity
         }
 
         return null;
+    }
+
+    /**
+     * @param array $items An array of Subproducts aggregate
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * @return SubProduct
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     /**
