@@ -29,6 +29,11 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     private $subProduct;
     private $items;
 
+    public function getRecurrenceType()
+    {
+        return self::RECURRENCE_TYPE;
+    }
+
     /**
      * @return int
      */
@@ -329,10 +334,5 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         $obj->updatedAt = $this->getUpdatedAt();
 
         return $obj;
-    }
-
-    public function getRecurrenceType()
-    {
-        return self::RECURRENCE_TYPE;
     }
 }

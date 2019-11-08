@@ -147,14 +147,12 @@ class PlanFactory implements FactoryInterface
     {
         if (!empty($postData['items'])) {
             foreach ($postData['items'] as $item) {
-                $subProduct = new SubProduct();
+                $subProductFactory = new SubProductFactory();
+                $item['recurrence_type'] = $this->plan->getRecurrenceType();
 
-                $subProduct->setProductRecurrenceId($this->plan->getProductId());
-                $subProduct->setName($item['name']);
-                $subProduct->setProductId($item['product_id']);
-                $subProduct->setDescription($item['description']);
-                $subProduct->setPrice($item['price']);
-                $subProduct->setQuantity($item['quantity']);
+                $subProductFactory->setRecurrenceType($item);
+                $subProduct = $subProductFactory->createFromPostData($item);
+
                 $items[] = $subProduct;
 
             }
