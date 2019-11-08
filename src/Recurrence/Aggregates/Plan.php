@@ -4,13 +4,15 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 
-final class Plan extends AbstractEntity
+final class Plan extends AbstractEntity implements RecurrenceEntityInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
+    const RECURRENCE_TYPE = "plan";
 
     protected $id = null;
     private $interval;
@@ -327,5 +329,10 @@ final class Plan extends AbstractEntity
         $obj->updatedAt = $this->getUpdatedAt();
 
         return $obj;
+    }
+
+    public function getRecurrenceType()
+    {
+        return self::RECURRENCE_TYPE;
     }
 }
