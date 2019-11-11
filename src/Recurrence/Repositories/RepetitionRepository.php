@@ -53,7 +53,11 @@ class RepetitionRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        // TODO: Implement delete() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+
+        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+
+        $this->db->query($query);
     }
 
     public function find($objectId)

@@ -79,7 +79,32 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        // TODO: Implement delete() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+
+        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+
+        $result = $this->db->query($query);
+
+        $this->deleteRepetitions($object);
+        $this->deleteSubProducts($object);
+
+        return $result;
+    }
+
+    public function deleteRepetitions(AbstractEntity &$object)
+    {
+        $repetitionRepository = new RepetitionRepository();
+        foreach ($object->getRepetitions() as $repetition) {
+            $repetitionRepository->delete($repetition);
+        }
+    }
+
+    public function deleteSubProducts(AbstractEntity &$object)
+    {
+        $subProductRepository = new SubProductRepository();
+        foreach ($object->getItems() as $subProduct) {
+            $subProductRepository->delete($subProduct);
+        }
     }
 
     public function find($objectId)
