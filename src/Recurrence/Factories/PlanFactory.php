@@ -12,6 +12,8 @@ use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 class PlanFactory implements FactoryInterface
 {
     private $plan;
+    private $intervalType;
+    private $intervalCount;
 
     public function __construct()
     {
@@ -44,24 +46,26 @@ class PlanFactory implements FactoryInterface
 
     private function setId($postData)
     {
-        if (isset($postData['id'])) {
+        if (!empty($postData['id'])) {
             $this->plan->setId($postData['id']);
             return;
         }
+
+        $this->plan->setId(null);
     }
 
     private function setName($postData)
     {
-        if (isset($postData['product_bundle_name'])) {
-            $this->plan->setName($postData['product_bundle_name']);
+        if (isset($postData['name'])) {
+            $this->plan->setName($postData['name']);
             return;
         }
     }
 
     private function setDescription($postData)
     {
-        if (isset($postData['product_bundle_description'])) {
-            $this->plan->setDescription($postData['product_bundle_description']);
+        if (isset($postData['description'])) {
+            $this->plan->setDescription($postData['description']);
             return;
         }
     }
@@ -73,8 +77,8 @@ class PlanFactory implements FactoryInterface
 
     private function setCreditCard($postData)
     {
-        if (isset($postData['payment_methods']['credit_card'])) {
-            $creditCard = $postData['payment_methods']['credit_card'] == 'true' ? '1' : '0';
+        if (isset($postData['credit_card'])) {
+            $creditCard = $postData['credit_card'] == 'true' ? '1' : '0';
             $this->plan->setCreditCard($creditCard);
             return;
         }
@@ -82,8 +86,8 @@ class PlanFactory implements FactoryInterface
 
     private function setBoleto($postData)
     {
-        if (isset($postData['payment_methods']['boleto'])) {
-            $boleto = $postData['payment_methods']['boleto'] == 'true' ? '1' : '0';
+        if (isset($postData['boleto'])) {
+            $boleto = $postData['boleto'] == 'true' ? '1' : '0';
             $this->plan->setBoleto($boleto);
             return;
         }
@@ -91,8 +95,8 @@ class PlanFactory implements FactoryInterface
 
     private function setAllowInstallments($postData)
     {
-        if (isset($postData['allow_installments'])) {
-            $installments = $postData['allow_installments'] == 'true' ? '1' : '0';
+        if (isset($postData['installments'])) {
+            $installments = $postData['installments'] == 'true' ? '1' : '0';
             $this->plan->setAllowInstallments($installments);
             return;
         }
@@ -100,8 +104,8 @@ class PlanFactory implements FactoryInterface
 
     private function setProductId($postData)
     {
-        if (isset($postData['product_bundle_id'])) {
-            $this->plan->setProductId($postData['product_bundle_id']);
+        if (isset($postData['product_id'])) {
+            $this->plan->setProductId($postData['product_id']);
             return;
         }
     }

@@ -19,7 +19,7 @@ class PlanService
         );
     }
 
-    public function createPlanAtPlatform($postData)
+    public function create($postData)
     {
         $planFactory = new PlanFactory();
 
