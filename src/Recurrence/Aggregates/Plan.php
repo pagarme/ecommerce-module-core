@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use MundiAPILib\Models\CreatePlanRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
@@ -28,6 +29,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     private $updatedAt;
     private $subProduct;
     private $items;
+    private $trialPeriodDays;
 
     public function getRecurrenceType()
     {
@@ -310,6 +312,28 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getTrialPeriodDays()
+    {
+        return $this->trialPeriodDays;
+    }
+
+    /**
+     * @param mixed $trialPeriodDays
+     */
+    public function setTrialPeriodDays($trialPeriodDays)
+    {
+        if (!is_numeric($trialPeriodDays)) {
+            throw new InvalidParamException(
+                "Status should be an integer!",
+                $status
+            );
+        }
+        $this->trialPeriodDays = $trialPeriodDays;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -332,7 +356,39 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
+        $obj->trialPeriodDays = $this->getTrialPeriodDays();
+        $obj->items = $this->getItems();
 
         return $obj;
+    }
+
+    public function convertToSdkRequest()
+    {
+        $planRequest = new CreatePlanRequest();
+
+        $planRequest->description = $this->getDescription();
+        $planRequest->name = $this->getName();
+        $planRequest->intervalCount = $this->getIntervalCount();
+        $planRequest->interval = $this->getIntervalType();
+        $planRequest->billingType = $this->getBillingType();
+
+        if ($this->getCreditCard()) {
+            $planRequest->paymentMethods[] = 'credit_card';
+        }
+        if ($this->getBoleto()) {
+            $planRequest->paymentMethods[] = 'boleto';
+        }
+
+        //$planRequest->trialPeriodDays
+
+        $items = $this->getItems();
+        if ($items !== null) {
+            foreach ($items as $item) {
+                $itemsSdk[] = $item->convertToSDKRequest();
+            }
+            $planRequest->items = $itemsSdk;
+        }
+
+        return $planRequest;
     }
 }

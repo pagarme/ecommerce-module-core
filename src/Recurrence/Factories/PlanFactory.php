@@ -2,12 +2,15 @@
 
 namespace Mundipagg\Core\Recurrence\Factories;
 
+use Magento\Catalog\Block\Product\Price;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Mundipagg\Core\Recurrence\ValueObjects\DueValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 
 class PlanFactory implements FactoryInterface
 {
@@ -155,10 +158,12 @@ class PlanFactory implements FactoryInterface
                 $item['recurrence_type'] = $this->plan->getRecurrenceType();
 
                 $subProductFactory->setRecurrenceType($item);
+                $schemeType = 'UNIT';
+                $pricingScheme = PricingScheme::$schemeType($item['price']);
+                $item['pricing_scheme'] = $pricingScheme;
+
                 $subProduct = $subProductFactory->createFromPostData($item);
-
                 $items[] = $subProduct;
-
             }
 
             $this->plan->setItems($items);

@@ -34,7 +34,7 @@ class SubProductFactory implements FactoryInterface
         $this->setRecurrenceType($postData);
         $this->setName($postData);
         $this->setDescription($postData);
-        $this->setPrice($postData);
+        $this->setPricingScheme($postData);
         $this->setQuantity($postData);
         $this->setCycles($postData);
         $this->setCreatedAt($postData);
@@ -96,10 +96,10 @@ class SubProductFactory implements FactoryInterface
         }
     }
 
-    public function setPrice($postData)
+    public function setPricingScheme($postData)
     {
-        if (!empty($postData['price'])) {
-            $this->subProduct->setPrice($postData['price']);
+        if (!empty($postData['pricing_scheme'])) {
+            $this->subProduct->setPricingScheme($postData['pricing_scheme']);
         }
     }
 
