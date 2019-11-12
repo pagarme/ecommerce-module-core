@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use MundiAPILib\Models\CreatePlanRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
@@ -27,6 +28,13 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     private $createdAt;
     private $updatedAt;
     private $subProduct;
+    private $items;
+    private $trialPeriodDays;
+
+    public function getRecurrenceType()
+    {
+        return self::RECURRENCE_TYPE;
+    }
 
     /**
      * @return int
@@ -42,6 +50,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -58,6 +67,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -74,6 +84,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -90,6 +101,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setInterval(IntervalValueObject $interval)
     {
         $this->interval = $interval;
+        return $this;
     }
 
     /**
@@ -112,6 +124,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->productId = $productId;
+        return $this;
     }
 
     /**
@@ -134,6 +147,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->creditCard = $creditCard;
+        return $this;
     }
 
     /**
@@ -156,6 +170,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->boleto = $boleto;
+        return $this;
     }
 
     /**
@@ -178,6 +193,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->status = $status;
+        return $this;
     }
 
     /**
@@ -200,6 +216,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->billingType = $billingType;
+        return $this;
     }
 
     /**
@@ -222,6 +239,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
             );
         }
         $this->allowInstallments = $allowInstallments;
+        return $this;
     }
 
     /**
@@ -238,6 +256,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
@@ -254,6 +273,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     public function getIntervalType()
@@ -272,6 +292,45 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param array $items An array of Subproducts aggregate
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * @return SubProduct
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTrialPeriodDays()
+    {
+        return $this->trialPeriodDays;
+    }
+
+    /**
+     * @param mixed $trialPeriodDays
+     */
+    public function setTrialPeriodDays($trialPeriodDays)
+    {
+        if (!is_numeric($trialPeriodDays)) {
+            throw new InvalidParamException(
+                "Status should be an integer!",
+                $status
+            );
+        }
+        $this->trialPeriodDays = $trialPeriodDays;
     }
 
     /**
@@ -297,12 +356,39 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
+        $obj->trialPeriodDays = $this->getTrialPeriodDays();
+        $obj->items = $this->getItems();
 
         return $obj;
     }
 
-    public function getRecurrenceType()
+    public function convertToSdkRequest()
     {
-        return self::RECURRENCE_TYPE;
+        $planRequest = new CreatePlanRequest();
+
+        $planRequest->description = $this->getDescription();
+        $planRequest->name = $this->getName();
+        $planRequest->intervalCount = $this->getIntervalCount();
+        $planRequest->interval = $this->getIntervalType();
+        $planRequest->billingType = $this->getBillingType();
+
+        if ($this->getCreditCard()) {
+            $planRequest->paymentMethods[] = 'credit_card';
+        }
+        if ($this->getBoleto()) {
+            $planRequest->paymentMethods[] = 'boleto';
+        }
+
+        //$planRequest->trialPeriodDays
+
+        $items = $this->getItems();
+        if ($items !== null) {
+            foreach ($items as $item) {
+                $itemsSdk[] = $item->convertToSDKRequest();
+            }
+            $planRequest->items = $itemsSdk;
+        }
+
+        return $planRequest;
     }
 }

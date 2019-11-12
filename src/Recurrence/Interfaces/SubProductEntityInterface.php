@@ -2,9 +2,8 @@
 
 namespace Mundipagg\Core\Recurrence\Interfaces;
 
-interface RecurrenceEntityInterface
+interface SubProductEntityInterface
 {
-    public function getRecurrenceType();
     public function getId();
     public function convertToSdkRequest();
 }

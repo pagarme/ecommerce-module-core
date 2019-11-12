@@ -3,8 +3,10 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Recurrence\Interfaces\SubProductEntityInterface;
+use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 
-class SubProduct extends AbstractEntity
+class SubProduct extends AbstractEntity implements SubProductEntityInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
 
@@ -21,7 +23,7 @@ class SubProduct extends AbstractEntity
     /** @var string */
     protected $description;
     /** @var int */
-    protected $price;
+    protected $pricingScheme;
     /** @var int */
     protected $quantity;
     /** @var int */
@@ -100,9 +102,7 @@ class SubProduct extends AbstractEntity
      */
     public function setDescription($description)
     {
-        if (preg_match('/[^a-zA-Z0-9 ]+/i', $description)) {
-            throw new \Exception("The field description must not use special characters.");
-        }
+        $description = substr(strip_tags($description), 0, 256);
 
         $this->description = $description;
         return $this;
@@ -127,7 +127,7 @@ class SubProduct extends AbstractEntity
             throw new \Exception("The field name must not use special characters.");
         }
 
-        $this->name = $name;
+        $this->name = substr($name, 0, 256);
         return $this;
     }
 
@@ -215,7 +215,7 @@ class SubProduct extends AbstractEntity
             "recurrenceType" => $this->getRecurrenceType(),
             "name" => $this->getName(),
             "description" => $this->getDescription(),
-            "price" => $this->getPrice(),
+            "pricingScheme" => $this->getPricingScheme(),
             "cycles" => $this->getCycles(),
             "quantity" => $this->getQuantity(),
             "createdAt" => $this->getCreatedAt(),
@@ -226,9 +226,9 @@ class SubProduct extends AbstractEntity
     /**
      * @return int
      */
-    public function getPrice()
+    public function getPricingScheme()
     {
-        return $this->price;
+        return $this->pricingScheme;
     }
 
     /**
@@ -236,9 +236,9 @@ class SubProduct extends AbstractEntity
      * @param int $price
      * @return SubProduct
      */
-    public function setPrice($price)
+    public function setPricingScheme(PricingSchemeValueObject $pricingScheme)
     {
-        $this->price = $price;
+        $this->pricingScheme = $pricingScheme;
         return $this;
     }
 
@@ -258,5 +258,18 @@ class SubProduct extends AbstractEntity
     {
         $this->recurrenceType = $recurrenceType;
         return $this;
+    }
+
+    public function convertToSdkRequest()
+    {
+        $items = new \stdClass();
+        $items->name = $this->getName();
+        $items->description = $this->getDescription();
+        $items->pricing_scheme = $this->getPricingScheme();
+        $items->cycles = $this->getCycles();
+        $items->quantity = $this->getQuantity();
+        $items->plan_item_id = $this->getId();
+
+        return $items;
     }
 }

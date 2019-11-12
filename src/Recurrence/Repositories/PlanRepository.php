@@ -50,6 +50,9 @@ final class PlanRepository extends AbstractRepository
         ";
 
         $this->db->query($query);
+        $object->setId($this->db->getLastId());
+
+        $this->saveSubProducts($object);
     }
 
     protected function update(AbstractEntity &$object)
@@ -76,23 +79,6 @@ final class PlanRepository extends AbstractRepository
         return null;
     }
 
-    /*public function findByMundipaggId(AbstractValidString $mundipaggId)
-    {
-        $id = $mundipaggId->getValue();
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
-        $query = "SELECT * FROM $table WHERE mundipagg_id = '$id'";
-
-        $result = $this->db->fetch($query);
-
-        if ($result->num_rows > 0) {
-            $factory = new CustomerFactory();
-            $customer = $factory->createFromDbData(end($result->rows));
-
-            return $customer;
-        }
-        return null;
-    }*/
-
     public function listEntities($limit, $listDisabled)
     {
         // TODO: Implement listEntities() method.
@@ -105,5 +91,15 @@ final class PlanRepository extends AbstractRepository
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
 
+    }
+
+    public function saveSubProducts(AbstractEntity &$object)
+    {
+        $subProductRepository = new SubProductRepository();
+        foreach ($object->getItems() as $subProduct) {
+            $subProduct->setProductRecurrenceId($object->getId());
+            $subProduct->setRecurrenceType($object->getRecurrenceType());
+            $subProductRepository->save($subProduct);
+        }
     }
 }
