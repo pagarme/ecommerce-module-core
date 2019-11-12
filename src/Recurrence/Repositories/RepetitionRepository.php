@@ -36,7 +36,19 @@ class RepetitionRepository extends AbstractRepository
 
     protected function update(AbstractEntity &$object)
     {
-        // TODO: Implement update() method.
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+
+        $query = "
+            UPDATE $table SET
+                `subscription_id` = '{$object->getSubscriptionId()}',
+                `interval` = '{$object->getIntervalType()}',
+                `interval_count` = '{$object->getIntervalCount()}',
+                `discount_type` = '{$object->getDiscountType()}',
+                `discount_value` = '{$object->getDiscountValue()}'
+            WHERE id = {$object->getId()}
+        ";
+
+        $this->db->query($query);
     }
 
     public function delete(AbstractEntity $object)
