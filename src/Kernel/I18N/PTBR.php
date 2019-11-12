@@ -57,6 +57,8 @@ class PTBR extends AbstractI18NTable
             'months' => "meses",
             'year' => "ano",
             'years' => "anos",
+            'discount' => "desconto",
+            'Credit Card' => "Cartão de Crédito",
         ];
     }
 }

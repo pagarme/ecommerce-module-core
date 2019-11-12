@@ -252,4 +252,9 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     {
         return self::RECURRENCE_TYPE;
     }
+
+    public function convertToSdkRequest()
+    {
+        // TODO: Implement convertToSdkRequest() method.
+    }
 }

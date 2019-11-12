@@ -8,6 +8,7 @@ use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 
 class SubProductFactory implements FactoryInterface
 {
@@ -102,8 +103,12 @@ class SubProductFactory implements FactoryInterface
 
     public function setPricingScheme($postData)
     {
-        if (!empty($postData['pricing_scheme'])) {
-            $this->subProduct->setPricingScheme($postData['pricing_scheme']);
+        if (!empty($postData['price'])) {
+
+            $schemeType = !empty($postData['price_type']) ? $postData['price_type'] : 'UNIT';
+            $pricingScheme = PricingScheme::$schemeType($postData['price']);
+
+            $this->subProduct->setPricingScheme($pricingScheme);
         }
     }
 

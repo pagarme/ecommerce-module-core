@@ -57,6 +57,8 @@ class ENUS extends AbstractI18NTable
             'months' => null,
             'year' => null,
             'years' => null,
+            'discount' => null,
+            'Credit Card' => null,
         ];
     }
 }
