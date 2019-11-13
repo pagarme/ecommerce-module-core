@@ -371,7 +371,6 @@ final class Charge extends AbstractEntity
     public function updateTransaction(Transaction $updatedTransaction, $overwriteId = false)
     {
         $transactions = $this->getTransactions();
-
         foreach ($transactions as &$transaction) {
             if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId())) {
                 $transactionId = $transaction->getId();

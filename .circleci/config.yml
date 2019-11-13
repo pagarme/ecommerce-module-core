@@ -1,0 +1,65 @@
+version: 2.1
+
+commands:
+  build:
+    steps:
+      - checkout
+      - run:
+          name: Install system packages
+          command: apt-get update && apt-get -y install zip git zlib1g-dev wget
+      - run:
+          name: Install PHP extensions
+          command: |
+            docker-php-ext-install pdo
+            docker-php-ext-install zip
+#            pecl install xdebug-2.6.0
+#            docker-php-ext-enable xdebug
+      - run:
+          name: Display PHP information
+          command: |
+            php -v
+      - run:
+          name: Check PHP sintax
+          command: find . -name \*.php -exec php -l "{}" \;
+      - run:
+          name: Download composer
+          command: |
+            php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
+            php composer-setup.php
+      - run:
+          name: Mock hook-git
+          command: mkdir -p .git/hooks
+      - run:
+          name: Install dependecy-composer
+          command: php composer.phar install
+      - run:
+          name: Run PHPUnit
+          command: vendor/bin/phpunit
+      - persist_to_workspace:
+          root: /
+          paths:
+            - app
+jobs:
+  build-php56:
+    working_directory: /app
+    docker:
+      - image: php:5.6-apache
+        environment:
+          APP_ENV: test
+    steps:
+      - build
+
+  build-php72:
+    working_directory: /app
+    docker:
+      - image: php:7.2-apache
+        environment:
+          APP_ENV: test
+    steps:
+      - build
+
+workflows:
+  build_publish_deploy:
+    jobs:
+      - build-php56
+      - build-php72

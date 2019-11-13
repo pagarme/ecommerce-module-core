@@ -120,7 +120,7 @@ final class Transaction extends AbstractEntity
      *
      * @param int $amount
      */
-    public function setPaidAmount(int $paidAmount)
+    public function setPaidAmount($paidAmount)
     {
         if ($paidAmount < 0) {
             throw new InvalidParamException(
@@ -145,7 +145,7 @@ final class Transaction extends AbstractEntity
      *
      * @param int $amount
      */
-    public function setAmount(int $amount)
+    public function setAmount($amount)
     {
         if ($amount < 0) {
             throw new InvalidParamException(
