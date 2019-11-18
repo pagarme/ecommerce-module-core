@@ -1,6 +1,6 @@
 {
   "name": "mundipagg/ecommerce-module-core",
-  "description": "Core component for Mundipagg e-commerce platforms modules.",
+  "description": "Core component for Mundipagg e-commerce platform modules.",
   "license": "MIT",
   "version": "1.10.8",
   "authors": [
@@ -12,7 +12,7 @@
   "type": "library",
   "require": {
     "php": ">=5.6",
-    "monolog/monolog": "~1.6",
+    "monolog/monolog": "1.0",
     "mundipagg/mundiapi": "^3.0",
     "ext-json": "*"
   },

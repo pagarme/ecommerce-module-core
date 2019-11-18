@@ -50,7 +50,15 @@ class PTBR extends AbstractI18NTable
             "state" => "estado",
             "document" => "CPF",
             "Can't create order." => "Não foi possível criar o pedido",
-            'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
+            'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválidas. Preencha as configurações de endereço no painel de administração',
+            'week' => "semana",
+            'weeks' => "semanas",
+            'month' => "mês",
+            'months' => "meses",
+            'year' => "ano",
+            'years' => "anos",
+            'discount' => "desconto",
+            'Credit Card' => "Cartão de Crédito",
         ];
     }
 }

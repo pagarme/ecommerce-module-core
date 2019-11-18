@@ -12,9 +12,10 @@ abstract class AbstractDatabaseDecorator
     const TABLE_HUB_INSTALL_TOKEN = 5;
     const TABLE_SAVED_CARD = 6;
     const TABLE_CUSTOMER = 7;
-    const TABLE_TEMPLATE = 8;
-    const TABLE_TEMPLATE_REPETITION = 9;
-    const TABLE_RECURRENCE_CHARGE = 12;
+    const TABLE_RECURRENCE_PRODUCTS_PLAN = 8;
+    const TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION = 9;
+    const TABLE_RECURRENCE_SUB_PRODUCTS = 10;
+    const TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION = 11;
 
     protected $db;
     protected $tablePrefix;
