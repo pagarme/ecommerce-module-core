@@ -288,6 +288,6 @@ final class OrderService
             }
         }
 
-        return;
+        return true;
     }
 }
