@@ -28,7 +28,6 @@ class PricingSchemeValueObject extends AbstractValueObject
         return $this;
     }
 
-
     /**
      * @return mixed
      */
@@ -67,7 +66,6 @@ class PricingSchemeValueObject extends AbstractValueObject
     public function getPrice()
     {
         return $this->price;
-
     }
 
     /**
