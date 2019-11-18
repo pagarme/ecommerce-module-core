@@ -12,62 +12,62 @@ class IntervalValueObject extends AbstractValueObject
     const INTERVAL_TYPE_YEAR = 'year';
 
     /** @var int */
-    protected $frequency;
+    protected $intervalCount;
     /** @var string */
     protected $intervalType;
 
-    protected function __construct($type, $frequency)
+    protected function __construct($intervalType, $intervalCount)
     {
-        $this->setIntervalType($type);
-        $this->setFrequency($frequency);
+        $this->setIntervalType($intervalType);
+        $this->setIntervalCount($intervalCount);
     }
 
-    public static function week($frequency)
+    public static function week($intervalCount)
     {
         return new IntervalValueObject(
             self::INTERVAL_TYPE_WEEK,
-            $frequency
+            $intervalCount
         );
     }
 
-    public static function month($frequency)
+    public static function month($intervalCount)
     {
         return new IntervalValueObject(
             self::INTERVAL_TYPE_MONTH,
-            $frequency
+            $intervalCount
         );
     }
 
-    public static function year($frequency)
+    public static function year($intervalCount)
     {
         return new IntervalValueObject(
             self::INTERVAL_TYPE_YEAR,
-            $frequency
+            $intervalCount
         );
     }
 
     /**
      * @return int
      */
-    public function getFrequency()
+    public function getIntervalCount()
     {
-        return $this->frequency;
+        return $this->intervalCount;
     }
 
     /**
-     * @param int $frequency
+     * @param int $intervalCount
      * @return IntervalValueObject
      * @throws Exception
      */
-    private function setFrequency($frequency)
+    private function setIntervalCount($intervalCount)
     {
-        $intValue = intval($frequency);
+        $intValue = intval($intervalCount);
         if ($intValue <= 0) {
             throw new Exception(
-                "Interval frequency should be greater than 0: $frequency!"
+                "Interval count should be greater than 0: $intervalCount!"
             );
         }
-        $this->frequency = $intValue;
+        $this->intervalCount = $intValue;
         return $this;
     }
 
@@ -80,11 +80,11 @@ class IntervalValueObject extends AbstractValueObject
     }
 
     /**
-     * @param string $intervalType
+     * @param string $interval
      */
-    private function setIntervalType($intervalType)
+    private function setIntervalType($interval)
     {
-        $this->intervalType = $intervalType;
+        $this->intervalType = $interval;
     }
 
     /**
@@ -98,7 +98,7 @@ class IntervalValueObject extends AbstractValueObject
     {
         return
             $this->getIntervalType() === $object->getIntervalType() &&
-            $this->getFrequency() === $object->getFrequency();
+            $this->getIntervalCount() === $object->getIntervalCount();
     }
 
     /**
@@ -112,7 +112,7 @@ class IntervalValueObject extends AbstractValueObject
     {
         return [
             'intervalType' => $this->getIntervalType(),
-            'frequency' => $this->getFrequency()
+            'intervalCount' => $this->getIntervalCount()
         ];
     }
 }
