@@ -21,6 +21,8 @@ final class TransactionStatus extends AbstractValueObject
     const PAID = 'paid';
     const OVERPAID = 'overpaid';
 
+    const PARTIAL_REFUNDED = 'partial_refunded';
+
     /**
      *
      * @var string 
@@ -35,6 +37,11 @@ final class TransactionStatus extends AbstractValueObject
     private function __construct($status)
     {
         $this->setStatus($status);
+    }
+
+    public static function partialRefunded()
+    {
+        return new self(self::PARTIAL_REFUNDED);
     }
 
     public static function partialCapture()

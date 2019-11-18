@@ -8,8 +8,9 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 
-final class Charge extends AbstractEntity
+final class Charge extends AbstractEntity implements ChargeInterface
 {
     use WithCustomerTrait;
 

@@ -14,6 +14,7 @@ abstract class AbstractDatabaseDecorator
     const TABLE_CUSTOMER = 7;
     const TABLE_TEMPLATE = 8;
     const TABLE_TEMPLATE_REPETITION = 9;
+    const TABLE_RECURRENCE_CHARGE = 12;
 
     protected $db;
     protected $tablePrefix;

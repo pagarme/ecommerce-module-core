@@ -19,7 +19,7 @@ class Invoice extends AbstractEntity
      */
     public function getSubscriptionId()
     {
-        return $this->mundipaggId;
+        return $this->subscriptionId;
     }
 
     /**
@@ -31,6 +31,13 @@ class Invoice extends AbstractEntity
     {
         $this->subscriptionId = $subscriptionId;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'subscriptionId' => $this->getSubscriptionId()
+        ];
     }
 
 }

@@ -5,11 +5,14 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Kernel\Aggregates\Transaction;
+use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 
-final class Charge extends AbstractEntity
+final class Charge extends AbstractEntity implements ChargeInterface
 {
     use WithCustomerTrait;
 
@@ -53,6 +56,11 @@ final class Charge extends AbstractEntity
     private $status;
 
     /**
+     * @var PaymentMethod
+     */
+    private $paymentMethod;
+
+    /**
      *
      * @var Transaction[] 
      */
@@ -66,6 +74,16 @@ final class Charge extends AbstractEntity
      * @var Invoice
      */
     private $invoice;
+
+    /**
+     * @var \Datetime
+     */
+    private $cycleStart;
+
+    /**
+     * @var \Datetime
+     */
+    private $cycleEnd;
 
     /**
      *
@@ -177,6 +195,48 @@ final class Charge extends AbstractEntity
         }
 
         return $this->paidAmount;
+    }
+
+    public function setCycleStart(\DateTime $cycleStart)
+    {
+        $this->cycleStart = $cycleStart;
+        return $this;
+    }
+
+    /**
+     * @return null|\DateTime
+     */
+    public function getCycleStart()
+    {
+        return $this->cycleStart;
+    }
+
+    public function setCycleEnd(\DateTime $cycleEnd)
+    {
+        $this->cycleEnd = $cycleEnd;
+        return $this;
+    }
+
+    /**
+     * @return null|\DateTime
+     */
+    public function getCycleEnd()
+    {
+        return $this->cycleEnd;
+    }
+
+    public function setPaymentMethod(PaymentMethod $paymentMethod)
+    {
+        $this->paymentMethod = $paymentMethod;
+        return $this;
+    }
+
+    /**
+     * @return PaymentMethod
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
     }
 
     /**

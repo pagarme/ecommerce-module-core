@@ -12,9 +12,12 @@ class InvoiceFactory implements FactoryInterface
 {
     public function createFromPostData($postData)
     {
+
         $postData = json_decode(json_encode($postData));
+
         $invoice = new Invoice();
 
+        //invoiceId
         $invoice->setMundipaggId(new InvoiceId($postData->id));
         $invoice->setSubscriptionId(new SubscriptionId($postData->subscriptionId));
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Repositories;
+namespace Mundipagg\Core\Recurrence\Repositories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
@@ -9,13 +9,13 @@ use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Kernel\Repositories\TransactionRepository;
 
 final class ChargeRepository extends AbstractRepository
 {
-
     public function findByOrderId(OrderId $orderId)
     {
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
         $id = $orderId->getValue();
@@ -23,6 +23,7 @@ final class ChargeRepository extends AbstractRepository
         $query = "
             SELECT 
                 c.*, 
+                GROUP_CONCAT(c.id) as id, 
                 GROUP_CONCAT(t.id) as tran_id, 
                 GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
@@ -69,17 +70,15 @@ final class ChargeRepository extends AbstractRepository
      */
     protected function create(AbstractEntity &$object)
     {
-      //  die('caiu aqui2 ');
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
-
-        $simpleObject = json_decode(json_encode($object));
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
 
         $query = "
           INSERT INTO 
             $chargeTable 
             (
                 mundipagg_id, 
-                order_id, 
+                invoice_id,
+                subscription_id, 
                 code, 
                 amount, 
                 paid_amount,
@@ -87,25 +86,32 @@ final class ChargeRepository extends AbstractRepository
                 refunded_amount,
                 status,
                 metadata,
-                customer_id
+                payment_method,
+                boleto_link,
+                cycle_start,
+                cycle_end
             )
           VALUES 
         ";
 
-        $metadata = json_encode($simpleObject->metadata);
+        $metadata = \json_encode($object->getMetadata());
 
         $query .= "
             (
-                '{$simpleObject->mundipaggId}',
-                '{$simpleObject->orderId}',
-                '{$simpleObject->code}',
-                {$simpleObject->amount},
-                {$simpleObject->paidAmount},
-                {$simpleObject->canceledAmount},
-                {$simpleObject->refundedAmount},
-                '{$simpleObject->status}',
-                '{$metadata}',
-                '{$simpleObject->customerId}'
+                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getInvoice()->getMundipaggId()->getValue()}',
+                '{$object->getInvoice()->getSubscriptionId()->getValue()}',
+                '{$object->getCode()}',
+                {$object->getAmount()},
+                {$object->getPaidAmount()},
+                {$object->getCanceledAmount()},
+                {$object->getRefundedAmount()},
+                '{$object->getStatus()->getStatus()}',
+                '{$metadata}', 
+                '{$object->getPaymentMethod()->getPaymentMethod()}',
+                'boleto_link',
+               '{$object->getCycleStart()->format('Y-m-d H:i:s')}',
+               '{$object->getCycleEnd()->format('Y-m-d H:i:s')}' 
             );
         ";
 
@@ -121,7 +127,7 @@ final class ChargeRepository extends AbstractRepository
     protected function update(AbstractEntity &$object)
     {
         $charge = json_decode(json_encode($object));
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
 
         $metadata = json_encode($charge->metadata);
 
@@ -164,7 +170,8 @@ final class ChargeRepository extends AbstractRepository
 
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
+
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
         $id = $mundipaggId->getValue();
@@ -201,7 +208,7 @@ final class ChargeRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new ChargeFactory();
+        $factory = new \Mundipagg\Core\Recurrence\Factories\ChargeFactory();
 
         return $factory->createFromDbData($result->row);
     }

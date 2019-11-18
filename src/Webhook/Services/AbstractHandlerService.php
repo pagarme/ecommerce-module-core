@@ -15,36 +15,43 @@ use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 abstract class AbstractHandlerService
 {
     /**
-     *
      * @var Order
      */
     protected $order;
 
+    public function getActionHandle($action)
+    {
+        $baseActions = explode('_', $action);
+        $action = '';
+        foreach ($baseActions as $baseAction) {
+            $action .= ucfirst($baseAction);
+        }
+
+        return 'handle' . $action;
+    }
+
+    public function validateWebhookHandling($entityType)
+    {
+        $validEntity = $this->getValidEntity();
+        if ($entityType !== $validEntity) {
+            throw new InvalidParamException(
+                self::class . ' only supports ' . $validEntity . ' type webhook handling!',
+                $entityType . '.(action)'
+            );
+        }
+    }
+
     /**
-     *
-     * @param  Webhook $webhook
+     * @param Webhook $webhook
      * @return mixed
      * @throws InvalidParamException
      * @throws NotFoundException
      */
     public function handle(Webhook $webhook)
     {
-        $entityType = $webhook->getType()->getEntityType();
-        $validEntity = $this->getValidEntity();
-        if ($entityType !== $validEntity) {
-            throw new InvalidParamException(
-                self::class . ' only supports '. $validEntity .' type webhook handling!',
-                $entityType . '.(action)'
-            );
-        }
+       // $this->validateWebhookHandling($webhook->getType()->getEntityType());
+        $handler = $this->getActionHandle($webhook->getType()->getAction());
 
-        $baseActions = explode('_', $webhook->getType()->getAction());
-        $action = '';
-        foreach ($baseActions as $baseAction) {
-            $action .= ucfirst($baseAction);
-        }
-
-        $handler = 'handle' . $action;
         if (method_exists($this, $handler)) {
             $this->loadOrder($webhook);
             $platformOrder = $this->order->getPlatformOrder();
@@ -63,7 +70,7 @@ abstract class AbstractHandlerService
 
     /**
      *
-     * @return string 
+     * @return string
      */
     protected function getValidEntity()
     {
