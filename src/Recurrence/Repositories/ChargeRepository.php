@@ -109,7 +109,7 @@ final class ChargeRepository extends AbstractRepository
                 '{$object->getStatus()->getStatus()}',
                 '{$metadata}', 
                 '{$object->getPaymentMethod()->getPaymentMethod()}',
-                'boleto_link',
+                '{$object->getLastTransaction()->getBoletoUrl()}',
                '{$object->getCycleStart()->format('Y-m-d H:i:s')}',
                '{$object->getCycleEnd()->format('Y-m-d H:i:s')}' 
             );
