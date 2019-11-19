@@ -49,7 +49,6 @@ abstract class AbstractHandlerService
      */
     public function handle(Webhook $webhook)
     {
-       // $this->validateWebhookHandling($webhook->getType()->getEntityType());
         $handler = $this->getActionHandle($webhook->getType()->getAction());
 
         if (method_exists($this, $handler)) {
