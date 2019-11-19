@@ -25,12 +25,17 @@ final class SubscriptionStatus extends AbstractValueObject
         $this->setStatus($status);
     }
 
-    static public function active()
+    public static function active()
     {
         return new self(self::ACTIVE);
     }
 
-    static public function future()
+    public static function canceled()
+    {
+        return new self(self::CANCELED);
+    }
+
+    public static function future()
     {
         return new self(self::FUTURE);
     }
