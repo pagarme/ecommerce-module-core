@@ -102,4 +102,30 @@ final class PlanRepository extends AbstractRepository
             $subProductRepository->save($subProduct);
         }
     }
+
+    public function findByProductId($productId)
+    {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
+        $query = "SELECT * FROM $table WHERE product_id = '$productId' LIMIT 1";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows == 0) {
+            return null;
+        }
+
+        $factory = new PlanFactory();
+        $plan = $factory->createFromDbData($result->row);
+
+        $subProductsRepository = new SubProductRepository();
+        $subProducts = $subProductsRepository->findByRecurrence($plan);
+
+        foreach ($subProducts as $subProduct) {
+            $plan->addItems($subProduct);
+        }
+
+        return $plan;
+    }
 }
