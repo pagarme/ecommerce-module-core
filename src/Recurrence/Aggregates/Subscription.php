@@ -3,15 +3,20 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class Subscription extends AbstractEntity
 {
     use WithCustomerTrait;
+
+    const RECURRENCE_TYPE = "subscription";
 
     /**
      * @var SubscriptionId
@@ -38,8 +43,6 @@ class Subscription extends AbstractEntity
      */
     private $paymentMethod;
 
-    private $recurrenceType;
-
     private $intervalType;
 
     private $intervalCount;
@@ -48,6 +51,11 @@ class Subscription extends AbstractEntity
      * @var PlanId
      */
     private $planId;
+
+    /**
+     * @var Order
+     */
+    private $platformOrder;
 
     /**
      * @return SubscriptionId
@@ -125,18 +133,12 @@ class Subscription extends AbstractEntity
         return $this->paymentMethod;
     }
 
-    public function setRecurrenceType($recurrenceType)
-    {
-        $this->recurrenceType = $recurrenceType;
-        return $this;
-    }
-
     public function getRecurrenceType()
     {
-        return $this->recurrenceType;
+        return self::RECURRENCE_TYPE;
     }
 
-    public function setIntervalType($intervalType)
+    public function setIntervalType(IntervalValueObject $intervalType)
     {
         $this->intervalType = $intervalType;
         return $this;
@@ -145,17 +147,6 @@ class Subscription extends AbstractEntity
     public function getIntervalType()
     {
         return $this->intervalType;
-    }
-
-    public function setIntervalCount($intervalCount)
-    {
-        $this->intervalCount = $intervalCount;
-        return $this;
-    }
-
-    public function getIntervalCount()
-    {
-        return $this->intervalCount;
     }
 
     public function setPlanId(PlanId $planId)
@@ -167,6 +158,46 @@ class Subscription extends AbstractEntity
     public function getPlanId()
     {
         return $this->planId;
+    }
+
+    /**
+     *
+     * @return PlatformOrderInterface
+     */
+    public function getPlatformOrder()
+    {
+        return $this->platformOrder;
+    }
+
+    /**
+     *
+     * @param  PlatformOrderInterface $platformOrder
+     * @return Order
+     */
+    public function setPlatformOrder(PlatformOrderInterface $platformOrder)
+    {
+        $this->platformOrder = $platformOrder;
+        return $this;
+    }
+
+    /**
+     *
+     * @return Cycle
+     */
+    public function getCycle()
+    {
+        return $this->cycle;
+    }
+
+    /**
+     *
+     * @param  Cycle $cycle
+     * @return \Mundipagg\Core\Kernel\Aggregates\Subscription
+     */
+    public function setCycle(Cycle $cycle)
+    {
+        $this->cycle = $cycle;
+        return $this;
     }
 
     public function jsonSerialize()
