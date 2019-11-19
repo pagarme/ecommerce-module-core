@@ -6,9 +6,6 @@ use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\OrderLogService;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
@@ -46,6 +43,7 @@ abstract class AbstractHandlerService
      * @return mixed
      * @throws InvalidParamException
      * @throws NotFoundException
+     * @throws WebhookHandlerNotFoundException
      */
     public function handle(Webhook $webhook)
     {

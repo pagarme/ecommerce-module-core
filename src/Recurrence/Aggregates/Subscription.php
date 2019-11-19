@@ -57,6 +57,8 @@ class Subscription extends AbstractEntity
      */
     private $platformOrder;
 
+    private $cycle;
+
     /**
      * @return SubscriptionId
      */
@@ -102,7 +104,7 @@ class Subscription extends AbstractEntity
     }
 
     /**
-     * @param  string $subscriptionStatus
+     * @param SubscriptionStatus $status
      * @return $this
      */
     public function setStatus(SubscriptionStatus $status)
@@ -162,7 +164,7 @@ class Subscription extends AbstractEntity
 
     /**
      *
-     * @return PlatformOrderInterface
+     * @return Order
      */
     public function getPlatformOrder()
     {
@@ -171,8 +173,8 @@ class Subscription extends AbstractEntity
 
     /**
      *
-     * @param  PlatformOrderInterface $platformOrder
-     * @return Order
+     * @param PlatformOrderInterface $platformOrder
+     * @return Subscription
      */
     public function setPlatformOrder(PlatformOrderInterface $platformOrder)
     {
@@ -191,8 +193,8 @@ class Subscription extends AbstractEntity
 
     /**
      *
-     * @param  Cycle $cycle
-     * @return \Mundipagg\Core\Kernel\Aggregates\Subscription
+     * @param Cycle $cycle
+     * @return Subscription
      */
     public function setCycle(Cycle $cycle)
     {
@@ -204,5 +206,4 @@ class Subscription extends AbstractEntity
     {
         return get_object_vars($this);
     }
-
 }

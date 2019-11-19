@@ -2,13 +2,14 @@
 
 namespace Mundipagg\Core\Webhook\Services;
 
+use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
@@ -16,25 +17,22 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
+use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 
 final class ChargeRecurrenceService extends AbstractHandlerService
 {
-    const COMPONENT_RECURRENCE = 'Recurrence';
-
     /**
-     *
      * @param Webhook $webhook
      * @return array
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidOperationException
+     * @throws InvalidParamException
      */
     public function handlePaid(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
-        $chargeRepository = new \Mundipagg\Core\Recurrence\Repositories\ChargeRepository();
+        $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
         /**
@@ -68,13 +66,12 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         }
 
         $platformOrder = $this->order->getPlatformOrder();
-        if($outdatedCharge == null) {
+        if ($outdatedCharge == null) {
             $this->order->setStatus(OrderStatus::processing());
             $platformOrder->setState(OrderState::processing());
         }
 
         $orderRepository->save($this->order);
-
         $chargeRepository->save($charge);
 
         $this->order->addCharge($charge);
@@ -99,10 +96,15 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         return $result;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handlePartialCanceled(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
-        $chargeRepository = new \Mundipagg\Core\Recurrence\Repositories\ChargeRepository();
+        $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
         $order = $this->order;
@@ -121,6 +123,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         $outdatedCharge = $chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
+
         if ($outdatedCharge !== null) {
             $outdatedCharge->addTransaction($transaction);
             $charge = $outdatedCharge;
@@ -162,7 +165,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
     protected function handleRefunded(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
-        $chargeRepository = new \Mundipagg\Core\Recurrence\Repositories\ChargeRepository();
+        $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
         $order = $this->order;
@@ -252,46 +255,17 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         //@todo, but not with priority,
     }
 
-    protected function loadOrderByCode(Webhook $webhook)
-    {
-        $orderRepository = new OrderRepository();
-
-        /* @var Charge $charge */
-        $charge = $webhook->getEntity();
-        $order = $orderRepository->findByCode($charge->getCode());
-
-        if ($order === null) {
-            $orderDecoratorClass =
-                MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-
-            /**
-             *
-             * @var PlatformOrderInterface $order
-             */
-            $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($charge->getCode());
-
-            $orderFactory = new OrderFactory();
-            $order = $orderFactory->createFromPlatformData(
-                $order,
-                $charge->getOrderId()->getValue()
-            );
-        }
-
-        $this->order = $order;
-    }
-
     /**
      * @param Webhook $webhook
-     * @param $findByOrderId
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws InvalidParamException
+     * @throws Exception
      */
     public function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
         $apiService = new ApiService();
 
-        /** @var \Mundipagg\Core\Recurrence\Aggregates\Charge $charge */
+        /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
         $subscriptionId = $webhook->getEntity()->getInvoice()->getSubscriptionId();
@@ -299,7 +273,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $code = $subscription->getPlatformOrder()->getCode();
         if (is_null($code)) {
-            throw new \Exception('Code não foi encontrado', 400);
+            throw new Exception('Code não foi encontrado', 400);
         }
 
         $charge->setCode($code);
@@ -307,7 +281,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         $charge->setCycleEnd($subscription->getCycle()->getCycleEnd());
 
         $order = $orderRepository->findByCode($charge->getCode());
-
         if ($order === null) {
             $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
@@ -327,12 +300,18 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         $this->order = $order;
     }
 
+    /**
+     * @param ChargeInterface $charge
+     * @return mixed|string
+     * @throws InvalidParamException
+     */
     public function prepareHistoryComment(ChargeInterface $charge)
     {
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
@@ -346,15 +325,15 @@ final class ChargeRecurrenceService extends AbstractHandlerService
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
                 $history .= ". " . $i18n->getDashboard(
-                        "Extra amount paid: %.2f",
-                        $moneyService->centsToFloat($extraValue)
+                    "Extra amount paid: %.2f",
+                    $moneyService->centsToFloat($extraValue)
                     );
             }
 
             if ($extraValue < 0) {
                 $history .= ". " . $i18n->getDashboard(
-                        "Remaining amount: %.2f",
-                        $moneyService->centsToFloat(abs($extraValue))
+                    "Remaining amount: %.2f",
+                    $moneyService->centsToFloat(abs($extraValue))
                     );
             }
 
@@ -388,19 +367,26 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
 
         $history .= ' ' . $i18n->getDashboard(
-                'Refunded amount: %.2f',
-                $amountInCurrency
+            'Refunded amount: %.2f',
+            $amountInCurrency
             );
+
         $history .= " (" . $i18n->getDashboard('until now') . ")";
 
         return $history;
     }
 
+    /**
+     * @param ChargeInterface $charge
+     * @return string
+     * @throws InvalidParamException
+     */
     public function prepareReturnMessage(ChargeInterface $charge)
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {

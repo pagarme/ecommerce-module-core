@@ -5,7 +5,11 @@ namespace Mundipagg\Core\Webhook\Services;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
@@ -14,36 +18,31 @@ use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
 final class ChargeOrderService extends AbstractHandlerService
 {
-
-    const COMPONENT_RECURRENCE = 'Recurrence';
     /**
-     *
      * @param Webhook $webhook
      * @return array
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidOperationException
+     * @throws InvalidOperationException
+     * @throws InvalidParamException
      */
     protected function handlePaid(Webhook $webhook)
     {
-        //magento\sales\model\order\payment\interceptor
         $orderRepository = new OrderRepository();
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
-        //Magento\Sales\Model\Order\Payment\Transaction\Repository
         /**
-         *
          * @var Order $order
          */
         $order = $this->order;
 
         /**
          *
-         * @var Charge $charge
+         * @var Charge|ChargeInterface $charge
          */
         $charge = $webhook->getEntity();
 
@@ -55,6 +54,8 @@ final class ChargeOrderService extends AbstractHandlerService
         $outdatedCharge = $chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
+
+        $platformOrder = $this->order->getPlatformOrder();
         if ($outdatedCharge !== null) {
             $outdatedCharge->addTransaction($charge->getLastTransaction());
             $charge = $outdatedCharge;
@@ -69,21 +70,11 @@ final class ChargeOrderService extends AbstractHandlerService
             $charge->setPaidAmount($paidAmount);
         }
 
-    //    var_dump($charge); die;
-
         $order->updateCharge($charge);
 
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $this->order->getPlatformOrder()->addHistoryComment($history);
-
-        /*
-         * @moved to order.paid handler.
-          if ($transaction->getTransactionType()->equals
-        (TransactionType::creditCard())) {
-            $orderService->updateAcquirerData($order);
-        }
-        */
 
         $orderService->syncPlatformWith($order);
 
@@ -99,6 +90,11 @@ final class ChargeOrderService extends AbstractHandlerService
         return $result;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handlePartialCanceled(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
@@ -275,32 +271,18 @@ final class ChargeOrderService extends AbstractHandlerService
 
     /**
      * @param Webhook $webhook
-     * @param $findByOrderId
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws InvalidParamException
+     * @throws NotFoundException
+     * @throws WebhookHandlerNotFoundException
      */
     protected function loadOrder(Webhook $webhook)
     {
         $orderRepository = new OrderRepository();
-        $recurrence = new ChargeRecurrenceService();
-        $apiService = new ApiService();
 
         /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
-        if ($webhook->getComponent() != self::COMPONENT_RECURRENCE) {
-            $order = $orderRepository->findByMundipaggId($charge->getOrderId());
-        }
-
-        if ($webhook->getComponent() == self::COMPONENT_RECURRENCE) {
-            $subscriptionId = $webhook->getEntity()->getInvoice()->getSubscriptionId();
-            $subscription = $apiService->getSubscription(new SubscriptionId($subscriptionId));
-
-            $code = $subscription->getPlatformOrder()->getCode();
-            $charge->setCode($code);
-
-            $order = $orderRepository->findByCode($charge->getCode());
-        }
-
+        $order = $orderRepository->findByMundipaggId($charge->getOrderId());
         if ($order === null) {
             $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
@@ -318,10 +300,6 @@ final class ChargeOrderService extends AbstractHandlerService
         }
 
         $this->order = $order;
-
-        if ($webhook->getComponent() == self::COMPONENT_RECURRENCE) {
-            $recurrence->handle($this->order, $webhook);
-        }
     }
 
     public function prepareHistoryComment(ChargeInterface $charge)
@@ -329,7 +307,8 @@ final class ChargeOrderService extends AbstractHandlerService
         $i18n = new LocalizationService();
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
@@ -397,7 +376,8 @@ final class ChargeOrderService extends AbstractHandlerService
     {
         $moneyService = new MoneyService();
 
-        if ($charge->getStatus()->equals(ChargeStatus::paid())
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {

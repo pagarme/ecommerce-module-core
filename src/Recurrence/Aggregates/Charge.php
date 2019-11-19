@@ -3,7 +3,6 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
@@ -11,6 +10,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Kernel\Aggregates\Transaction;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use stdClass;
 
 final class Charge extends AbstractEntity implements ChargeInterface
 {
@@ -18,17 +18,17 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @var OrderId 
+     * @var OrderId
      */
     private $orderId;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $amount;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $paidAmount;
     /**
@@ -46,12 +46,12 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @var string 
+     * @var string
      */
     private $code;
     /**
      *
-     * @var ChargeStatus 
+     * @var ChargeStatus
      */
     private $status;
 
@@ -62,7 +62,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @var Transaction[] 
+     * @var Transaction[]
      */
     private $transactions;
 
@@ -96,7 +96,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @param  OrderId $orderId
+     * @param OrderId $orderId
      * @return Charge
      */
     public function setOrderId(OrderId $orderId)
@@ -139,6 +139,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
         if ($amount === 0) {
             $amount = $this->getPaidAmount();
         }
+
         if ($this->status->equals(ChargeStatus::paid())) {
             $amountRefunded = $amount + $this->getRefundedAmount();
             $this->setRefundedAmount($amountRefunded);
@@ -343,7 +344,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @param  string $code
+     * @param string $code
      * @return Charge
      */
     public function setCode($code)
@@ -363,7 +364,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @param  ChargeStatus $status
+     * @param ChargeStatus $status
      * @return Charge
      */
     public function setStatus(ChargeStatus $status)
@@ -399,7 +400,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @param  Transaction $newTransaction
+     * @param Transaction $newTransaction
      * @return Charge
      */
     public function addTransaction(Transaction $newTransaction)
@@ -407,10 +408,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $transactions = $this->getTransactions();
         //cant add a transaction that was already added.
         foreach ($transactions as $transaction) {
-            if ($transaction->getMundipaggId()->equals(
-                $newTransaction->getMundipaggId()
-            )
-            ) {
+            if ($transaction->getMundipaggId()->equals($newTransaction->getMundipaggId())) {
                 return $this;
             }
         }
@@ -501,7 +499,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
      */
     public function jsonSerialize()
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
 
         $obj->id = $this->getId();
         $obj->mundipaggId = $this->getMundipaggId();

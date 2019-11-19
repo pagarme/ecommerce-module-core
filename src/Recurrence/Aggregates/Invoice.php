@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 
 class Invoice extends AbstractEntity
@@ -23,7 +21,6 @@ class Invoice extends AbstractEntity
     }
 
     /**
-     *
      * @param  SubscriptionId $subscriptionId
      * @return $this
      */

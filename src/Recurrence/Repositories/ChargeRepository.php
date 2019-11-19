@@ -2,11 +2,12 @@
 
 namespace Mundipagg\Core\Recurrence\Repositories;
 
+use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
+use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\Repositories\TransactionRepository;
@@ -65,8 +66,8 @@ final class ChargeRepository extends AbstractRepository
 
     /**
      *
-     * @param  Charge $object
-     * @throws \Exception
+     * @param Charge|AbstractEntity $object
+     * @throws Exception
      */
     protected function create(AbstractEntity &$object)
     {
@@ -168,9 +169,9 @@ final class ChargeRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
+
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
@@ -208,8 +209,7 @@ final class ChargeRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new \Mundipagg\Core\Recurrence\Factories\ChargeFactory();
-
+        $factory = new ChargeFactory();
         return $factory->createFromDbData($result->row);
     }
 }

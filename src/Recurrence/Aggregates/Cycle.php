@@ -1,8 +1,8 @@
 <?php
 
-
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use DateTime;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
 
@@ -14,12 +14,12 @@ class Cycle extends AbstractEntity
     private $cycleId;
 
     /**
-     * @var \Datetime
+     * @var Datetime
      */
     private $cycleStart;
 
     /**
-     * @var \Datetime
+     * @var Datetime
      */
     private $cycleEnd;
 
@@ -43,17 +43,17 @@ class Cycle extends AbstractEntity
     }
 
     /**
-     * @param \DateTime $cycleStart
+     * @param DateTime $cycleStart
      * @return $this
      */
-    public function setCycleStart(\DateTime $cycleStart)
+    public function setCycleStart(DateTime $cycleStart)
     {
         $this->cycleStart = $cycleStart;
         return $this;
     }
 
     /**
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     public function getCycleStart()
     {
@@ -61,17 +61,17 @@ class Cycle extends AbstractEntity
     }
 
     /**
-     * @param \DateTime $cycleEnd
+     * @param DateTime $cycleEnd
      * @return $this
      */
-    public function setCycleEnd(\DateTime $cycleEnd)
+    public function setCycleEnd(DateTime $cycleEnd)
     {
         $this->cycleEnd = $cycleEnd;
         return $this;
     }
 
     /**
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     public function getCycleEnd()
     {

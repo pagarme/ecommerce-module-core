@@ -2,10 +2,11 @@
 
 namespace Mundipagg\Core\Recurrence\Repositories;
 
+use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Repositories\TransactionRepository;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 
@@ -14,7 +15,7 @@ class SubscriptionRepository extends AbstractRepository
     /**
      * @param AbstractValidString $mundipaggId
      * @return AbstractEntity|Subscription|null
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws InvalidParamException
      */
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
@@ -38,7 +39,7 @@ class SubscriptionRepository extends AbstractRepository
 
     /**
      * @param Subscription|AbstractEntity $object
-     * @throws \Exception
+     * @throws Exception
      */
     protected function create(AbstractEntity &$object)
     {
@@ -78,7 +79,7 @@ class SubscriptionRepository extends AbstractRepository
 
     /**
      * @param Subscription|AbstractEntity $object
-     * @throws \Exception
+     * @throws Exception
      */
     protected function update(AbstractEntity &$object)
     {
@@ -114,6 +115,4 @@ class SubscriptionRepository extends AbstractRepository
     {
         // TODO: Implement listEntities() method.
     }
-
-
 }

@@ -4,12 +4,11 @@ namespace Mundipagg\Core\Recurrence\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
@@ -20,7 +19,7 @@ class SubscriptionFactory implements FactoryInterface
     /**
      * @param array $postData
      * @return AbstractEntity|Subscription
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws InvalidParamException
      */
     public function createFromPostData($postData)
     {
@@ -37,7 +36,7 @@ class SubscriptionFactory implements FactoryInterface
 
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
 
-        if(isset($postData['current_cycle'])) {
+        if (isset($postData['current_cycle'])) {
             $cycleFactory = new CycleFactory();
             $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
             $subscription->setCycle($cycle);
@@ -67,7 +66,7 @@ class SubscriptionFactory implements FactoryInterface
     /**
      * @param array $dbData
      * @return AbstractEntity|Subscription
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws InvalidParamException
      */
     public function createFromDbData($dbData)
     {
