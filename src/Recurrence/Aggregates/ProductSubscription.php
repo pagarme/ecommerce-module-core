@@ -25,6 +25,8 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     private $repetitions = [];
     /** @var @var SubProductSubscription[] */
     private $items = [];
+
+    private $sellAsNormalProduct;
     /** @var @var string */
     private $createdAt;
     /** @var @var string */
@@ -238,6 +240,7 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
         $obj->productId = $this->getProductId();
         $obj->creditCard = $this->getCreditCard();
         $obj->boleto = $this->getBoleto();
+        $obj->sellAsNormalProduct = $this->getSellAsNormalProduct();
         $obj->billintType = $this->getBillingType();
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->repetitions = $this->getRepetitions();
@@ -256,5 +259,31 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     public function convertToSdkRequest()
     {
         // TODO: Implement convertToSdkRequest() method.
+    }
+
+    /**
+     * @return int
+     */
+    public function getSellAsNormalProduct()
+    {
+        return $this->sellAsNormalProduct;
+    }
+
+    /**
+     * @param string $sellAsNormalProduct 1 or 0
+     * @return ProductSubscription
+     * @throws InvalidParamException
+     */
+    public function setSellAsNormalProduct($sellAsNormalProduct)
+    {
+        if ($sellAsNormalProduct != '1' && $sellAsNormalProduct != '0') {
+            throw new InvalidParamException(
+                "Allow sell as normal product should be 1 or 0!",
+                $sellAsNormalProduct
+            );
+        }
+
+        $this->sellAsNormalProduct = $sellAsNormalProduct;
+        return $this;
     }
 }

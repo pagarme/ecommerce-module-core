@@ -12,7 +12,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 {
     protected function create(AbstractEntity &$object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
 
         $query = "
             INSERT INTO $table (
@@ -20,12 +22,14 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `credit_card`,
                 `installments`,
                 `boleto`,
+                `sell_as_normal_product`,
                 `billing_type`
             ) VALUES (
                 '{$object->getProductId()}',
                 '{$object->getCreditCard()}',
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
+                '{$object->getSellAsNormalProduct()}',
                 '{$object->getBillingType()}'
             )
         ";
@@ -40,7 +44,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     protected function update(AbstractEntity &$object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
 
         $query = "
             UPDATE $table SET 
@@ -48,6 +54,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `credit_card` = '{$object->getCreditCard()}',
                 `installments` = '{$object->getAllowInstallments()}',
                 `boleto` = '{$object->getBoleto()}',
+                `sell_as_normal_product` = '{$object->getSellAsNormalProduct()}',
                 `billing_type` = '{$object->getBillingType()}'
             WHERE id = {$object->getId()}
         ";
@@ -79,7 +86,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
 
         $query = "DELETE FROM $table WHERE id = {$object->getId()}";
 
@@ -109,7 +118,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
 
         $query = "SELECT * FROM $table WHERE id = $objectId";
 
@@ -120,13 +131,15 @@ class ProductSubscriptionRepository extends AbstractRepository
         }
 
         $productSubscriptionFactory = new ProductSubscriptionFactory();
-        $productSubscription = $productSubscriptionFactory->createFromDbData($result->row);
+        $productSubscription =
+            $productSubscriptionFactory->createFromDbData($result->row);
 
         $repetitionRepository = new RepetitionRepository();
         $repetitions = $repetitionRepository->findBySubscriptionId($objectId);
 
         $subProductsRepository = new SubProductRepository();
-        $subProducts = $subProductsRepository->findByRecurrence($productSubscription);
+        $subProducts =
+            $subProductsRepository->findByRecurrence($productSubscription);
 
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
@@ -151,7 +164,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function findByProductId($productId)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
 
         $query = "SELECT * FROM $table WHERE product_id = $productId";
 
@@ -162,13 +177,17 @@ class ProductSubscriptionRepository extends AbstractRepository
         }
 
         $productSubscriptionFactory = new ProductSubscriptionFactory();
-        $productSubscription = $productSubscriptionFactory->createFromDbData($result->row);
+        $productSubscription =
+            $productSubscriptionFactory->createFromDbData($result->row);
 
         $repetitionRepository = new RepetitionRepository();
-        $repetitions = $repetitionRepository->findBySubscriptionId($productSubscription->getId());
+        $repetitions = $repetitionRepository->findBySubscriptionId(
+            $productSubscription->getId()
+        );
 
         $subProductsRepository = new SubProductRepository();
-        $subProducts = $subProductsRepository->findByRecurrence($productSubscription);
+        $subProducts =
+            $subProductsRepository->findByRecurrence($productSubscription);
 
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
