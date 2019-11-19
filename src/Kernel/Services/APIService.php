@@ -14,7 +14,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\Factories\SubscriptionFactory;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class APIService
 {
