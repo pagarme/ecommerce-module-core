@@ -17,93 +17,95 @@ use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 
 class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterface
 {
-    public function createFromPostData($postData)
+    /**
+     * @var Charge
+     */
+    private $charge;
+
+    /**
+     * ChargeFactory constructor.
+     */
+    public function __construct()
     {
-        $charge = new Charge();
-
-        $charge->setMundipaggId(new ChargeId($postData['id']));
-        $charge->setCode($postData['code']);
-        $charge->setAmount($postData['amount']);
-
-        $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
-        $charge->setPaidAmount($paidAmount);
-        $charge->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
-        $this->addTransaction($postData, $charge);
-        $charge->setStatus(ChargeStatus::$postData['status']());
-
-        if (!empty($postData['metadata'])) {
-            $metadata = json_decode(json_encode($postData['metadata']));
-            $charge->setMetadata($metadata);
-        }
-
-        if (!empty($postData['customer'])) {
-            $customerFactory = new CustomerFactory();
-            $customer = $customerFactory->createFromPostData($postData['customer']);
-            $charge->setCustomer($customer);
-        }
-
-        if (!empty($postData['invoice'])) {
-            $invoiceFactory = new InvoiceFactory();
-            $invoice = $invoiceFactory->createFromPostData($postData['invoice']);
-            $charge->setInvoice($invoice);
-        }
-
-        return $charge;
+        $this->charge = new Charge();
     }
 
-    public function createFromDbData($dbData)
+    private function setId($id)
     {
-        $charge = new Charge();
+        $this->charge->setId($id);
+    }
 
-        $charge->setId($dbData['id']);
-        $charge->setMundipaggId(new ChargeId($dbData['mundipagg_id']));
-        $charge->setCode($dbData['code']);
-        $charge->setAmount($dbData['amount']);
-        $charge->setPaidAmount(intval($dbData['paid_amount']));
-        $charge->setCanceledAmount($dbData['canceled_amount']);
-        $charge->setRefundedAmount($dbData['refunded_amount']);
-        $charge->setStatus(ChargeStatus::$dbData['status']());
+    private function setMundiPaggId($id)
+    {
+        $this->charge->setMundipaggId(new ChargeId($id));
+    }
 
-        if (!empty($dbData['metadata'])) {
-            $metadata = json_decode($dbData['metadata']);
-            $charge->setMetadata($metadata);
+    private function setCode($code)
+    {
+        $this->charge->setCode($code);
+    }
+
+    private function setAmount($amount)
+    {
+        $this->charge->setCode($amount);
+    }
+
+    private function setPaidAmount($paidAmount)
+    {
+        $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
+        $this->charge->setPaidAmount($paidAmount);
+    }
+
+    private function setPaymentMethod($paymentMethod)
+    {
+        $this->charge->setPaymentMethod(PaymentMethod::{$paymentMethod}());
+    }
+
+    private function setStatus($status)
+    {
+        $this->charge->setStatus(ChargeStatus::{$status}());
+    }
+
+    private function setCanceledAmount($canceledAmount){
+        $this->charge->setCanceledAmount($canceledAmount);
+    }
+
+    private function setRefundedAmount($refundedAmount){
+        $this->charge->setRefundedAmount($refundedAmount);
+    }
+
+    private function setMetadata($data)
+    {
+        if (!empty($data['metadata'])) {
+            $metadata = json_decode(json_encode($data['metadata']));
+            $this->charge->setMetadata($metadata);
         }
+    }
 
-        $transactionFactory = new TransactionFactory();
-        $transactions = $this->extractTransactionsFromDbData($dbData);
-        foreach ($transactions as $transaction) {
-            $newTransaction = $transactionFactory->createFromDbData($transaction);
-            $charge->addTransaction($newTransaction);
+    private function setCustomer($data)
+    {
+        if (!empty($data['customer'])) {
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($data['customer']);
+            $this->charge->setCustomer($customer);
         }
+    }
 
-        $customer = null;
-        if (!empty($dbData['customer_id'])) {
-            $customerRepository = new CustomerRepository();
-            $customer = $customerRepository->findByMundipaggId(
-                new CustomerId($dbData['customer_id'])
-            );
-        }
-
-        if ($customer) {
-            $charge->setCustomer($customer);
-        }
-
-        if (!empty($dbData['invoice'])) {
+    private function setInvoice($data)
+    {
+        if (!empty($data['invoice'])) {
             $invoiceFactory = new InvoiceFactory();
-            $invoice = $invoiceFactory->createFromPostData($dbData['invoice']);
-            $charge->setInvoice($invoice);
+            $invoice = $invoiceFactory->createFromPostData($data['invoice']);
+            $this->charge->setInvoice($invoice);
         }
-
-        return $charge;
     }
 
     /**
      * @param $postData
-     * @param Charge $charge
      * @return mixed
      * @throws InvalidParamException
      */
-    public function addTransaction($postData, Charge $charge)
+    private function addTransaction($postData)
     {
         $lastTransactionData = null;
         if (isset($postData['last_transaction'])) {
@@ -115,7 +117,40 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
             $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
             $lastTransaction->setChargeId($charge->getMundipaggId());
 
-            $charge->addTransaction($lastTransaction);
+            $this->charge->addTransaction($lastTransaction);
         }
+    }
+
+    public function createFromPostData($postData)
+    {
+        $this->setMundiPaggId($postData['id']);
+        $this->setCode($postData['code']);
+        $this->setAmount($postData['amount']);
+        $this->setPaidAmount($postData);
+        $this->setPaymentMethod($postData['payment_method']);
+        $this->addTransaction($postData);
+        $this->setStatus($postData['status']);
+        $this->setCustomer($postData);
+        $this->setInvoice($postData);
+
+        return $this->charge;
+    }
+
+    public function createFromDbData($dbData)
+    {
+        $this->setId($dbData['id']);
+        $this->setMundiPaggId($dbData['mundipagg_id']);
+        $this->setCode($dbData['code']);
+        $this->setAmount($dbData['amount']);
+        $this->setPaidAmount(intval($dbData['paid_amount']));
+        $this->setCanceledAmount($dbData['canceled_amount']);
+        $this->setRefundedAmount($dbData['refunded_amount']);
+        $this->setStatus($dbData['status']);
+        $this->setMetadata($dbData);
+        $this->addTransaction($dbData);
+        $this->setCustomer($dbData);
+        $this->setInvoice($dbData);
+
+        return $this->charge;
     }
 }
