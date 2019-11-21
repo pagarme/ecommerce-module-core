@@ -59,7 +59,11 @@ class TransactionStatusTest extends TestCase
         'OVERPAID' => [
             'method' => 'overpaid',
             'value' => 'overpaid'
-        ],  
+        ],
+        'PARTIAL_REFUNDED' => [
+            'method' => 'partialRefunded',
+            'value' => 'partial_refunded'
+        ],
     ];
 
     /**
