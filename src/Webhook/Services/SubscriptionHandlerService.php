@@ -12,10 +12,10 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 
 class SubscriptionHandlerService extends AbstractHandlerService
 {
-
     protected function handleCreated(Webhook $webhook)
     {
         throw new \Exception('Not implemented');
@@ -23,7 +23,7 @@ class SubscriptionHandlerService extends AbstractHandlerService
 
     protected function handleCanceled(Webhook $webhook)
     {
-        $subscriptionRepository = new \Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository();
+        $subscriptionRepository = new SubscriptionRepository();
         $orderService = new OrderService();
         $i18n = new LocalizationService();
 
@@ -32,7 +32,10 @@ class SubscriptionHandlerService extends AbstractHandlerService
          */
         $subscription = $webhook->getEntity();
 
-        $outdatedSubscription = $subscriptionRepository->findByMundipaggId($subscription->getMundipaggId());
+        $outdatedSubscription = $subscriptionRepository->findByMundipaggId(
+            $subscription->getMundipaggId()
+        );
+
         if ($outdatedSubscription != null) {
             $outdatedSubscription->setStatus($subscription->getStatus());
             $subscription = $outdatedSubscription;
@@ -61,7 +64,6 @@ class SubscriptionHandlerService extends AbstractHandlerService
          * @var Order $order
          */
         $order = $webhook->getEntity();
-       // $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
         $order = $orderRepository->findByCode($order->getCode());
         if ($order === null) {
             $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);

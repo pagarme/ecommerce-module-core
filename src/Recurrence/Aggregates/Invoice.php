@@ -36,5 +36,4 @@ class Invoice extends AbstractEntity
             'subscriptionId' => $this->getSubscriptionId()
         ];
     }
-
 }

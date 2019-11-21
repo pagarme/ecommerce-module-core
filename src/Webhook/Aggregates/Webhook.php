@@ -41,7 +41,10 @@ class Webhook extends AbstractEntity
 
     public function setComponent($data)
     {
-        if ((isset($data['invoice']) && !empty($data['invoice'])) || $this->type->getEntityType() == 'subscription') {
+        if (
+            (isset($data['invoice']) && !empty($data['invoice']))
+            || $this->type->getEntityType() == 'subscription'
+        ) {
             $this->component = 'Recurrence';
             return $this;
         }

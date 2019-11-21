@@ -182,7 +182,10 @@ class APIService
         try {
             $subscriptionController = $this->getSubscriptionController();
 
-            $subscriptionData = $subscriptionController->getSubscription($subscriptionId->getValue());
+            $subscriptionData = $subscriptionController->getSubscription(
+                $subscriptionId->getValue()
+            );
+
             $subscriptionData = json_decode(json_encode($subscriptionData), true);
 
             $subscriptionFactory = new SubscriptionFactory();

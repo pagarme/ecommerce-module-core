@@ -15,45 +15,21 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 
-class ChargeFactory implements FactoryInterface
+class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterface
 {
     public function createFromPostData($postData)
     {
         $charge = new Charge();
-        $status = $postData['status'];
 
         $charge->setMundipaggId(new ChargeId($postData['id']));
-
         $charge->setCode($postData['code']);
-
         $charge->setAmount($postData['amount']);
+
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
         $charge->setPaidAmount($paidAmount);
-
-        $paymentMethod = PaymentMethod::{$postData['payment_method']}();
-        $charge->setPaymentMethod($paymentMethod);
-
-        $lastTransactionData = null;
-        if (isset($postData['last_transaction'])) {
-            $lastTransactionData = $postData['last_transaction'];
-        }
-
-        if ($lastTransactionData !== null) {
-            $transactionFactory = new TransactionFactory();
-            $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
-            $lastTransaction->setChargeId($charge->getMundipaggId());
-            $charge->addTransaction($lastTransaction);
-        }
-
-        try {
-            ChargeStatus::$status();
-        }catch(Throwable $e) {
-            throw new InvalidParamException(
-                "Invalid charge status!",
-                $status
-            );
-        }
-        $charge->setStatus(ChargeStatus::$status());
+        $charge->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
+        $this->addTransaction($postData, $charge);
+        $charge->setStatus(ChargeStatus::$postData['status']());
 
         if (!empty($postData['metadata'])) {
             $metadata = json_decode(json_encode($postData['metadata']));
@@ -81,16 +57,12 @@ class ChargeFactory implements FactoryInterface
 
         $charge->setId($dbData['id']);
         $charge->setMundipaggId(new ChargeId($dbData['mundipagg_id']));
-
         $charge->setCode($dbData['code']);
-
         $charge->setAmount($dbData['amount']);
         $charge->setPaidAmount(intval($dbData['paid_amount']));
         $charge->setCanceledAmount($dbData['canceled_amount']);
         $charge->setRefundedAmount($dbData['refunded_amount']);
-
-        $status = $dbData['status'];
-        $charge->setStatus(ChargeStatus::$status());
+        $charge->setStatus(ChargeStatus::$dbData['status']());
 
         if (!empty($dbData['metadata'])) {
             $metadata = json_decode($dbData['metadata']);
@@ -104,15 +76,16 @@ class ChargeFactory implements FactoryInterface
             $charge->addTransaction($newTransaction);
         }
 
+        $customer = null;
         if (!empty($dbData['customer_id'])) {
             $customerRepository = new CustomerRepository();
             $customer = $customerRepository->findByMundipaggId(
                 new CustomerId($dbData['customer_id'])
             );
+        }
 
-            if ($customer) {
-                $charge->setCustomer($customer);
-            }
+        if ($customer) {
+            $charge->setCustomer($customer);
         }
 
         if (!empty($dbData['invoice'])) {
@@ -124,73 +97,25 @@ class ChargeFactory implements FactoryInterface
         return $charge;
     }
 
-    private function extractTransactionsFromDbData($dbData)
-    {
-        $transactions = [];
-        if ($dbData['tran_id'] !== null) {
-            $tranId = explode(',', $dbData['tran_id']);
-            $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
-            $tranChargeId = explode(',', $dbData['tran_charge_id']);
-            $tranAmount = explode(',', $dbData['tran_amount']);
-            $tranPaidAmount = explode(',', $dbData['tran_paid_amount']);
-            $tranType = explode(',', $dbData['tran_type']);
-            $tranStatus = explode(',', $dbData['tran_status']);
-            $tranCreatedAt = explode(',', $dbData['tran_created_at']);
-
-            $tranAcquirerNsu = explode(',', $dbData['tran_acquirer_nsu']);
-            $tranAcquirerTid = explode(',', $dbData['tran_acquirer_tid']);
-            $tranAcquirerAuthCode = explode(
-                ',',
-                $dbData['tran_acquirer_auth_code']
-            );
-            $tranAcquirerName = explode(',', $dbData['tran_acquirer_name']);
-            $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
-            $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
-            $tranCardData = explode('---', $dbData['tran_card_data']);
-
-            foreach ($tranId as $index => $id) {
-                $transaction = [
-                    'id' => $id,
-                    'mundipagg_id' => $tranMundipaggId[$index],
-                    'charge_id' => $tranChargeId[$index],
-                    'amount' => $tranAmount[$index],
-                    'paid_amount' => $tranPaidAmount[$index],
-                    'type' => $tranType[$index],
-                    'status' => $tranStatus[$index],
-                    'acquirer_name' => $tranAcquirerName[$index],
-                    'acquirer_tid' => $tranAcquirerTid[$index],
-                    'acquirer_nsu' => $tranAcquirerNsu[$index],
-                    'acquirer_auth_code' => $tranAcquirerAuthCode[$index],
-                    'acquirer_message' => $tranAcquirerMessage[$index],
-                    'created_at' => $tranCreatedAt[$index],
-                    'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
-                    'card_data' => $this->treatCardData($tranCardData, $index)
-                ];
-                $transactions[] = $transaction;
-            }
-        }
-
-        return $transactions;
-    }
-
-    private function treatCardData(array $tranCardData, $index)
-    {
-        if (!isset($tranCardData[$index])) {
-            return null;
-        }
-        return $tranCardData[$index];
-    }
-
     /**
-     * @param array $tranBoletoUrl
-     * @param int $index
-     * @return string|null
+     * @param $postData
+     * @param Charge $charge
+     * @return mixed
+     * @throws InvalidParamException
      */
-    private function treatBoletoUrl(array $tranBoletoUrl, $index)
+    public function addTransaction($postData, Charge $charge)
     {
-        if (!isset($tranBoletoUrl[$index])) {
-            return null;
+        $lastTransactionData = null;
+        if (isset($postData['last_transaction'])) {
+            $lastTransactionData = $postData['last_transaction'];
         }
-        return $tranBoletoUrl[$index];
+
+        if ($lastTransactionData !== null) {
+            $transactionFactory = new TransactionFactory();
+            $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
+            $lastTransaction->setChargeId($charge->getMundipaggId());
+
+            $charge->addTransaction($lastTransaction);
+        }
     }
 }
