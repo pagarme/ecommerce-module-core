@@ -69,7 +69,6 @@ final class ChargeRepository extends AbstractRepository
      */
     protected function create(AbstractEntity &$object)
     {
-      //  die('caiu aqui2 ');
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
 
         $simpleObject = json_decode(json_encode($object));

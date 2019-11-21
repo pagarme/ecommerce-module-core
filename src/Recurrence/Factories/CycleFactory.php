@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mundipagg\Core\Recurrence\Factories;
-
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
@@ -31,6 +29,4 @@ class CycleFactory implements FactoryInterface
     {
         // TODO: Implement createFromDbData() method.
     }
-
-
 }

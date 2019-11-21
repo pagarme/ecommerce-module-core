@@ -81,7 +81,6 @@ class ChargeFactory implements FactoryInterface
 
         $charge->setId($dbData['id']);
         $charge->setMundipaggId(new ChargeId($dbData['mundipagg_id']));
-        //$charge->setOrderId(new OrderId($dbData['order_id']));
 
         $charge->setCode($dbData['code']);
 

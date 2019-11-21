@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class SubscriptionRepository extends AbstractRepository
 {
@@ -33,7 +34,7 @@ class SubscriptionRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new \Mundipagg\Core\Recurrence\Factories\SubscriptionFactory();
+        $factory = new SubscriptionFactory();
         return $factory->createFromDbData($result->row);
     }
 

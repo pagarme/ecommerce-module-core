@@ -20,7 +20,6 @@ final class TransactionStatus extends AbstractValueObject
     const UNDERPAID = 'underpaid';
     const PAID = 'paid';
     const OVERPAID = 'overpaid';
-
     const PARTIAL_REFUNDED = 'partial_refunded';
 
     /**
