@@ -30,6 +30,12 @@ class ProductSubscriptionService
         return $productSubscriptionRepository->find($id);
     }
 
+    public function findByProductId($id)
+    {
+        $productSubscriptionRepository = $this->getProductSubscriptionRepository();
+        return $productSubscriptionRepository->findByProductId($id);
+    }
+
     public function delete($productSubscriptionId)
     {
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();

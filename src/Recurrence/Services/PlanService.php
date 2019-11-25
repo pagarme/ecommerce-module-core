@@ -53,8 +53,19 @@ class PlanService
 
     public function findById($id)
     {
-        $productSubscriptionRepository = new PlanRepository();
-        return $productSubscriptionRepository->find($id);
+        $planRepository = $this->getPlanRepository();
+        return $planRepository->find($id);
+    }
+
+    public function findByProductId($id)
+    {
+        $planRepository = $this->getPlanRepository();
+        return $planRepository->findByProductId($id);
+    }
+
+    public function getPlanRepository()
+    {
+        return new PlanRepository();
     }
 
 }
