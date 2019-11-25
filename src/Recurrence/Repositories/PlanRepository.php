@@ -108,7 +108,7 @@ final class PlanRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
         );
-        $query = "SELECT * FROM $table WHERE product_id = '$productId' LIMIT 1";
+        $query = "SELECT * FROM $table WHERE product_id = '{$productId}' LIMIT 1";
 
         $result = $this->db->fetch($query);
 
