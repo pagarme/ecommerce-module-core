@@ -55,6 +55,7 @@ interface RepetitionInterface
 
     /**
      * @param \DateTime $createdAt
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function setCreatedAt(\DateTime $createdAt);
 
@@ -65,6 +66,7 @@ interface RepetitionInterface
 
     /**
      * @param \DateTime $updatedAt
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function setUpdatedAt(\DateTime $updatedAt);
 }

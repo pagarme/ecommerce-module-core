@@ -29,6 +29,12 @@ class ProductSubscriptionService
         return $productSubscriptionRepository->find($id);
     }
 
+    public function findAll()
+    {
+        return $this->getProductSubscriptionRepository()
+            ->listEntities(0, false);
+    }
+
     public function findByProductId($id)
     {
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();

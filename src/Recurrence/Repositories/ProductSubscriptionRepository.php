@@ -133,7 +133,35 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        $table =
+            $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+
+        $query = "SELECT * FROM `$table` as t";
+
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->db->fetch($query . ";");
+
+        $factory = new ProductSubscriptionFactory();
+
+        $productSubscriptions = [];
+        foreach ($result->rows as $row) {
+            $productSubscription = $factory->createFromDBData($row);
+
+            $repetitionRepository = new RepetitionRepository();
+            $repetitions = $repetitionRepository->findBySubscriptionId(
+                $productSubscription->getId()
+            );
+
+            $productSubscription->setRepetitions($repetitions);
+
+            $productSubscriptions[] = $productSubscription;
+        }
+
+        return $productSubscriptions;
     }
 
     public function findByProductId($productId)

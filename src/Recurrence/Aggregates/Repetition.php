@@ -77,18 +77,22 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @param \DateTime $createdAt
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
      * @return string
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+        return $this;
     }
 
     /**

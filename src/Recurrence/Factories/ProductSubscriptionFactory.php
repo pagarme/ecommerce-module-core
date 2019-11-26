@@ -41,7 +41,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setSellAsNormalProduct($postData);
         $this->setBillingType($postData);
         $this->setRepetitions($postData);
-        $this->setItems($postData);
+        $this->setCycles($postData);
         $this->setUpdatedAt($postData);
         $this->setCreatedAt($postData);
 
@@ -80,18 +80,13 @@ class ProductSubscriptionFactory implements FactoryInterface
         }
     }
 
-    protected function setItems($postData)
+    protected function setCycles($postData)
     {
-        if (empty($postData['items'])) {
+        if (empty($postData['cycles'])) {
             return;
         }
 
-        foreach ($postData['items'] as $item) {
-            $subProductFactory = new SubProductFactory();
-            $subProduct = $subProductFactory->createFromPostData($item);
-            $subProduct->setRecurrenceType($this->productSubscription->getRecurrenceType());
-            $this->productSubscription->addItems($subProduct);
-        }
+        $this->productSubscription->setCycles($postData['cycles']);
     }
 
     private function setId($postData)

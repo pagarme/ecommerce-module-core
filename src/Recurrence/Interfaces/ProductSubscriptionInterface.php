@@ -2,8 +2,6 @@
 
 namespace Mundipagg\Core\Recurrence\Interfaces;
 
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-
 interface ProductSubscriptionInterface
 {
     /**
