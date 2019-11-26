@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
 
@@ -11,11 +12,9 @@ class ProductSubscriptionService
     /** @var LogService  */
     protected $logService;
 
-    public function saveProductSubscription($formData)
+    public function saveProductSubscription(ProductSubscription $productSubscription)
     {
         $this->getLogService()->info("Creating product subscription at platform");
-        $productSubscriptionFactory = $this->getProductSubscriptionFactory();
-        $productSubscription = $productSubscriptionFactory->createFromPostData($formData);
 
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
         $productSubscriptionRepository->save($productSubscription);

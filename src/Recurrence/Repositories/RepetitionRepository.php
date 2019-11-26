@@ -20,14 +20,12 @@ class RepetitionRepository extends AbstractRepository
                 `subscription_id`,
                 `interval`,
                 `interval_count`,
-                `discount_type`,
-                `discount_value`
+                `recurrence_price`
             ) VALUES (
                 '{$object->getSubscriptionId()}',
-                '{$object->getIntervalType()}',
+                '{$object->getInterval()}',
                 '{$object->getIntervalCount()}',
-                '{$object->getDiscountType()}',
-                '{$object->getDiscountValue()}'
+                '{$object->getRecurrencePrice()}'
             )
         ";
 
@@ -41,10 +39,9 @@ class RepetitionRepository extends AbstractRepository
         $query = "
             UPDATE $table SET
                 `subscription_id` = '{$object->getSubscriptionId()}',
-                `interval` = '{$object->getIntervalType()}',
+                `interval` = '{$object->getInterval()}',
                 `interval_count` = '{$object->getIntervalCount()}',
-                `discount_type` = '{$object->getDiscountType()}',
-                `discount_value` = '{$object->getDiscountValue()}'
+                `recurrence_price` = '{$object->getRecurrencePrice()}'
             WHERE id = {$object->getId()}
         ";
 
