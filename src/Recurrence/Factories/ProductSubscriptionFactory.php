@@ -38,6 +38,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setCreditCard($postData);
         $this->setAllowInstallments($postData);
         $this->setBoleto($postData);
+        $this->setSellAsNormalProduct($postData);
         $this->setBillingType($postData);
         $this->setRepetitions($postData);
         $this->setItems($postData);
@@ -120,6 +121,15 @@ class ProductSubscriptionFactory implements FactoryInterface
         if (isset($postData['boleto'])) {
             $boleto = !empty($postData['boleto']) ? '1' : '0';
             $this->productSubscription->setBoleto($boleto);
+            return;
+        }
+    }
+
+    private function setSellAsNormalProduct($postData)
+    {
+        if (isset($postData['sell_as_normal_product'])) {
+            $sellAsNormalProduct = !empty($postData['sell_as_normal_product']) ? '1' : '0';
+            $this->productSubscription->setSellAsNormalProduct($sellAsNormalProduct);
             return;
         }
     }
