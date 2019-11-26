@@ -156,7 +156,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
             'recurrencePrice' => $this->getRecurrencePrice(),
             'subscriptionId' => $this->getSubscriptionId(),
             'intervalCount' => $this->getIntervalCount(),
-            'intervalType' => $this->getIntervalType(),
+            'interval' => $this->getInterval(),
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt()
         ];
@@ -166,9 +166,9 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     {
         //@todo change to a class formater maybe
         if ($this->intervalCount > 1) {
-            return $this->intervalType . "s";
+            return $this->interval . "s";
         }
-        return $this->intervalType;
+        return $this->interval;
     }
 
     public function getAvailablesInterval()
