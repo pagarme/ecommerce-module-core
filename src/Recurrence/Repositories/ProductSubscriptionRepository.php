@@ -69,9 +69,9 @@ class ProductSubscriptionRepository extends AbstractRepository
     public function saveRepetitions(AbstractEntity &$object)
     {
         $repetitionRepository = new RepetitionRepository();
-        foreach ($object->getRepetitions() as $repetition) {
+        foreach ($object->getRepetitions() as &$repetition) {
             $repetition->setSubscriptionId($object->getId());
-            $repetitionRepository->save($repetition);
+            $repetition = $repetitionRepository->save($repetition);
         }
     }
 
@@ -145,10 +145,10 @@ class ProductSubscriptionRepository extends AbstractRepository
 
         $result = $this->db->fetch($query . ";");
 
-        $factory = new ProductSubscriptionFactory();
-
         $productSubscriptions = [];
         foreach ($result->rows as $row) {
+
+            $factory = new ProductSubscriptionFactory();
             $productSubscription = $factory->createFromDBData($row);
 
             $repetitionRepository = new RepetitionRepository();

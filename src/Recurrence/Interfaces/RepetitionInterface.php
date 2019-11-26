@@ -7,6 +7,17 @@ interface RepetitionInterface
     /**
      * @return int
      */
+    public function getId();
+
+    /**
+     * @param int $id
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setId($id);
+
+    /**
+     * @return int
+     */
     public function getRecurrencePrice();
 
     /**

@@ -6,6 +6,7 @@ use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
+use Mundipagg\Core\Recurrence\Repositories\RepetitionRepository;
 
 class ProductSubscriptionService
 {
@@ -15,6 +16,11 @@ class ProductSubscriptionService
     public function saveProductSubscription(ProductSubscription $productSubscription)
     {
         $this->getLogService()->info("Creating product subscription at platform");
+        if (!empty($productSubscription->getId())) {
+            $this->deleteRepetitionsBySubscriptionProductId(
+                $productSubscription->getId()
+            );
+        }
 
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
         $productSubscriptionRepository->save($productSubscription);
@@ -51,6 +57,12 @@ class ProductSubscriptionService
         return $productSubscriptionRepository->delete($productSubscription);
     }
 
+    public function deleteRepetitionsBySubscriptionProductId($subscriptionProductId)
+    {
+        return $this->getRepetitionsRepository()
+            ->deleteBySubscriptionId($subscriptionProductId);
+    }
+
     public function getProductSubscriptionRepository()
     {
         return new ProductSubscriptionRepository();
@@ -59,6 +71,11 @@ class ProductSubscriptionService
     public function getProductSubscriptionFactory()
     {
         return new ProductSubscriptionFactory();
+    }
+
+    public function getRepetitionsRepository()
+    {
+        return new RepetitionRepository();
     }
 
     public function getLogService()
