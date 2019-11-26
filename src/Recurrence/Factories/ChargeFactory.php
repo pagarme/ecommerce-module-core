@@ -47,7 +47,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
 
     private function setAmount($amount)
     {
-        $this->charge->setCode($amount);
+        $this->charge->setAmount($amount);
     }
 
     private function setPaidAmount($paidAmount)
@@ -66,7 +66,8 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setStatus(ChargeStatus::{$status}());
     }
 
-    private function setCanceledAmount($canceledAmount){
+    private function setCanceledAmount($canceledAmount)
+    {
         $this->charge->setCanceledAmount($canceledAmount);
     }
 
@@ -115,7 +116,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         if ($lastTransactionData !== null) {
             $transactionFactory = new TransactionFactory();
             $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
-            $lastTransaction->setChargeId($charge->getMundipaggId());
+            $lastTransaction->setChargeId($this->charge->getMundipaggId());
 
             $this->charge->addTransaction($lastTransaction);
         }

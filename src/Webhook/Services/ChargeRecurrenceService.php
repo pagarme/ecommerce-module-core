@@ -76,9 +76,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $this->order->addCharge($charge);
 
-        //provalvemente tirar isso
-        $this->order->updateCharge($charge);
-
         $history = $this->prepareHistoryComment($charge);
         $platformOrder->addHistoryComment($history);
 
@@ -130,9 +127,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         }
 
         $charge->cancel($transaction->getAmount());
-
-        //provalvement tirar isso
-        $order->updateCharge($charge);
 
         $orderRepository->save($order);
         $chargeRepository->save($charge);
