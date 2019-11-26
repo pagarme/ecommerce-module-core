@@ -45,6 +45,9 @@ class ProductSubscriptionService
     {
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
         $productSubscription = $productSubscriptionRepository->find($productSubscriptionId);
+        if (empty($productSubscription)) {
+            throw new \Exception("Subscription Product not found - ID : {$productSubscriptionId} ");
+        }
         return $productSubscriptionRepository->delete($productSubscription);
     }
 
