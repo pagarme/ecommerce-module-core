@@ -41,7 +41,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     public function setRecurrencePrice($recurrencePrice)
     {
         if ($recurrencePrice < 0) {
-            throw new Exception(
+            throw new \Exception(
                 "Recurrence price should be greater than 0: $recurrencePrice!"
             );
         }
