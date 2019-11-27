@@ -91,7 +91,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
      */
     public function setCreditCard($creditCard)
     {
-        $this->creditCard = (bool) $creditCard;
+        $this->creditCard = $creditCard;
     }
 
     /**
@@ -107,7 +107,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
      */
     public function setBoleto($boleto)
     {
-        $this->boleto = (bool) $boleto;
+        $this->boleto = $boleto;
     }
 
     /**
@@ -146,7 +146,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
      */
     public function setAllowInstallments($allowInstallments)
     {
-        $this->allowInstallments = (bool) $allowInstallments;
+        $this->allowInstallments = $allowInstallments;
     }
 
     /**
@@ -254,7 +254,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
      */
     public function setSellAsNormalProduct($sellAsNormalProduct)
     {
-        $this->sellAsNormalProduct = (bool) $sellAsNormalProduct;
+        $this->sellAsNormalProduct = $sellAsNormalProduct;
         return $this;
     }
 
