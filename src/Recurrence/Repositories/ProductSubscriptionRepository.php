@@ -20,9 +20,10 @@ class ProductSubscriptionRepository extends AbstractRepository
             INSERT INTO $table (
                 `product_id`,
                 `credit_card`,
-                `installments`,
+                `allow_installments`,
                 `boleto`,
                 `sell_as_normal_product`,
+                `cycles`,
                 `billing_type`
             ) VALUES (
                 '{$object->getProductId()}',
@@ -30,6 +31,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
                 '{$object->getSellAsNormalProduct()}',
+                 {$object->getCycles()},
                 '{$object->getBillingType()}'
             )
         ";
@@ -39,7 +41,6 @@ class ProductSubscriptionRepository extends AbstractRepository
         $object->setId($this->db->getLastId());
 
         $this->saveRepetitions($object);
-        $this->saveSubProducts($object);
     }
 
     protected function update(AbstractEntity &$object)
@@ -52,9 +53,10 @@ class ProductSubscriptionRepository extends AbstractRepository
             UPDATE $table SET 
                 `product_id` = '{$object->getProductId()}',
                 `credit_card` = '{$object->getCreditCard()}',
-                `installments` = '{$object->getAllowInstallments()}',
+                `allow_installments` = '{$object->getAllowInstallments()}',
                 `boleto` = '{$object->getBoleto()}',
                 `sell_as_normal_product` = '{$object->getSellAsNormalProduct()}',
+                `cycles` = '{$object->getCycles()}',
                 `billing_type` = '{$object->getBillingType()}'
             WHERE id = {$object->getId()}
         ";
@@ -62,25 +64,14 @@ class ProductSubscriptionRepository extends AbstractRepository
         $this->db->query($query);
 
         $this->saveRepetitions($object);
-        $this->saveSubProducts($object);
     }
 
     public function saveRepetitions(AbstractEntity &$object)
     {
         $repetitionRepository = new RepetitionRepository();
-        foreach ($object->getRepetitions() as $repetition) {
+        foreach ($object->getRepetitions() as &$repetition) {
             $repetition->setSubscriptionId($object->getId());
-            $repetitionRepository->save($repetition);
-        }
-    }
-
-    public function saveSubProducts(AbstractEntity &$object)
-    {
-        $subProductRepository = new SubProductRepository();
-        foreach ($object->getItems() as $subProduct) {
-            $subProduct->setProductRecurrenceId($object->getId());
-            $subProduct->setRecurrenceType($object->getRecurrenceType());
-            $subProductRepository->save($subProduct);
+            $repetition = $repetitionRepository->save($repetition);
         }
     }
 
@@ -95,7 +86,6 @@ class ProductSubscriptionRepository extends AbstractRepository
         $result = $this->db->query($query);
 
         $this->deleteRepetitions($object);
-        $this->deleteSubProducts($object);
 
         return $result;
     }
@@ -105,14 +95,6 @@ class ProductSubscriptionRepository extends AbstractRepository
         $repetitionRepository = new RepetitionRepository();
         foreach ($object->getRepetitions() as $repetition) {
             $repetitionRepository->delete($repetition);
-        }
-    }
-
-    public function deleteSubProducts(AbstractEntity &$object)
-    {
-        $subProductRepository = new SubProductRepository();
-        foreach ($object->getItems() as $subProduct) {
-            $subProductRepository->delete($subProduct);
         }
     }
 
@@ -137,16 +119,8 @@ class ProductSubscriptionRepository extends AbstractRepository
         $repetitionRepository = new RepetitionRepository();
         $repetitions = $repetitionRepository->findBySubscriptionId($objectId);
 
-        $subProductsRepository = new SubProductRepository();
-        $subProducts =
-            $subProductsRepository->findByRecurrence($productSubscription);
-
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
-        }
-
-        foreach ($subProducts as $subProduct) {
-            $productSubscription->addItems($subProduct);
         }
 
         return $productSubscription;
@@ -159,7 +133,36 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        $table = $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+            );
+
+        $query = "SELECT * FROM `$table` as t";
+
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->db->fetch($query . ";");
+
+        $productSubscriptions = [];
+        foreach ($result->rows as $row) {
+
+            $factory = new ProductSubscriptionFactory();
+            $productSubscription = $factory->createFromDBData($row);
+
+            $repetitionRepository = new RepetitionRepository();
+            $repetitions = $repetitionRepository->findBySubscriptionId(
+                $productSubscription->getId()
+            );
+
+            $productSubscription->setRepetitions($repetitions);
+
+            $productSubscriptions[] = $productSubscription;
+        }
+
+        return $productSubscriptions;
     }
 
     public function findByProductId($productId)
@@ -185,16 +188,8 @@ class ProductSubscriptionRepository extends AbstractRepository
             $productSubscription->getId()
         );
 
-        $subProductsRepository = new SubProductRepository();
-        $subProducts =
-            $subProductsRepository->findByRecurrence($productSubscription);
-
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
-        }
-
-        foreach ($subProducts as $subProduct) {
-            $productSubscription->addItems($subProduct);
         }
 
         return $productSubscription;

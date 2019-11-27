@@ -13,38 +13,35 @@ class RepetitionRepository extends AbstractRepository
 
     protected function create(AbstractEntity &$object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
         $query = "
             INSERT INTO $table (
                 `subscription_id`,
                 `interval`,
                 `interval_count`,
-                `discount_type`,
-                `discount_value`
+                `recurrence_price`
             ) VALUES (
                 '{$object->getSubscriptionId()}',
-                '{$object->getIntervalType()}',
+                '{$object->getInterval()}',
                 '{$object->getIntervalCount()}',
-                '{$object->getDiscountType()}',
-                '{$object->getDiscountValue()}'
+                '{$object->getRecurrencePrice()}'
             )
         ";
 
-        $this->db->query($query);
+        return $this->db->query($query);
     }
 
     protected function update(AbstractEntity &$object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
         $query = "
             UPDATE $table SET
                 `subscription_id` = '{$object->getSubscriptionId()}',
-                `interval` = '{$object->getIntervalType()}',
+                `interval` = '{$object->getInterval()}',
                 `interval_count` = '{$object->getIntervalCount()}',
-                `discount_type` = '{$object->getDiscountType()}',
-                `discount_value` = '{$object->getDiscountValue()}'
+                `recurrence_price` = '{$object->getRecurrencePrice()}'
             WHERE id = {$object->getId()}
         ";
 
@@ -53,16 +50,25 @@ class RepetitionRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
         $query = "DELETE FROM $table WHERE id = {$object->getId()}";
 
         $this->db->query($query);
     }
 
+    public function deleteBySubscriptionId($subscriptionProductId)
+    {
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
+
+        $query = "DELETE FROM $table WHERE subscription_id = {$subscriptionProductId}";
+
+        $this->db->query($query);
+    }
+
     public function find($objectId)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
         $query = "SELECT * FROM $table WHERE id = $objectId";
 
@@ -90,7 +96,7 @@ class RepetitionRepository extends AbstractRepository
 
     public function findBySubscriptionId($subscriptionId)
     {
-        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS_SUBSCRIPTION_REPETITION);
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
         $query = "SELECT * FROM $table WHERE subscription_id = $subscriptionId";
 

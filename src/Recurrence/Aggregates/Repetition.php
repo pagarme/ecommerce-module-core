@@ -3,16 +3,21 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
 
-class Repetition extends AbstractEntity
+class Repetition extends AbstractEntity implements RepetitionInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
+    const INTERVAL_WEEK = 'week';
+    const INTERVAL_MONTH = 'month';
+    const INTERVAL_YEAR = 'year';
 
-    /** @var DiscountValueObject */
-    protected $discount;
-    /** @var IntervalValueObject */
+    /** @var int */
+    protected $recurrencePrice;
+    /** @var int */
+    protected $intervalCount;
+    /** @var string */
     protected $interval;
     /** @var int */
     protected $subscriptionId;
@@ -22,38 +27,25 @@ class Repetition extends AbstractEntity
     protected $updatedAt;
 
     /**
-     * @return DiscountValueObject
+     * @return int
      */
-    public function getDiscount()
+    public function getRecurrencePrice()
     {
-        return $this->discount;
+        return $this->recurrencePrice;
     }
 
     /**
-     * @param DiscountValueObject $discount
-     * @return Repetition
+     * @param int $recurrencePrice
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
-    public function setDiscount(DiscountValueObject $discount)
+    public function setRecurrencePrice($recurrencePrice)
     {
-        $this->discount = $discount;
-        return $this;
-    }
-
-    /**
-     * @return IntervalValueObject
-     */
-    public function getInterval()
-    {
-        return $this->interval;
-    }
-
-    /**
-     * @param IntervalValueObject $interval
-     * @return Repetition
-     */
-    public function setInterval(IntervalValueObject $interval)
-    {
-        $this->interval = $interval;
+        if ($recurrencePrice < 0) {
+            throw new \Exception(
+                "Recurrence price should be greater than 0: $recurrencePrice!"
+            );
+        }
+        $this->recurrencePrice = $recurrencePrice;
         return $this;
     }
 
@@ -85,18 +77,22 @@ class Repetition extends AbstractEntity
 
     /**
      * @param \DateTime $createdAt
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
      * @return string
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+        return $this;
     }
 
     /**
@@ -107,36 +103,47 @@ class Repetition extends AbstractEntity
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
     }
 
-    public function getDiscountType()
-    {
-        if ($this->getDiscount() !== null) {
-            return $this->getDiscount()->getDiscountType();
-        }
-        return null;
-    }
-
-    public function getDiscountValue()
-    {
-        if ($this->getDiscount() !== null) {
-            return $this->getDiscount()->getDiscountValue();
-        }
-        return null;
-    }
-
+    /**
+     * @return int
+     */
     public function getIntervalCount()
     {
-        if ($this->getInterval() !== null) {
-            return $this->getInterval()->getIntervalCount();
-        }
-        return null;
+        return $this->intervalCount;
     }
 
-    public function getIntervalType()
+    /**
+     * @param int $intervalCount
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setIntervalCount($intervalCount)
     {
-        if ($this->getInterval() !== null) {
-            return $this->getInterval()->getIntervalType();
+        $this->intervalCount = $intervalCount;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInterval()
+    {
+        return $this->interval;
+    }
+
+    /**
+     * @param int $interval
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @throws InvalidParamException
+     */
+    public function setInterval($interval)
+    {
+        if (!in_array($interval, $this->getAvailablesInterval())) {
+            throw new InvalidParamException(
+                "Interval is not available!",
+                $interval
+            );
         }
-        return null;
+        $this->interval = $interval;
+        return $this;
     }
 
     /**
@@ -150,11 +157,10 @@ class Repetition extends AbstractEntity
     {
         return [
             'id' => $this->getId(),
+            'recurrencePrice' => $this->getRecurrencePrice(),
             'subscriptionId' => $this->getSubscriptionId(),
             'intervalCount' => $this->getIntervalCount(),
-            'intervalType' => $this->getIntervalType(),
-            'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType(),
+            'interval' => $this->getInterval(),
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt()
         ];
@@ -163,18 +169,18 @@ class Repetition extends AbstractEntity
     public function getIntervalTypeLabel()
     {
         //@todo change to a class formater maybe
-        if ($this->getInterval()->getIntervalCount() > 1) {
-            return $this->getInterval()->getIntervalType() . "s";
+        if ($this->intervalCount > 1) {
+            return $this->interval . "s";
         }
-        return $this->getInterval()->getIntervalType();
+        return $this->interval;
     }
 
-    public static function getDiscountTypeSymbols()
+    public function getAvailablesInterval()
     {
-        //@todo get currency code from platform
         return [
-            DiscountValueObject::DISCOUNT_TYPE_PERCENT => '%',
-            DiscountValueObject::DISCOUNT_TYPE_FLAT => "R$"
+            self::INTERVAL_WEEK,
+            self::INTERVAL_MONTH,
+            self::INTERVAL_YEAR
         ];
     }
 }
