@@ -27,7 +27,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     /** @var Repetition[] */
     private $repetitions = [];
     /** @var boolean */
-    private $sellAsNormalProduct;
+    private $sellAsNormalProduct = false;
     /** @var string */
     private $billingType = 'PREPAID';
     /** @var string */
