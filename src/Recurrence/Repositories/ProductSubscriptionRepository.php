@@ -133,8 +133,9 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function listEntities($limit, $listDisabled)
     {
-        $table =
-            $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION);
+        $table = $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+            );
 
         $query = "SELECT * FROM `$table` as t";
 
