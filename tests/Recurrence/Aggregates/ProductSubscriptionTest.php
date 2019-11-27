@@ -53,7 +53,8 @@ class ProductSubscriptionTest extends TestCase
     }
 
     /**
-     * @expectedException TypeError
+     * @requires PHP >= 7.0
+     * @expectedException \Error
      */
     public function testShouldThrowAnTypeErrorExceptionIfAddAnWrongTypeOfRepetition()
     {
