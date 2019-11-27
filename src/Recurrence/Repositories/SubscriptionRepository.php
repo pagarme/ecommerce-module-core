@@ -25,7 +25,7 @@ class SubscriptionRepository extends AbstractRepository
 
         $query = "
             SELECT *
-              FROM $chargeTable as recurrence_subscription                  
+              FROM {$chargeTable} as recurrence_subscription                  
              WHERE recurrence_subscription.mundipagg_id = '{$id}'             
         ";
 
@@ -121,9 +121,11 @@ class SubscriptionRepository extends AbstractRepository
     public function listEntities($limit, $listDisabled)
     {
         $table =
-            $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION);
+            $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+            );
 
-        $query = "SELECT * FROM `$table` as t";
+        $query = "SELECT * FROM `{$table}` as t";
 
         if ($limit !== 0) {
             $limit = intval($limit);
@@ -150,7 +152,9 @@ class SubscriptionRepository extends AbstractRepository
      */
     public function findByCustomerId($customerId)
     {
-        $recurrenceTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION);
+        $recurrenceTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION)
+        ;
 
         $query = "
             SELECT *
