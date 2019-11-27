@@ -16,11 +16,6 @@ class RecurrenceService
             return $productSubscription;
         }
 
-        $plan = $this->getPlan($productId);
-        if ($plan !== null) {
-            return $plan;
-        }
-
         return null;
     }
 
