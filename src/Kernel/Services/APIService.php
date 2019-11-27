@@ -13,6 +13,8 @@ use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class APIService
 {
@@ -173,5 +175,28 @@ class APIService
             $customer->getMundipaggId()->getValue(),
             $customer->convertToSDKRequest()
         );
+    }
+
+    public function getSubscription(SubscriptionId $subscriptionId)
+    {
+        try {
+            $subscriptionController = $this->getSubscriptionController();
+
+            $subscriptionData = $subscriptionController->getSubscription(
+                $subscriptionId->getValue()
+            );
+
+            $subscriptionData = json_decode(json_encode($subscriptionData), true);
+
+            $subscriptionFactory = new SubscriptionFactory();
+            return $subscriptionFactory->createFromPostData($subscriptionData);
+        } catch (APIException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    private function getSubscriptionController()
+    {
+        return $this->apiClient->getSubscriptions();
     }
 }

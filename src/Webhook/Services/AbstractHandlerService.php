@@ -12,36 +12,43 @@ use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 abstract class AbstractHandlerService
 {
     /**
-     *
      * @var Order
      */
     protected $order;
 
-    /**
-     *
-     * @param  Webhook $webhook
-     * @return mixed
-     * @throws InvalidParamException
-     * @throws NotFoundException
-     */
-    public function handle(Webhook $webhook)
+    public function getActionHandle($action)
     {
-        $entityType = $webhook->getType()->getEntityType();
-        $validEntity = $this->getValidEntity();
-        if ($entityType !== $validEntity) {
-            throw new InvalidParamException(
-                self::class . ' only supports '. $validEntity .' type webhook handling!',
-                $entityType . '.(action)'
-            );
-        }
-
-        $baseActions = explode('_', $webhook->getType()->getAction());
+        $baseActions = explode('_', $action);
         $action = '';
         foreach ($baseActions as $baseAction) {
             $action .= ucfirst($baseAction);
         }
 
-        $handler = 'handle' . $action;
+        return 'handle' . $action;
+    }
+
+    public function validateWebhookHandling($entityType)
+    {
+        $validEntity = $this->getValidEntity();
+        if ($entityType !== $validEntity) {
+            throw new InvalidParamException(
+                self::class . ' only supports ' . $validEntity . ' type webhook handling!',
+                $entityType . '.(action)'
+            );
+        }
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @return mixed
+     * @throws InvalidParamException
+     * @throws NotFoundException
+     * @throws WebhookHandlerNotFoundException
+     */
+    public function handle(Webhook $webhook)
+    {
+        $handler = $this->getActionHandle($webhook->getType()->getAction());
+
         if (method_exists($this, $handler)) {
             $this->loadOrder($webhook);
             $platformOrder = $this->order->getPlatformOrder();
@@ -60,7 +67,7 @@ abstract class AbstractHandlerService
 
     /**
      *
-     * @return string 
+     * @return string
      */
     protected function getValidEntity()
     {

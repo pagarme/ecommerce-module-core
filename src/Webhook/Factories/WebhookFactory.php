@@ -24,13 +24,14 @@ class WebhookFactory implements FactoryInterface
 
         $webhook->setMundipaggId(new WebhookId($postData->id));
         $webhook->setType(WebhookType::fromPostType($postData->type));
+        $webhook->setComponent($postData->data);
 
         $factoryService = new FactoryService;
 
         try {
             $entityFactory =
                 $factoryService->getFactoryFor(
-                    'Kernel',
+                    $webhook->getComponent(),
                     $webhook->getType()->getEntityType()
                 );
         }catch(InvalidClassException $e) {

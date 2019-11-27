@@ -10,6 +10,7 @@ class IntervalValueObject extends AbstractValueObject
     const INTERVAL_TYPE_WEEK = 'week';
     const INTERVAL_TYPE_MONTH = 'month';
     const INTERVAL_TYPE_YEAR = 'year';
+    const INTERVAL_TYPE_DAY = 'day';
 
     /** @var int */
     protected $intervalCount;
@@ -42,6 +43,14 @@ class IntervalValueObject extends AbstractValueObject
     {
         return new IntervalValueObject(
             self::INTERVAL_TYPE_YEAR,
+            $intervalCount
+        );
+    }
+
+    public static function day($intervalCount)
+    {
+        return new IntervalValueObject(
+            self::INTERVAL_TYPE_DAY,
             $intervalCount
         );
     }

@@ -16,6 +16,8 @@ abstract class AbstractDatabaseDecorator
     const TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION = 9;
     const TABLE_RECURRENCE_SUB_PRODUCTS = 10;
     const TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS = 11;
+    const TABLE_RECURRENCE_CHARGE = 12;
+    const TABLE_RECURRENCE_SUBSCRIPTION = 13;
 
     protected $db;
     protected $tablePrefix;
