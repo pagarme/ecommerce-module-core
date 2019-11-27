@@ -137,6 +137,11 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         return $this->charge;
     }
 
+    /**
+     * @param array $dbData
+     * @return AbstractEntity|Charge
+     * @throws InvalidParamException
+     */
     public function createFromDbData($dbData)
     {
         $this->setId($dbData['id']);
@@ -148,9 +153,17 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setRefundedAmount($dbData['refunded_amount']);
         $this->setStatus($dbData['status']);
         $this->setMetadata($dbData);
-        $this->addTransaction($dbData);
+
+        $transactionFactory = new TransactionFactory();
+        $transactions = $this->extractTransactionsFromDbData($dbData);
+        foreach ($transactions as $transaction) {
+            $newTransaction = $transactionFactory->createFromDbData($transaction);
+            $this->charge->addTransaction($newTransaction);
+        }
+
         $this->setCustomer($dbData);
         $this->setInvoice($dbData);
+        $this->setPaymentMethod($dbData['payment_method']);
 
         return $this->charge;
     }
