@@ -3,19 +3,24 @@
 namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
+use Mundipagg\Core\Recurrence\Repositories\RepetitionRepository;
 
 class ProductSubscriptionService
 {
     /** @var LogService  */
     protected $logService;
 
-    public function saveProductSubscription($formData)
+    public function saveProductSubscription(ProductSubscription $productSubscription)
     {
         $this->getLogService()->info("Creating product subscription at platform");
-        $productSubscriptionFactory = $this->getProductSubscriptionFactory();
-        $productSubscription = $productSubscriptionFactory->createFromPostData($formData);
+        if (!empty($productSubscription->getId())) {
+            $this->deleteRepetitionsBySubscriptionProductId(
+                $productSubscription->getId()
+            );
+        }
 
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
         $productSubscriptionRepository->save($productSubscription);
@@ -30,6 +35,12 @@ class ProductSubscriptionService
         return $productSubscriptionRepository->find($id);
     }
 
+    public function findAll()
+    {
+        return $this->getProductSubscriptionRepository()
+            ->listEntities(0, false);
+    }
+
     public function findByProductId($id)
     {
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
@@ -40,7 +51,16 @@ class ProductSubscriptionService
     {
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
         $productSubscription = $productSubscriptionRepository->find($productSubscriptionId);
+        if (empty($productSubscription)) {
+            throw new \Exception("Subscription Product not found - ID : {$productSubscriptionId} ");
+        }
         return $productSubscriptionRepository->delete($productSubscription);
+    }
+
+    public function deleteRepetitionsBySubscriptionProductId($subscriptionProductId)
+    {
+        return $this->getRepetitionsRepository()
+            ->deleteBySubscriptionId($subscriptionProductId);
     }
 
     public function getProductSubscriptionRepository()
@@ -51,6 +71,11 @@ class ProductSubscriptionService
     public function getProductSubscriptionFactory()
     {
         return new ProductSubscriptionFactory();
+    }
+
+    public function getRepetitionsRepository()
+    {
+        return new RepetitionRepository();
     }
 
     public function getLogService()

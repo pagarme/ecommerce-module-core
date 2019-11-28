@@ -5,9 +5,6 @@ namespace Mundipagg\Core\Recurrence\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class RepetitionFactory implements FactoryInterface
 {
@@ -34,8 +31,9 @@ class RepetitionFactory implements FactoryInterface
 
         $this->setId($postData);
         $this->setSubscriptionId($postData);
-        $this->setDiscount($postData);
+        $this->setRecurrencePrice($postData);
         $this->setInterval($postData);
+        $this->setIntervalCount($postData);
         $this->setCreatedAt($postData);
         $this->setUpdatedAt($postData);
 
@@ -58,15 +56,13 @@ class RepetitionFactory implements FactoryInterface
         $this->repetition->setSubscriptionId($postData['subscription_id']);
     }
 
-    public function setDiscount($postData)
+    public function setRecurrencePrice($postData)
     {
-        if (empty($postData['discount_type'])) {
+        if (empty($postData['recurrence_price'])) {
             return;
         }
 
-        $discountType = $postData['discount_type'];
-        $discount = DiscountValueObject::$discountType($postData['discount_value']);
-        $this->repetition->setDiscount($discount);
+        $this->repetition->setRecurrencePrice($postData['recurrence_price']);
     }
 
     public function setInterval($postData)
@@ -75,9 +71,16 @@ class RepetitionFactory implements FactoryInterface
             return;
         }
 
-        $intervalType = $postData['interval'];
-        $interval = IntervalValueObject::$intervalType($postData['interval_count']);
-        $this->repetition->setInterval($interval);
+        $this->repetition->setInterval($postData['interval']);
+    }
+
+    public function setIntervalCount($postData)
+    {
+        if (empty($postData['interval_count'])) {
+            return;
+        }
+
+        $this->repetition->setIntervalCount($postData['interval_count']);
     }
 
     public function setCreatedAt($postData)
@@ -98,6 +101,7 @@ class RepetitionFactory implements FactoryInterface
      *
      * @param array $dbData
      * @return AbstractEntity
+     * @throws \Exception
      */
     public function createFromDbData($dbData)
     {

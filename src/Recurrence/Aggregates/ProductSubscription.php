@@ -4,9 +4,10 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
+use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
+use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
 
-class ProductSubscription extends AbstractEntity implements RecurrenceEntityInterface
+class ProductSubscription extends AbstractEntity implements ProductSubscriptionInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
     const RECURRENCE_TYPE = "subscription";
@@ -15,6 +16,8 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     protected $id = null;
     /** @var int */
     private $productId;
+    /** @var int */
+    private $cycles;
     /** @var boolean */
     private $creditCard = false;
     /** @var boolean */
@@ -23,13 +26,13 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     private $allowInstallments = false;
     /** @var Repetition[] */
     private $repetitions = [];
-    /** @var @var SubProductSubscription[] */
-    private $items = [];
-
-    private $sellAsNormalProduct;
-    /** @var @var string */
+    /** @var boolean */
+    private $sellAsNormalProduct = false;
+    /** @var string */
+    private $billingType = 'PREPAID';
+    /** @var string */
     private $createdAt;
-    /** @var @var string */
+    /** @var string */
     private $updatedAt;
 
     /**
@@ -61,9 +64,16 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     /**
      * @param int $productId
      * @return ProductSubscription
+     * @throws InvalidParamException
      */
     public function setProductId($productId)
     {
+        if (empty($productId)) {
+            throw new InvalidParamException(
+                "Product id should not be empty!",
+                $productId
+            );
+        }
         $this->productId = $productId;
         return $this;
     }
@@ -77,21 +87,15 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     }
 
     /**
-     * @param string $creditCard true or false
+     * @param bool $creditCard
      */
     public function setCreditCard($creditCard)
     {
-        if ($creditCard != '1' && $creditCard != '0') {
-            throw new InvalidParamException(
-                "Credit card should be 1 or 0!",
-                $creditCard
-            );
-        }
         $this->creditCard = $creditCard;
     }
 
     /**
-     * @return string true or false
+     * @return bool
      */
     public function getBoleto()
     {
@@ -99,16 +103,10 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     }
 
     /**
-     * @param string $boleto 1 or 0
+     * @param bool $boleto
      */
     public function setBoleto($boleto)
     {
-        if ($boleto != '1' && $boleto != '0') {
-            throw new InvalidParamException(
-                "Boleto should be 1 or 0",
-                $boleto
-            );
-        }
         $this->boleto = $boleto;
     }
 
@@ -122,6 +120,7 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
 
     /**
      * @param string $billingType
+     * @throws InvalidParamException
      */
     public function setBillingType($billingType)
     {
@@ -143,22 +142,15 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     }
 
     /**
-     * @param string $allowInstallments 1 or 0
-     * @throws InvalidParamException
+     * @param bool $allowInstallments
      */
     public function setAllowInstallments($allowInstallments)
     {
-        if ($allowInstallments != '1' && $allowInstallments != '0') {
-            throw new InvalidParamException(
-                "Allow installments should be 1 or 0!",
-                $allowInstallments
-            );
-        }
         $this->allowInstallments = $allowInstallments;
     }
 
     /**
-     * @return array
+     * @return \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[]|null
      */
     public function getRepetitions()
     {
@@ -166,30 +158,22 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     }
 
     /**
-     * @param Repetition $repetition
-     * @return ProductSubscription
+     * @param \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[] $repetitions
+     * @return ProductSubscriptionInterface
      */
-    public function addRepetition(Repetition $repetition)
+    public function setRepetitions(array $repetitions)
     {
-        $this->repetitions[] = $repetition;
+        $this->repetitions = $repetitions;
         return $this;
     }
 
     /**
-     * @return SubProduct[]
-     */
-    public function getItems()
-    {
-        return $this->items;
-    }
-
-    /**
-     * @param SubProduct $items
+     * @param RepetitionInterface $repetition
      * @return ProductSubscription
      */
-    public function addItems(SubProduct $items)
+    public function addRepetition(RepetitionInterface $repetition)
     {
-        $this->items[] = $items;
+        $this->repetitions[] = $repetition;
         return $this;
     }
 
@@ -244,7 +228,7 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
         $obj->billintType = $this->getBillingType();
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->repetitions = $this->getRepetitions();
-        $obj->items = $this->getItems();
+        $obj->cycles = $this->getCycles();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
 
@@ -256,11 +240,6 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
         return self::RECURRENCE_TYPE;
     }
 
-    public function convertToSdkRequest()
-    {
-        // TODO: Implement convertToSdkRequest() method.
-    }
-
     /**
      * @return int
      */
@@ -270,20 +249,30 @@ class ProductSubscription extends AbstractEntity implements RecurrenceEntityInte
     }
 
     /**
-     * @param string $sellAsNormalProduct 1 or 0
+     * @param bool $sellAsNormalProduct
      * @return ProductSubscription
-     * @throws InvalidParamException
      */
     public function setSellAsNormalProduct($sellAsNormalProduct)
     {
-        if ($sellAsNormalProduct != '1' && $sellAsNormalProduct != '0') {
-            throw new InvalidParamException(
-                "Allow sell as normal product should be 1 or 0!",
-                $sellAsNormalProduct
-            );
-        }
-
         $this->sellAsNormalProduct = $sellAsNormalProduct;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCycles()
+    {
+        return $this->cycles;
+    }
+
+    /**
+     * @param int $cycles
+     * @return ProductSubscriptionInterface
+     */
+    public function setCycles($cycles)
+    {
+        $this->cycles = $cycles;
         return $this;
     }
 }
