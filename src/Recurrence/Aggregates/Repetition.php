@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use Magento\Framework\Exception\LocalizedException;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
@@ -182,5 +183,19 @@ class Repetition extends AbstractEntity implements RepetitionInterface
             self::INTERVAL_MONTH,
             self::INTERVAL_YEAR
         ];
+    }
+
+    /**
+     * @param Repetition $repetitionObject
+     * @return bool
+     */
+    public function checkRepetitionIsEquals(Repetition $repetitionObject)
+    {
+        if (($this->getInterval() == $repetitionObject->getInterval()) &&
+            ($this->getIntervalCount() == $repetitionObject->getIntervalCount())) {
+            return true;
+        }
+
+        return false;
     }
 }
