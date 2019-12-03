@@ -114,23 +114,12 @@ class ProductSubscriptionFactoryTest extends TestCase
         $dbData = [
             'id' => 456654,
             'product_id' => 12345,
-            'boleto' => true,
-            'credit_card' => true,
-            'allow_installments' => true,
-            'sell_as_normal_product' => true,
+            'boleto' => "1",
+            'credit_card' => "1",
+            'allow_installments' => "1",
+            'sell_as_normal_product' => "1",
+            'billing_type' => "PREPAID",
             'cycles' => 5,
-            'repetitions' => [
-                [
-                    'interval' => 'month',
-                    'interval_count' => 5,
-                    'recurrence_price' => 50000,
-                ],
-                [
-                    'interval' => 'month',
-                    'interval_count' => 10,
-                    'recurrence_price' => 40000,
-                ]
-            ],
             'created_at' => '2019-10-01 10:12:00',
             'updated_at' => '2019-10-01 10:12:00',
         ];
@@ -141,10 +130,10 @@ class ProductSubscriptionFactoryTest extends TestCase
         $this->assertEquals($dbData['id'], $productSubscription->getId());
         $this->assertEquals($dbData['product_id'], $productSubscription->getProductId());
         $this->assertEquals($dbData['cycles'], $productSubscription->getCycles());
+        $this->assertEquals('PREPAID', $productSubscription->getBillingType());
         $this->assertTrue($productSubscription->getCreditCard());
         $this->assertTrue($productSubscription->getBoleto());
         $this->assertTrue($productSubscription->getAllowInstallments());
-        $this->assertCount(2, $productSubscription->getRepetitions());
         $this->assertTrue($productSubscription->getSellAsNormalProduct());
         $this->assertEquals($dbData['created_at'], $productSubscription->getCreatedAt());
         $this->assertEquals($dbData['updated_at'], $productSubscription->getUpdatedAt());

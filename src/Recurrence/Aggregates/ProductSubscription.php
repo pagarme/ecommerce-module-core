@@ -88,10 +88,12 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param bool $creditCard
+     * @return ProductSubscription
      */
     public function setCreditCard($creditCard)
     {
         $this->creditCard = $creditCard;
+        return $this;
     }
 
     /**
@@ -104,10 +106,12 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param bool $boleto
+     * @return ProductSubscription
      */
     public function setBoleto($boleto)
     {
         $this->boleto = $boleto;
+        return $this;
     }
 
     /**
@@ -120,6 +124,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param string $billingType
+     * @return ProductSubscription
      * @throws InvalidParamException
      */
     public function setBillingType($billingType)
@@ -131,6 +136,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
             );
         }
         $this->billingType = $billingType;
+        return $this;
     }
 
     /**
@@ -143,10 +149,12 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param bool $allowInstallments
+     * @return ProductSubscription
      */
     public function setAllowInstallments($allowInstallments)
     {
         $this->allowInstallments = $allowInstallments;
+        return $this;
     }
 
     /**
@@ -187,10 +195,12 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param \DateTime $createdAt
+     * @return ProductSubscription
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
@@ -203,10 +213,12 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
 
     /**
      * @param \DateTime $updatedAt
+     * @return ProductSubscription
      */
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
