@@ -2,7 +2,9 @@
 
 namespace Mundipagg\Core\Kernel\ValueObjects\Key;
 
-final class PublicKey extends AbstractPublicKey
+use Mundipagg\Core\Kernel\Interfaces\SensibleDataInterface;
+
+final class PublicKey extends AbstractPublicKey implements SensibleDataInterface
 {
     protected function validateValue($value)
     {
