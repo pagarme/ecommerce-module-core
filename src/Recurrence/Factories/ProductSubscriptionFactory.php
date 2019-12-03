@@ -47,11 +47,27 @@ class ProductSubscriptionFactory implements FactoryInterface
      *
      * @param array $dbData
      * @return AbstractEntity
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromDbData($dbData)
     {
-        return $this->createFromPostData($dbData);
-        // TODO: Implement createFromDbData() method.
+        if (!is_array($dbData)) {
+            return;
+        }
+
+        $this->productSubscription->setId($dbData['id'])
+            ->setProductId($dbData['product_id'])
+            ->setCreditCard(boolval($dbData['credit_card']))
+            ->setBoleto(boolval($dbData['boleto']))
+            ->setAllowInstallments(boolval($dbData['allow_installments']))
+            ->setSellAsNormalProduct(boolval($dbData['sell_as_normal_product']))
+            ->setCycles($dbData['cycles'])
+            ->setBillingType($dbData['billing_type']);
+
+        $this->setCreatedAt($dbData);
+        $this->setUpdatedAt($dbData);
+
+        return $this->productSubscription;
     }
 
     protected function setRepetitions($postData)
