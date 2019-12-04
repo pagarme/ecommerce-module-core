@@ -1,15 +1,10 @@
 <?php
 
-
 namespace Mundipagg\Core\Recurrence\Factories;
-
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class ProductSubscriptionFactory implements FactoryInterface
 {
@@ -41,7 +36,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setSellAsNormalProduct($postData);
         $this->setBillingType($postData);
         $this->setRepetitions($postData);
-        $this->setItems($postData);
+        $this->setCycles($postData);
         $this->setUpdatedAt($postData);
         $this->setCreatedAt($postData);
 
@@ -52,20 +47,36 @@ class ProductSubscriptionFactory implements FactoryInterface
      *
      * @param array $dbData
      * @return AbstractEntity
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromDbData($dbData)
     {
-        return $this->createFromPostData($dbData);
-        // TODO: Implement createFromDbData() method.
+        if (!is_array($dbData)) {
+            return;
+        }
+
+        $this->productSubscription->setId($dbData['id'])
+            ->setProductId($dbData['product_id'])
+            ->setCreditCard(boolval($dbData['credit_card']))
+            ->setBoleto(boolval($dbData['boleto']))
+            ->setAllowInstallments(boolval($dbData['allow_installments']))
+            ->setSellAsNormalProduct(boolval($dbData['sell_as_normal_product']))
+            ->setCycles($dbData['cycles'])
+            ->setBillingType($dbData['billing_type']);
+
+        $this->setCreatedAt($dbData);
+        $this->setUpdatedAt($dbData);
+
+        return $this->productSubscription;
     }
 
     protected function setRepetitions($postData)
     {
-        if (empty($postData['intervals'])) {
+        if (empty($postData['repetitions'])) {
             return;
         }
 
-        foreach ($postData['intervals'] as $repetition) {
+        foreach ($postData['repetitions'] as $repetition) {
             if (
                 empty($repetition['interval_count']) ||
                 empty($repetition['interval'])
@@ -74,24 +85,20 @@ class ProductSubscriptionFactory implements FactoryInterface
             }
 
             $repetitionFactory = new RepetitionFactory();
-            $repetitionEntity = $repetitionFactory->createFromPostData($repetition);
+            $repetitionEntity =
+                $repetitionFactory->createFromPostData($repetition);
 
             $this->productSubscription->addRepetition($repetitionEntity);
         }
     }
 
-    protected function setItems($postData)
+    protected function setCycles($postData)
     {
-        if (empty($postData['items'])) {
+        if (empty($postData['cycles'])) {
             return;
         }
 
-        foreach ($postData['items'] as $item) {
-            $subProductFactory = new SubProductFactory();
-            $subProduct = $subProductFactory->createFromPostData($item);
-            $subProduct->setRecurrenceType($this->productSubscription->getRecurrenceType());
-            $this->productSubscription->addItems($subProduct);
-        }
+        $this->productSubscription->setCycles($postData['cycles']);
     }
 
     private function setId($postData)
@@ -109,18 +116,29 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setCreditCard($postData)
     {
-        if (isset($postData['credit_card'])) {
-            $creditCard = !empty($postData['credit_card']) ? '1' : '0';
-            $this->productSubscription->setCreditCard($creditCard);
+        if (isset($postData['credit_card']) && is_bool($postData['credit_card'])) {
+            $this->productSubscription->setCreditCard($postData['credit_card']);
             return;
         }
     }
 
     private function setBoleto($postData)
     {
-        if (isset($postData['boleto'])) {
-            $boleto = !empty($postData['boleto']) ? '1' : '0';
-            $this->productSubscription->setBoleto($boleto);
+        if (isset($postData['boleto']) && is_bool($postData['boleto'])) {
+            $this->productSubscription->setBoleto($postData['boleto']);
+            return;
+        }
+    }
+
+    private function setSellAsNormalProduct($postData)
+    {
+        if (
+            isset($postData['sell_as_normal_product']) &&
+            is_bool($postData['sell_as_normal_product'])
+        ) {
+            $this->productSubscription->setSellAsNormalProduct(
+                $postData['sell_as_normal_product']
+            );
             return;
         }
     }
@@ -136,9 +154,13 @@ class ProductSubscriptionFactory implements FactoryInterface
 
     private function setAllowInstallments($postData)
     {
-        if (isset($postData['installments'])) {
-            $installments = !empty($postData['installments']) ? '1' : '0';
-            $this->productSubscription->setAllowInstallments($installments);
+        if (
+            isset($postData['allow_installments']) &&
+            is_bool($postData['allow_installments'])
+        ) {
+            $this->productSubscription->setAllowInstallments(
+                $postData['allow_installments']
+            );
             return;
         }
     }
@@ -154,7 +176,9 @@ class ProductSubscriptionFactory implements FactoryInterface
     private function setUpdatedAt($postData)
     {
         if (isset($postData['updated_at'])) {
-            $this->productSubscription->setUpdatedAt(new \Datetime($postData['updated_at']));
+            $this->productSubscription->setUpdatedAt(
+                new \Datetime($postData['updated_at'])
+            );
             return;
         }
     }
@@ -162,7 +186,9 @@ class ProductSubscriptionFactory implements FactoryInterface
     private function setCreatedAt($postData)
     {
         if (isset($postData['created_at'])) {
-            $this->productSubscription->setCreatedAt(new \Datetime($postData['created_at']));
+            $this->productSubscription->setCreatedAt(
+                new \Datetime($postData['created_at'])
+            );
             return;
         }
     }
