@@ -194,4 +194,42 @@ class ProductSubscriptionRepository extends AbstractRepository
 
         return $productSubscription;
     }
+
+    public function findByProductId($productId)
+    {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
+        );
+
+        $query = "SELECT * FROM $table WHERE product_id = $productId";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $productSubscriptionFactory = new ProductSubscriptionFactory();
+        $productSubscription =
+            $productSubscriptionFactory->createFromDbData($result->row);
+
+        $repetitionRepository = new RepetitionRepository();
+        $repetitions = $repetitionRepository->findBySubscriptionId(
+            $productSubscription->getId()
+        );
+
+        $subProductsRepository = new SubProductRepository();
+        $subProducts =
+            $subProductsRepository->findByRecurrence($productSubscription);
+
+        foreach ($repetitions as $repetition) {
+            $productSubscription->addRepetition($repetition);
+        }
+
+        foreach ($subProducts as $subProduct) {
+            $productSubscription->addItems($subProduct);
+        }
+
+        return $productSubscription;
+    }
 }

@@ -25,7 +25,7 @@ class SubscriptionRepository extends AbstractRepository
 
         $query = "
             SELECT *
-              FROM $chargeTable as recurrence_subscription                  
+              FROM {$chargeTable} as recurrence_subscription                  
              WHERE recurrence_subscription.mundipagg_id = '{$id}'             
         ";
 
@@ -112,8 +112,69 @@ class SubscriptionRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
+    /**
+     * @param $limit
+     * @param $listDisabled
+     * @return Subscription[]|array
+     * @throws InvalidParamException
+     */
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        $table =
+            $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+            );
+
+        $query = "SELECT * FROM `{$table}` as t";
+
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->db->fetch($query . ";");
+
+        $factory = new SubscriptionFactory();
+
+        $listSubscription = [];
+        foreach ($result->rows as $row) {
+            $subscription = $factory->createFromDBData($row);
+            $listSubscription[] = $subscription;
+        }
+
+        return $listSubscription;
+    }
+
+    /**
+     * @param $customerId
+     * @return AbstractEntity|Subscription[]|null
+     * @throws InvalidParamException
+     */
+    public function findByCustomerId($customerId)
+    {
+        $recurrenceTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION)
+        ;
+
+        $query = "
+            SELECT *
+              FROM {$recurrenceTable} as recurrence_subscription                  
+             WHERE recurrence_subscription.customer_id = '{$customerId}'             
+        ";
+
+        $result = $this->db->fetch($query);
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new SubscriptionFactory();
+
+        $listSubscription = [];
+        foreach ($result->rows as $row) {
+            $subscription = $factory->createFromDBData($row);
+            $listSubscription[] = $subscription;
+        }
+
+        return $listSubscription;
     }
 }
