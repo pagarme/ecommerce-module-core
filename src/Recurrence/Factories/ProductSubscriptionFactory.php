@@ -143,15 +143,6 @@ class ProductSubscriptionFactory implements FactoryInterface
         }
     }
 
-    private function setSellAsNormalProduct($postData)
-    {
-        if (isset($postData['sell_as_normal_product'])) {
-            $sellAsNormalProduct = !empty($postData['sell_as_normal_product']) ? '1' : '0';
-            $this->productSubscription->setSellAsNormalProduct($sellAsNormalProduct);
-            return;
-        }
-    }
-
     private function setAllowInstallments($postData)
     {
         if (

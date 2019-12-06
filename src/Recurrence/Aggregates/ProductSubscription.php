@@ -287,30 +287,4 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
         $this->cycles = $cycles;
         return $this;
     }
-
-    /**
-     * @return int
-     */
-    public function getSellAsNormalProduct()
-    {
-        return $this->sellAsNormalProduct;
-    }
-
-    /**
-     * @param string $sellAsNormalProduct 1 or 0
-     * @return ProductSubscription
-     * @throws InvalidParamException
-     */
-    public function setSellAsNormalProduct($sellAsNormalProduct)
-    {
-        if ($sellAsNormalProduct != '1' && $sellAsNormalProduct != '0') {
-            throw new InvalidParamException(
-                "Allow sell as normal product should be 1 or 0!",
-                $sellAsNormalProduct
-            );
-        }
-
-        $this->sellAsNormalProduct = $sellAsNormalProduct;
-        return $this;
-    }
 }
