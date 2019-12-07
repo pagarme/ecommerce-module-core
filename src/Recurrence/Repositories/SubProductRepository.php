@@ -77,7 +77,8 @@ class SubProductRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findByRecurrence(RecurrenceEntityInterface $recurrenceEntity)
+    //tirei tipagem
+    public function findByRecurrence($recurrenceEntity)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
 
