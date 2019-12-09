@@ -4,8 +4,6 @@ namespace Mundipagg\Core\Test\Mock\Concrete;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use PDO;
 use PDOException;
 
