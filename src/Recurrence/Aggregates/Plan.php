@@ -321,13 +321,14 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
 
     /**
      * @param mixed $trialPeriodDays
+     * @throws InvalidParamException
      */
     public function setTrialPeriodDays($trialPeriodDays)
     {
         if (!is_numeric($trialPeriodDays)) {
             throw new InvalidParamException(
-                "Status should be an integer!",
-                $status
+                "Trial period days should be an integer!",
+                $trialPeriodDays
             );
         }
         $this->trialPeriodDays = $trialPeriodDays;

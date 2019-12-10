@@ -128,7 +128,7 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        // TODO: Implement findByMundipaggId() method.
+        return; // TODO: Implement findByMundipaggId() method.
     }
 
     public function listEntities($limit, $listDisabled)
