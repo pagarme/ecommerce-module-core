@@ -24,11 +24,19 @@ abstract class AbstractValidString extends AbstractValueObject
         $this->setValue($value);
     }
 
+    /**
+     * @return string
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @param string $value
+     * @return AbstractValidString
+     * @throws InvalidParamException
+     */
     protected function setValue($value)
     {
         if (!is_string($value)) {
