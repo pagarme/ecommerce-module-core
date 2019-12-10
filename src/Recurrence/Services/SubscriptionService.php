@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as ‌‌MPSetup;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
@@ -13,7 +13,6 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
@@ -91,34 +90,43 @@ final class SubscriptionService
 
         $items = $this->getSubscriptionItems($order);
 
-        if (count($items) == 0) {
+        if (count($items) == 0 || !isset($items[0])) {
             return;
         }
 
         $recurrenceSettings = $items[0];
         $payments = $order->getPayments();
         $cardToken = $order->getPayments()[0]->getIdentifier()->getValue();
-        $intervalType = $recurrenceSettings->getRepetitions()[0]->getInterval();
-        $intervalCount = $recurrenceSettings->getRepetitions()[0]->getIntervalCount();
-
-        $subscription->setCode($order->getCode());
-        $subscription->setPaymentMethod($order->getPaymentMethod());
-        $subscription->setIntervalType($intervalType);
-        $subscription->setIntervalCount($intervalCount);
 
         $subscriptionItems = $this->extractSubscriptionItemsFromOrder(
             $order,
             $recurrenceSettings
         );
+
+        $intervalCount =
+            $subscriptionItems[0]
+                ->getSelectedRepetition()
+                ->getIntervalCount();
+
+        $intervalType =
+            $subscriptionItems[0]
+                ->getSelectedRepetition()
+                ->getInterval();
+
+        $subscription->setCode($order->getCode());
+        $subscription->setPaymentMethod($order->getPaymentMethod());
+        $subscription->setIntervalType($intervalType);
+        $subscription->setIntervalCount($intervalCount);
         $subscription->setItems($subscriptionItems);
         $subscription->setCardToken($cardToken);
         $subscription->setBillingType($recurrenceSettings->getBillingType());
         $subscription->setCustomer($order->getCustomer());
 
-
-        /** @fixme Fix installments and boleto */
-        $subscription->setInstallments(1);
-        $subscription->setBoletoDays(5);
+        if ($payments[0]->getInstallments()) {
+            $subscription->setInstallments($payments[0]->getInstallments());
+        }
+        $boletoDays = ‌‌MPSetup::getModuleConfiguration()->getBoletoDueDays();
+        $subscription->setBoletoDays($boletoDays);
 
         return $subscription;
     }
@@ -149,24 +157,20 @@ final class SubscriptionService
             $subProduct->setCycles($recurrenceSettings->getCycles());
             $subProduct->setDescription($item->getDescription());
             $subProduct->setQuantity($item->getQuantity());
-            $pricingScheme = PricingScheme::UNIT($item->getAmount());
+
+            $itemPrice = PricingScheme::UNIT($item->getAmount());
+
+            if ($item->getSelectedOption()->getRecurrencePrice()) {
+                $itemPrice = $item->getSelectedOption()->getRecurrencePrice();
+            }
+            $pricingScheme = PricingScheme::UNIT($itemPrice);
+
             $subProduct->setPricingScheme($pricingScheme);
+            $subProduct->setSelectedRepetition($item->getSelectedOption());
+
             $subscriptionItems[] = $subProduct;
         }
 
         return $subscriptionItems;
-
-        /*$subscriptionItems = [
-            'description' => $item->getDescription(),
-            "quantity" => $item->getQuantity(),
-            "pricing_scheme" => [
-                "price" => $item->getAmount()
-            ],
-            "cycles" => $recurrenceSettings->getCycles()
-        ];*/
-
-
     }
-
-
 }

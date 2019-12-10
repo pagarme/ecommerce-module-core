@@ -19,6 +19,8 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     /** @var string */
     private $code;
 
+    private $selectedOption;
+
     /**
      * @return string
      */
@@ -69,6 +71,22 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
             );
         }
         $this->quantity = $quantity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSelectedOption()
+    {
+        return $this->selectedOption;
+    }
+
+    /**
+     * @param mixed $selectedOption
+     */
+    public function setSelectedOption($selectedOption)
+    {
+        $this->selectedOption = $selectedOption;
     }
 
     /**
