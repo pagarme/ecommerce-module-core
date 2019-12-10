@@ -80,6 +80,8 @@ class ConfigurationFactory implements FactoryInterface
         $config->setAntifraudEnabled($antifraudEnabled);
         $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
+        $config->setBoletoBankCode($data->boletoBankCode);
+        $config->setBoletoDueDays($data->boletoDueDays);
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
