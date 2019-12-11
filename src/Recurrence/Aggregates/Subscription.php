@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
@@ -67,6 +68,7 @@ class Subscription extends AbstractEntity
     private $cardToken;
     private $boletoDays;
     private $cardId;
+    private $shipping;
 
     /**
      * @return mixed
@@ -313,6 +315,22 @@ class Subscription extends AbstractEntity
         $this->description = $description;
     }
 
+    /**
+     * @return Shipping
+     */
+    public function getShipping()
+    {
+        return $this->shipping;
+    }
+
+    /**
+     * @param Shipping $shipping
+     */
+    public function setShipping(Shipping $shipping)
+    {
+        $this->shipping = $shipping;
+    }
+
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -328,16 +346,12 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
         $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
         $subscriptionRequest->description = $this->getDescription();
+        $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {
             $subscriptionRequest->items[] = $item->convertToSDKRequest();
         }
-
-        /*$shipping = $this->getShipping();
-        if ($shipping !== null) {
-            $subscriptionRequest->shipping = $shipping->convertToSDKRequest();
-        }*/
 
         return $subscriptionRequest;
     }

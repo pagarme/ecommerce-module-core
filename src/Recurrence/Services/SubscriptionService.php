@@ -14,6 +14,7 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
@@ -103,6 +104,7 @@ final class SubscriptionService
         $this->fillInterval($subscription);
         $this->fillBoletoData($subscription);
         $this->fillDescription($subscription);
+        $this->fillShipping($subscription, $order);
 
         $subscription->setCode($order->getCode());
         $subscription->setCustomer($order->getCustomer());
@@ -203,9 +205,15 @@ final class SubscriptionService
         $subscription->setIntervalCount($intervalCount);
     }
 
-    private function fillDescription($subscription)
+    private function fillDescription(&$subscription)
     {
         $subscription->setDescription($this->subscriptionItems[0]->getDescription());
+    }
+
+    private function fillShipping(&$subscription, $order)
+    {
+        $orderShipping = $order->getShipping();
+        $subscription->setShipping($orderShipping);
     }
 
     private function paymentExists($order)
