@@ -17,12 +17,6 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     use WithAmountTrait;
     use WithCustomerTrait;
 
-    private $paymentMethods = [
-        'SavedCreditCardPayment' => 'returnCreditCardPaymentMethod',
-        'BoletoPayment' => 'returnBoletoPaymentMethod',
-        'NewCreditCardPayment' => 'returnCreditCardPaymentMethod'
-    ];
-
     private $paymentMethod;
 
     /** @var string */
@@ -99,16 +93,15 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         return $this->paymentMethod;
     }
 
-    public function setPaymentMethod($payment)
+    /**
+     * @param string $paymentMethodName
+     */
+    public function setPaymentMethod($paymentMethodName)
     {
-        $paymentMethodClass = $this->discoverPaymentMethod($payment);
+        $replace = str_replace('_', '', $paymentMethodName);
+        $paymentMethodObject = $replace . 'PaymentMethod';
 
-        if (isset($this->paymentMethods[$paymentMethodClass])) {
-            $methodName = $this->paymentMethods[$paymentMethodClass];
-
-            $this->paymentMethod = $this->$methodName();
-        }
-        return $this;
+        $this->paymentMethod = $this->$paymentMethodObject();;
     }
 
     /**
@@ -124,7 +117,6 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         $this->validatePaymentInvariants($payment);
         $this->blockOverPaymentAttempt($payment);
         $this->setCaptureFlag($payment);
-        $this->setPaymentMethod($payment);
 
         $payment->setOrder($this);
 
@@ -336,13 +328,13 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         }
     }
 
-    private function returnCreditCardPaymentMethod()
+    private function creditcardPaymentMethod()
     {
         return PaymentMethod::credit_card();
     }
 
-    private function returnBoletoPaymentMethod()
+    private function boletoPaymentMethod()
     {
-        return PaymentMethod::credit_card();
+        return PaymentMethod::boleto();
     }
 }

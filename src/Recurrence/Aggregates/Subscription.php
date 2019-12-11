@@ -150,7 +150,7 @@ class Subscription extends AbstractEntity
 
     public function setPaymentMethod(PaymentMethod $paymentMethod)
     {
-        $this->paymentMethod = $paymentMethod;
+        $this->paymentMethod = $paymentMethod->getPaymentMethod();
         return $this;
     }
 
@@ -308,6 +308,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->cardId = $this->getCardId();
         $subscriptionRequest->installments = $this->getInstallments();
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
+        $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {

@@ -61,7 +61,7 @@ final class SubscriptionService
 
                 throw new \Exception($message, 400);
             }
-
+            $paymentMethod = $platformOrder->getPaymentMethod();
             $platformOrder->save();
 
             $orderFactory = new OrderFactory();
@@ -73,6 +73,7 @@ final class SubscriptionService
             $handler->handle($response, $order);
 
             $platformOrder->save();*/
+
 
             return [$response];
         } catch(\Exception $e) {
@@ -96,7 +97,17 @@ final class SubscriptionService
 
         $recurrenceSettings = $items[0];
         $payments = $order->getPayments();
-        $cardToken = $order->getPayments()[0]->getIdentifier()->getValue();
+
+        if (isset($payments) && isset($payments[0])) {
+            if (method_exists($payments[0], 'getIdentifier')) {
+                $cardToken = $payments[0]->getIdentifier()->getValue();
+                $subscription->setCardToken($cardToken);
+            }
+
+            if (method_exists($payments[0], 'getInstallments')) {
+                $subscription->setInstallments($payments[0]->getInstallments());
+            }
+        }
 
         $subscriptionItems = $this->extractSubscriptionItemsFromOrder(
             $order,
@@ -118,13 +129,9 @@ final class SubscriptionService
         $subscription->setIntervalType($intervalType);
         $subscription->setIntervalCount($intervalCount);
         $subscription->setItems($subscriptionItems);
-        $subscription->setCardToken($cardToken);
         $subscription->setBillingType($recurrenceSettings->getBillingType());
         $subscription->setCustomer($order->getCustomer());
 
-        if ($payments[0]->getInstallments()) {
-            $subscription->setInstallments($payments[0]->getInstallments());
-        }
         $boletoDays = ‌‌MPSetup::getModuleConfiguration()->getBoletoDueDays();
         $subscription->setBoletoDays($boletoDays);
 
