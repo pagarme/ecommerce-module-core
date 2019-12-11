@@ -50,6 +50,8 @@ class Subscription extends AbstractEntity
 
     private $intervalCount;
 
+    private $description;
+
     /**
      * @var PlanId
      */
@@ -183,7 +185,7 @@ class Subscription extends AbstractEntity
 
     public function getIntervalCount()
     {
-        return $this->intervalType;
+        return $this->intervalCount;
     }
 
     public function setPlanId(PlanId $planId)
@@ -295,6 +297,22 @@ class Subscription extends AbstractEntity
         $this->cardId = $cardId;
     }
 
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -309,6 +327,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->installments = $this->getInstallments();
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
         $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
+        $subscriptionRequest->description = $this->getDescription();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {

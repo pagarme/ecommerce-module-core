@@ -26,6 +26,7 @@ use MundiPagg\MundiPagg\Model\Source\Interval;
 final class SubscriptionService
 {
     private $logService;
+    private $subscriptionItems;
 
     public function __construct()
     {
@@ -91,49 +92,22 @@ final class SubscriptionService
 
         $items = $this->getSubscriptionItems($order);
 
-        if (count($items) == 0 || !isset($items[0])) {
-            return;
+        if (empty($items[0]) || count($items) == 0) {
+            throw new \Exception('Recurrence items not found', 400);
         }
 
         $recurrenceSettings = $items[0];
-        $payments = $order->getPayments();
 
-        if (isset($payments) && isset($payments[0])) {
-            if (method_exists($payments[0], 'getIdentifier')) {
-                $cardToken = $payments[0]->getIdentifier()->getValue();
-                $subscription->setCardToken($cardToken);
-            }
-
-            if (method_exists($payments[0], 'getInstallments')) {
-                $subscription->setInstallments($payments[0]->getInstallments());
-            }
-        }
-
-        $subscriptionItems = $this->extractSubscriptionItemsFromOrder(
-            $order,
-            $recurrenceSettings
-        );
-
-        $intervalCount =
-            $subscriptionItems[0]
-                ->getSelectedRepetition()
-                ->getIntervalCount();
-
-        $intervalType =
-            $subscriptionItems[0]
-                ->getSelectedRepetition()
-                ->getInterval();
+        $this->fillCreditCardData($subscription, $order);
+        $this->fillSubscriptionItems($subscription, $order, $recurrenceSettings);
+        $this->fillInterval($subscription);
+        $this->fillBoletoData($subscription);
+        $this->fillDescription($subscription);
 
         $subscription->setCode($order->getCode());
-        $subscription->setPaymentMethod($order->getPaymentMethod());
-        $subscription->setIntervalType($intervalType);
-        $subscription->setIntervalCount($intervalCount);
-        $subscription->setItems($subscriptionItems);
-        $subscription->setBillingType($recurrenceSettings->getBillingType());
         $subscription->setCustomer($order->getCustomer());
-
-        $boletoDays = ‌‌MPSetup::getModuleConfiguration()->getBoletoDueDays();
-        $subscription->setBoletoDays($boletoDays);
+        $subscription->setBillingType($recurrenceSettings->getBillingType());
+        $subscription->setPaymentMethod($order->getPaymentMethod());
 
         return $subscription;
     }
@@ -179,5 +153,84 @@ final class SubscriptionService
         }
 
         return $subscriptionItems;
+    }
+
+    private function fillCreditCardData(&$subscription, $order)
+    {
+        if ($this->paymentExists($order)) {
+            $payments = $order->getPayments();
+
+            $subscription->setCardToken(
+                $this->extractCreditCardTokenFromPayment($payments[0])
+            );
+            $subscription->setInstallments(
+                $this->extractInstallmentsFromPayment($payments[0])
+            );
+        }
+    }
+
+    private function fillBoletoData(&$subscription)
+    {
+        $boletoDays = ‌‌MPSetup::getModuleConfiguration()->getBoletoDueDays();
+        $subscription->setBoletoDays($boletoDays);
+    }
+
+    private function fillSubscriptionItems(&$subscription, $order, $recurrenceSettings)
+    {
+        $this->subscriptionItems = $this->extractSubscriptionItemsFromOrder(
+            $order,
+            $recurrenceSettings
+        );
+        $subscription->setItems($this->subscriptionItems);
+    }
+
+    private function fillInterval(&$subscription)
+    {
+        /**
+         * @todo Subscription Intervals are comming from subscription items
+         */
+        $intervalCount =
+            $this->subscriptionItems[0]
+                ->getSelectedRepetition()
+                ->getIntervalCount();
+
+        $intervalType =
+            $this->subscriptionItems[0]
+                ->getSelectedRepetition()
+                ->getInterval();
+
+        $subscription->setIntervalType($intervalType);
+        $subscription->setIntervalCount($intervalCount);
+    }
+
+    private function fillDescription($subscription)
+    {
+        $subscription->setDescription($this->subscriptionItems[0]->getDescription());
+    }
+
+    private function paymentExists($order)
+    {
+        $payments = $order->getPayments();
+        if (isset($payments) && isset($payments[0])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function extractCreditCardTokenFromPayment($payment)
+    {
+        if (method_exists($payment, 'getIdentifier')) {
+            return $payment->getIdentifier()->getValue();
+        }
+
+        return null;
+    }
+
+    private function extractInstallmentsFromPayment($payment)
+    {
+        if (method_exists($payment, 'getInstallments')) {
+            return $payment->getInstallments();
+        }
     }
 }
