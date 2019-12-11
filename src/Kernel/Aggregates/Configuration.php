@@ -96,7 +96,6 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
-
     /** @var string */
     private $storeId;
 
@@ -120,6 +119,12 @@ final class Configuration extends AbstractEntity
 
     /** @var bool */
     private $installmentsDefaultConfig;
+
+    /** @var int */
+    private $boletoDueDays;
+
+    /** @var string */
+    private $boletoBankCode;
 
     public function __construct()
     {
@@ -523,6 +528,38 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return int
+     */
+    public function getBoletoDueDays()
+    {
+        return $this->boletoDueDays;
+    }
+
+    /**
+     * @param int $boletoDueDays
+     */
+    public function setBoletoDueDays($boletoDueDays)
+    {
+        $this->boletoDueDays = $boletoDueDays;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBoletoBankCode()
+    {
+        return $this->boletoBankCode;
+    }
+
+    /**
+     * @param string $boletoBankCode
+     */
+    public function setBoletoBankCode($boletoBankCode)
+    {
+        $this->boletoBankCode = $boletoBankCode;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -551,6 +588,8 @@ final class Configuration extends AbstractEntity
             "installmentsDefaultConfig" => $this->isInstallmentsDefaultConfig(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
+            "boletoDueDays" => $this->getBoletoDueDays(),
+            "boletoBankCode" => $this->getBoletoBankCode(),
             "cardConfigs" => $this->getCardConfigs(),
             "storeId" => $this->getStoreId(),
             "methodsInherited" => $this->getMethodsInherited(),

@@ -33,6 +33,9 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     /** @var string */
     protected $updatedAt;
 
+    /** @var Repetition */
+    protected $selectedRepetition;
+
     /**
      * @return int
      */
@@ -258,6 +261,22 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     {
         $this->recurrenceType = $recurrenceType;
         return $this;
+    }
+
+    /**
+     * @return Repetition
+     */
+    public function getSelectedRepetition()
+    {
+        return $this->selectedRepetition;
+    }
+
+    /**
+     * @param Repetition $selectedRepetition
+     */
+    public function setSelectedRepetition($selectedRepetition)
+    {
+        $this->selectedRepetition = $selectedRepetition;
     }
 
     public function convertToSdkRequest()
