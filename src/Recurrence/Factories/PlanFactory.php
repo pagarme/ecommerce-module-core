@@ -196,31 +196,8 @@ class PlanFactory implements FactoryInterface
         return $this->plan;
     }
 
-    /**
-     *
-     * @param  array $dbData
-     * @return SavedCard
-     */
     public function createFromDbData($dbData)
     {
-        $plan = new Plan();
-
-        $plan->setId($dbData['id']);
-
-        $plan->setMundipaggId(
-            new PlanId($dbData['plan_id'])
-        );
-
-        $plan->setBillingType($postData['billing_type']);
-        $plan->setCreditCard($postData['credit_card']);
-        $plan->setBoleto($postData['boleto']);
-        $plan->setAllowInstallments($postData['allow_installments']);
-        $plan->setProductId($postData['product_id']);
-        $plan->setUpdatedAt(new \Datetime($postData['updated_at']));
-        $plan->setCreatedAt(new \Datetime($postData['created_at']));
-        $plan->setStatus($postData['status']);
-        $plan->setInterval(IntervalValueObject::$intervalType($intervalCount));
-
-        return $savedCard;
+        return new Plan();
     }
 }

@@ -86,12 +86,12 @@ class RepetitionRepository extends AbstractRepository
 
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        // TODO: Implement findByMundipaggId() method.
+        return;// TODO: Implement findByMundipaggId() method.
     }
 
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        return;// TODO: Implement listEntities() method.
     }
 
     public function findBySubscriptionId($subscriptionId)

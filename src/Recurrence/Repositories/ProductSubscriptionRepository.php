@@ -16,6 +16,8 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
 
+        $cycles = $object->getCycles() ?: '0';
+
         $query = "
             INSERT INTO $table (
                 `product_id`,
@@ -31,7 +33,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
                 '{$object->getSellAsNormalProduct()}',
-                 {$object->getCycles()},
+                '{$cycles}',
                 '{$object->getBillingType()}'
             )
         ";
@@ -128,7 +130,7 @@ class ProductSubscriptionRepository extends AbstractRepository
 
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        // TODO: Implement findByMundipaggId() method.
+        return; // TODO: Implement findByMundipaggId() method.
     }
 
     public function listEntities($limit, $listDisabled)
@@ -170,16 +172,14 @@ class ProductSubscriptionRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
-
         $query = "SELECT * FROM $table WHERE product_id = $productId";
 
         $result = $this->db->fetch($query);
-
         if ($result->num_rows === 0) {
             return null;
         }
-
         $productSubscriptionFactory = new ProductSubscriptionFactory();
+
         $productSubscription =
             $productSubscriptionFactory->createFromDbData($result->row);
 
