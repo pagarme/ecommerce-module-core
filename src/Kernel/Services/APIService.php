@@ -70,7 +70,7 @@ class APIService
         $endpoint = $this->getAPIBaseEndpoint();
 
         $orderRequest = $order->convertToSDKRequest();
-        $orderRequest->metadata = $this->getOrderMetaData();
+        $orderRequest->metadata = $this->getRequestMetaData();
         $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
 
         $message =
@@ -103,7 +103,7 @@ class APIService
         }
     }
 
-    private function getOrderMetaData()
+    private function getRequestMetaData()
     {
         $versionService = new VersionService();
         $metadata = new \stdClass();
@@ -188,7 +188,7 @@ class APIService
         $endpoint = $this->getAPIBaseEndpoint();
 
         $subscriptionRequest = $subscription->convertToSDKRequest();
-        //$subscriptionRequest->metadata = $this->getOrderMetaData();
+        $subscriptionRequest->metadata = $this->getRequestMetaData();
         $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
 
         $message =
