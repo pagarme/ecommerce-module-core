@@ -13,6 +13,13 @@ class ProductSubscriptionService
     /** @var LogService  */
     protected $logService;
 
+    public function saveFormProductSubscription($formData)
+    {
+        $productSubscriptionFactory = $this->getProductSubscriptionFactory();
+        $productSubscription = $productSubscriptionFactory->createFromPostData($formData);
+        return $this->saveProductSubscription($productSubscription);
+    }
+
     public function saveProductSubscription(ProductSubscription $productSubscription)
     {
         $this->getLogService()->info("Creating product subscription at platform");
