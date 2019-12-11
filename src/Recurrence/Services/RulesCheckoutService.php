@@ -5,7 +5,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 
-class RulesCheckout
+class RulesCheckoutService
 {
     public function runRulesCheckoutSubscription(
         ProductSubscription $productSubscriptionInCart,
@@ -17,7 +17,7 @@ class RulesCheckout
             $repetitionSelected
         );
 
-        $productSubscriptionCompatible = $productSubscriptionInCart->checkProductHasSameMethodPayment(
+        $productSubscriptionCompatible = $productSubscriptionInCart->checkProductHasSamePaymentMethod(
             $productSubscriptionSelected
         );
 
