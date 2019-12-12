@@ -59,6 +59,10 @@ class PTBR extends AbstractI18NTable
             'years' => "anos",
             'discount' => "desconto",
             'Credit Card' => "Cartão de Crédito",
+            'Subscription canceled with success!' => "Assinatura cancelada com sucesso!",
+            'Error on cancel subscription' => "Erro ao cancelar a assinatura",
+            'Subscription not found' => "Assinatura não encontrada",
+            'Subscription already canceled' => "Assinatura já está cancelada",
         ];
     }
 }

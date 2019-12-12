@@ -19,17 +19,24 @@ use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
+use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use MundiPagg\MundiPagg\Model\Source\Interval;
 
 final class SubscriptionService
 {
     private $logService;
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
 
     public function __construct()
     {
         $this->logService = new OrderLogService();
+        $this->i18n = new LocalizationService();
     }
 
     public function createSubscriptionAtMundipagg(PlatformOrderInterface $platformOrder)
@@ -178,6 +185,72 @@ final class SubscriptionService
     {
         return $this->getSubscriptionRepository()
             ->listEntities(0, false);
+    }
+
+    public function cancel($subscriptionId)
+    {
+        try {
+
+            $subscription = $this->getSubscriptionRepository()
+                ->find($subscriptionId);
+
+            if (!$subscription) {
+                $message = $this->i18n->getDashboard(
+                    'Subscription not found'
+                );
+
+                $this->logService->orderInfo(
+                    null,
+                    $message . " ID {$subscriptionId} ."
+                );
+
+                return [
+                    "message" => $message,
+                    "code" => 404
+                ];
+            }
+
+            if ($subscription->getStatus() == SubscriptionStatus::canceled()) {
+                $message = $this->i18n->getDashboard(
+                    'Subscription already canceled'
+                );
+
+                return [
+                    "message" => $message,
+                    "code" => 200
+                ];
+            }
+
+            $apiService = new APIService();
+            $apiService->cancelSubscription($subscription);
+
+            $subscription->setStatus(SubscriptionStatus::canceled());
+            $this->getSubscriptionRepository()->save($subscription);
+
+            $message = $this->i18n->getDashboard(
+                'Subscription canceled with success!'
+            );
+
+            return [
+                "message" => $message,
+                "code" => 200
+            ];
+        } catch (\Exception $exception) {
+
+            $message = $this->i18n->getDashboard(
+                'Error on cancel subscription'
+            );
+
+            $this->logService->orderInfo(
+                null,
+                $message . ' - ' . $exception->getMessage()
+            );
+
+            return [
+                "message" => $message,
+                "code" => 200
+            ];
+        }
     }
 
     public function getSubscriptionRepository()

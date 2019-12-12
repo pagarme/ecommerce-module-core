@@ -59,6 +59,10 @@ class ENUS extends AbstractI18NTable
             'years' => null,
             'discount' => null,
             'Credit Card' => null,
+            'Subscription canceled with success!' => null,
+            'Error on cancel subscription' => null,
+            'Subscription not found' => null,
+            'Subscription already canceled' => null,
         ];
     }
 }

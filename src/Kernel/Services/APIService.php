@@ -238,4 +238,41 @@ class APIService
             return $e->getMessage();
         }
     }
+
+    public function cancelSubscription(Subscription $subscription)
+    {
+        $endpoint = $this->getAPIBaseEndpoint();
+
+        $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
+
+        $message =
+            'Cancel subscription request from ' .
+            $publicKey .
+            ' to ' .
+            $endpoint;
+
+        $this->logService->orderInfo(
+            $subscription->getCode(),
+            $message
+        );
+
+        $subscriptionController = $this->getSubscriptionController();
+
+        try {
+            $response = $subscriptionController->cancelSubscription(
+                $subscription->getMundipaggId()
+            );
+            $this->logService->orderInfo(
+                $subscription->getCode(),
+                'Cancel subscription response',
+                $response
+            );
+
+            return json_decode(json_encode($response), true);
+
+        } catch (\Exception $e) {
+            $this->logService->exception($e);
+            return $e;
+        }
+    }
 }
