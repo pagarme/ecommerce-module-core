@@ -104,7 +104,9 @@ class ProductSubscriptionFactoryTest extends TestCase
         $productSubscriptionFactory = new ProductSubscriptionFactory();
 
         $productSubscription = $productSubscriptionFactory->createFromPostData("");
+        $productSubscription2 = $productSubscriptionFactory->createFromDbData("");
         $this->assertNotInstanceOf(ProductSubscription::class, $productSubscription);
+        $this->assertNotInstanceOf(ProductSubscription::class, $productSubscription2);
     }
 
     public function testCreateFromDbShouldReturnAProductSubscription()
