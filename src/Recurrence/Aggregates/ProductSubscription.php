@@ -287,4 +287,28 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
         $this->cycles = $cycles;
         return $this;
     }
+
+    public function checkProductHasSamePaymentMethod(ProductSubscription $productSubscription)
+    {
+        $paymentMethodAccept = [];
+        if ($this->getBoleto()) {
+            $paymentMethodAccept[] = 'boleto';
+        }
+
+        if ($this->getCreditCard()) {
+            $paymentMethodAccept[] = 'creditCard';
+        }
+
+        $paymentMethodAcceptReceive = [];
+        if ($productSubscription->getBoleto()) {
+            $paymentMethodAcceptReceive[] = 'boleto';
+        }
+
+        if ($productSubscription->getCreditCard()) {
+            $paymentMethodAcceptReceive[] = 'creditCard';
+        }
+
+        $compatible = array_intersect($paymentMethodAccept, $paymentMethodAcceptReceive);
+        return !empty($compatible);
+    }
 }

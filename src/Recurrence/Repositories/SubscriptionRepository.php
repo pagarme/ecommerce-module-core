@@ -164,7 +164,7 @@ class SubscriptionRepository extends AbstractRepository
 
         $result = $this->db->fetch($query);
         if ($result->num_rows === 0) {
-            return null;
+            return [];
         }
 
         $factory = new SubscriptionFactory();

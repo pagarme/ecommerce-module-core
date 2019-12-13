@@ -16,6 +16,8 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
 
+        $cycles = $object->getCycles() ?: '0';
+
         $query = "
             INSERT INTO $table (
                 `product_id`,
@@ -31,7 +33,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
                 '{$object->getSellAsNormalProduct()}',
-                 {$object->getCycles()},
+                '{$cycles}',
                 '{$object->getBillingType()}'
             )
         ";
@@ -170,64 +172,25 @@ class ProductSubscriptionRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
-
         $query = "SELECT * FROM $table WHERE product_id = $productId";
 
         $result = $this->db->fetch($query);
-
         if ($result->num_rows === 0) {
             return null;
         }
-
         $productSubscriptionFactory = new ProductSubscriptionFactory();
+
         $productSubscription =
             $productSubscriptionFactory->createFromDbData($result->row);
 
         $repetitionRepository = new RepetitionRepository();
+
         $repetitions = $repetitionRepository->findBySubscriptionId(
             $productSubscription->getId()
         );
 
         foreach ($repetitions as $repetition) {
             $productSubscription->addRepetition($repetition);
-        }
-
-        return $productSubscription;
-    }
-
-    public function findByProductId($productId)
-    {
-        $table = $this->db->getTable(
-            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
-        );
-
-        $query = "SELECT * FROM $table WHERE product_id = $productId";
-
-        $result = $this->db->fetch($query);
-
-        if ($result->num_rows === 0) {
-            return null;
-        }
-
-        $productSubscriptionFactory = new ProductSubscriptionFactory();
-        $productSubscription =
-            $productSubscriptionFactory->createFromDbData($result->row);
-
-        $repetitionRepository = new RepetitionRepository();
-        $repetitions = $repetitionRepository->findBySubscriptionId(
-            $productSubscription->getId()
-        );
-
-        $subProductsRepository = new SubProductRepository();
-        $subProducts =
-            $subProductsRepository->findByRecurrence($productSubscription);
-
-        foreach ($repetitions as $repetition) {
-            $productSubscription->addRepetition($repetition);
-        }
-
-        foreach ($subProducts as $subProduct) {
-            $productSubscription->addItems($subProduct);
         }
 
         return $productSubscription;

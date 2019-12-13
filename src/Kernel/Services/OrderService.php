@@ -167,7 +167,7 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            if ($this->checkResponseStatus($response)) {
+            if (!$this->checkResponseStatus($response)) {
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
@@ -288,6 +288,6 @@ final class OrderService
             }
         }
 
-        return;
+        return true;
     }
 }
