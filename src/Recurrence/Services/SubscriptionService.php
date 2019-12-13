@@ -2,7 +2,8 @@
 
 namespace Mundipagg\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as ‌‌MPSetup;
+use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
@@ -57,7 +58,7 @@ final class SubscriptionService
             $apiService = new APIService();
             $response = $apiService->createSubscription($subscription);
 
-            /*if ($this->checkResponseStatus($response)) {
+            if (!$this->checkResponseStatus($response)) {
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
@@ -66,10 +67,10 @@ final class SubscriptionService
             $paymentMethod = $platformOrder->getPaymentMethod();
             $platformOrder->save();
 
-            $orderFactory = new OrderFactory();
+            /*$orderFactory = new OrderFactory();
             $response = $orderFactory->createFromPostData($response);
 
-            $response->setPlatformOrder($platformOrder);
+            /*$response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
             $handler->handle($response, $order);
@@ -114,17 +115,23 @@ final class SubscriptionService
         return $subscription;
     }
 
+    /**
+     * @param PaymentOrder $order
+     * @return array
+     */
     private function getSubscriptionItems(PaymentOrder $order)
     {
         $recurrenceService = new RecurrenceService();
         $items = [];
 
         foreach ($order->getItems() as $product) {
-            $items[] =
-                $recurrenceService
-                    ->getRecurrenceProductByProductId(
-                        $product->getCode()
-                    );
+            if ($product->getSelectedOption()) {
+                $items[] =
+                    $recurrenceService
+                        ->getRecurrenceProductByProductId(
+                            $product->getCode()
+                        );
+            }
         }
 
         return $items;
@@ -140,13 +147,7 @@ final class SubscriptionService
             $subProduct->setCycles($recurrenceSettings->getCycles());
             $subProduct->setDescription($item->getDescription());
             $subProduct->setQuantity($item->getQuantity());
-
-            $itemPrice = PricingScheme::UNIT($item->getAmount());
-
-            if ($item->getSelectedOption()->getRecurrencePrice()) {
-                $itemPrice = $item->getSelectedOption()->getRecurrencePrice();
-            }
-            $pricingScheme = PricingScheme::UNIT($itemPrice);
+            $pricingScheme = PricingScheme::UNIT($item->getAmount());
 
             $subProduct->setPricingScheme($pricingScheme);
             $subProduct->setSelectedRepetition($item->getSelectedOption());
@@ -191,6 +192,10 @@ final class SubscriptionService
         /**
          * @todo Subscription Intervals are comming from subscription items
          */
+        if (empty($this->subscriptionItems[0]->getSelectedRepetition())) {
+            return;
+        }
+
         $intervalCount =
             $this->subscriptionItems[0]
                 ->getSelectedRepetition()
@@ -240,5 +245,30 @@ final class SubscriptionService
         if (method_exists($payment, 'getInstallments')) {
             return $payment->getInstallments();
         }
+    }
+
+    private function checkResponseStatus($response)
+    {
+        if (
+            !isset($response['status']) ||
+            $response['status'] == 'failed'
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isSubscription($platformOrder)
+    {
+        $orderService = new OrderService();
+        $order = $orderService->extractPaymentOrderFromPlatformOrder($platformOrder);
+        $subscriptionItem = $this->getSubscriptionItems($order);
+
+        if (count($subscriptionItem) == 0) {
+            return false;
+        }
+
+        return true;
     }
 }
