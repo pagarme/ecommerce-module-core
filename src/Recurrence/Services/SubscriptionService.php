@@ -174,7 +174,7 @@ final class SubscriptionService
 
     private function fillBoletoData(&$subscription)
     {
-        $boletoDays = ‌‌MPSetup::getModuleConfiguration()->getBoletoDueDays();
+        $boletoDays = MPSetup::getModuleConfiguration()->getBoletoDueDays();
         $subscription->setBoletoDays($boletoDays);
     }
 
