@@ -322,8 +322,44 @@ class Subscription extends AbstractEntity
         return $subscriptionRequest;
     }
 
+    public function getStatusValue()
+    {
+        if ($this->getStatus() !== null) {
+            return $this->getStatus()->getStatus();
+        }
+        return null;
+    }
+
+    public function getPaymentMethodValue()
+    {
+        if ($this->getPaymentMethod() !== null) {
+            return $this->getPaymentMethod()
+                ->getPaymentMethod();
+        }
+        return null;
+    }
+
+    public function getPlanIdValue()
+    {
+        if ($this->getPlanId() !== null) {
+            return $this->getPlanId()->getValue();
+        }
+        return null;
+    }
+
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return [
+            "id" => $this->getId(),
+            "subscriptionId" => $this->getMundipaggId(),
+            "code" => $this->getCode(),
+            "status" => $this->getStatusValue(),
+            "paymentMethod" => $this->getPaymentMethodValue(),
+            "planId" => $this->getPlanIdValue(),
+            "intervalType" => $this->getIntervalType(),
+            "intervalCount" => $this->getIntervalCount(),
+            "installments" => $this->getInstallments(),
+            "billingType" => $this->getBillingType()
+        ];
     }
 }
