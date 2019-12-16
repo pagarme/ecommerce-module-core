@@ -21,6 +21,7 @@ use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 use MundiPagg\MundiPagg\Model\Source\Interval;
@@ -64,18 +65,18 @@ final class SubscriptionService
 
                 throw new \Exception($message, 400);
             }
-            $paymentMethod = $platformOrder->getPaymentMethod();
+
             $platformOrder->save();
 
-            /*$orderFactory = new OrderFactory();
-            $response = $orderFactory->createFromPostData($response);
+            $subscriptionFactory = new SubscriptionFactory();
+            $response = $subscriptionFactory->createFromPostData($response);
 
-            /*$response->setPlatformOrder($platformOrder);
+            $response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
             $handler->handle($response, $order);
 
-            $platformOrder->save();*/
+            $platformOrder->save();
 
 
             return [$response];
@@ -270,5 +271,21 @@ final class SubscriptionService
         }
 
         return true;
+    }
+
+    /**
+     * @param Subscription $response
+     * @return string
+     */
+    private function getResponseHandler($response)
+    {
+        $responseClass = get_class($response);
+        $responseClass = explode('\\', $responseClass);
+
+        $responseClass =
+            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            end($responseClass) . 'Handler';
+
+        return new $responseClass;
     }
 }
