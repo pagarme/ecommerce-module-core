@@ -229,6 +229,7 @@ final class OrderService
         );
         $order->setCustomer($platformOrder->getCustomer());
         $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
+        $order->setPaymentMethod($platformOrder->getPaymentMethod());
 
         $payments = $platformOrder->getPaymentMethodCollection();
         foreach ($payments as $payment) {

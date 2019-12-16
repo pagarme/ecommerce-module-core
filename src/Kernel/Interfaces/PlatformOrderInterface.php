@@ -79,4 +79,7 @@ interface PlatformOrderInterface
 
     /** @since  1.7.2 */
     public function getTotalPaidFromCharges();
+
+    /** @since 1.11.0 */
+    public function getPaymentMethod();
 }
