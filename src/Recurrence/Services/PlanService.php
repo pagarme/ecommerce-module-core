@@ -83,6 +83,16 @@ class PlanService
         return $planRepository->findByProductId($id);
     }
 
+    public function delete($id)
+    {
+        $planRepository = $this->getPlanRepository();
+        $plan = $planRepository->find($id);
+        if (empty($plan)) {
+            throw new \Exception("Plan not found - ID : {$id} ");
+        }
+        return $planRepository->delete($plan);
+    }
+
     public function getPlanRepository()
     {
         return new PlanRepository();

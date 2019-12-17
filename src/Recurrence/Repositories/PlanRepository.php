@@ -117,11 +117,29 @@ final class PlanRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
 
+        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+
+        $result = $this->db->query($query);
+
+        $this->deleteSubproducts($object);
+
+        return $result;
     }
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
 
+    }
+
+    public function deleteSubproducts(AbstractEntity &$object)
+    {
+        $subProductRepository = new SubProductRepository();
+        foreach ($object->getItems() as $subProduct) {
+            $subProductRepository->delete($subProduct);
+        }
     }
 
     public function saveSubProducts(AbstractEntity &$object)
