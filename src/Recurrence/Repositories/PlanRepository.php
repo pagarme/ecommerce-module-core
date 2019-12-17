@@ -31,7 +31,8 @@ final class PlanRepository extends AbstractRepository
                 installments,
                 boleto,
                 billing_type,
-                status
+                status,
+                trial_period_days
             )
           VALUES 
             (
@@ -45,7 +46,8 @@ final class PlanRepository extends AbstractRepository
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
                 '{$object->getBillingType()}',
-                '{$object->getStatus()}'
+                '{$object->getStatus()}',
+                '{$object->getTrialPeriodDays()}'
             )          
         ";
 
@@ -57,7 +59,30 @@ final class PlanRepository extends AbstractRepository
 
     protected function update(AbstractEntity &$object)
     {
-        // TODO: Implement update() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
+
+        $query = "
+            UPDATE $table SET
+                `interval_type` = '{$object->getIntervalType()}',
+                `interval_count` = '{$object->getIntervalCount()}',
+                `name` = '{$object->getName()}',
+                `description` = '{$object->getDescription()}',
+                `plan_id` = '{$object->getMundipaggId()->getValue()}',
+                `product_id` = '{$object->getProductId()}',
+                `credit_card` = '{$object->getCreditCard()}',
+                `installments` = '{$object->getAllowInstallments()}',
+                `boleto` = '{$object->getBoleto()}',
+                `billing_type` = '{$object->getBillingType()}',
+                `status` = '{$object->getStatus()}',
+                `trial_period_days` = '{$object->getTrialPeriodDays()}'
+            WHERE id = {$object->getId()}
+        ";
+
+        $this->db->query($query);
+
+        $this->saveSubProducts($object);
     }
 
     /** @param Plan $object */
@@ -66,17 +91,23 @@ final class PlanRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
         );
-        $query = "SELECT * FROM $table WHERE id = '$id' LIMIT 1";
+        $query = "SELECT * FROM $table WHERE id = '$objectId' LIMIT 1";
 
         $result = $this->db->fetch($query);
 
-        if ($result->num_rows > 0) {
-            $factory = new PlanFactory();
-            $plan = $factory->createFromDbData($result->row);
-
-            return $plan;
+        if ($result->num_rows === 0) {
+            return null;
         }
-        return null;
+
+        $factory = new PlanFactory();
+        $plan = $factory->createFromDbData($result->row);
+
+        $subProductRepository = new SubProductRepository();
+        $items = $subProductRepository->findByRecurrence($plan);
+
+        $plan->setItems($items);
+
+        return $plan;
     }
 
     public function listEntities($limit, $listDisabled)

@@ -8,6 +8,8 @@ use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 use Mundipagg\Core\Recurrence\Repositories\PlanRepository;
 use MundiAPILib\Models\CreatePlanRequest;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class PlanService
 {
@@ -20,35 +22,53 @@ class PlanService
             'PlanService',
             true
         );
+
+        Magento2CoreSetup::bootstrap();
+
+        $config = Magento2CoreSetup::getModuleConfiguration();
+        $secretKey = $config->getSecretKey()->getValue();
+        $password = '';
+
+        \MundiAPILib\Configuration::$basicAuthPassword = '';
+
+        $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
+
     }
 
-    public function create($postData)
+    public function save($postData)
     {
         $planFactory = new PlanFactory();
-
         $postData['status'] = 'ACTIVE';
 
         $plan = $planFactory->createFromPostData($postData);
-        $planRepository = new PlanRepository();
-        $this->createPlanAtMundipagg($plan);
-        $planRepository->save($plan);
 
-        return;
+        $methodName = "createPlanAtMundipagg";
+        if ($plan->getMundipaggId() !== null) {
+            $methodName = "updatePlanAtMundipagg";
+        }
+
+        $result = $this->{$methodName}($plan);
+        $planId = new PlanId($result->id);
+        $plan->setMundipaggId($planId);
+
+        $planRepository = new PlanRepository();
+        $planRepository->save($plan);
     }
 
     public function createPlanAtMundipagg(Plan $plan)
     {
-        $secretKey = ''; //$config->getSecretKey()->getValue();
-        $password = '';
         $createPlanRequest = $plan->convertToSdkRequest();
-
-        \MundiAPILib\Configuration::$basicAuthPassword = '';
-
-        $mundipaggApi = new MundiAPIClient($secretKey, $password);
-        $planController = $mundipaggApi->getPlans();
+        $planController = $this->mundipaggApi->getPlans();
         $result = $planController->createPlan($createPlanRequest);
         return $result;
+    }
 
+    public function updatePlanAtMundipagg(Plan $plan)
+    {
+        $updatePlanRequest = $plan->convertToSdkRequest(true);
+        $planController = $this->mundipaggApi->getPlans();
+        $result = $planController->updatePlan($plan->getMundipaggId(), $updatePlanRequest);
+        return $result;
     }
 
     public function findById($id)
@@ -66,6 +86,11 @@ class PlanService
     public function getPlanRepository()
     {
         return new PlanRepository();
+    }
+
+    public function getMundiAPIClient($secretKey, $password)
+    {
+        return new MundiAPIClient($secretKey, $password);
     }
 
 }
