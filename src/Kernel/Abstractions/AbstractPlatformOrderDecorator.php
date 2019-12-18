@@ -14,6 +14,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 {
     protected $platformOrder;
     private $logService;
+    private $paymentMethod;
 
     public function __construct()
     {
@@ -188,6 +189,16 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $grandTotal = $moneyService->centsToFloat($grandTotal);
 
         return $grandTotal;
+    }
+
+    public function setPaymentMethod($paymentMethod)
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
     }
 
     abstract protected function addMPHistoryComment($message);

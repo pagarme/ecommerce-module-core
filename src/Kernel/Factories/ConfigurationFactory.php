@@ -165,6 +165,13 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoInstructions($data->boletoInstructions);
         }
 
+        if (isset($data->boletoBankCode)) {
+            $config->setBoletoBankCode($data->boletoBankCode);
+        }
+        if (isset($data->boletoDueDays)) {
+            $config->setBoletoDueDays($data->boletoDueDays);
+        }
+
         if (isset($data->saveCards)) {
             $config->setSaveCards($data->saveCards);
         }

@@ -141,6 +141,8 @@ class PlatformCoreSetup extends AbstractModuleCoreSetup
             'installmentsDefaultConfig' => true,
             'cardStatementDescriptor' => 'Loja Magento 2 stg',
             'boletoInstructions' => 'Pagar ate o vencimento',
+            'boletoDueDays' => 5,
+            'boletoBankCode' => '002',
             'cardConfigs' => [
                 [
                     'enabled' => true,

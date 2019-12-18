@@ -209,7 +209,7 @@ final class OrderService
         return new $responseClass;
     }
 
-    private function extractPaymentOrderFromPlatformOrder(
+    public function extractPaymentOrderFromPlatformOrder(
         PlatformOrderInterface $platformOrder
     )
     {
@@ -229,6 +229,7 @@ final class OrderService
         );
         $order->setCustomer($platformOrder->getCustomer());
         $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
+        $order->setPaymentMethod($platformOrder->getPaymentMethod());
 
         $payments = $platformOrder->getPaymentMethodCollection();
         foreach ($payments as $payment) {
@@ -261,7 +262,7 @@ final class OrderService
      * @param PlatformOrderInterface $platformOrder
      * @return \stdClass
      */
-    private function getOrderInfo(PlatformOrderInterface $platformOrder)
+    public function getOrderInfo(PlatformOrderInterface $platformOrder)
     {
         $orderInfo = new \stdClass();
         $orderInfo->grandTotal = $platformOrder->getGrandTotal();

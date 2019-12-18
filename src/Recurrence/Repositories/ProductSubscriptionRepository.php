@@ -184,7 +184,6 @@ class ProductSubscriptionRepository extends AbstractRepository
             $productSubscriptionFactory->createFromDbData($result->row);
 
         $repetitionRepository = new RepetitionRepository();
-
         $repetitions = $repetitionRepository->findBySubscriptionId(
             $productSubscription->getId()
         );

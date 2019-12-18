@@ -2,15 +2,16 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use MundiAPILib\Models\CreateSubscriptionRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class Subscription extends AbstractEntity
 {
@@ -47,6 +48,8 @@ class Subscription extends AbstractEntity
 
     private $intervalCount;
 
+    private $description;
+
     /**
      * @var PlanId
      */
@@ -56,8 +59,30 @@ class Subscription extends AbstractEntity
      * @var Order
      */
     private $platformOrder;
-
+    private $items;
     private $cycle;
+    private $billingType;
+    private $cardToken;
+    private $boletoDays;
+    private $cardId;
+    private $shipping;
+
+    /**
+     * @return mixed
+     */
+    public function getBillingType()
+    {
+        return $this->billingType;
+    }
+
+    /**
+     * @param mixed $billingType
+     */
+    public function setBillingType($billingType)
+    {
+        $this->billingType = $billingType;
+        return $this;
+    }
 
     /**
      * @return SubscriptionId
@@ -126,7 +151,7 @@ class Subscription extends AbstractEntity
 
     public function setPaymentMethod(PaymentMethod $paymentMethod)
     {
-        $this->paymentMethod = $paymentMethod;
+        $this->paymentMethod = $paymentMethod->getPaymentMethod();
         return $this;
     }
 
@@ -140,7 +165,7 @@ class Subscription extends AbstractEntity
         return self::RECURRENCE_TYPE;
     }
 
-    public function setIntervalType(IntervalValueObject $intervalType)
+    public function setIntervalType($intervalType)
     {
         $this->intervalType = $intervalType;
         return $this;
@@ -149,6 +174,17 @@ class Subscription extends AbstractEntity
     public function getIntervalType()
     {
         return $this->intervalType;
+    }
+
+    public function setIntervalCount($intervalCount)
+    {
+        $this->intervalCount = $intervalCount;
+        return $this;
+    }
+
+    public function getIntervalCount()
+    {
+        return $this->intervalCount;
     }
 
     public function setPlanId(PlanId $planId)
@@ -202,8 +238,150 @@ class Subscription extends AbstractEntity
         return $this;
     }
 
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    public function setItems(array $items)
+    {
+        $this->items = $items;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCardToken()
+    {
+        return $this->cardToken;
+    }
+
+    /**
+     * @param mixed $cardToken
+     */
+    public function setCardToken($cardToken)
+    {
+        $this->cardToken = $cardToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoletoDays()
+    {
+        return $this->boletoDays;
+    }
+
+    /**
+     * @param mixed $boletoDays
+     */
+    public function setBoletoDays($boletoDays)
+    {
+        $this->boletoDays = $boletoDays;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCardId()
+    {
+        return $this->cardId;
+    }
+
+    /**
+     * @param mixed $cardId
+     */
+    public function setCardId($cardId)
+    {
+        $this->cardId = $cardId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return Shipping
+     */
+    public function getShipping()
+    {
+        return $this->shipping;
+    }
+
+    /**
+     * @param Shipping $shipping
+     */
+    public function setShipping(Shipping $shipping)
+    {
+        $this->shipping = $shipping;
+    }
+
+    public function convertToSdkRequest()
+    {
+        $subscriptionRequest = new CreateSubscriptionRequest();
+
+        $subscriptionRequest->code = $this->getCode();
+        $subscriptionRequest->customer = $this->getCustomer()->convertToSDKRequest();
+        $subscriptionRequest->billingType = $this->getBillingType();
+        $subscriptionRequest->interval = $this->getIntervalType();
+        $subscriptionRequest->intervalCount = $this->getIntervalCount();
+        $subscriptionRequest->cardToken = $this->getCardToken();
+        $subscriptionRequest->cardId = $this->getCardId();
+        $subscriptionRequest->installments = $this->getInstallments();
+        $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
+        $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
+        $subscriptionRequest->description = $this->getDescription();
+        $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
+
+        $subscriptionRequest->items = [];
+        foreach ($this->getItems() as $item) {
+            $subscriptionRequest->items[] = $item->convertToSDKRequest();
+        }
+
+        return $subscriptionRequest;
+    }
+
+    public function getStatusValue()
+    {
+        if ($this->getStatus() !== null) {
+            return $this->getStatus()->getStatus();
+        }
+        return null;
+    }
+
+    public function getPlanIdValue()
+    {
+        if ($this->getPlanId() !== null) {
+            return $this->getPlanId()->getValue();
+        }
+        return null;
+    }
+
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return [
+            "id" => $this->getId(),
+            "subscriptionId" => $this->getMundipaggId(),
+            "code" => $this->getCode(),
+            "status" => $this->getStatusValue(),
+            "paymentMethod" => $this->getPaymentMethod(),
+            "planId" => $this->getPlanIdValue(),
+            "intervalType" => $this->getIntervalType(),
+            "intervalCount" => $this->getIntervalCount(),
+            "installments" => $this->getInstallments(),
+            "billingType" => $this->getBillingType()
+        ];
     }
 }
