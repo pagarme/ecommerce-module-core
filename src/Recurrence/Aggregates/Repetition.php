@@ -167,6 +167,11 @@ class Repetition extends AbstractEntity implements RepetitionInterface
         ];
     }
 
+    public function getIntervalType()
+    {
+        return $this->interval;
+    }
+
     public function getIntervalTypeLabel()
     {
         //@todo change to a class formater maybe

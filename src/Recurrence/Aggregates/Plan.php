@@ -9,14 +9,17 @@ use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use Mundipagg\Core\Recurrence\Interfaces\ProductPlanInterface;
 
-final class Plan extends AbstractEntity implements RecurrenceEntityInterface
+final class Plan extends AbstractEntity implements RecurrenceEntityInterface,ProductPlanInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
     const RECURRENCE_TYPE = "plan";
 
     protected $id = null;
     private $interval;
+    private $intervalType;
+    private $intervalCount;
     private $name;
     private $description;
     private $productId;
@@ -102,6 +105,58 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
     {
         $this->interval = $interval;
         return $this;
+    }
+
+    /**
+     * @param string $interval
+     * @return $this
+     */
+    public function setIntervalType($intervalType)
+    {
+        $listIntervalAccept = [
+            IntervalValueObject::INTERVAL_TYPE_WEEK,
+            IntervalValueObject::INTERVAL_TYPE_DAY,
+            IntervalValueObject::INTERVAL_TYPE_MONTH,
+            IntervalValueObject::INTERVAL_TYPE_YEAR
+        ];
+
+        if (!in_array($intervalType, $listIntervalAccept)) {
+            throw new \Exception('Interval not find');
+        }
+
+        $this->intervalType = $intervalType;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntervalType()
+    {
+        return $this->intervalType;
+    }
+
+    /**
+     * @param int $intervalCount
+     * @return $this
+     * @throws \Exception
+     */
+    public function setIntervalCount($intervalCount)
+    {
+        if (!is_numeric($intervalCount)) {
+            throw new \Exception('Interval count not compatible');
+        }
+
+        $this->intervalCount = $intervalCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIntervalCount()
+    {
+        return $this->intervalCount;
     }
 
     /**
@@ -276,28 +331,10 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         return $this;
     }
 
-    public function getIntervalType()
-    {
-        if ($this->getInterval() != null) {
-            return $this->getInterval()->getIntervalType();
-        }
-
-        return null;
-    }
-
-    public function getIntervalCount()
-    {
-        if ($this->getInterval() != null) {
-            return $this->getInterval()->getIntervalCount();
-        }
-
-        return null;
-    }
-
     /**
      * @param array $items An array of Subproducts aggregate
      */
-    public function setItems($items)
+    public function setItems(array $items)
     {
         $this->items = $items;
         return $this;

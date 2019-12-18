@@ -143,9 +143,11 @@ class PlanFactory implements FactoryInterface
         $intervalType = $this->intervalType;
 
         if (isset($intervalType) && isset($intervalCount)) {
-            $this->plan->setInterval(
-                IntervalValueObject::$intervalType($intervalCount)
-            );
+//            $this->plan->setInterval(
+//                IntervalValueObject::$intervalType($intervalCount)
+//            );
+            $this->plan->setIntervalType($intervalType);
+            $this->plan->setIntervalCount($intervalCount);
             return;
         }
     }
