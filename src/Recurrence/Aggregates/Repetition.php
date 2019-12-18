@@ -104,6 +104,11 @@ class Repetition extends AbstractEntity implements RepetitionInterface
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
     }
 
+    public function getIntervalType()
+    {
+        return $this->interval;
+    }
+
     /**
      * @return int
      */
