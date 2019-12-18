@@ -109,6 +109,44 @@ class ProductSubscriptionServiceTest extends AbstractRepositoryTest
         $this->assertEquals($productSubscription->getProductId(), $result->getProductId());
     }
 
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage  Product already exists on recurrence product- Product ID : 23
+     */
+    public function testShouldNotAllowSaveProductSubscriptionWithProductIdAlreadyExisting()
+    {
+        $product = [
+            "product_id" => "23",
+            "boleto" => true,
+            "credit_card" => true,
+            "allow_installments" => true,
+            "sell_as_normal_product" => true,
+            "cycles" => 10,
+            "repetitions" => [
+                [
+                    "interval_count" => 1,
+                    "interval" => "month",
+                    "recurrence_price"=> 50000
+                ],
+                [
+                    "interval_count" => 2,
+                    "interval" => "month",
+                    "recurrence_price" => 45000
+                ]
+            ]
+        ];
+
+        $factory = new ProductSubscriptionFactory();
+        $productSubscription1 = $factory->createFromPostData($product);
+
+        $this->service->saveProductSubscription($productSubscription1);
+
+        $factory2 = new ProductSubscriptionFactory();
+        $productSubscription2 = $factory2->createFromPostData($product);
+
+        $this->service->saveProductSubscription($productSubscription2);
+    }
+
     public function testShouldSaveProductSubscriptionByFormDataWithSuccess()
     {
         $formData = [
