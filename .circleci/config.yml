@@ -37,6 +37,13 @@ commands:
           root: /
           paths:
             - app
+  build_test:
+    steps:
+      - run:
+          name: Code coverage
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report 
+      - store_artifacts:
+          path:  build/coverage-report       
 jobs:
   build-php56:
     working_directory: /app
@@ -55,12 +62,7 @@ jobs:
           APP_ENV: test
     steps:
       - build
-    - run:
-        name: code coverage
-        command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
-    - store_artifacts:
-        path:  build/coverage-report
-
+      - build_test
 
 workflows:
   build_publish_deploy:
