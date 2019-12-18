@@ -55,6 +55,12 @@ jobs:
           APP_ENV: test
     steps:
       - build
+    - run:
+        name: code coverage
+        command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
+    - store_artifacts:
+        path:  build/coverage-report
+
 
 workflows:
   build_publish_deploy:
