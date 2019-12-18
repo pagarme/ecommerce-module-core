@@ -63,12 +63,12 @@ class PTBR extends AbstractI18NTable
             'Error on cancel subscription' => "Erro ao cancelar a assinatura",
             'Subscription not found' => "Assinatura não encontrada",
             'Subscription already canceled' => "Assinatura já está cancelada",
-            'De 1 em 1 mês' => 'Mensal',
-            'De 2 em 2 meses' => 'Bimestral',
-            'De 3 em 3 meses' => 'Trimestral',
-            'De 1 em 1 ano' => 'Anual',
-            'De 2 em 2 anos' => 'Bienal',
-            'De 1 em 1 semana' => 'Semanal'
+            'monthly' => 'Mensal',
+            'bimonthly' => 'Bimestral',
+            'quarterly' => 'Trimestral',
+            'yearly' => 'Anual',
+            'biennial' => 'Bienal',
+            'weekly' => 'Semanal'
         ];
     }
 }
