@@ -63,6 +63,12 @@ class ENUS extends AbstractI18NTable
             'Error on cancel subscription' => null,
             'Subscription not found' => null,
             'Subscription already canceled' => null,
+            'monthly' => null,
+            'bimonthly' => null,
+            'quarterly' => null,
+            'yearly' => null,
+            'biennial' => null,
+            'weekly' => null
         ];
     }
 }
