@@ -131,4 +131,30 @@ class ProductSubscriptionTest extends TestCase
 
         $this->assertJson(json_encode($this->productSubscription));
     }
+
+    public function testShouldReturnFalseBecauseDoesntHasTheSamePaymentMethodConfig()
+    {
+        $productSubscription = new ProductSubscription();
+        $productSubscription->setBoleto(false);
+        $productSubscription->setCreditCard(true);
+
+        $productSubscription2 = new ProductSubscription();
+        $productSubscription2->setBoleto(true);
+        $productSubscription2->setCreditCard(false);
+
+        $this->assertFalse($productSubscription->checkProductHasSamePaymentMethod($productSubscription2));
+    }
+
+    public function testShouldReturnTrueBecauseThePaymentMethodConfigAreCompatibles()
+    {
+        $productSubscription = new ProductSubscription();
+        $productSubscription->setBoleto(true);
+        $productSubscription->setCreditCard(true);
+
+        $productSubscription2 = new ProductSubscription();
+        $productSubscription2->setBoleto(true);
+        $productSubscription2->setCreditCard(true);
+
+        $this->assertTrue($productSubscription->checkProductHasSamePaymentMethod($productSubscription2));
+    }
 }
