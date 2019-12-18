@@ -79,7 +79,7 @@ final class SubscriptionService
 
             return [$response];
         } catch(\Exception $e) {
-            $exceptionHandler = new ErrorExceptionHandler;
+            $exceptionHandler = new ErrorExceptionHandler();
             $paymentOrder = new PaymentOrder;
             $paymentOrder->setCode($platformOrder->getcode());
             $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
