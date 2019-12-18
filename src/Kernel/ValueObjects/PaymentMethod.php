@@ -82,6 +82,6 @@ final class PaymentMethod extends AbstractValueObject
      */
     public function jsonSerialize()
     {
-        return $this->status;
+        return $this->paymentMethod;
     }
 }

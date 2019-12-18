@@ -109,7 +109,21 @@ class SubscriptionRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        // TODO: Implement find() method.
+        $table =
+            $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+            );
+
+        $query = "SELECT * FROM $table WHERE id = $objectId";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new SubscriptionFactory();
+        return $factory->createFromDBData($result->row);
     }
 
     /**

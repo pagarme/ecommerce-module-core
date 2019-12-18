@@ -209,7 +209,7 @@ final class OrderService
         return new $responseClass;
     }
 
-    private function extractPaymentOrderFromPlatformOrder(
+    public function extractPaymentOrderFromPlatformOrder(
         PlatformOrderInterface $platformOrder
     )
     {
@@ -261,7 +261,7 @@ final class OrderService
      * @param PlatformOrderInterface $platformOrder
      * @return \stdClass
      */
-    private function getOrderInfo(PlatformOrderInterface $platformOrder)
+    public function getOrderInfo(PlatformOrderInterface $platformOrder)
     {
         $orderInfo = new \stdClass();
         $orderInfo->grandTotal = $platformOrder->getGrandTotal();

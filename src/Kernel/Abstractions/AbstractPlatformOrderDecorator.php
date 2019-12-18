@@ -14,6 +14,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 {
     protected $platformOrder;
     private $logService;
+    private $paymentMethod;
 
     public function __construct()
     {

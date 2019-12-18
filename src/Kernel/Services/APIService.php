@@ -11,10 +11,11 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 
 class APIService
 {
@@ -177,6 +178,49 @@ class APIService
         );
     }
 
+    private function getSubscriptionController()
+    {
+        return $this->apiClient->getSubscriptions();
+    }
+
+    public function createSubscription(Subscription $subscription)
+    {
+        $endpoint = $this->getAPIBaseEndpoint();
+
+        $subscriptionRequest = $subscription->convertToSDKRequest();
+        //$subscriptionRequest->metadata = $this->getOrderMetaData();
+        $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
+
+        $message =
+            'Create subscription request from ' .
+            $publicKey .
+            ' to ' .
+            $endpoint;
+
+        $this->logService->orderInfo(
+            $subscription->getCode(),
+            $message,
+            $subscriptionRequest
+        );
+
+       $subscriptionController = $this->getSubscriptionController();
+
+        try {
+            $response = $subscriptionController->createSubscription($subscriptionRequest);
+            $this->logService->orderInfo(
+                $subscription->getCode(),
+                'Create subscription response',
+                $response
+            );
+
+            return json_decode(json_encode($response), true);
+
+        } catch (ErrorException $e) {
+            $this->logService->exception($e);
+            return $e;
+        }
+    }
+
     public function getSubscription(SubscriptionId $subscriptionId)
     {
         try {
@@ -195,8 +239,40 @@ class APIService
         }
     }
 
-    private function getSubscriptionController()
+    public function cancelSubscription(Subscription $subscription)
     {
-        return $this->apiClient->getSubscriptions();
+        $endpoint = $this->getAPIBaseEndpoint();
+
+        $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
+
+        $message =
+            'Cancel subscription request from ' .
+            $publicKey .
+            ' to ' .
+            $endpoint;
+
+        $this->logService->orderInfo(
+            $subscription->getCode(),
+            $message
+        );
+
+        $subscriptionController = $this->getSubscriptionController();
+
+        try {
+            $response = $subscriptionController->cancelSubscription(
+                $subscription->getMundipaggId()
+            );
+            $this->logService->orderInfo(
+                $subscription->getCode(),
+                'Cancel subscription response',
+                $response
+            );
+
+            return json_decode(json_encode($response), true);
+
+        } catch (\Exception $e) {
+            $this->logService->exception($e);
+            return $e;
+        }
     }
 }
