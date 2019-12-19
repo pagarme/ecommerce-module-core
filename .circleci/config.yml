@@ -46,10 +46,8 @@ commands:
             pecl install xdebug
             docker-php-ext-enable xdebug
             pwd           
-            php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
-            ls 
-            ls build 
-            ls build/logs
+            php vendor/bin/phpunit --coverage-clover build/logs/clover tests                    
+            ls build           
           
             
       - store_artifacts:
