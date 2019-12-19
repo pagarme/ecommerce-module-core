@@ -45,10 +45,6 @@ commands:
             mkdir -p build/logs
             pecl install xdebug
             docker-php-ext-enable xdebug
-            pwd           
-            php vendor/bin/phpunit --coverage-clover build/logs/clover tests  
-            chmod +x build/logs/clover                              
-            vi build/logs/clover   
             php codacy-coverage.phar clover        
           
             
