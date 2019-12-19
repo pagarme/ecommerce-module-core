@@ -41,7 +41,11 @@ commands:
     steps:
       - run:
           name: Code coverage
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report 
+          command: | 
+            echo ${CODACY_PROJECT_TOKEN}
+            php vendor/bin/phpunit --coverage-clover build/coverage/xml tests
+            php codacy-coverage.phar clover build/coverage/xml
+            
       - store_artifacts:
           path:  build/coverage-report       
 jobs:
