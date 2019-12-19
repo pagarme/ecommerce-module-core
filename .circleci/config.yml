@@ -47,7 +47,9 @@ commands:
             docker-php-ext-enable xdebug
             pwd           
             php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
-            ls  
+            ls 
+            ls build 
+            ls build/logs
             php codacy-coverage.phar clover build/logs/clover.xml
             
       - store_artifacts:
