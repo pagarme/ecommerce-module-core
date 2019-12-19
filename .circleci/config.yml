@@ -44,7 +44,7 @@ commands:
           command: | 
             mkdir -p build/logs
             apt-get install curl
-            apt-get install php-curl
+            apt-get install php7.2-curl
             pecl install xdebug
             docker-php-ext-enable xdebug
             php vendor/bin/phpunit --coverage-clover build/coverage/xml   
