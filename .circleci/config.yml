@@ -43,6 +43,7 @@ commands:
           name: Code coverage
           command: | 
             mkdir -p build/logs
+            apt-get install php-xdebug
             pwd           
             php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
             ls  
