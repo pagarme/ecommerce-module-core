@@ -10,6 +10,8 @@ commands:
       - run:
           name: Install PHP extensions
           command: |
+            echo ${CIRCLE_BRANCH}
+            echo ${CODACY_PROJECT_TOKEN}
             docker-php-ext-install pdo
             docker-php-ext-install zip
       - run:
