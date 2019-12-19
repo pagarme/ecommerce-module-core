@@ -42,6 +42,7 @@ commands:
       - run:
           name: Code coverage
           command: | 
+            mkdir -p build/logs
             pwd           
             php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
             ls  
