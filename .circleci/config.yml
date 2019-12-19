@@ -43,8 +43,7 @@ commands:
           name: Code coverage
           command: | 
             pwd           
-            php vendor/bin/phpunit --coverage-clover build/logs/clover tests        
-            ls build/logs/
+            php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
             ls  
             php codacy-coverage.phar clover build/logs/clover.xml
             
