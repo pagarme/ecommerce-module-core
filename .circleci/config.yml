@@ -45,7 +45,7 @@ commands:
             mkdir -p build/logs
             pecl install xdebug
             docker-php-ext-enable xdebug
-            php codacy-coverage.phar clover        
+            php codacy-coverage.phar clover build/logs/clover.xml       
           
             
       - store_artifacts:
