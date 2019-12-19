@@ -37,24 +37,6 @@ commands:
           root: /
           paths:
             - app
-  build_test:
-    steps:
-      - run:
-          name: Code coverage
-          command: | 
-            mkdir -p build/logs            
-            apt-get install libcurl4-gnutls-dev
-            docker-php-ext-install curl
-            pecl install xdebug
-            docker-php-ext-enable xdebug
-            php vendor/bin/phpunit --coverage-clover build/coverage/xml   
-            curl -L https://github.com/codacy/codacy-coverage-reporter/releases/download/4.0.5/codacy-coverage-reporter-4.0.5-assembly.jar > ./codacy-test-reporter.jar
-            chmod +x ./codacy-test-reporter.jar
-            java -jar ./codacy-test-reporter.jar report --language PHP -t ${CODACY_PROJECT_TOKEN} -r build/coverage/xml
-          
-            
-      - store_artifacts:
-          path:  build/coverage-report       
 jobs:
   build-php56:
     working_directory: /app
@@ -73,7 +55,6 @@ jobs:
           APP_ENV: test
     steps:
       - build
-      - build_test
 
 workflows:
   build_publish_deploy:
