@@ -47,7 +47,10 @@ commands:
             docker-php-ext-enable xdebug
             pwd           
             php vendor/bin/phpunit --coverage-clover build/logs/clover tests                   
-
+            ls 
+            ls build 
+            ls build/logs
+          
             
       - store_artifacts:
           path:  build/coverage-report       
