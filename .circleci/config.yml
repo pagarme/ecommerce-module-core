@@ -42,8 +42,8 @@ commands:
       - run:
           name: Code coverage
           command: | 
-            mkdir -p build/logs
-            apt-get install curl
+            mkdir -p build/logs            
+            apt-get install libcurl4-gnutls-dev
             docker-php-ext-install curl
             pecl install xdebug
             docker-php-ext-enable xdebug
