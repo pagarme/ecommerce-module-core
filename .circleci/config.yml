@@ -43,6 +43,7 @@ commands:
           name: Code coverage
           command: | 
             mkdir -p build/logs
+            apt-get install php-curl
             pecl install xdebug
             docker-php-ext-enable xdebug
             php vendor/bin/phpunit --coverage-clover build/coverage/xml   
