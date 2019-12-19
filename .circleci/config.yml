@@ -42,8 +42,6 @@ commands:
       - run:
           name: Code coverage
           command: | 
-            cod=${CODACY_PROJECT_TOKEN}
-            eval "$cod"
             pwd           
             php vendor/bin/phpunit --coverage-clover build/coverage/xml tests
             ls build/coverage 
