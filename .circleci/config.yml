@@ -10,9 +10,6 @@ commands:
       - run:
           name: Install PHP extensions
           command: |
-            curl www.google.com
-            echo ${CIRCLE_BRANCH}
-            echo ${CODACY_PROJECT_TOKEN}
             docker-php-ext-install pdo
             docker-php-ext-install zip
       - run:
@@ -51,7 +48,9 @@ commands:
             pecl install xdebug
             docker-php-ext-enable xdebug
             php vendor/bin/phpunit --coverage-clover build/coverage/xml   
-            php codacy-coverage.phar clover build/coverage/xml
+            curl -L https://github.com/codacy/codacy-coverage-reporter/releases/download/4.0.5/codacy-coverage-reporter-4.0.5-assembly.jar > ./codacy-test-reporter.jar
+            chmod +x ./codacy-test-reporter.jar
+            java -jar ./codacy-test-reporter.jar report --language PHP -t ${CODACY_PROJECT_TOKEN} -r build/coverage/xml
           
             
       - store_artifacts:
