@@ -45,7 +45,7 @@ commands:
             pwd           
             php vendor/bin/phpunit --coverage-clover build/logs/clover tests        
             ls build/logs/
-            ls build  
+            ls  
             php codacy-coverage.phar clover build/logs/clover.xml
             
       - store_artifacts:
