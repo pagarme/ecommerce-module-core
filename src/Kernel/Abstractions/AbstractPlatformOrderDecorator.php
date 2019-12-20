@@ -191,6 +191,16 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         return $grandTotal;
     }
 
+    public function setPaymentMethod($paymentMethod)
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
+    }
+
     abstract protected function addMPHistoryComment($message);
     abstract protected function setStatusAfterLog(OrderStatus $status);
     abstract protected function setStateAfterLog(OrderState $state);

@@ -29,7 +29,6 @@ class Migrate
         $this->downRecurrenceProductSubscription();
         $this->downRecurrenceSubscriptionRepetitions();
         $this->downConfigurationMigration();
-
     }
 
     public function runConfigurationMigration()
