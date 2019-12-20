@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
@@ -53,6 +54,14 @@ class SubscriptionFactory implements FactoryInterface
 
         if (isset($postData['plan_id'])) {
             $subscription->setPlanId(new PlanId($postData['plan_id']));
+        }
+
+        if (isset($postData['customer'])) {
+
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+
+            $subscription->setCustomer($customer);
         }
 
         return $subscription;

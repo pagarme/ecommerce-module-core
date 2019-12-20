@@ -124,8 +124,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
         return true;
     }*/
 
-
-
     /**
      * @param Order $order
      * @param $invoice
@@ -144,14 +142,14 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
-            $i18n->getDashboard('Subscription invoice paid.') .
+            $i18n->getDashboard('Subscription invoice paid.') . '<br>' .
             ' MundipaggId: ' . $subscription->getMundipaggId()->getValue() . '<br>' .
-            $i18n->getDashboard('Invoice') . ': ' . '<br>' .
+            $i18n->getDashboard('Invoice') . ': ' .
             $subscription->getInvoice()->getMundipaggId()->getValue()
         );
 
         $subscriptionRepository = new SubscriptionRepository();
-        //$subscriptionRepository->save($subscription);
+        $subscriptionRepository->save($subscription);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);

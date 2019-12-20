@@ -50,6 +50,7 @@ class SubscriptionRepository extends AbstractRepository
           INSERT INTO 
             $subscriptionTable 
             (
+                customer_id,
                 mundipagg_id, 
                 code,                 
                 status,
@@ -64,11 +65,12 @@ class SubscriptionRepository extends AbstractRepository
 
         $query .= "
             (
+                '{$object->getCustomer()->getMundipaggId()->getValue()}',
                 '{$object->getMundipaggId()->getValue()}',                
                 '{$object->getCode()}',
                 '{$object->getStatus()->getStatus()}',                
                 '{$object->getInstallments()}',
-                '{$object->getPaymentMethod()->getPaymentMethod()}',             
+                '{$object->getPaymentMethod()}',             
                 '{$object->getRecurrenceType()}',       
                 '{$object->getIntervalType()->getIntervalType()}',       
                 '{$object->getIntervalType()->getIntervalCount()}'       
