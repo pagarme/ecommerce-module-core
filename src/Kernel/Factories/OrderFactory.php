@@ -13,6 +13,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Throwable;
 
 class OrderFactory implements FactoryInterface
@@ -140,6 +141,36 @@ class OrderFactory implements FactoryInterface
         }
         $order->setStatus(OrderStatus::$status());
         $order->setPlatformOrder($platformOrder);
+
+        return $order;
+    }
+
+    public function createFromSubscriptionData(
+        Subscription $subscription,
+        $platformOrderStatus
+    )
+    {
+        $order = new Order();
+        //$order->setMundipaggId(new OrderId($postData['id']));
+
+        try {
+            OrderStatus::$platformOrderStatus();
+        }catch(Throwable $e) {
+            throw new InvalidParamException(
+                "Invalid order status!",
+                $status
+            );
+        }
+
+        $order->setStatus(OrderStatus::$platformOrderStatus());
+        $order->setPlatformOrder($subscription->getPlatformOrder());
+
+        $chargeFactory = new ChargeFactory();
+        $order->addCharge($subscription->getCharge());
+
+        /*$customerFactory = new CustomerFactory();
+        $customer = $customerFactory->createFromPostData($postData['customer']);
+        $order->setCustomer($customer);*/
 
         return $order;
     }

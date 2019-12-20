@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
@@ -11,6 +12,8 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderLogService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
@@ -18,8 +21,11 @@ use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
 use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
@@ -30,10 +36,12 @@ final class SubscriptionService
 {
     private $logService;
     private $subscriptionItems;
+    private $apiService;
 
     public function __construct()
     {
         $this->logService = new OrderLogService();
+        $this->apiService = new APIService();
     }
 
     public function createSubscriptionAtMundipagg(PlatformOrderInterface $platformOrder)
@@ -47,19 +55,17 @@ final class SubscriptionService
                 'Creating order.',
                 $orderInfo
             );
-            //set pending
-            $platformOrder->setState(OrderState::stateNew());
-            $platformOrder->setStatus(OrderStatus::pending());
+            $this->setPlatformOrderPending($platformOrder);
 
             //build PaymentOrder based on platformOrder
             $order = $orderService->extractPaymentOrderFromPlatformOrder($platformOrder);
             $subscription = $this->extractSubscriptionDataFromOrder($order);
 
             //Send through the APIService to mundipagg
-            $apiService = new APIService();
-            $response = $apiService->createSubscription($subscription);
+            $subscriptionResponse = $this->apiService->createSubscription($subscription);
+            $this->getSubscriptionMissingData($subscriptionResponse);
 
-            if (!$this->checkResponseStatus($response)) {
+            if (!$this->checkResponseStatus($subscriptionResponse)) {
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
@@ -69,17 +75,16 @@ final class SubscriptionService
             $platformOrder->save();
 
             $subscriptionFactory = new SubscriptionFactory();
-            $response = $subscriptionFactory->createFromPostData($response);
+            $response = $subscriptionFactory->createFromPostData($subscriptionResponse);
 
             $response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
-            $handler->handle($response, $order);
-
+            $handler->handle($response);
             $platformOrder->save();
 
-
             return [$response];
+
         } catch(\Exception $e) {
             $exceptionHandler = new ErrorExceptionHandler;
             $paymentOrder = new PaymentOrder;
@@ -283,9 +288,57 @@ final class SubscriptionService
         $responseClass = explode('\\', $responseClass);
 
         $responseClass =
-            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            'Mundipagg\\Core\\Recurrence\\Services\\ResponseHandlers\\' .
             end($responseClass) . 'Handler';
 
         return new $responseClass;
+    }
+
+    private function setPlatformOrderPending(&$platformOrder)
+    {
+        //First platform order status and state after subscription creation success
+        $platformOrder->setState(OrderState::stateNew());
+        $platformOrder->setStatus(OrderStatus::pending());
+    }
+
+    private function getSubscriptionMissingData(&$subscriptionResponse)
+    {
+        $subscriptionResponse['invoice'] =
+            $this->getInvoiceFromSubscriptionResponse(
+                $subscriptionResponse
+            );
+        $subscriptionResponse['charge'] = $this->getChargeFromInvoiceResponse(
+            $subscriptionResponse['invoice']
+        );
+    }
+
+    /**
+     * @param $subscriptionResponse
+     * @return Invoice
+     */
+    private function getInvoiceFromSubscriptionResponse($subscriptionResponse)
+    {
+        $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
+
+        $invoiceResponse = $this->apiService->getSubscriptionInvoice($subscriptionId);
+        $invoiceResponse = $this->apiService->getSubscriptionInvoice($subscriptionId);
+        $invoiceFactory = new InvoiceFactory();
+
+        return $invoiceFactory->createFromApiResponseData($invoiceResponse);
+    }
+
+    /**
+     * @param $invoiceResponse
+     * @return Charge
+     */
+    private function getChargeFromInvoiceResponse($invoiceResponse)
+    {
+        $chargeResponse = $this->apiService->getCharge(
+            $invoiceResponse->getCharge()->getMundipaggId()
+        );
+
+        $chargeFactory = new ChargeFactory();
+
+        return $chargeFactory->createFromPostData($chargeResponse);
     }
 }

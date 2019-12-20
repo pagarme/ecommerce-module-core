@@ -36,19 +36,13 @@ class ChargeFactory implements FactoryInterface
         $charge->setAmount($postData['amount']);
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
         $charge->setPaidAmount($paidAmount);
-        $charge->setOrderId(new OrderId($postData['order']['id']));
 
-        $lastTransactionData = null;
-        if (isset($postData['last_transaction'])) {
-            $lastTransactionData = $postData['last_transaction'];
+        if (!empty($postData['order']['id'])) {
+            $orderId = $postData['order']['id'];
+            $charge->setOrderId(new OrderId($orderId));
         }
 
-        if ($lastTransactionData !== null) {
-            $transactionFactory = new TransactionFactory();
-            $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
-            $lastTransaction->setChargeId($charge->getMundipaggId());
-            $charge->addTransaction($lastTransaction);
-        }
+        $this->setLastTransaction($postData, $charge);
 
         try {
             ChargeStatus::$status();
@@ -200,5 +194,22 @@ class ChargeFactory implements FactoryInterface
             return null;
         }
         return $tranBoletoUrl[$index];
+    }
+
+    private function setLastTransaction($postData, &$charge)
+    {
+        $lastTransactionData = null;
+        if (isset($postData['last_transaction'])) {
+            $lastTransactionData = $postData['last_transaction'];
+        }
+
+        if ($lastTransactionData !== null) {
+            $transactionFactory = new TransactionFactory();
+            $lastTransaction = $transactionFactory->createFromPostData(
+                $lastTransactionData
+            );
+            $lastTransaction->setChargeId($charge->getMundipaggId());
+            $charge->addTransaction($lastTransaction);
+        }
     }
 }

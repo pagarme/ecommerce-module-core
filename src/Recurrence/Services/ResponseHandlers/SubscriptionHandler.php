@@ -1,7 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
+namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
 
+use \Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
+use Mundipagg\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
@@ -11,39 +14,75 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\OrderStatus as OrderStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
+use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 
-/** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class SubscriptionHandler extends AbstractResponseHandler
 {
+    private $order;
+
     /**
      * @param Order $createdOrder
      * @return mixed
      */
-    public function handle($createdOrder, PaymentOrder $paymentOrder = null)
+    public function handle(Subscription $subscription)
     {
-        $orderStatus = ucfirst($createdOrder->getStatus()->getStatus());
-        $statusHandler = 'handleOrderStatus' . $orderStatus;
+        /**
+         * @fixMe
+         * $status = ucfirst($createdOrder->getStatus()->getStatus());
+        */
+        $status = 'Paid';
+
+        $statusHandler = 'handleSubscriptionStatus' . $status;
+
+        $platformOrderStatus = $status;
 
         $this->logService->orderInfo(
-            $createdOrder->getCode(),
-            "Handling order status: $orderStatus"
+            $subscription->getCode(),
+            "Handling order status: 'Paid'"
         );
 
-        $orderRepository = new OrderRepository();
-        $orderRepository->save($createdOrder);
+        $orderFactory = new OrderFactory();
+        $this->order =
+            $orderFactory->createFromSubscriptionData(
+                $subscription,
+                $platformOrderStatus
+            );
 
-        $this->saveCustomer($createdOrder);
+        $subscriptionRepository = new SubscriptionRepository();
+        //$subscriptionRepository->save($subscription);
 
-        return $this->$statusHandler($createdOrder);
+        //$this->saveCustomer($subscription);
+
+        return $this->$statusHandler($subscription);
     }
 
-    private function handleOrderStatusProcessing(Order $order)
+    private function handleSubscriptionStatusPaid(Subscription $subscription)
+    {
+        $invoiceService = new InvoiceService();
+
+        $order = $this->order;
+
+        $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
+        $invoice = $invoiceService->createInvoiceFor($order);
+        if ($invoice !== null) {
+
+            $this->completePayment($order, $subscription, $invoice);
+            //$this->saveCards($order);
+
+            return true;
+        }
+        return $cantCreateReason;
+    }
+
+    /*private function handleOrderStatusProcessing(Order $order)
     {
         $platformOrder = $order->getPlatformOrder();
 
@@ -56,13 +95,13 @@ final class SubscriptionHandler extends AbstractResponseHandler
         );
 
         return $this->handleOrderStatusPending($order);
-    }
+    }*/
 
     /**
      * @param Order $order
      * @return bool
      */
-    private function handleOrderStatusPending(Order $order)
+    /*private function handleSubscriptionStatusActive(Order $order)
     {
         $this->createAuthorizationTransaction($order);
 
@@ -83,34 +122,15 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
         return true;
-    }
+    }*/
 
-    /**
-     * @param Order $order
-     * @return bool|string|null
-     */
-    private function handleOrderStatusPaid(Order $order)
-    {
-        $invoiceService = new InvoiceService();
 
-        $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
-        $invoice = $invoiceService->createInvoiceFor($order);
-        if ($invoice !== null) {
-
-            $this->completePayment($order, $invoice);
-
-            $this->saveCards($order);
-
-            return true;
-        }
-        return $cantCreateReason;
-    }
 
     /**
      * @param Order $order
      * @param $invoice
      */
-    private function completePayment(Order $order, $invoice)
+    private function completePayment(Order $order, Subscription $subscription, $invoice)
     {
         $invoice->setState(InvoiceState::paid());
         $invoice->save();
@@ -124,12 +144,14 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
-            $i18n->getDashboard('Order paid.') .
-            ' MundipaggId: ' . $order->getMundipaggId()->getValue()
+            $i18n->getDashboard('Subscription invoice paid.') .
+            ' MundipaggId: ' . $subscription->getMundipaggId()->getValue() . '<br>' .
+            $i18n->getDashboard('Invoice') . ': ' . '<br>' .
+            $subscription->getInvoice()->getMundipaggId()->getValue()
         );
 
-        $orderRepository = new OrderRepository();
-        $orderRepository->save($order);
+        $subscriptionRepository = new SubscriptionRepository();
+        //$subscriptionRepository->save($subscription);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
@@ -137,56 +159,24 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
     private function createCaptureTransaction(Order $order)
     {
-        $dataServiceClass =
-            MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
-
-        $this->logService->orderInfo(
-            $order->getCode(),
-            "Creating Capture Transaction..."
-        );
-
         /**
-         *
-         * @var AbstractDataService $dataService
+         * @todo Decide if we have to create platform transactions
          */
-        $dataService = new $dataServiceClass();
-        $dataService->createCaptureTransaction($order);
-
-        $this->logService->orderInfo(
-            $order->getCode(),
-            "Capture Transaction created."
-        );
     }
 
     private function createAuthorizationTransaction(Order $order)
     {
-        $dataServiceClass =
-            MPSetup::get(MPSetup::CONCRETE_DATA_SERVICE);
-
-        $this->logService->orderInfo(
-            $order->getCode(),
-            "Creating Authorization Transaction..."
-        );
-
         /**
-         *
-         * @var AbstractDataService $dataService
+         * @todo Decide if we have to create platform transactions
          */
-        $dataService = new $dataServiceClass();
-        $dataService->createAuthorizationTransaction($order);
-
-        $this->logService->orderInfo(
-            $order->getCode(),
-            "Authorization Transaction created."
-        );
     }
 
-    private function handleOrderStatusCanceled(Order $order)
+    /*private function handleOrderStatusCanceled(Order $order)
     {
         return $this->handleOrderStatusFailed($order);
-    }
+    }*/
 
-    private function handleOrderStatusFailed(Order $order)
+    /*private function handleOrderStatusFailed(Order $order)
     {
         $charges = $order->getCharges();
 
@@ -233,12 +223,12 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $orderService->syncPlatformWith($order);
 
         return "One or more charges weren't authorized. Please try again.";
-    }
+    }*/
 
     /**
      * @param PaymentOrder $paymentOrder
      */
-    private function saveCustomer(Order $createdOrder)
+    /*private function saveCustomer(Order $createdOrder)
     {
         $customer = $createdOrder->getCustomer();
 
@@ -258,9 +248,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
         ) {
             $customerRepository->save($customer);
         }
-    }
+    }*/
 
-    private function saveCards(Order $order)
+    /*private function saveCards(Order $order)
     {
         $savedCardFactory = new SavedCardFactory();
         $savedCardRepository = new SavedCardRepository();
@@ -309,5 +299,5 @@ final class SubscriptionHandler extends AbstractResponseHandler
                 }
             }
         }
-    }
+    }*/
 }

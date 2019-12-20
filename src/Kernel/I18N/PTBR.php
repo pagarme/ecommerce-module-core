@@ -59,6 +59,8 @@ class PTBR extends AbstractI18NTable
             'years' => "anos",
             'discount' => "desconto",
             'Credit Card' => "Cartão de Crédito",
+            'Subscription invoice paid.' => 'Fatura de assinatura paga.',
+            'invoice' => 'fatura'
         ];
     }
 }

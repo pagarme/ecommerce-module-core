@@ -15,6 +15,8 @@ use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
 {
@@ -69,6 +71,8 @@ class Subscription extends AbstractEntity
     private $boletoDays;
     private $cardId;
     private $shipping;
+    private $invoice;
+    private $charge;
 
     /**
      * @return mixed
@@ -329,6 +333,38 @@ class Subscription extends AbstractEntity
     public function setShipping(Shipping $shipping)
     {
         $this->shipping = $shipping;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInvoice()
+    {
+        return $this->invoice;
+    }
+
+    /**
+     * @param mixed $invoice
+     */
+    public function setInvoice(Invoice $invoice)
+    {
+        $this->invoice = $invoice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCharge()
+    {
+        return $this->charge;
+    }
+
+    /**
+     * @param mixed $charge
+     */
+    public function setCharge(Charge $charge)
+    {
+        $this->charge = $charge;
     }
 
     public function convertToSdkRequest()

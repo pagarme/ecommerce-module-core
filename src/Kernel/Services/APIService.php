@@ -6,16 +6,23 @@ use MundiAPILib\APIException;
 use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCaptureChargeRequest;
+use MundiAPILib\Models\CreateChargeRequest;
+use MundiAPILib\Models\ListInvoicesResponse;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Zend\Db\Sql\Ddl\Column\Datetime;
 
 class APIService
 {
@@ -26,6 +33,19 @@ class APIService
     {
         $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
+    }
+
+    public function getCharge(ChargeId $chargeId)
+    {
+        try {
+            $chargeController = $this->getChargeController();
+            $response = $chargeController->getCharge($chargeId->getValue());
+
+            return json_decode(json_encode($response), true);
+
+        } catch (APIException $e) {
+            return $e->getMessage();
+        }
     }
 
     public function cancelCharge(Charge &$charge, $amount = 0)
@@ -183,6 +203,11 @@ class APIService
         return $this->apiClient->getSubscriptions();
     }
 
+    private function getInvoiceController()
+    {
+        return $this->apiClient->getInvoices();
+    }
+
     public function createSubscription(Subscription $subscription)
     {
         $endpoint = $this->getAPIBaseEndpoint();
@@ -234,6 +259,31 @@ class APIService
 
             $subscriptionFactory = new SubscriptionFactory();
             return $subscriptionFactory->createFromPostData($subscriptionData);
+        } catch (APIException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Get subscription invoice
+     * @param SubscriptionId $subscriptionId
+     * @return ListInvoicesResponse
+     */
+    public function getSubscriptionInvoice(SubscriptionId $subscriptionId)
+    {
+        try {
+            $invoiceController = $this->getInvoiceController();
+
+            $response = $invoiceController->getInvoices(
+                1,
+                1,
+                null,
+                null,
+                $subscriptionId->getValue()
+            );
+
+            return json_decode(json_encode($response), true);;
+
         } catch (APIException $e) {
             return $e->getMessage();
         }
