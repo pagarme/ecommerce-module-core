@@ -16,6 +16,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class APIService
 {
@@ -231,6 +232,8 @@ class APIService
             );
 
             $subscriptionData = json_decode(json_encode($subscriptionData), true);
+
+            $subscriptionData['interval_type'] = $subscriptionData['interval'];
 
             $subscriptionFactory = new SubscriptionFactory();
             return $subscriptionFactory->createFromPostData($subscriptionData);

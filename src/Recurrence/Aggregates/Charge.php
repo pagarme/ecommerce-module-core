@@ -70,6 +70,8 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     private $customerId;
 
+    private $boletoUrl;
+
     /**
      * @var Invoice
      */
@@ -513,7 +515,24 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $obj->transactions = $this->getTransactions();
         $obj->metadata = $this->getMetadata();
         $obj->customerId = $this->getCustomerId();
+        $obj->boletoUrl = $this->getBoletoUrl();
 
         return $obj;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBoletoUrl()
+    {
+        return $this->boletoUrl;
+    }
+
+    /**
+     * @param string $boletoUrl
+     */
+    public function setBoletoUrl($boletoUrl)
+    {
+        $this->boletoUrl = $boletoUrl;
     }
 }
