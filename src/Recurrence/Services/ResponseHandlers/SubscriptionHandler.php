@@ -59,6 +59,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $subscriptionRepository = new SubscriptionRepository();
         $subscriptionRepository->save($subscription);
 
+        /**
+         * @todo Save customer
+         */
         //$this->saveCustomer($subscription);
 
         return $this->$statusHandler($subscription);
@@ -71,10 +74,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $order = $this->order;
 
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
-        $invoice = $invoiceService->createInvoiceFor($order);
+        $platformInvoice = $invoiceService->createInvoiceFor($order);
         if ($invoice !== null) {
-
-            $this->completePayment($order, $subscription, $invoice);
+            $this->completePayment($order, $subscription, $platformInvoice);
             //$this->saveCards($order);
 
             return true;
