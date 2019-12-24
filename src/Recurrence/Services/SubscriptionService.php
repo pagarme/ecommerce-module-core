@@ -223,6 +223,9 @@ final class SubscriptionService
 
     private function fillShipping(&$subscription, $order)
     {
+        /** @todo
+         * Multiply shipping for cycles
+         **/
         $orderShipping = $order->getShipping();
         $subscription->setShipping($orderShipping);
     }
@@ -320,7 +323,6 @@ final class SubscriptionService
     {
         $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
 
-        $invoiceResponse = $this->apiService->getSubscriptionInvoice($subscriptionId);
         $invoiceResponse = $this->apiService->getSubscriptionInvoice($subscriptionId);
         $invoiceFactory = new InvoiceFactory();
 

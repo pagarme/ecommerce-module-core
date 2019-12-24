@@ -94,7 +94,7 @@ class SubscriptionRepository extends AbstractRepository
               code = '{$object->getCode()}',                         
               status = '{$object->getStatus()->getStatus()}',
               installments = '{$object->getInstallments()}',
-              payment_method = '{$object->getPaymentMethod()->getPaymentMethod()}',
+              payment_method = '{$object->getPaymentMethod()}',
               recurrence_type = '{$object->getRecurrenceType()}',
               interval_type = '{$object->getIntervalType()->getIntervalType()}',
               interval_count = '{$object->getIntervalType()->getIntervalCount()}'

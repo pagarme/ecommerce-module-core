@@ -57,7 +57,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
             );
 
         $subscriptionRepository = new SubscriptionRepository();
-        //$subscriptionRepository->save($subscription);
+        $subscriptionRepository->save($subscription);
 
         //$this->saveCustomer($subscription);
 
