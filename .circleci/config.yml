@@ -68,8 +68,8 @@ jobs:
         environment:
           APP_ENV: test
     steps:
-      - build
       - xdebug
+      - build
       - qa  
 
 workflows:
