@@ -11,9 +11,7 @@ commands:
           name: Install PHP extensions
           command: |
             docker-php-ext-install pdo
-            docker-php-ext-install zip
-            pecl install xdebug
-            docker-php-ext-enable xdebug  
+            docker-php-ext-install zip 
       - run:
           name: Display PHP information
           command: |
@@ -41,6 +39,13 @@ commands:
           root: /
           paths:
             - app
+  xdebug:
+    steps:
+      - run:
+          name: Install xdebug
+          command: |
+            pecl install xdebug
+            docker-php-ext-enable xdebug  
   qa:
     steps:
       - run:
@@ -64,6 +69,7 @@ jobs:
           APP_ENV: test
     steps:
       - build
+      - xdebug
       - qa  
 
 workflows:
