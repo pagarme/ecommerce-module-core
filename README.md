@@ -1,7 +1,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32e40b5efbc2419eaf78881dd6687dcd)](https://app.codacy.com/app/mundipagg/ecommerce-module-core?utm_source=github.com&utm_medium=referral&utm_content=mundipagg/ecommerce-module-core&utm_campaign=Badge_Grade_Settings)
 [![Latest Stable Version](https://poser.pugx.org/mundipagg/ecommerce-module-core/v/stable)](https://packagist.org/packages/mundipagg/ecommerce-module-core)
 [![mundipagg maturity](http://maturityapp.herokuapp.com/maturity.php?project=https://github.com/mundipagg/ecommerce-module-core&token=&command=badge_image)](http://maturityapp.herokuapp.com/index.html?project=https://github.com/mundipagg/ecommerce-module-core&token=)
-<a href="https://api.codacy.com/project/badge/Coverage/0aa921d1047049359c0bef962a1e2d5c">
+<a href="https://app.codacy.com/manual/mundipagg/ecommerce-module-core/dashboard">
 <img alt="Codacy branch coverage" src="https://img.shields.io/codacy/coverage/0aa921d1047049359c0bef962a1e2d5c/develop-recurrence">
  </a>
 
