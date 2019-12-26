@@ -82,6 +82,7 @@ final class OrderHandlerService extends AbstractHandlerService
         $invoiceService->cancelInvoicesFor($order);
 
         $order->setStatus(OrderStatus::canceled());
+        $order->getPlatformOrder()->setState(OrderState::canceled());
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
@@ -90,15 +91,27 @@ final class OrderHandlerService extends AbstractHandlerService
         $history = $i18n->getDashboard(
             'Order canceled.'
         );
-        $order->getPlatformOrder()->addHistoryComment($history);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
+        $statusOrderLabel = $order->getPlatformOrder()->getStatusLabel(
+            $order->getStatus()
+        );
+
+        $messageComplementEmail = $i18n->getDashboard(
+            'New order status: %s',
+            $statusOrderLabel
+        );
+
+        $sender = $order->getPlatformOrder()->sendEmail($messageComplementEmail);
+        $order->getPlatformOrder()->addHistoryComment($history, $sender);
 
         $result = [
             "message" => 'Order canceled.',
             "code" => 200
         ];
+
         return $result;
     }
 
