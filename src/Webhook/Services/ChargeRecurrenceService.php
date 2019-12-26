@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Webhook\Services;
 
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
@@ -262,33 +263,20 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
-        $subscriptionId = $webhook->getEntity()->getInvoice()->getSubscriptionId();
+        $subscriptionId = $charge->getInvoice()->getSubscriptionId();
         $subscription = $apiService->getSubscription(new SubscriptionId($subscriptionId));
 
-        $code = $subscription->getPlatformOrder()->getCode();
-        if (is_null($code)) {
+        if (is_null($subscription)) {
             throw new Exception('Code não foi encontrado', 400);
         }
 
-        $charge->setCode($code);
         $charge->setCycleStart($subscription->getCycle()->getCycleStart());
         $charge->setCycleEnd($subscription->getCycle()->getCycleEnd());
 
-        $order = $orderRepository->findByCode($charge->getCode());
+        $orderCode = $subscription->getPlatformOrder()->getCode();
+        $order = $orderRepository->findByCode($orderCode);
         if ($order === null) {
-            $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-
-            /**
-             * @var PlatformOrderInterface $order
-             */
-            $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($charge->getCode());
-
-            $orderFactory = new OrderFactory();
-            $order = $orderFactory->createFromPlatformData(
-                $order,
-                $charge->getOrderId()->getValue()
-            );
+            throw new NotFoundException("Order #{$orderCode} not found.");
         }
 
         $this->order = $order;

@@ -62,7 +62,7 @@ class RepetitionFactory implements FactoryInterface
             return;
         }
 
-        $this->repetition->setRecurrencePrice($postData['recurrence_price']);
+        $this->repetition->setRecurrencePrice((int) $postData['recurrence_price']);
     }
 
     public function setInterval($postData)
