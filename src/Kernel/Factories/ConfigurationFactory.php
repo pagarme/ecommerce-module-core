@@ -80,8 +80,6 @@ class ConfigurationFactory implements FactoryInterface
         $config->setAntifraudEnabled($antifraudEnabled);
         $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
-        $config->setBoletoBankCode($data->boletoBankCode);
-        $config->setBoletoDueDays($data->boletoDueDays);
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
@@ -165,6 +163,13 @@ class ConfigurationFactory implements FactoryInterface
 
         if (isset($data->boletoInstructions)) {
             $config->setBoletoInstructions($data->boletoInstructions);
+        }
+
+        if (isset($data->boletoBankCode)) {
+            $config->setBoletoBankCode($data->boletoBankCode);
+        }
+        if (isset($data->boletoDueDays)) {
+            $config->setBoletoDueDays($data->boletoDueDays);
         }
 
         if (isset($data->saveCards)) {

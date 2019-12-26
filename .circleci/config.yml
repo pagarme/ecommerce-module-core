@@ -11,7 +11,7 @@ commands:
           name: Install PHP extensions
           command: |
             docker-php-ext-install pdo
-            docker-php-ext-install zip
+            docker-php-ext-install zip 
       - run:
           name: Display PHP information
           command: |
@@ -29,14 +29,28 @@ commands:
           command: mkdir -p .git/hooks
       - run:
           name: Install dependecy-composer
-          command: php composer.phar install
+          command: |
+            php composer.phar require codacy/coverage
+            php composer.phar install
       - run:
           name: Run PHPUnit
-          command: vendor/bin/phpunit
+          command: vendor/bin/phpunit --coverage-clover /app/build/logs/clover.xml
       - persist_to_workspace:
           root: /
           paths:
             - app
+  xdebug:
+    steps:
+      - run:
+          name: Install xdebug
+          command: |
+            pecl install xdebug
+            docker-php-ext-enable xdebug  
+  qa:
+    steps:
+      - run:
+          name: Send to Codacy
+          command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml
 jobs:
   build-php56:
     working_directory: /app
@@ -54,7 +68,9 @@ jobs:
         environment:
           APP_ENV: test
     steps:
+      - xdebug
       - build
+      - qa  
 
 workflows:
   build_publish_deploy:

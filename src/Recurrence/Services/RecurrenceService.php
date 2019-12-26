@@ -15,7 +15,7 @@ class RecurrenceService
         if ($productSubscription !== null) {
             return $productSubscription;
         }
-
+      
         return null;
     }
 

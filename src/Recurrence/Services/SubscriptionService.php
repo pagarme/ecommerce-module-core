@@ -9,16 +9,13 @@ use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderLogService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
@@ -27,14 +24,18 @@ use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
 use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
-use MundiPagg\MundiPagg\Model\Source\Interval;
+use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 
 final class SubscriptionService
 {
     private $logService;
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
     private $subscriptionItems;
     private $apiService;
 
@@ -42,6 +43,7 @@ final class SubscriptionService
     {
         $this->logService = new OrderLogService();
         $this->apiService = new APIService();
+        $this->i18n = new LocalizationService();
     }
 
     public function createSubscriptionAtMundipagg(PlatformOrderInterface $platformOrder)
@@ -86,7 +88,7 @@ final class SubscriptionService
             return [$response];
 
         } catch(\Exception $e) {
-            $exceptionHandler = new ErrorExceptionHandler;
+            $exceptionHandler = new ErrorExceptionHandler();
             $paymentOrder = new PaymentOrder;
             $paymentOrder->setCode($platformOrder->getcode());
             $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
@@ -340,5 +342,92 @@ final class SubscriptionService
         $chargeFactory = new ChargeFactory();
 
         return $chargeFactory->createFromPostData($chargeResponse);
+    }
+
+    /**
+     * @return array|Subscription[]
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
+    public function listAll()
+    {
+        return $this->getSubscriptionRepository()
+            ->listEntities(0, false);
+    }
+
+    /**
+     * @param $subscriptionId
+     * @return array
+     */
+    public function cancel($subscriptionId)
+    {
+        try {
+            $subscription = $this->getSubscriptionRepository()
+                ->find($subscriptionId);
+
+            if (!$subscription) {
+                $message = $this->i18n->getDashboard(
+                    'Subscription not found'
+                );
+
+                $this->logService->orderInfo(
+                    null,
+                    $message . " ID {$subscriptionId} ."
+                );
+
+                return [
+                    "message" => $message,
+                    "code" => 404
+                ];
+            }
+
+            if ($subscription->getStatus() == SubscriptionStatus::canceled()) {
+                $message = $this->i18n->getDashboard(
+                    'Subscription already canceled'
+                );
+
+                return [
+                    "message" => $message,
+                    "code" => 200
+                ];
+            }
+
+            $apiService = new APIService();
+            $apiService->cancelSubscription($subscription);
+
+            $subscription->setStatus(SubscriptionStatus::canceled());
+            $this->getSubscriptionRepository()->save($subscription);
+
+            $message = $this->i18n->getDashboard(
+                'Subscription canceled with success!'
+            );
+
+            return [
+                "message" => $message,
+                "code" => 200
+            ];
+        } catch (\Exception $exception) {
+
+            $message = $this->i18n->getDashboard(
+                'Error on cancel subscription'
+            );
+
+            $this->logService->orderInfo(
+                null,
+                $message . ' - ' . $exception->getMessage()
+            );
+
+            return [
+                "message" => $message,
+                "code" => 200
+            ];
+        }
+    }
+
+    /**
+     * @return SubscriptionRepository
+     */
+    public function getSubscriptionRepository()
+    {
+        return new SubscriptionRepository();
     }
 }

@@ -31,9 +31,8 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setStatus(SubscriptionStatus::{$postData['status']}());
         $subscription->setInstallments($postData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
-        $subscription->setIntervalType(
-            IntervalValueObject::{$postData['interval']}($postData['interval_count'])
-        );
+        $subscription->setIntervalType($postData['interval']);
+        $subscription->setIntervalCount($postData['interval_count']);
 
         $subscription->setMundipaggId(new SubscriptionId($postData['id']));
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
@@ -96,9 +95,8 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setStatus(SubscriptionStatus::{$dbData['status']}());
         $subscription->setInstallments($dbData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$dbData['payment_method']}());
-        $subscription->setIntervalType(
-            IntervalValueObject::{$dbData['interval_type']}($dbData['interval_count'])
-        );
+        $subscription->setIntervalType($dbData['interval_type']);
+        $subscription->setIntervalCount($dbData['interval_count']);
 
         $subscription->setPlatformOrder($this->getPlatformOrder($dbData['code']));
 

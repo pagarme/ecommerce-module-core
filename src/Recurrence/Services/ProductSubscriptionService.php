@@ -13,6 +13,13 @@ class ProductSubscriptionService
     /** @var LogService  */
     protected $logService;
 
+    public function saveFormProductSubscription($formData)
+    {
+        $productSubscriptionFactory = $this->getProductSubscriptionFactory();
+        $productSubscription = $productSubscriptionFactory->createFromPostData($formData);
+        return $this->saveProductSubscription($productSubscription);
+    }
+
     public function saveProductSubscription(ProductSubscription $productSubscription)
     {
         $this->getLogService()->info("Creating product subscription at platform");
@@ -23,6 +30,19 @@ class ProductSubscriptionService
         }
 
         $productSubscriptionRepository = $this->getProductSubscriptionRepository();
+
+        if (
+            !$productSubscription->getId() &&
+            $productSubscriptionRepository->findByProductId(
+                $productSubscription->getProductId()
+            )
+        ) {
+            $message = "Product already exists on recurrence product";
+            $message .= "- Product ID : {$productSubscription->getProductId()} ";
+
+            throw new \Exception($message);
+        }
+
         $productSubscriptionRepository->save($productSubscription);
         $this->getLogService()->info("Subscription created: " . $productSubscription->getId());
 
