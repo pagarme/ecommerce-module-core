@@ -191,16 +191,16 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $cancelAmount = $charge->getAmount();
         if ($transaction !== null) {
-            $outdatedCharge->addTransaction($transaction);
+            $charge->addTransaction($transaction);
             $cancelAmount = $transaction->getAmount();
         }
 
         $charge->cancel($cancelAmount);
 
-        $order->updateCharge($charge);
+        $this->order->addCharge($charge);
 
-        $orderRepository->save($order);
         $chargeRepository->save($charge);
+        $orderRepository->save($order);
 
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history);
