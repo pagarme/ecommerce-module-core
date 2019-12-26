@@ -75,7 +75,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
         $platformInvoice = $invoiceService->createInvoiceFor($order);
-        if ($invoice !== null) {
+        if ($platformInvoice !== null) {
             $this->completePayment($order, $subscription, $platformInvoice);
             //$this->saveCards($order);
 

@@ -60,20 +60,20 @@ class SubscriptionRepository extends AbstractRepository
                 interval_type,
                 interval_count
             )
-          VALUES 
+          VALUES
         ";
 
         $query .= "
             (
                 '{$object->getCustomer()->getMundipaggId()->getValue()}',
-                '{$object->getMundipaggId()->getValue()}',                
+                '{$object->getMundipaggId()->getValue()}',
                 '{$object->getCode()}',
-                '{$object->getStatus()->getStatus()}',                
+                '{$object->getStatus()->getStatus()}',
                 '{$object->getInstallments()}',
-                '{$object->getPaymentMethod()}',             
-                '{$object->getRecurrenceType()}',       
-                '{$object->getIntervalType()->getIntervalType()}',       
-                '{$object->getIntervalType()->getIntervalCount()}'       
+                '{$object->getPaymentMethod()}',
+                '{$object->getRecurrenceType()}',
+                '{$object->getIntervalType()}',
+                '{$object->getIntervalCount()}'
             );
         ";
 
@@ -91,13 +91,13 @@ class SubscriptionRepository extends AbstractRepository
         $query = "
             UPDATE {$subscriptionTable} SET
               mundipagg_id = '{$object->getMundipaggId()->getValue()}',
-              code = '{$object->getCode()}',                         
+              code = '{$object->getCode()}',
               status = '{$object->getStatus()->getStatus()}',
               installments = '{$object->getInstallments()}',
               payment_method = '{$object->getPaymentMethod()}',
               recurrence_type = '{$object->getRecurrenceType()}',
-              interval_type = '{$object->getIntervalType()->getIntervalType()}',
-              interval_count = '{$object->getIntervalType()->getIntervalCount()}'
+              interval_type = '{$object->getIntervalType()}',
+              interval_count = '{$object->getIntervalCount()}'
             WHERE id = {$object->getId()}
         ";
 
