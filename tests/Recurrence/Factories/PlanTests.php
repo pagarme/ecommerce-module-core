@@ -79,7 +79,30 @@ class PlanFactoryTests extends TestCase
     {
         $planFactory = new PlanFactory();
 
-        $plan = $planFactory->createFromDbData("");
+        $data = [
+            'id' => 456654,
+            'plan_id' => 'plan_45asDadb8Xd95451',
+            'name' => "Product Name",
+            'description' => "Product Description",
+            'billing_type' => 'PREPAID',
+            'credit_card' => false,
+            'boleto' => true,
+            'installments' => false,
+            'product_id' => '8081',
+            'created_at' => '2019-10-01 10:12:00',
+            'updated_at' => '2019-10-01 10:12:00',
+            'status' => 'ACTIVE',
+            'interval_type' => 'month',
+            'interval_count' => 5,
+            'items' => [
+                [
+                    'id' => 1,
+                    'productId' => 10,
+                ]
+            ]
+        ];
+
+        $plan = $planFactory->createFromDbData($data);
         $this->assertInstanceOf(Plan::class, $plan);
     }
 }
