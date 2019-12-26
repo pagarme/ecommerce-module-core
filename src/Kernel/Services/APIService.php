@@ -39,7 +39,19 @@ class APIService
     {
         try {
             $chargeController = $this->getChargeController();
+
+            $this->logService->orderInfo(
+                $chargeId,
+                'Get charge from api'
+            );
+
             $response = $chargeController->getCharge($chargeId->getValue());
+
+            $this->logService->orderInfo(
+                $chargeId,
+                'Get charge response: ',
+                $response
+            );
 
             return json_decode(json_encode($response), true);
 
@@ -274,12 +286,23 @@ class APIService
         try {
             $invoiceController = $this->getInvoiceController();
 
+            $this->logService->orderInfo(
+                $subscriptionId,
+                'Get invoice from subscription.'
+            );
+
             $response = $invoiceController->getInvoices(
                 1,
                 1,
                 null,
                 null,
                 $subscriptionId->getValue()
+            );
+
+            $this->logService->orderInfo(
+                $subscriptionId,
+                'Invoice response: ',
+                $response
             );
 
             return json_decode(json_encode($response), true);;
