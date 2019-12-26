@@ -14,7 +14,7 @@ use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
@@ -64,7 +64,6 @@ class Subscription extends AbstractEntity
      */
     private $platformOrder;
     private $items;
-    private $cycle;
     private $billingType;
     private $cardToken;
     private $boletoDays;
@@ -221,26 +220,6 @@ class Subscription extends AbstractEntity
     public function setPlatformOrder(PlatformOrderInterface $platformOrder)
     {
         $this->platformOrder = $platformOrder;
-        return $this;
-    }
-
-    /**
-     *
-     * @return Cycle
-     */
-    public function getCycle()
-    {
-        return $this->cycle;
-    }
-
-    /**
-     *
-     * @param Cycle $cycle
-     * @return Subscription
-     */
-    public function setCycle(Cycle $cycle)
-    {
-        $this->cycle = $cycle;
         return $this;
     }
 

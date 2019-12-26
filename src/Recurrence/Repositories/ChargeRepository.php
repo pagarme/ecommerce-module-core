@@ -271,4 +271,34 @@ final class ChargeRepository extends AbstractRepository
 
         return $charges;
     }
+
+    public function findBySubscriptionId(AbstractValidString $subscriptionId)
+    {
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
+
+        $id = $subscriptionId->getValue();
+
+        $query = "
+            SELECT 
+                *
+            FROM
+                $chargeTable as c  
+            WHERE subscription_id = '$id'
+        ";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        $factory = new ChargeFactory();
+
+        $charges = [];
+        foreach ($result->rows as $row) {
+            $charges[] = $factory->createFromDbData($row);
+        }
+
+        return $charges;
+    }
 }

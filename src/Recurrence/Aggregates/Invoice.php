@@ -4,7 +4,7 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 
 class Invoice extends AbstractEntity
@@ -17,6 +17,7 @@ class Invoice extends AbstractEntity
     private $totalDiscount;
     private $totalIncrement;
     private $customer;
+    private $cycle;
 
     /**
      * @var SubscriptionId
@@ -167,6 +168,44 @@ class Invoice extends AbstractEntity
     public function setCustomer($customer)
     {
         $this->customer = $customer;
+    }
+
+    /**
+     *
+     * @return Cycle
+     */
+    public function getCycle()
+    {
+        return $this->cycle;
+    }
+
+    /**
+     *
+     * @param Cycle $cycle
+     * @return Subscription
+     */
+    public function setCycle(Cycle $cycle)
+    {
+        $this->cycle = $cycle;
+        return $this;
+    }
+
+    public function getCycleStart()
+    {
+        if (!empty($this->getCycle())) {
+            return $this->getCycle()->getCycleStart();
+        }
+
+        return null;
+    }
+
+    public function getCycleEnd()
+    {
+        if (!empty($this->getCycle())) {
+            return $this->getCycle()->getCycleEnd();
+        }
+
+        return null;
     }
 
     public function jsonSerialize()

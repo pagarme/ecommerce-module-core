@@ -37,12 +37,6 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setMundipaggId(new SubscriptionId($postData['id']));
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
 
-        if (isset($postData['current_cycle'])) {
-            $cycleFactory = new CycleFactory();
-            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
-            $subscription->setCycle($cycle);
-        }
-
         if (isset($postData['invoice'])) {
             $subscription->setInvoice($postData['invoice']);
         }

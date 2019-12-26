@@ -4,7 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
+use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
@@ -358,8 +358,16 @@ final class SubscriptionService
         );
 
         $chargeFactory = new ChargeFactory();
+        unset($chargeResponse['invoice']);
 
-        return $chargeFactory->createFromPostData($chargeResponse);
+        $chargeResponse['cycle_start'] = $invoiceResponse->getCycleStart();
+        $chargeResponse['cycle_end'] = $invoiceResponse->getCycleEnd();
+
+        $charge = $chargeFactory->createFromPostData($chargeResponse);
+
+        $charge->setInvoice($invoiceResponse);
+
+        return $charge;
     }
 
     /**

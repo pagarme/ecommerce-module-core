@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
 use \Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
@@ -55,6 +56,10 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $subscriptionRepository = new SubscriptionRepository();
         $subscriptionRepository->save($subscription);
 
+        $charge = $subscription->getCharge();
+        $chargeRepository = new ChargeRepository();
+        $chargeRepository->save($charge);
+
         $this->saveCustomer($subscription->getCustomer());
 
         return $this->$statusHandler($subscription);
@@ -76,10 +81,32 @@ final class SubscriptionHandler extends AbstractResponseHandler
         return $cantCreateReason;
     }
 
-    /*private function handleOrderStatusProcessing(Order $order)
+    private function handleSubscriptionStatusPending(Subscription $subscription)
+    {
+        $order = $this->order;
+
+        $order->setStatus(OrderStatus::pending());
+        $platformOrder = $subscription->getPlatformOrder();
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard(
+                'Subscription created at Mundipagg. Id: %s',
+                $subscription->getMundipaggId()->getValue()
+            )
+        );
+
+        $subscriptionRepository = new SubscriptionRepository();
+        $subscriptionRepository->save($subscription);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
+        return true;
+    }
+
+    private function handleSubscriptionStatus(Order $order)
     {
         $platformOrder = $order->getPlatformOrder();
-
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
@@ -89,7 +116,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
         );
 
         return $this->handleOrderStatusPending($order);
-    }*/
+    }
 
     /**
      * @param Order $order
@@ -128,8 +155,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $invoice->save();
         $platformOrder = $order->getPlatformOrder();
 
-        $this->createCaptureTransaction($order);
-
         $order->setStatus(OrderStatus::processing());
         //@todo maybe an Order Aggregate should have a State too.
         $platformOrder->setState(OrderState::processing());
@@ -149,19 +174,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $orderService->syncPlatformWith($order);
     }
 
-    private function createCaptureTransaction(Order $order)
-    {
-        /**
-         * @todo Decide if we have to create platform transactions
-         */
-    }
-
-    private function createAuthorizationTransaction(Order $order)
-    {
-        /**
-         * @todo Decide if we have to create platform transactions
-         */
-    }
 
     /*private function handleOrderStatusCanceled(Order $order)
     {

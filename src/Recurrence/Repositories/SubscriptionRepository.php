@@ -20,13 +20,37 @@ class SubscriptionRepository extends AbstractRepository
      */
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION);
+        $subscriptionTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+        );
         $id = $mundipaggId->getValue();
 
         $query = "
             SELECT *
-              FROM {$chargeTable} as recurrence_subscription                  
+              FROM {$subscriptionTable} as recurrence_subscription                  
              WHERE recurrence_subscription.mundipagg_id = '{$id}'             
+        ";
+
+        $result = $this->db->fetch($query);
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new SubscriptionFactory();
+        return $factory->createFromDbData($result->row);
+    }
+
+    public function findByCode($code)
+    {
+        $subscriptionTable =
+            $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+            );
+
+        $query = "
+            SELECT *
+              FROM {$subscriptionTable} as recurrence_subscription                  
+             WHERE recurrence_subscription.code = '{$code}'             
         ";
 
         $result = $this->db->fetch($query);

@@ -4,7 +4,7 @@ namespace Mundipagg\Core\Recurrence\Factories;
 
 use MundiAPILib\Models\ListInvoicesResponse;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
@@ -58,6 +58,11 @@ class InvoiceFactory implements FactoryInterface
         $this->setCustomer($data, $invoice);
         $this->setCharge($data, $invoice);
 
+        if (isset($data->cycle)) {
+            $cycleFactory = new CycleFactory();
+            $cycle = $cycleFactory->createFromPostData((array) $data->cycle);
+            $invoice->setCycle($cycle);
+        }
         return $invoice;
     }
 
