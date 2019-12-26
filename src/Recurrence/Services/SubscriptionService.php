@@ -68,6 +68,11 @@ final class SubscriptionService
             $this->getSubscriptionMissingData($subscriptionResponse);
 
             if (!$this->checkResponseStatus($subscriptionResponse)) {
+
+                /**
+                 * @todo Cancel subscription
+                 */
+
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
@@ -266,6 +271,17 @@ final class SubscriptionService
         ) {
             return false;
         }
+
+        $charge = $response['charge'];
+        $chargeStatus = $charge->getStatus()->getStatus();
+
+        if (
+            !$chargeStatus ||
+            $chargeStatus == 'payment_failed'
+        ) {
+            return false;
+        }
+
 
         return true;
     }

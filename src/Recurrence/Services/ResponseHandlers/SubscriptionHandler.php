@@ -35,19 +35,14 @@ final class SubscriptionHandler extends AbstractResponseHandler
      */
     public function handle(Subscription $subscription)
     {
-        /**
-         * @fixMe
-         * $status = ucfirst($createdOrder->getStatus()->getStatus());
-        */
-        $status = 'Paid';
-
+        $status = $this->getSubscriptionStatusFromCharge($subscription);
         $statusHandler = 'handleSubscriptionStatus' . $status;
 
         $platformOrderStatus = $status;
 
         $this->logService->orderInfo(
             $subscription->getCode(),
-            "Handling order status: 'Paid'"
+            "Handling subscription status: " . $status
         );
 
         $orderFactory = new OrderFactory();
@@ -75,7 +70,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $platformInvoice = $invoiceService->createInvoiceFor($order);
         if ($platformInvoice !== null) {
             $this->completePayment($order, $subscription, $platformInvoice);
-            //$this->saveCards($order);
 
             return true;
         }
@@ -174,19 +168,10 @@ final class SubscriptionHandler extends AbstractResponseHandler
         return $this->handleOrderStatusFailed($order);
     }*/
 
-    /*private function handleOrderStatusFailed(Order $order)
+    private function handleSubscriptionStatusPaymentFailed(Subscription $subscription)
     {
-        $charges = $order->getCharges();
+        /*$charges = $order->getCharges();
 
-        $acquirerMessages = '';
-        $historyData = [];
-        foreach ($charges as $charge) {
-            $lastTransaction = $charge->getLastTransaction();
-            $acquirerMessages .=
-                "{$charge->getMundipaggId()->getValue()} => '{$lastTransaction->getAcquirerMessage()}', ";
-            $historyData[$charge->getMundipaggId()->getValue()] = $lastTransaction->getAcquirerMessage();
-
-        }
         $acquirerMessages = rtrim($acquirerMessages, ', ') ;
 
         $this->logService->orderInfo(
@@ -220,8 +205,8 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
 
-        return "One or more charges weren't authorized. Please try again.";
-    }*/
+        return "One or more charges weren't authorized. Please try again.";*/
+    }
 
     /**
      * @param PaymentOrder $paymentOrder
@@ -246,54 +231,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
         }
     }
 
-    /*private function saveCards(Order $order)
+    private function getSubscriptionStatusFromCharge(Subscription $subscription)
     {
-        $savedCardFactory = new SavedCardFactory();
-        $savedCardRepository = new SavedCardRepository();
-        $charges = $order->getCharges();
-
-        foreach ($charges as $charge) {
-            $lastTransaction = $charge->getLastTransaction();
-            if ($lastTransaction === null) {
-                continue;
-            }
-            if (
-                !$lastTransaction->getTransactionType()->equals(
-                    TransactionType::creditCard()
-                )
-            ) {
-                continue; //save only credit card transactions;
-            }
-
-            $metadata = $charge->getMetadata();
-            $saveOnSuccess =
-                isset($metadata->saveOnSuccess) &&
-                $metadata->saveOnSuccess === "true";
-
-            if (
-                !empty($lastTransaction->getCardData()) &&
-                $saveOnSuccess &&
-                $order->getCustomer()->getMundipaggId()->equals(
-                    $charge->getCustomer()->getMundipaggId()
-                )
-            ) {
-                $postData =
-                    json_decode(json_encode($lastTransaction->getCardData()));
-                $postData->owner =
-                    $charge->getCustomer()->getMundipaggId();
-
-                $savedCard = $savedCardFactory->createFromTransactionJson($postData);
-                if (
-                    $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
-                ) {
-                    $savedCardRepository->save($savedCard);
-                    $this->logService->orderInfo(
-                        $order->getCode(),
-                        "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
-                    );
-
-                }
-            }
-        }
-    }*/
+        $charge = $subscription->getCharge();
+        return ucfirst($charge->getStatus()->getStatus());
+    }
 }

@@ -20,7 +20,7 @@ class OrderFactory implements FactoryInterface
 {
     /**
      *
-     * @param  array $postData
+     * @param array $postData
      * @return \Mundipagg\Core\Kernel\Abstractions\AbstractEntity|Order
      * @throws NotFoundException
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
@@ -34,7 +34,7 @@ class OrderFactory implements FactoryInterface
 
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -51,7 +51,7 @@ class OrderFactory implements FactoryInterface
 
         $chargeFactory = new ChargeFactory();
 
-        foreach($charges as $charge) {
+        foreach ($charges as $charge) {
             $charge['order'] = [
                 'id' => $order->getMundipaggId()->getValue()
             ];
@@ -68,7 +68,7 @@ class OrderFactory implements FactoryInterface
 
     /**
      *
-     * @param  array $dbData
+     * @param array $dbData
      * @return AbstractEntity
      */
     public function createFromDbData($dbData)
@@ -81,7 +81,7 @@ class OrderFactory implements FactoryInterface
         $status = $dbData['status'];
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -120,7 +120,8 @@ class OrderFactory implements FactoryInterface
     public function createFromPlatformData(
         PlatformOrderInterface $platformOrder,
         $orderId
-    ) {
+    )
+    {
         $order = new Order;
 
         $order->setMundipaggId(new OrderId($orderId));
@@ -133,7 +134,7 @@ class OrderFactory implements FactoryInterface
 
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -151,11 +152,10 @@ class OrderFactory implements FactoryInterface
     )
     {
         $order = new Order();
-        //$order->setMundipaggId(new OrderId($postData['id']));
 
         try {
             OrderStatus::$platformOrderStatus();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -164,13 +164,8 @@ class OrderFactory implements FactoryInterface
 
         $order->setStatus(OrderStatus::$platformOrderStatus());
         $order->setPlatformOrder($subscription->getPlatformOrder());
-
-        $chargeFactory = new ChargeFactory();
         $order->addCharge($subscription->getCharge());
-
-        /*$customerFactory = new CustomerFactory();
-        $customer = $customerFactory->createFromPostData($postData['customer']);
-        $order->setCustomer($customer);*/
+        $order->setCustomer($subscription->getCustomer());
 
         return $order;
     }
