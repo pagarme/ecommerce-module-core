@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
 
 use \Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
+use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
@@ -59,10 +60,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $subscriptionRepository = new SubscriptionRepository();
         $subscriptionRepository->save($subscription);
 
-        /**
-         * @todo Save customer
-         */
-        //$this->saveCustomer($subscription);
+        $this->saveCustomer($subscription->getCustomer());
 
         return $this->$statusHandler($subscription);
     }
@@ -228,10 +226,8 @@ final class SubscriptionHandler extends AbstractResponseHandler
     /**
      * @param PaymentOrder $paymentOrder
      */
-    /*private function saveCustomer(Order $createdOrder)
+    private function saveCustomer(Customer $customer)
     {
-        $customer = $createdOrder->getCustomer();
-
         //save only registered customers;
         if(empty($customer) || $customer->getCode() === null) {
             return;
@@ -248,7 +244,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
         ) {
             $customerRepository->save($customer);
         }
-    }*/
+    }
 
     /*private function saveCards(Order $order)
     {
