@@ -105,16 +105,14 @@ final class SubscriptionService
     {
         $subscription = new Subscription();
 
-        $items = $this->getSubscriptionItems($order);
-
-        if (empty($items[0]) || count($items) == 0) {
-            throw new \Exception('Recurrence items not found', 400);
-        }
-
-        $recurrenceSettings = $items[0];
+        $subscriptionSettings = $this->getSubscriptionSettings($order);
 
         $this->fillCreditCardData($subscription, $order);
-        $this->fillSubscriptionItems($subscription, $order, $recurrenceSettings);
+        $this->fillSubscriptionItems(
+            $subscription,
+            $order,
+            $subscriptionSettings
+        );
         $this->fillInterval($subscription);
         $this->fillBoletoData($subscription);
         $this->fillDescription($subscription);
@@ -122,10 +120,21 @@ final class SubscriptionService
 
         $subscription->setCode($order->getCode());
         $subscription->setCustomer($order->getCustomer());
-        $subscription->setBillingType($recurrenceSettings->getBillingType());
+        $subscription->setBillingType($subscriptionSettings->getBillingType());
         $subscription->setPaymentMethod($order->getPaymentMethod());
 
         return $subscription;
+    }
+
+    private function getSubscriptionSettings($order)
+    {
+        $items = $this->getSubscriptionItems($order);
+
+        if (empty($items[0]) || count($items) == 0) {
+            throw new \Exception('Recurrence items not found', 400);
+        }
+
+        return $items[0];
     }
 
     /**
@@ -156,14 +165,18 @@ final class SubscriptionService
 
         foreach ($order->getItems() as $item) {
             $subProduct = new SubProduct();
+            $cycles = 1;
 
-            $subProduct->setCycles($recurrenceSettings->getCycles());
+            if ($item->getSelectedOption()) {
+                $cycles = $recurrenceSettings->getCycles();
+                $subProduct->setSelectedRepetition($item->getSelectedOption());
+            }
+
+            $subProduct->setCycles($cycles);
             $subProduct->setDescription($item->getDescription());
             $subProduct->setQuantity($item->getQuantity());
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
-
             $subProduct->setPricingScheme($pricingScheme);
-            $subProduct->setSelectedRepetition($item->getSelectedOption());
 
             $subscriptionItems[] = $subProduct;
         }
