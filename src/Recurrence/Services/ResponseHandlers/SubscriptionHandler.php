@@ -45,6 +45,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
             $subscription->getCode(),
             "Handling subscription status: " . $status
         );
+        $charge = $subscription->getCharge();
+        $chargeRepository = new ChargeRepository();
+        $chargeRepository->save($charge);
 
         $orderFactory = new OrderFactory();
         $this->order =
@@ -55,11 +58,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $subscriptionRepository = new SubscriptionRepository();
         $subscriptionRepository->save($subscription);
-
-        $charge = $subscription->getCharge();
-        $chargeRepository = new ChargeRepository();
-        $chargeRepository->save($charge);
-
         $this->saveCustomer($subscription->getCustomer());
 
         return $this->$statusHandler($subscription);
@@ -127,6 +125,11 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $invoice->setState(InvoiceState::paid());
         $invoice->save();
         $platformOrder = $order->getPlatformOrder();
+
+        /**
+         * @todo Check if we should create transactions
+         */
+        //$this->createCaptureTransaction($order);
 
         $order->setStatus(OrderStatus::processing());
         //@todo maybe an Order Aggregate should have a State too.

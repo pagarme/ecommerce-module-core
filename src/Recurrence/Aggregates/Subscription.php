@@ -71,6 +71,7 @@ class Subscription extends AbstractEntity
     private $shipping;
     private $invoice;
     private $charge;
+    private $increment;
 
     /**
      * @return mixed
@@ -345,6 +346,22 @@ class Subscription extends AbstractEntity
         $this->charge = $charge;
     }
 
+    /**
+     * @return Increment
+     */
+    public function getIncrement()
+    {
+        return $this->increment;
+    }
+
+    /**
+     * @param Increment $increment
+     */
+    public function setIncrement(Increment $increment)
+    {
+        $this->increment = $increment;
+    }
+
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -360,11 +377,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
         $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
         $subscriptionRequest->description = $this->getDescription();
-
-        /** @todo
-         * Shipping doesn't adds any subscription amount
-         **/
-        //$subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
+        $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {

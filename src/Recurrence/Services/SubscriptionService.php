@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
@@ -183,6 +184,13 @@ final class SubscriptionService
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
             $subProduct->setPricingScheme($pricingScheme);
 
+            $increment = new Increment();
+            $increment->setValue($order->getShipping()->getAmount());
+            $increment->setIncrementType('flat');
+            $increment->setCycles($cycles);
+
+            $subProduct->setIncrement($increment);
+
             $subscriptionItems[] = $subProduct;
         }
 
@@ -248,9 +256,6 @@ final class SubscriptionService
 
     private function fillShipping(&$subscription, $order)
     {
-        /** @todo
-         * Multiply shipping for cycles
-         **/
         $orderShipping = $order->getShipping();
         $subscription->setShipping($orderShipping);
     }
