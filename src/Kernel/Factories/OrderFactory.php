@@ -167,6 +167,14 @@ class OrderFactory implements FactoryInterface
         $order->addCharge($subscription->getCharge());
         $order->setCustomer($subscription->getCustomer());
 
+        foreach ($subscription->getCharge() as $charge) {
+            $charge['order'] = [
+                'id' => $order->getMundipaggId()->getValue()
+            ];
+            $newCharge = $chargeFactory->createFromPostData($charge);
+            $order->addCharge($newCharge);
+        }
+
         return $order;
     }
 }
