@@ -50,7 +50,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setAmount($amount);
     }
 
-    private function setPaidAmount($paidAmount)
+    private function setPaidAmount($postData)
     {
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
         $this->charge->setPaidAmount($paidAmount);
