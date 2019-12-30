@@ -133,6 +133,11 @@ class SubscriptionRepository extends AbstractRepository
         // TODO: Implement delete() method.
     }
 
+    /**
+     * @param $objectId
+     * @return AbstractEntity|Subscription|null
+     * @throws InvalidParamException
+     */
     public function find($objectId)
     {
         $table =
@@ -140,7 +145,7 @@ class SubscriptionRepository extends AbstractRepository
                 AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
             );
 
-        $query = "SELECT * FROM $table WHERE id = $objectId";
+        $query = "SELECT * FROM $table WHERE id = '" . $objectId . "'";
 
         $result = $this->db->fetch($query);
 

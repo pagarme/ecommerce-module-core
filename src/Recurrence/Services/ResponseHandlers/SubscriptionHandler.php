@@ -120,33 +120,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
     /**
      * @param Order $order
-     * @return bool
-     */
-    /*private function handleSubscriptionStatusActive(Order $order)
-    {
-        $this->createAuthorizationTransaction($order);
-
-        $order->setStatus(OrderStatus::pending());
-        $platformOrder = $order->getPlatformOrder();
-
-        $i18n = new LocalizationService();
-        $platformOrder->addHistoryComment(
-            $i18n->getDashboard(
-                'Order created at Mundipagg. Id: %s',
-                $order->getMundipaggId()->getValue()
-            )
-        );
-
-        $orderRepository = new OrderRepository();
-        $orderRepository->save($order);
-
-        $orderService = new OrderService();
-        $orderService->syncPlatformWith($order);
-        return true;
-    }*/
-
-    /**
-     * @param Order $order
      * @param $invoice
      */
     private function completePayment(Order $order, Subscription $subscription, $invoice)
@@ -172,52 +145,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
-    }
-
-
-    /*private function handleOrderStatusCanceled(Order $order)
-    {
-        return $this->handleOrderStatusFailed($order);
-    }*/
-
-    private function handleSubscriptionStatusPaymentFailed(Subscription $subscription)
-    {
-        /*$charges = $order->getCharges();
-
-        $acquirerMessages = rtrim($acquirerMessages, ', ') ;
-
-        $this->logService->orderInfo(
-            $order->getCode(),
-            "Order creation Failed: $acquirerMessages"
-        );
-
-        $i18n = new LocalizationService();
-        $historyComment = $i18n->getDashboard('Order payment failed');
-        $historyComment .= ' (' . $order->getMundipaggId()->getValue() . ') : ';
-
-        foreach ($historyData as $chargeId => $acquirerMessage) {
-            $historyComment .= "$chargeId => $acquirerMessage; ";
-        }
-        $historyComment = rtrim($historyComment, '; ');
-        $order->getPlatformOrder()->addHistoryComment(
-            $historyComment
-        );
-
-        $order->setStatus(OrderStatus::canceled());
-        $order->getPlatformOrder()->setState(OrderState::canceled());
-        $order->getPlatformOrder()->save();
-
-        $order->getPlatformOrder()->addHistoryComment(
-            $i18n->getDashboard('Order canceled.')
-        );
-
-        $orderRepository = new OrderRepository();
-        $orderRepository->save($order);
-
-        $orderService = new OrderService();
-        $orderService->syncPlatformWith($order);
-
-        return "One or more charges weren't authorized. Please try again.";*/
     }
 
     /**

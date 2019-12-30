@@ -67,11 +67,18 @@ final class SubscriptionService
             $subscriptionResponse = $this->apiService->createSubscription($subscription);
             $this->getSubscriptionMissingData($subscriptionResponse);
 
+            $subscriptionFactory = new SubscriptionFactory();
             if (!$this->checkResponseStatus($subscriptionResponse)) {
 
-                /**
-                 * @todo Cancel subscription
-                 */
+                if (!empty($subscriptionResponse['id'])) {
+                    $failedSubscription =
+                        $subscriptionFactory
+                            ->createFromFailedSubscription(
+                                $subscriptionResponse
+                            );
+
+                    $this->cancelSubscriptionAtMundipagg($failedSubscription);
+                }
 
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
@@ -80,8 +87,6 @@ final class SubscriptionService
             }
 
             $platformOrder->save();
-
-            $subscriptionFactory = new SubscriptionFactory();
             $response = $subscriptionFactory->createFromPostData($subscriptionResponse);
 
             $response->setPlatformOrder($platformOrder);
@@ -430,8 +435,7 @@ final class SubscriptionService
                 ];
             }
 
-            $apiService = new APIService();
-            $apiService->cancelSubscription($subscription);
+            $this->cancelSubscriptionAtMundipagg($subscription);
 
             $subscription->setStatus(SubscriptionStatus::canceled());
             $this->getSubscriptionRepository()->save($subscription);
@@ -460,6 +464,12 @@ final class SubscriptionService
                 "code" => 200
             ];
         }
+    }
+
+    public function cancelSubscriptionAtMundipagg(Subscription $subscription)
+    {
+        $apiService = new APIService();
+        $apiService->cancelSubscription($subscription);
     }
 
     /**

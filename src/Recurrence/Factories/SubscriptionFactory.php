@@ -108,4 +108,21 @@ class SubscriptionFactory implements FactoryInterface
 
         return $subscription;
     }
+
+    /**
+     * @param $subscriptionResponse
+     * @return Subscription
+     * @throws InvalidParamException
+     */
+    public function createFromFailedSubscription($subscriptionResponse)
+    {
+        $subscription = new Subscription();
+
+        $subscription->setCode($subscriptionResponse['code']);
+
+        $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
+        $subscription->setMundipaggId($subscriptionId);
+
+        return $subscription;
+    }
 }
