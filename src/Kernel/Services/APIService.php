@@ -22,7 +22,6 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
-use Zend\Db\Sql\Ddl\Column\Datetime;
 
 class APIService
 {
@@ -268,6 +267,8 @@ class APIService
             );
 
             $subscriptionData = json_decode(json_encode($subscriptionData), true);
+
+            $subscriptionData['interval_type'] = $subscriptionData['interval'];
 
             $subscriptionFactory = new SubscriptionFactory();
             return $subscriptionFactory->createFromPostData($subscriptionData);

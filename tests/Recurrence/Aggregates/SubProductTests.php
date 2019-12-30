@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Test\Recurrence\Aggregates;
 
+use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,8 @@ class SubProductTests extends TestCase
         $cycles = 10;
         $createdAt = new \Datetime();
         $updatedAt = new \Datetime();
+
+        $selectedRepetition = new Repetition();
 
         $this->subProduct->setId($id);
         $this->assertEquals($this->subProduct->getId(), $id);
@@ -66,6 +69,9 @@ class SubProductTests extends TestCase
 
         $this->subProduct->setUpdatedAt($updatedAt);
         $this->assertInternalType('string', $this->subProduct->getUpdatedAt());
+
+        $this->subProduct->setSelectedRepetition($selectedRepetition);
+        $this->assertInstanceOf(Repetition::class, $this->subProduct->getSelectedRepetition());
     }
 
     /**

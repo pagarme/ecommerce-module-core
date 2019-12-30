@@ -338,6 +338,7 @@ final class SubscriptionService
         return new $responseClass;
     }
 
+
     private function setPlatformOrderPending(&$platformOrder)
     {
         //First platform order status and state after subscription creation success
@@ -441,6 +442,9 @@ final class SubscriptionService
             }
 
             $this->cancelSubscriptionAtMundipagg($subscription);
+
+            $apiService = new APIService();
+            $apiService->cancelSubscription($subscription);
 
             $subscription->setStatus(SubscriptionStatus::canceled());
             $this->getSubscriptionRepository()->save($subscription);

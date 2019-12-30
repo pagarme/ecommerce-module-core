@@ -33,7 +33,6 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
         $subscription->setIntervalType($postData['interval']);
         $subscription->setIntervalCount($postData['interval_count']);
-
         $subscription->setMundipaggId(new SubscriptionId($postData['id']));
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
 

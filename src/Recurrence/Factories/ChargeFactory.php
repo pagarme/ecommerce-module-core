@@ -122,6 +122,12 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         }
     }
 
+    private function setBoletoUrl($data)
+    {
+        if (!empty($data['boleto_link'])) {
+            $this->charge->setBoletoUrl($data['boleto_link']);
+        }
+    }
 
     /**
      * @param $postData
@@ -157,6 +163,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setInvoice($postData);
         $this->setCycleStart($postData);
         $this->setCycleEnd($postData);
+        $this->setBoletoUrl($postData);
 
         return $this->charge;
     }
@@ -172,20 +179,12 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setMundiPaggId($dbData['mundipagg_id']);
         $this->setCode($dbData['code']);
         $this->setAmount($dbData['amount']);
-        $this->setPaidAmount(intval($dbData['paid_amount']));
+        $this->charge->setPaidAmount(intval($dbData['paid_amount']));
         $this->setCanceledAmount($dbData['canceled_amount']);
         $this->setRefundedAmount($dbData['refunded_amount']);
         $this->setStatus($dbData['status']);
         $this->setMetadata($dbData);
         $this->setBoletoLink($dbData);
-
-        /*$transactionFactory = new TransactionFactory();
-        $transactions = $this->extractTransactionsFromDbData($dbData);
-        foreach ($transactions as $transaction) {
-            $newTransaction = $transactionFactory->createFromDbData($transaction);
-            $this->charge->addTransaction($newTransaction);
-        }*/
-
         $this->setCustomer($dbData);
         $this->setInvoice($dbData);
         $this->setPaymentMethod($dbData['payment_method']);

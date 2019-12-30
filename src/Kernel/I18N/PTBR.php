@@ -71,7 +71,8 @@ class PTBR extends AbstractI18NTable
             'yearly' => 'Anual',
             'biennial' => 'Bienal',
             'weekly' => 'Semanal',
-            'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s'
+            'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s',
+            'weekly' => 'Semanal'
         ];
     }
 }

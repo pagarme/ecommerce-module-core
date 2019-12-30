@@ -109,4 +109,30 @@ class RepetitionTest extends TestCase
 
         $this->assertJson(json_encode($this->repetition));
     }
+
+    public function testShouldReturnFalseBecauseDoesntHasTheSameIntervalConfig()
+    {
+        $repetition = new Repetition();
+        $repetition->setIntervalCount(2);
+        $repetition->setInterval('month');
+
+        $repetition2 = new Repetition();
+        $repetition2->setIntervalCount(3);
+        $repetition2->setInterval('year');
+
+        $this->assertFalse($repetition->checkRepetitionIsCompatible($repetition2));
+    }
+
+    public function testShouldReturnTrueBecauseTheIntervalConfigAreCompatibles()
+    {
+        $repetition = new Repetition();
+        $repetition->setIntervalCount(2);
+        $repetition->setInterval('month');
+
+        $repetition2 = new Repetition();
+        $repetition2->setIntervalCount(2);
+        $repetition2->setInterval('month');
+
+        $this->assertTrue($repetition->checkRepetitionIsCompatible($repetition2));
+    }
 }

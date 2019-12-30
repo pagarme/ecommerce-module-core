@@ -146,7 +146,6 @@ class SubscriptionRepository extends AbstractRepository
             );
 
         $query = "SELECT * FROM $table WHERE id = '" . $objectId . "'";
-
         $result = $this->db->fetch($query);
 
         if ($result->num_rows === 0) {

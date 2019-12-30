@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreatePlanRequest;
+use MundiAPILib\Models\UpdatePlanRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
@@ -353,7 +354,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         $obj->creditCard = $this->getCreditCard();
         $obj->boleto = $this->getBoleto();
         $obj->status = $this->getStatus();
-        $obj->billintType = $this->getBillingType();
+        $obj->billingType = $this->getBillingType();
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
@@ -363,9 +364,14 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         return $obj;
     }
 
-    public function convertToSdkRequest()
+    public function convertToSdkRequest($update = false)
     {
         $planRequest = new CreatePlanRequest();
+        if ($update) {
+            $planRequest = new UpdatePlanRequest();
+            $planRequest->status = $this->getStatus();
+            $planRequest->currency = $this->getCurrency();
+        }
 
         $planRequest->description = $this->getDescription();
         $planRequest->name = $this->getName();
@@ -391,5 +397,10 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface
         }
 
         return $planRequest;
+    }
+
+    public function getCurrency()
+    {
+        return 'BRL';
     }
 }

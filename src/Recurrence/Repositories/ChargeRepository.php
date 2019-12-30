@@ -140,8 +140,7 @@ final class ChargeRepository extends AbstractRepository
               refunded_amount = {$charge->refundedAmount},                         
               canceled_amount = {$charge->canceledAmount},
               status = '{$charge->status}',
-              metadata = '{$metadata}',
-              customer_id = '{$charge->customerId}'
+              metadata = '{$metadata}'
             WHERE id = {$charge->id}
         ";
 
@@ -295,7 +294,9 @@ final class ChargeRepository extends AbstractRepository
         $factory = new ChargeFactory();
 
         $charges = [];
+
         foreach ($result->rows as $row) {
+            $factory = new ChargeFactory();
             $charges[] = $factory->createFromDbData($row);
         }
 
