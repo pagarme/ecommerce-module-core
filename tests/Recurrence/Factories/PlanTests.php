@@ -79,8 +79,6 @@ class PlanFactoryTests extends TestCase
     {
         $planFactory = new PlanFactory();
 
-        $plan = $planFactory->createFromDbData("");
-
         $data = [
             'id' => 456654,
             'plan_id' => 'plan_45asDadb8Xd95451',

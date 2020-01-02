@@ -70,7 +70,6 @@ class PTBR extends AbstractI18NTable
             'quarterly' => 'Trimestral',
             'yearly' => 'Anual',
             'biennial' => 'Bienal',
-            'weekly' => 'Semanal',
             'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s',
             'weekly' => 'Semanal'
         ];

@@ -16,7 +16,7 @@ use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus as OrderStatus;
+use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
