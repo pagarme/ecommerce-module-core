@@ -31,6 +31,8 @@ commands:
           name: Install dependecy-composer
           command: |
             php composer.phar require codacy/coverage
+            php composer.phar remove phpunit/phpunit --dev -n
+            php composer.phar require phpunit/phpunit:7.5 --dev -n
             php composer.phar install
       - run:
           name: Run PHPUnit
