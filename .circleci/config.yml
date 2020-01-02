@@ -43,7 +43,7 @@ commands:
           command: |
             pecl install xdebug
             docker-php-ext-enable xdebug                          
-  dependecy-php7.2:
+  dependecy:
     steps:
       - run:
           name: Dependecy PHP7.2
@@ -80,7 +80,7 @@ jobs:
     steps:
       - xdebug
       - build
-      - dependecy-php7.2
+      - dependecy
       - phpunit
       - qa  
 
