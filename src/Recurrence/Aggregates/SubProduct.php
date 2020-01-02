@@ -311,7 +311,9 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
          * @todo Fix increments
          * Array must be createad in another place
          */
-        $items->increments[] = $this->getIncrement()->convertToSDKRequest();
+        if ($this->getIncrement()) {
+            $items->increments[] = $this->getIncrement()->convertToSDKRequest();
+        }
 
         return $items;
     }
