@@ -1,12 +1,11 @@
 <?php
 
 
-namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
+namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
 
 use Mundipagg\Core\Kernel\Services\OrderLogService;
-use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 
-abstract class AbstractResponseHandler implements ResponseHandlerInterface
+abstract class AbstractResponseHandler
 {
     protected $logService;
 

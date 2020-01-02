@@ -101,6 +101,27 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         }
     }
 
+    private function setCycleStart($data)
+    {
+        if (!empty($data['cycle_start'])) {
+            $this->charge->setCycleStart($data['cycle_start']);
+        }
+    }
+
+    private function setCycleEnd($data)
+    {
+        if (!empty($data['cycle_end'])) {
+            $this->charge->setCycleEnd($data['cycle_end']);
+        }
+    }
+
+    private function setBoletoLink($data)
+    {
+        if (!empty($data['boleto_link'])) {
+            $this->charge->setBoletoLink($data['boleto_link']);
+        }
+    }
+
     private function setBoletoUrl($data)
     {
         if (!empty($data['boleto_link'])) {
@@ -140,6 +161,8 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setStatus($postData['status']);
         $this->setCustomer($postData);
         $this->setInvoice($postData);
+        $this->setCycleStart($postData);
+        $this->setCycleEnd($postData);
         $this->setBoletoUrl($postData);
 
         return $this->charge;
@@ -161,15 +184,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setRefundedAmount($dbData['refunded_amount']);
         $this->setStatus($dbData['status']);
         $this->setMetadata($dbData);
-        $this->setBoletoUrl($dbData);
-
-        $transactionFactory = new TransactionFactory();
-        $transactions = $this->extractTransactionsFromDbData($dbData);
-        foreach ($transactions as $transaction) {
-            $newTransaction = $transactionFactory->createFromDbData($transaction);
-            $this->charge->addTransaction($newTransaction);
-        }
-
+        $this->setBoletoLink($dbData);
         $this->setCustomer($dbData);
         $this->setInvoice($dbData);
         $this->setPaymentMethod($dbData['payment_method']);

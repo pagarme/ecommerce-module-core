@@ -12,6 +12,10 @@ use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
 {
@@ -60,12 +64,14 @@ class Subscription extends AbstractEntity
      */
     private $platformOrder;
     private $items;
-    private $cycle;
     private $billingType;
     private $cardToken;
     private $boletoDays;
     private $cardId;
     private $shipping;
+    private $invoice;
+    private $charge;
+    private $increment;
 
     /**
      * @return mixed
@@ -218,26 +224,6 @@ class Subscription extends AbstractEntity
         return $this;
     }
 
-    /**
-     *
-     * @return Cycle
-     */
-    public function getCycle()
-    {
-        return $this->cycle;
-    }
-
-    /**
-     *
-     * @param Cycle $cycle
-     * @return Subscription
-     */
-    public function setCycle(Cycle $cycle)
-    {
-        $this->cycle = $cycle;
-        return $this;
-    }
-
     public function getItems()
     {
         return $this->items;
@@ -326,6 +312,54 @@ class Subscription extends AbstractEntity
     public function setShipping(Shipping $shipping)
     {
         $this->shipping = $shipping;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInvoice()
+    {
+        return $this->invoice;
+    }
+
+    /**
+     * @param mixed $invoice
+     */
+    public function setInvoice(Invoice $invoice)
+    {
+        $this->invoice = $invoice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCharge()
+    {
+        return $this->charge;
+    }
+
+    /**
+     * @param mixed $charge
+     */
+    public function setCharge(Charge $charge)
+    {
+        $this->charge = $charge;
+    }
+
+    /**
+     * @return Increment
+     */
+    public function getIncrement()
+    {
+        return $this->increment;
+    }
+
+    /**
+     * @param Increment $increment
+     */
+    public function setIncrement(Increment $increment)
+    {
+        $this->increment = $increment;
     }
 
     public function convertToSdkRequest()

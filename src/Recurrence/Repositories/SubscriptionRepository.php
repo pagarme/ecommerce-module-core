@@ -20,13 +20,37 @@ class SubscriptionRepository extends AbstractRepository
      */
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
-        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION);
+        $subscriptionTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+        );
         $id = $mundipaggId->getValue();
 
         $query = "
             SELECT *
-              FROM {$chargeTable} as recurrence_subscription                  
+              FROM {$subscriptionTable} as recurrence_subscription                  
              WHERE recurrence_subscription.mundipagg_id = '{$id}'             
+        ";
+
+        $result = $this->db->fetch($query);
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new SubscriptionFactory();
+        return $factory->createFromDbData($result->row);
+    }
+
+    public function findByCode($code)
+    {
+        $subscriptionTable =
+            $this->db->getTable(
+                AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
+            );
+
+        $query = "
+            SELECT *
+              FROM {$subscriptionTable} as recurrence_subscription                  
+             WHERE recurrence_subscription.code = '{$code}'             
         ";
 
         $result = $this->db->fetch($query);
@@ -50,6 +74,7 @@ class SubscriptionRepository extends AbstractRepository
           INSERT INTO 
             $subscriptionTable 
             (
+                customer_id,
                 mundipagg_id, 
                 code,                 
                 status,
@@ -59,19 +84,20 @@ class SubscriptionRepository extends AbstractRepository
                 interval_type,
                 interval_count
             )
-          VALUES 
+          VALUES
         ";
 
         $query .= "
             (
-                '{$object->getMundipaggId()->getValue()}',                
+                '{$object->getCustomer()->getMundipaggId()->getValue()}',
+                '{$object->getMundipaggId()->getValue()}',
                 '{$object->getCode()}',
-                '{$object->getStatus()->getStatus()}',                
+                '{$object->getStatus()->getStatus()}',
                 '{$object->getInstallments()}',
-                '{$object->getPaymentMethod()->getPaymentMethod()}',             
-                '{$object->getRecurrenceType()}',       
-                '{$object->getIntervalType()->getIntervalType()}',       
-                '{$object->getIntervalType()->getIntervalCount()}'       
+                '{$object->getPaymentMethod()}',
+                '{$object->getRecurrenceType()}',
+                '{$object->getIntervalType()}',
+                '{$object->getIntervalCount()}'
             );
         ";
 
@@ -89,13 +115,13 @@ class SubscriptionRepository extends AbstractRepository
         $query = "
             UPDATE {$subscriptionTable} SET
               mundipagg_id = '{$object->getMundipaggId()->getValue()}',
-              code = '{$object->getCode()}',                         
+              code = '{$object->getCode()}',
               status = '{$object->getStatus()->getStatus()}',
               installments = '{$object->getInstallments()}',
-              payment_method = '{$object->getPaymentMethod()->getPaymentMethod()}',
+              payment_method = '{$object->getPaymentMethod()}',
               recurrence_type = '{$object->getRecurrenceType()}',
-              interval_type = '{$object->getIntervalType()->getIntervalType()}',
-              interval_count = '{$object->getIntervalType()->getIntervalCount()}'
+              interval_type = '{$object->getIntervalType()}',
+              interval_count = '{$object->getIntervalCount()}'
             WHERE id = {$object->getId()}
         ";
 
@@ -107,6 +133,11 @@ class SubscriptionRepository extends AbstractRepository
         // TODO: Implement delete() method.
     }
 
+    /**
+     * @param $objectId
+     * @return AbstractEntity|Subscription|null
+     * @throws InvalidParamException
+     */
     public function find($objectId)
     {
         $table =
@@ -114,8 +145,7 @@ class SubscriptionRepository extends AbstractRepository
                 AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
             );
 
-        $query = "SELECT * FROM $table WHERE id = $objectId";
-
+        $query = "SELECT * FROM $table WHERE id = '" . $objectId . "'";
         $result = $this->db->fetch($query);
 
         if ($result->num_rows === 0) {

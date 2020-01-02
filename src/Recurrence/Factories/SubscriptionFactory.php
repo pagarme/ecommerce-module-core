@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
@@ -30,21 +31,29 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setStatus(SubscriptionStatus::{$postData['status']}());
         $subscription->setInstallments($postData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
-        $subscription->setIntervalType($postData['interval_type']);
+        $subscription->setIntervalType($postData['interval']);
         $subscription->setIntervalCount($postData['interval_count']);
-
         $subscription->setMundipaggId(new SubscriptionId($postData['id']));
-
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
 
-        if (isset($postData['current_cycle'])) {
-            $cycleFactory = new CycleFactory();
-            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
-            $subscription->setCycle($cycle);
+        if (isset($postData['invoice'])) {
+            $subscription->setInvoice($postData['invoice']);
+        }
+
+        if (isset($postData['charge'])) {
+            $subscription->setCharge($postData['charge']);
         }
 
         if (isset($postData['plan_id'])) {
             $subscription->setPlanId(new PlanId($postData['plan_id']));
+        }
+
+        if (isset($postData['customer'])) {
+
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+
+            $subscription->setCustomer($customer);
         }
 
         return $subscription;
@@ -95,6 +104,23 @@ class SubscriptionFactory implements FactoryInterface
         if (isset($dbData['plan_id'])) {
             $subscription->setPlanId(new PlanId($dbData['plan_id']));
         }
+
+        return $subscription;
+    }
+
+    /**
+     * @param $subscriptionResponse
+     * @return Subscription
+     * @throws InvalidParamException
+     */
+    public function createFromFailedSubscription($subscriptionResponse)
+    {
+        $subscription = new Subscription();
+
+        $subscription->setCode($subscriptionResponse['code']);
+
+        $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
+        $subscription->setMundipaggId($subscriptionId);
 
         return $subscription;
     }

@@ -3,17 +3,28 @@
 namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Recurrence\Aggregates\Increment;
+use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
+use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderLogService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
+use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
+use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
@@ -27,10 +38,12 @@ final class SubscriptionService
      */
     private $i18n;
     private $subscriptionItems;
+    private $apiService;
 
     public function __construct()
     {
         $this->logService = new OrderLogService();
+        $this->apiService = new APIService();
         $this->i18n = new LocalizationService();
     }
 
@@ -45,19 +58,29 @@ final class SubscriptionService
                 'Creating order.',
                 $orderInfo
             );
-            //set pending
-            $platformOrder->setState(OrderState::stateNew());
-            $platformOrder->setStatus(OrderStatus::pending());
+            $this->setPlatformOrderPending($platformOrder);
 
             //build PaymentOrder based on platformOrder
             $order = $orderService->extractPaymentOrderFromPlatformOrder($platformOrder);
             $subscription = $this->extractSubscriptionDataFromOrder($order);
 
             //Send through the APIService to mundipagg
-            $apiService = new APIService();
-            $response = $apiService->createSubscription($subscription);
+            $subscriptionResponse = $this->apiService->createSubscription($subscription);
+            $this->getSubscriptionMissingData($subscriptionResponse);
 
-            if (!$this->checkResponseStatus($response)) {
+            $subscriptionFactory = new SubscriptionFactory();
+            if (!$this->checkResponseStatus($subscriptionResponse)) {
+
+                if (!empty($subscriptionResponse['id'])) {
+                    $failedSubscription =
+                        $subscriptionFactory
+                            ->createFromFailedSubscription(
+                                $subscriptionResponse
+                            );
+
+                    $this->cancelSubscriptionAtMundipagg($failedSubscription);
+                }
+
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
@@ -65,19 +88,16 @@ final class SubscriptionService
             }
 
             $platformOrder->save();
-
-            $subscriptionFactory = new SubscriptionFactory();
-            $response = $subscriptionFactory->createFromPostData($response);
+            $response = $subscriptionFactory->createFromPostData($subscriptionResponse);
 
             $response->setPlatformOrder($platformOrder);
 
             $handler = $this->getResponseHandler($response);
-            $handler->handle($response, $order);
-
+            $handler->handle($response);
             $platformOrder->save();
 
-
             return [$response];
+
         } catch(\Exception $e) {
             $exceptionHandler = new ErrorExceptionHandler();
             $paymentOrder = new PaymentOrder;
@@ -91,16 +111,14 @@ final class SubscriptionService
     {
         $subscription = new Subscription();
 
-        $items = $this->getSubscriptionItems($order);
-
-        if (empty($items[0]) || count($items) == 0) {
-            throw new \Exception('Recurrence items not found', 400);
-        }
-
-        $recurrenceSettings = $items[0];
+        $subscriptionSettings = $this->getSubscriptionSettings($order);
 
         $this->fillCreditCardData($subscription, $order);
-        $this->fillSubscriptionItems($subscription, $order, $recurrenceSettings);
+        $this->fillSubscriptionItems(
+            $subscription,
+            $order,
+            $subscriptionSettings
+        );
         $this->fillInterval($subscription);
         $this->fillBoletoData($subscription);
         $this->fillDescription($subscription);
@@ -108,10 +126,21 @@ final class SubscriptionService
 
         $subscription->setCode($order->getCode());
         $subscription->setCustomer($order->getCustomer());
-        $subscription->setBillingType($recurrenceSettings->getBillingType());
+        $subscription->setBillingType($subscriptionSettings->getBillingType());
         $subscription->setPaymentMethod($order->getPaymentMethod());
 
         return $subscription;
+    }
+
+    private function getSubscriptionSettings($order)
+    {
+        $items = $this->getSubscriptionItems($order);
+
+        if (empty($items[0]) || count($items) == 0) {
+            throw new \Exception('Recurrence items not found', 400);
+        }
+
+        return $items[0];
     }
 
     /**
@@ -142,14 +171,25 @@ final class SubscriptionService
 
         foreach ($order->getItems() as $item) {
             $subProduct = new SubProduct();
+            $cycles = 1;
 
-            $subProduct->setCycles($recurrenceSettings->getCycles());
+            if ($item->getSelectedOption()) {
+                $cycles = $recurrenceSettings->getCycles();
+                $subProduct->setSelectedRepetition($item->getSelectedOption());
+            }
+
+            $subProduct->setCycles($cycles);
             $subProduct->setDescription($item->getDescription());
             $subProduct->setQuantity($item->getQuantity());
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
-
             $subProduct->setPricingScheme($pricingScheme);
-            $subProduct->setSelectedRepetition($item->getSelectedOption());
+
+            $increment = new Increment();
+            $increment->setValue($order->getShipping()->getAmount());
+            $increment->setIncrementType('flat');
+            $increment->setCycles($cycles);
+
+            $subProduct->setIncrement($increment);
 
             $subscriptionItems[] = $subProduct;
         }
@@ -255,6 +295,17 @@ final class SubscriptionService
             return false;
         }
 
+        $charge = $response['charge'];
+        $chargeStatus = $charge->getStatus()->getStatus();
+
+        if (
+            !$chargeStatus ||
+            $chargeStatus == 'payment_failed'
+        ) {
+            return false;
+        }
+
+
         return true;
     }
 
@@ -281,10 +332,66 @@ final class SubscriptionService
         $responseClass = explode('\\', $responseClass);
 
         $responseClass =
-            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            'Mundipagg\\Core\\Recurrence\\Services\\ResponseHandlers\\' .
             end($responseClass) . 'Handler';
 
         return new $responseClass;
+    }
+
+
+    private function setPlatformOrderPending(&$platformOrder)
+    {
+        //First platform order status and state after subscription creation success
+        $platformOrder->setState(OrderState::stateNew());
+        $platformOrder->setStatus(OrderStatus::pending());
+    }
+
+    private function getSubscriptionMissingData(&$subscriptionResponse)
+    {
+        $subscriptionResponse['invoice'] =
+            $this->getInvoiceFromSubscriptionResponse(
+                $subscriptionResponse
+            );
+        $subscriptionResponse['charge'] = $this->getChargeFromInvoiceResponse(
+            $subscriptionResponse['invoice']
+        );
+    }
+
+    /**
+     * @param $subscriptionResponse
+     * @return Invoice
+     */
+    private function getInvoiceFromSubscriptionResponse($subscriptionResponse)
+    {
+        $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
+
+        $invoiceResponse = $this->apiService->getSubscriptionInvoice($subscriptionId);
+        $invoiceFactory = new InvoiceFactory();
+
+        return $invoiceFactory->createFromApiResponseData($invoiceResponse);
+    }
+
+    /**
+     * @param $invoiceResponse
+     * @return Charge
+     */
+    private function getChargeFromInvoiceResponse($invoiceResponse)
+    {
+        $chargeResponse = $this->apiService->getCharge(
+            $invoiceResponse->getCharge()->getMundipaggId()
+        );
+
+        $chargeFactory = new ChargeFactory();
+        unset($chargeResponse['invoice']);
+
+        $chargeResponse['cycle_start'] = $invoiceResponse->getCycleStart();
+        $chargeResponse['cycle_end'] = $invoiceResponse->getCycleEnd();
+
+        $charge = $chargeFactory->createFromPostData($chargeResponse);
+
+        $charge->setInvoice($invoiceResponse);
+
+        return $charge;
     }
 
     /**
@@ -304,7 +411,6 @@ final class SubscriptionService
     public function cancel($subscriptionId)
     {
         try {
-
             $subscription = $this->getSubscriptionRepository()
                 ->find($subscriptionId);
 
@@ -334,6 +440,8 @@ final class SubscriptionService
                     "code" => 200
                 ];
             }
+
+            $this->cancelSubscriptionAtMundipagg($subscription);
 
             $apiService = new APIService();
             $apiService->cancelSubscription($subscription);
@@ -365,6 +473,12 @@ final class SubscriptionService
                 "code" => 200
             ];
         }
+    }
+
+    public function cancelSubscriptionAtMundipagg(Subscription $subscription)
+    {
+        $apiService = new APIService();
+        $apiService->cancelSubscription($subscription);
     }
 
     /**

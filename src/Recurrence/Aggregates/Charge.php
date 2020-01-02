@@ -70,6 +70,11 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     private $customerId;
 
+
+    private $invoiceId;
+
+    private $boletoLink;/** @fixme */
+
     private $boletoUrl;
 
     /**
@@ -492,6 +497,33 @@ final class Charge extends AbstractEntity implements ChargeInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getInvoiceId()
+    {
+        if (empty($this->getInvoice())) {
+            return null;
+        }
+        return $this->getInvoice()->getMundipaggId();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoletoLink()
+    {
+        return $this->boletoLink;
+    }
+
+    /**
+     * @param mixed $boletoLink
+     */
+    public function setBoletoLink($boletoLink)
+    {
+        $this->boletoLink = $boletoLink;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -515,8 +547,8 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $obj->transactions = $this->getTransactions();
         $obj->metadata = $this->getMetadata();
         $obj->customerId = $this->getCustomerId();
+        $obj->boletoLink = $this->getBoletoLink(); /** @var @fixme boletoUrl */
         $obj->boletoUrl = $this->getBoletoUrl();
-
         return $obj;
     }
 
