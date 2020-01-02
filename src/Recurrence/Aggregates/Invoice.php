@@ -68,6 +68,7 @@ class Invoice extends AbstractEntity
 
     /**
      * @param mixed $status
+     * @todo Invoice status should be a value object
      */
     public function setStatus($status)
     {
