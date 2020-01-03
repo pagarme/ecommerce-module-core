@@ -3,13 +3,14 @@
 namespace Mundipagg\Core\Test\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreatePlanRequest;
+use MundiAPILib\Models\UpdatePlanRequest;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use PHPUnit\Framework\TestCase;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
-class PlanTests extends TestCase
+class PlanTest extends TestCase
 {
     private $plan;
 
@@ -232,6 +233,39 @@ class PlanTests extends TestCase
         $sdkObject = $this->plan->convertToSdkRequest();
 
         $this->assertInstanceOf(CreatePlanRequest::class, $sdkObject);
+        $this->assertCount(2, $sdkObject->items);
+    }
+
+    public function testShouldReturnAUpdatePlanRequestObject()
+    {
+        $update = true;
+        $this->assertInstanceOf(UpdatePlanRequest::class, $this->plan->convertToSdkRequest($update));
+    }
+
+    public function testShouldReturnAUpdatePlanRequestObjectWithPaymentMethods()
+    {
+        $update = true;
+        $this->plan->setCreditCard(true);
+        $this->plan->setBoleto(true);
+        $sdkObject = $this->plan->convertToSdkRequest($update);
+
+        $this->assertInstanceOf(UpdatePlanRequest::class, $sdkObject);
+        $this->assertCount(2, $sdkObject->paymentMethods);
+    }
+
+    public function testShouldReturnAUpdatePlanRequestObjectWithItems()
+    {
+        $update = true;
+        $items = [
+            new SubProduct(),
+            new SubProduct()
+        ];
+
+        $this->plan->setItems($items);
+
+        $sdkObject = $this->plan->convertToSdkRequest($update);
+
+        $this->assertInstanceOf(UpdatePlanRequest::class, $sdkObject);
         $this->assertCount(2, $sdkObject->items);
     }
 }

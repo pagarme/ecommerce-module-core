@@ -9,7 +9,7 @@ use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Zend\Db\Sql\Ddl\Column\Datetime;
 
-class PlanFactoryTests extends TestCase
+class PlanFactoryTest extends TestCase
 {
     public function testCreateFromPostDataShouldReturnAPlan()
     {

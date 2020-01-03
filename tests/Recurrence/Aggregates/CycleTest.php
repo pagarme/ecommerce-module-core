@@ -6,7 +6,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
 use Mundipagg\Core\Recurrence\Aggregates\Cycle;
 use PHPUnit\Framework\TestCase;
 
-class CycleTests extends TestCase
+class CycleTest extends TestCase
 {
     /**
      * @var Cycle

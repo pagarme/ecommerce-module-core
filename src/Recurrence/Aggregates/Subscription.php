@@ -63,7 +63,7 @@ class Subscription extends AbstractEntity
      * @var Order
      */
     private $platformOrder;
-    private $items;
+    private $items = [];
     private $billingType;
     private $cardToken;
     private $boletoDays;
