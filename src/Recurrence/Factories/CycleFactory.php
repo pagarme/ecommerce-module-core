@@ -27,6 +27,12 @@ class CycleFactory implements FactoryInterface
 
     public function createFromDbData($dbData)
     {
-        // TODO: Implement createFromDbData() method.
+        $cycle = new Cycle();
+
+        $cycle->setCycleId(new CycleId($dbData['id']));
+        $cycle->setCycleStart(new \DateTime($dbData['start_at']));
+        $cycle->setCycleEnd(new \DateTime($dbData['end_at']));
+
+        return $cycle;
     }
 }
