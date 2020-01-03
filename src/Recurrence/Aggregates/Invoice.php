@@ -68,6 +68,7 @@ class Invoice extends AbstractEntity
 
     /**
      * @param mixed $status
+     * @todo Invoice status should be a value object
      */
     public function setStatus($status)
     {
@@ -116,6 +117,7 @@ class Invoice extends AbstractEntity
 
     /**
      * @param mixed $installments
+     * @todo Set param type
      */
     public function setInstallments($installments)
     {
@@ -132,6 +134,7 @@ class Invoice extends AbstractEntity
 
     /**
      * @param mixed $totalDiscount
+     * @todo Set param type
      */
     public function setTotalDiscount($totalDiscount)
     {
@@ -148,6 +151,7 @@ class Invoice extends AbstractEntity
 
     /**
      * @param mixed $totalIncrement
+     * @todo Set param type
      */
     public function setTotalIncrement($totalIncrement)
     {
@@ -182,7 +186,7 @@ class Invoice extends AbstractEntity
     /**
      *
      * @param Cycle $cycle
-     * @return Subscription
+     * @return Invoice
      */
     public function setCycle(Cycle $cycle)
     {
