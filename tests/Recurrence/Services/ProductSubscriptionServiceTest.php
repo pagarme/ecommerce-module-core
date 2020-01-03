@@ -6,9 +6,9 @@ use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
 use Mundipagg\Core\Recurrence\Services\ProductSubscriptionService;
-use Mundipagg\Core\Test\Abstractions\AbstractRepositoryTest;
+use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
 
-class ProductSubscriptionServiceTest extends AbstractRepositoryTest
+class ProductSubscriptionServiceTest extends AbstractSetupTest
 {
     /**
      * @var \Mockery\Mock
