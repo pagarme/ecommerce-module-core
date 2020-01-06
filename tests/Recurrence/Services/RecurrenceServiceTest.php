@@ -34,8 +34,6 @@ class RecurrenceServiceTest extends AbstractSetupTest
         $this->assertEquals(7, $maxInstallment);
     }
 
-
-
     public function testShouldReturnMaxInstallmentByIntervalTypeYear()
     {
         $interval = IntervalValueObject::year(2);
