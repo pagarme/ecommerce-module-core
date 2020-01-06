@@ -22,7 +22,10 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
                 'mundipagg_module_core_recurrence_products_subscription',
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS =>
-                'mundipagg_module_core_recurrence_subscription_repetitions'
+                'mundipagg_module_core_recurrence_subscription_repetitions',
+
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS =>
+                'mundipagg_module_core_recurrence_sub_products',
         ];
     }
 
