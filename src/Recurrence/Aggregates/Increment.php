@@ -77,7 +77,7 @@ class Increment extends AbstractEntity
     }
 
     /**
-     * @return CreateShippingRequest
+     * @return CreateIncrementRequest
      */
     public function convertToSDKRequest()
     {

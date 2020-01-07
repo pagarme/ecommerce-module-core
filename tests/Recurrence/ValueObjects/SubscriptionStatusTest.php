@@ -22,6 +22,11 @@ class SubscriptionStatusTest extends TestCase
         $this->assertEquals('future', SubscriptionStatus::future()->getStatus());
     }
 
+    public function testSubscriptionStatusFailed()
+    {
+        $this->assertEquals('failed', SubscriptionStatus::failed()->getStatus());
+    }
+
     public function testSubscriptionStatusIsEquals()
     {
         $subscriptionStatusFuture = SubscriptionStatus::future();

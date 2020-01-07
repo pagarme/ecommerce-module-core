@@ -2,12 +2,13 @@
 
 namespace Mundipagg\Core\Test\Recurrence\Aggregates;
 
+use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 use PHPUnit\Framework\TestCase;
 
-class SubProductTests extends TestCase
+class SubProductTest extends TestCase
 {
     private $subProduct;
 
@@ -34,6 +35,7 @@ class SubProductTests extends TestCase
         $cycles = 10;
         $createdAt = new \Datetime();
         $updatedAt = new \Datetime();
+        $increment = new Increment();
 
         $selectedRepetition = new Repetition();
 
@@ -72,6 +74,9 @@ class SubProductTests extends TestCase
 
         $this->subProduct->setSelectedRepetition($selectedRepetition);
         $this->assertInstanceOf(Repetition::class, $this->subProduct->getSelectedRepetition());
+
+        $this->subProduct->setIncrement($increment);
+        $this->assertInstanceOf(Increment::class, $this->subProduct->getIncrement());
     }
 
     /**
@@ -91,6 +96,7 @@ class SubProductTests extends TestCase
 
     public function testShouldReturnAStdClassWhenCallTheMethodConvertToSdkRequest()
     {
+        $this->subProduct->setIncrement(new Increment());
         $this->assertInstanceOf(\stdClass::class, $this->subProduct->convertToSdkRequest());
     }
 }

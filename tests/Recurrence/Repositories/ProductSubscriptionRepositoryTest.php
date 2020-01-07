@@ -12,7 +12,7 @@ use Mundipagg\Core\Test\Abstractions\AbstractRepositoryTest;
 
 class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
 {
-        public function testShouldReturnAProductSubscriptionByProductId()
+    public function testShouldReturnAProductSubscriptionByProductId()
     {
         $this->insertProductSubscription();
         $this->assertInstanceOf(ProductSubscription::class, $this->repo->findByProductId(23));

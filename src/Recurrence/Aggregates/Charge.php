@@ -121,7 +121,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
     {
         $this->setPaidAmount($amount);
 
-        if ($this->getStatus()->equals(ChargeStatus::underpaid())) {
+        if ($this->amount > $this->getPaidAmount()) {
             $this->status = ChargeStatus::underpaid();
             return;
         }
@@ -443,10 +443,10 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $transactions = $this->getTransactions();
         foreach ($transactions as &$transaction) {
             if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId())) {
-                $transactionId = $transaction->getId();
+                $originalId = $transaction->getId();
                 $transaction = $updatedTransaction;
-                if ($overwriteId) {
-                    $transaction->setId($transactionId);
+                if (!$overwriteId) {
+                    $transaction->setId($originalId);
                 }
                 $this->transactions = $transactions;
                 return;
