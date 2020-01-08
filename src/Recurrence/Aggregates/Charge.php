@@ -70,7 +70,6 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     private $customerId;
 
-
     private $invoiceId;
 
     private $boletoLink;/** @fixme */
