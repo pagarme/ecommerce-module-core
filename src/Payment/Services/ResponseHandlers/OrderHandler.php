@@ -48,11 +48,20 @@ final class OrderHandler extends AbstractResponseHandler
         $platformOrder = $order->getPlatformOrder();
 
         $i18n = new LocalizationService();
+
+        $messageComplementEmail = $i18n->getDashboard(
+            'New order status: %s',
+            $platformOrder->getStatus()
+        );
+
+        $sender = $platformOrder->sendEmail($messageComplementEmail);
+
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
                 'Order waiting for online retries at Mundipagg.' .
                 ' MundipaggId: ' . $order->getMundipaggId()->getValue()
-            )
+            ),
+            $sender
         );
 
         return $this->handleOrderStatusPending($order);
@@ -70,18 +79,32 @@ final class OrderHandler extends AbstractResponseHandler
         $platformOrder = $order->getPlatformOrder();
 
         $i18n = new LocalizationService();
-        $platformOrder->addHistoryComment(
-            $i18n->getDashboard(
-                'Order created at Mundipagg. Id: %s',
-                $order->getMundipaggId()->getValue()
-            )
-        );
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
+        $statusOrderLabel = $platformOrder->getStatusLabel(
+            $order->getStatus()
+        );
+
+        $messageComplementEmail = $i18n->getDashboard(
+            'New order status: %s',
+            $statusOrderLabel
+        );
+
+        $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard(
+                'Order created at Mundipagg. Id: %s',
+                $order->getMundipaggId()->getValue()
+            ),
+            $sender
+        );
+
         return true;
     }
 
@@ -123,16 +146,29 @@ final class OrderHandler extends AbstractResponseHandler
         $platformOrder->setState(OrderState::processing());
 
         $i18n = new LocalizationService();
-        $platformOrder->addHistoryComment(
-            $i18n->getDashboard('Order paid.') .
-            ' MundipaggId: ' . $order->getMundipaggId()->getValue()
-        );
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
+        $statusOrderLabel = $platformOrder->getStatusLabel(
+            $order->getStatus()
+        );
+
+        $messageComplementEmail = $i18n->getDashboard(
+            'New order status: %s',
+            $statusOrderLabel
+        );
+
+        $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard('Order paid.') .
+            ' MundipaggId: ' . $order->getMundipaggId()->getValue(),
+            $sender
+        );
     }
 
     private function createCaptureTransaction(Order $order)
@@ -222,15 +258,29 @@ final class OrderHandler extends AbstractResponseHandler
         $order->getPlatformOrder()->setState(OrderState::canceled());
         $order->getPlatformOrder()->save();
 
-        $order->getPlatformOrder()->addHistoryComment(
-            $i18n->getDashboard('Order canceled.')
-        );
-
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
+
+        $platformOrder = $order->getPlatformOrder();
+
+        $statusOrderLabel = $platformOrder->getStatusLabel(
+            $order->getStatus()
+        );
+
+        $messageComplementEmail = $i18n->getDashboard(
+            'New order status: %s',
+            $statusOrderLabel
+        );
+
+        $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+        $order->getPlatformOrder()->addHistoryComment(
+            $i18n->getDashboard('Order canceled.'),
+            $sender
+        );
 
         return "One or more charges weren't authorized. Please try again.";
     }

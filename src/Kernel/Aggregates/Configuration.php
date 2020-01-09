@@ -121,6 +121,11 @@ final class Configuration extends AbstractEntity
     /** @var bool */
     private $installmentsDefaultConfig;
 
+    /**
+     * @var bool
+     */
+    private $sendMailEnabled;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -266,6 +271,19 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @param $sendMailEnable
+     * @return $this
+     */
+    public function setSendMailEnabled($sendMailEnable)
+    {
+        $this->sendMailEnabled = filter_var(
+            $sendMailEnable,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this;
+    }
+
+    /**
      *
      * @param  bool $twoCreditCardsEnabled
      * @return Configuration
@@ -309,6 +327,14 @@ final class Configuration extends AbstractEntity
     protected function isCreditCardEnabled()
     {
         return $this->creditCardEnabled;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSendMailEnabled()
+    {
+        return $this->sendMailEnabled;
     }
 
     /**
@@ -557,7 +583,8 @@ final class Configuration extends AbstractEntity
             "parentId" => $this->getParentId(),
             "parent" => $this->parentConfiguration,
             "inheritAll" => $this->isInheritedAll(),
-            "recurrenceConfig" => $this->getRecurrenceConfig()
+            "recurrenceConfig" => $this->getRecurrenceConfig(),
+            "sendMail" => $this->isSendMailEnabled()
         ];
     }
 

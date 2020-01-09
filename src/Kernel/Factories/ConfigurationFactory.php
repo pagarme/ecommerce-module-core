@@ -84,6 +84,10 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
+        if (isset($data->sendMail)) {
+            $config->setSendMailEnabled($data->sendMail);
+        }
+
         if (isset($data->methodsInherited)) {
             $config->setMethodsInherited($data->methodsInherited);
         }
