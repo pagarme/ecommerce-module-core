@@ -443,9 +443,6 @@ final class SubscriptionService
 
             $this->cancelSubscriptionAtMundipagg($subscription);
 
-            $apiService = new APIService();
-            $apiService->cancelSubscription($subscription);
-
             $subscription->setStatus(SubscriptionStatus::canceled());
             $this->getSubscriptionRepository()->save($subscription);
 
