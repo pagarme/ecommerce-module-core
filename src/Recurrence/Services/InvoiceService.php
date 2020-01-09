@@ -3,11 +3,12 @@
 namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Services\APIService;
+use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\ValueObjects\InvoiceIdValueObject;
 
-final class InvoiceService
+class InvoiceService
 {
     private $logService;
     /**
@@ -29,29 +30,38 @@ final class InvoiceService
 
     public function cancel($invoiceId)
     {
+        $logService = $this->getLogService();
         try {
-            $apiService = new APIService();
+            $apiService = $this->getApiService();
 
             $invoice = new Invoice();
             $invoiceId = new InvoiceIdValueObject($invoiceId);
 
             $invoice->setMundipaggId($invoiceId);
+
+            $logService->info(
+                null,
+                'Invoice cancel request | invoice id: ' . $invoiceId
+            );
+
             $apiService->cancelInvoice($invoice);
 
-            return [
+            $return = [
                 "message" => 'Invoice canceled successfully',
                 "code" => 200
             ];
-        } catch (\Exception $exception) {
 
-            /*$message = $this->i18n->getDashboard(
-                'Error on cancel invoice'
+            $logService->info(
+                null,
+                'Invoice cancel response: ' . $return['message']
             );
 
-            $this->logService->orderInfo(
+            return $return;
+        } catch (\Exception $exception) {
+            $logService->info(
                 null,
-                $message . ' - ' . $exception->getMessage()
-            );*/
+                $exception->getMessage()
+            );
 
             return [
                 "message" => $exception->getMessage(),
@@ -60,4 +70,13 @@ final class InvoiceService
         }
     }
 
+    public function getApiService()
+    {
+        return new APIService();
+    }
+
+    public function getLogService()
+    {
+        return new LogService('InvoiceService', true);
+    }
 }
