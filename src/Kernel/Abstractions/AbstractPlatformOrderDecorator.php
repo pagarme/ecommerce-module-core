@@ -20,10 +20,10 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $this->logService = new OrderLogService();
     }
 
-    public function addHistoryComment($message, $sendCustomerNotified = false)
+    public function addHistoryComment($message, $notifyCustomer = false)
     {
         $message = 'MP - ' . $message;
-        $this->addMPHistoryComment($message, $sendCustomerNotified);
+        $this->addMPHistoryComment($message, $notifyCustomer);
     }
 
     public function getPlatformOrder()
@@ -190,7 +190,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         return $grandTotal;
     }
 
-    abstract protected function addMPHistoryComment($message, $sendCustomerNotified);
+    abstract protected function addMPHistoryComment($message, $notifyCustomer);
     abstract protected function setStatusAfterLog(OrderStatus $status);
     abstract protected function setStateAfterLog(OrderState $state);
 }
