@@ -3,11 +3,8 @@
 namespace Mundipagg\Core\Test\Abstractions;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Test\Mock\Concrete\Migrate;
-use Mundipagg\Core\Test\Mock\Concrete\PlatformCoreSetup;
-use PHPUnit\Framework\TestCase;
 
-abstract class AbstractRepositoryTest extends TestCase
+abstract class AbstractRepositoryTest extends AbstractSetupTest
 {
     /**
      * @var AbstractRepository
@@ -17,15 +14,7 @@ abstract class AbstractRepositoryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        PlatformCoreSetup::bootstrap();
         $this->repo = $this->getRepository();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $migrate = new Migrate(PlatformCoreSetup::getDatabaseAccessObject());
-        $migrate->down();
     }
 
     abstract public function getRepository();

@@ -9,7 +9,7 @@ use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Zend\Db\Sql\Ddl\Column\Datetime;
 
-class PlanFactoryTests extends TestCase
+class PlanFactoryTest extends TestCase
 {
     public function testCreateFromPostDataShouldReturnAPlan()
     {
@@ -35,7 +35,8 @@ class PlanFactoryTests extends TestCase
                     'id' => 1,
                     'productId' => 10,
                 ]
-            ]
+            ],
+            'trial_period_days' => 10
         ];
 
         $result = $planFactory->createFromPostData($data);
@@ -72,7 +73,9 @@ class PlanFactoryTests extends TestCase
         $planFactory = new PlanFactory();
 
         $plan = $planFactory->createFromPostData("");
+        $plan2 = $planFactory->createFromDbData("");
         $this->assertNotInstanceOf(Plan::class, $plan);
+        $this->assertNotInstanceOf(Plan::class, $plan2);
     }
 
     public function testCreateFromDbShouldReturnAPlan()
@@ -99,7 +102,8 @@ class PlanFactoryTests extends TestCase
                     'id' => 1,
                     'productId' => 10,
                 ]
-            ]
+            ],
+            'trial_period_days' => 10
         ];
 
         $plan = $planFactory->createFromDbData($data);
