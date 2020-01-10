@@ -51,6 +51,7 @@ class PTBR extends AbstractI18NTable
             "document" => "CPF",
             "Can't create order." => "Não foi possível criar o pedido",
             'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
+            'New order status: %s' => 'Novo status do pedido: %s',
         ];
     }
 }
