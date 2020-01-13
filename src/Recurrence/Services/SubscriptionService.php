@@ -178,7 +178,10 @@ final class SubscriptionService
                 $subProduct->setSelectedRepetition($item->getSelectedOption());
             }
 
-            $subProduct->setCycles($cycles);
+            if (!empty($cycles)) {
+                $subProduct->setCycles($cycles);
+            }
+
             $subProduct->setDescription($item->getDescription());
             $subProduct->setQuantity($item->getQuantity());
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
