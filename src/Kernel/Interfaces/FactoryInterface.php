@@ -4,7 +4,9 @@ namespace Mundipagg\Core\Kernel\Interfaces;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 
-interface FactoryInterface
+interface FactoryInterface extends
+    FactoryCreateFromDbDataInterface,
+    FactoryCreateFromPostDataInterface
 {
     /**
      *
