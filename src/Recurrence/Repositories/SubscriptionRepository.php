@@ -217,10 +217,15 @@ class SubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION)
         ;
 
+        $customerTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_CUSTOMER)
+        ;
+
         $query = "
-            SELECT *
-              FROM {$recurrenceTable} as recurrence_subscription                  
-             WHERE recurrence_subscription.customer_id = '{$customerId}'             
+            SELECT recurrence_subscription.*
+              FROM {$recurrenceTable} as recurrence_subscription
+              JOIN {$customerTable} as customer ON (recurrence_subscription.customer_id = customer.mundipagg_id)
+             WHERE customer.code = '{$customerId}'
         ";
 
         $result = $this->db->fetch($query);
