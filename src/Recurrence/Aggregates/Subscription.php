@@ -5,16 +5,17 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 use MundiAPILib\Models\CreateSubscriptionRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
@@ -70,8 +71,18 @@ class Subscription extends AbstractEntity
     private $cardId;
     private $shipping;
     private $invoice;
-    private $charge;
+    /**
+     * @var Charge[]
+     */
+    private $charges;
+
+    /**
+     * @var Charge
+     */
+    private $currentCharge;
     private $increment;
+
+    private $currentCycle;
 
     /**
      * @return mixed
@@ -331,19 +342,46 @@ class Subscription extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return Charge[]
      */
-    public function getCharge()
+    public function getCharges()
     {
-        return $this->charge;
+        if (!is_array($this->charges)) {
+            return [];
+        }
+        return $this->charges;
     }
 
     /**
-     * @param mixed $charge
+     *
+     * @param  ChargeInterface $newCharge
+     * @return Subscription
      */
-    public function setCharge(Charge $charge)
+    public function addCharge(ChargeInterface $newCharge)
     {
-        $this->charge = $charge;
+        $charges = $this->getCharges();
+        //cant add a charge that was already added.
+        foreach ($charges as $charge) {
+            if ($charge->getMundipaggId()->equals(
+                $newCharge->getMundipaggId()
+            )
+            ) {
+                return $this;
+            }
+        }
+
+        $charges[] = $newCharge;
+        $this->charges = $charges;
+
+        return $this;
+    }
+
+    /**
+     * @param ChargeInterface[] $charges
+     */
+    public function setCharges($charges)
+    {
+        $this->charges = $charges;
     }
 
     /**
@@ -417,5 +455,37 @@ class Subscription extends AbstractEntity
             "installments" => $this->getInstallments(),
             "billingType" => $this->getBillingType()
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentCycle()
+    {
+        return $this->currentCycle;
+    }
+
+    /**
+     * @param mixed $currentCycle
+     */
+    public function setCurrentCycle(Cycle $currentCycle)
+    {
+        $this->currentCycle = $currentCycle;
+    }
+
+    /**
+     * @return ChargeInterface
+     */
+    public function getCurrentCharge()
+    {
+        return $this->currentCharge;
+    }
+
+    /**
+     * @param ChargeInterface
+     */
+    public function setCurrentCharge(ChargeInterface $currentCharge)
+    {
+        $this->currentCharge = $currentCharge;
     }
 }

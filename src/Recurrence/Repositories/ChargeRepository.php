@@ -131,7 +131,10 @@ final class ChargeRepository extends AbstractRepository
         $charge = json_decode(json_encode($object));
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
 
-        $metadata = json_encode($charge->metadata);
+        $metadata = null;
+        if (!empty($charge->metadata)) {
+            $metadata = json_encode($charge->metadata);
+        }
 
         $query = "
             UPDATE $chargeTable SET

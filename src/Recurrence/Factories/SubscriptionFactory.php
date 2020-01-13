@@ -40,8 +40,14 @@ class SubscriptionFactory implements FactoryInterface
             $subscription->setInvoice($postData['invoice']);
         }
 
-        if (isset($postData['charge'])) {
-            $subscription->setCharge($postData['charge']);
+        if (isset($postData['current_charge'])) {
+            $currentCharge = $postData['current_charge'];
+            if (!is_array($currentCharge)) {
+                $currentCharge = json_decode(json_encode($currentCharge), true);
+            }
+            $chargeFactory = new ChargeFactory();
+            $charge = $chargeFactory->createFromPostData($currentCharge);
+            $subscription->setCurrentCharge($charge);
         }
 
         if (isset($postData['plan_id'])) {
@@ -54,6 +60,12 @@ class SubscriptionFactory implements FactoryInterface
             $customer = $customerFactory->createFromPostData($postData['customer']);
 
             $subscription->setCustomer($customer);
+        }
+
+        if (isset($postData['current_cycle'])) {
+            $cycleFactory = new CycleFactory();
+            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
+            $subscription->setCurrentCycle($cycle);
         }
 
         return $subscription;
@@ -98,7 +110,13 @@ class SubscriptionFactory implements FactoryInterface
         if (isset($dbData['current_cycle'])) {
             $cycleFactory = new CycleFactory();
             $cycle = $cycleFactory->createFromPostData($dbData['current_cycle']);
-            $subscription->setCycle($cycle);
+            $subscription->setCurrentCycle($cycle);
+        }
+
+        if (isset($dbData['current_charge'])) {
+            $chargeFactory = new ChargeFactory();
+            $charge = $chargeFactory->createFromPostData($dbData['current_charge']);
+            $subscription->setCurrentCharge($charge);
         }
 
         if (isset($dbData['plan_id'])) {
