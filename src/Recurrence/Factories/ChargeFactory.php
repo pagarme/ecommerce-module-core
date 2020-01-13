@@ -37,6 +37,9 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
 
     private function setMundiPaggId($id)
     {
+        if (empty($id)) {
+            return;
+        }
         $this->charge->setMundipaggId(new ChargeId($id));
     }
 
@@ -56,14 +59,20 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setPaidAmount($paidAmount);
     }
 
-    private function setPaymentMethod($paymentMethod)
+    private function setPaymentMethod($postData)
     {
-        $this->charge->setPaymentMethod(PaymentMethod::{$paymentMethod}());
+        if (!empty($postData['payment_method'])) {
+            $paymentMethod = $postData['payment_method'];
+            $this->charge->setPaymentMethod(PaymentMethod::{$paymentMethod}());
+        }
     }
 
-    private function setStatus($status)
+    private function setStatus($postData)
     {
-        $this->charge->setStatus(ChargeStatus::{$status}());
+        if (!empty($postData['status'])) {
+            $status = $postData['status'];
+            $this->charge->setStatus(ChargeStatus::{$status}());
+        }
     }
 
     private function setCanceledAmount($canceledAmount)
@@ -156,14 +165,15 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setCode($postData['code']);
         $this->setAmount($postData['amount']);
         $this->setPaidAmount($postData);
-        $this->setPaymentMethod($postData['payment_method']);
+        $this->setPaymentMethod($postData);
         $this->addTransaction($postData);
-        $this->setStatus($postData['status']);
+        $this->setStatus($postData);
         $this->setCustomer($postData);
         $this->setInvoice($postData);
         $this->setCycleStart($postData);
         $this->setCycleEnd($postData);
         $this->setBoletoUrl($postData);
+        $this->setMetadata($postData);
 
         return $this->charge;
     }
@@ -182,12 +192,16 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setPaidAmount(intval($dbData['paid_amount']));
         $this->setCanceledAmount($dbData['canceled_amount']);
         $this->setRefundedAmount($dbData['refunded_amount']);
-        $this->setStatus($dbData['status']);
-        $this->setMetadata($dbData);
+        $this->setStatus($dbData);
         $this->setBoletoLink($dbData);
         $this->setCustomer($dbData);
         $this->setInvoice($dbData);
-        $this->setPaymentMethod($dbData['payment_method']);
+        $this->setPaymentMethod($dbData);
+
+        if (!empty($dbData['metadata'])) {
+            $metadata = json_decode($dbData['metadata']);
+            $this->charge->setMetadata($metadata);
+        }
 
         return $this->charge;
     }

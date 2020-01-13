@@ -91,6 +91,7 @@ final class SubscriptionService
             $response = $subscriptionFactory->createFromPostData($subscriptionResponse);
 
             $response->setPlatformOrder($platformOrder);
+            $response->setCurrentCharge($subscriptionResponse['current_charge']);
 
             $handler = $this->getResponseHandler($response);
             $handler->handle($response);
@@ -298,7 +299,7 @@ final class SubscriptionService
             return false;
         }
 
-        $charge = $response['charge'];
+        $charge = $response['current_charge'];
         $chargeStatus = $charge->getStatus()->getStatus();
 
         if (
@@ -355,7 +356,7 @@ final class SubscriptionService
             $this->getInvoiceFromSubscriptionResponse(
                 $subscriptionResponse
             );
-        $subscriptionResponse['charge'] = $this->getChargeFromInvoiceResponse(
+        $subscriptionResponse['current_charge'] = $this->getChargeFromInvoiceResponse(
             $subscriptionResponse['invoice']
         );
     }

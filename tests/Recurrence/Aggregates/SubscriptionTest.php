@@ -51,7 +51,7 @@ class SubscriptionTest extends TestCase
         $this->subscription->setSubscriptionId(Mockery::mock(SubscriptionId::class));
         $this->subscription->setPlatformOrder(Mockery::mock(PlatformOrderInterface::class));
         $this->subscription->setInvoice(Mockery::mock(Invoice::class));
-        $this->subscription->setCharge(new Charge());
+        $this->subscription->setCurrentCharge(new Charge());
         $this->subscription->setPlanId(Mockery::mock(PlanId::class));
         $this->subscription->setCustomer(new Customer());
         $this->subscription->setItems([new SubProduct]);
@@ -76,7 +76,7 @@ class SubscriptionTest extends TestCase
         $this->assertInstanceOf(SubscriptionId::class, $this->subscription->getSubscriptionId());
         $this->assertInstanceOf(PlatformOrderInterface::class, $this->subscription->getPlatformOrder());
         $this->assertInstanceOf(Invoice::class, $this->subscription->getInvoice());
-        $this->assertInstanceOf(Charge::class, $this->subscription->getCharge());
+        $this->assertInstanceOf(Charge::class, $this->subscription->getCurrentCharge());
         $this->assertInstanceOf(PlanId::class, $this->subscription->getPlanId());
         $this->assertInstanceOf(Customer::class, $this->subscription->getCustomer());
         $this->assertInstanceOf(Shipping::class, $this->subscription->getShipping());

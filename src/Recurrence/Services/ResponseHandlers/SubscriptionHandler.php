@@ -45,7 +45,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
             $subscription->getCode(),
             "Handling subscription status: " . $status
         );
-        $charge = $subscription->getCharge();
+        $charge = $subscription->getCurrentCharge();
         $chargeRepository = new ChargeRepository();
         $chargeRepository->save($charge);
 
@@ -175,7 +175,7 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
     private function getSubscriptionStatusFromCharge(Subscription $subscription)
     {
-        $charge = $subscription->getCharge();
+        $charge = $subscription->getCurrentCharge();
         return ucfirst($charge->getStatus()->getStatus());
     }
 }
