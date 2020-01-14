@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
@@ -30,22 +31,41 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setStatus(SubscriptionStatus::{$postData['status']}());
         $subscription->setInstallments($postData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
-        $subscription->setIntervalType(
-            IntervalValueObject::{$postData['interval']}($postData['interval_count'])
-        );
-
+        $subscription->setIntervalType($postData['interval']);
+        $subscription->setIntervalCount($postData['interval_count']);
         $subscription->setMundipaggId(new SubscriptionId($postData['id']));
-
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
 
-        if (isset($postData['current_cycle'])) {
-            $cycleFactory = new CycleFactory();
-            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
-            $subscription->setCycle($cycle);
+        if (isset($postData['invoice'])) {
+            $subscription->setInvoice($postData['invoice']);
+        }
+
+        if (isset($postData['current_charge'])) {
+            $currentCharge = $postData['current_charge'];
+            if (!is_array($currentCharge)) {
+                $currentCharge = json_decode(json_encode($currentCharge), true);
+            }
+            $chargeFactory = new ChargeFactory();
+            $charge = $chargeFactory->createFromPostData($currentCharge);
+            $subscription->setCurrentCharge($charge);
         }
 
         if (isset($postData['plan_id'])) {
             $subscription->setPlanId(new PlanId($postData['plan_id']));
+        }
+
+        if (isset($postData['customer'])) {
+
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+
+            $subscription->setCustomer($customer);
+        }
+
+        if (isset($postData['current_cycle'])) {
+            $cycleFactory = new CycleFactory();
+            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
+            $subscription->setCurrentCycle($cycle);
         }
 
         return $subscription;
@@ -80,9 +100,8 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setStatus(SubscriptionStatus::{$dbData['status']}());
         $subscription->setInstallments($dbData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$dbData['payment_method']}());
-        $subscription->setIntervalType(
-            IntervalValueObject::{$dbData['interval_type']}($dbData['interval_count'])
-        );
+        $subscription->setIntervalType($dbData['interval_type']);
+        $subscription->setIntervalCount($dbData['interval_count']);
 
         $subscription->setPlatformOrder($this->getPlatformOrder($dbData['code']));
 
@@ -91,12 +110,35 @@ class SubscriptionFactory implements FactoryInterface
         if (isset($dbData['current_cycle'])) {
             $cycleFactory = new CycleFactory();
             $cycle = $cycleFactory->createFromPostData($dbData['current_cycle']);
-            $subscription->setCycle($cycle);
+            $subscription->setCurrentCycle($cycle);
+        }
+
+        if (isset($dbData['current_charge'])) {
+            $chargeFactory = new ChargeFactory();
+            $charge = $chargeFactory->createFromPostData($dbData['current_charge']);
+            $subscription->setCurrentCharge($charge);
         }
 
         if (isset($dbData['plan_id'])) {
             $subscription->setPlanId(new PlanId($dbData['plan_id']));
         }
+
+        return $subscription;
+    }
+
+    /**
+     * @param $subscriptionResponse
+     * @return Subscription
+     * @throws InvalidParamException
+     */
+    public function createFromFailedSubscription($subscriptionResponse)
+    {
+        $subscription = new Subscription();
+
+        $subscription->setCode($subscriptionResponse['code']);
+
+        $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
+        $subscription->setMundipaggId($subscriptionId);
 
         return $subscription;
     }

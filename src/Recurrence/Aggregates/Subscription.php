@@ -2,18 +2,21 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
-use MundiAPILib\Models\CreateOrderRequest;
 use MundiAPILib\Models\CreateSubscriptionRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
 {
@@ -50,6 +53,8 @@ class Subscription extends AbstractEntity
 
     private $intervalCount;
 
+    private $description;
+
     /**
      * @var PlanId
      */
@@ -59,12 +64,25 @@ class Subscription extends AbstractEntity
      * @var Order
      */
     private $platformOrder;
-    private $items;
-    private $cycle;
+    private $items = [];
     private $billingType;
     private $cardToken;
     private $boletoDays;
     private $cardId;
+    private $shipping;
+    private $invoice;
+    /**
+     * @var Charge[]
+     */
+    private $charges;
+
+    /**
+     * @var Charge
+     */
+    private $currentCharge;
+    private $increment;
+
+    private $currentCycle;
 
     /**
      * @return mixed
@@ -150,7 +168,7 @@ class Subscription extends AbstractEntity
 
     public function setPaymentMethod(PaymentMethod $paymentMethod)
     {
-        $this->paymentMethod = $paymentMethod;
+        $this->paymentMethod = $paymentMethod->getPaymentMethod();
         return $this;
     }
 
@@ -183,7 +201,7 @@ class Subscription extends AbstractEntity
 
     public function getIntervalCount()
     {
-        return $this->intervalType;
+        return $this->intervalCount;
     }
 
     public function setPlanId(PlanId $planId)
@@ -214,26 +232,6 @@ class Subscription extends AbstractEntity
     public function setPlatformOrder(PlatformOrderInterface $platformOrder)
     {
         $this->platformOrder = $platformOrder;
-        return $this;
-    }
-
-    /**
-     *
-     * @return Cycle
-     */
-    public function getCycle()
-    {
-        return $this->cycle;
-    }
-
-    /**
-     *
-     * @param Cycle $cycle
-     * @return Subscription
-     */
-    public function setCycle(Cycle $cycle)
-    {
-        $this->cycle = $cycle;
         return $this;
     }
 
@@ -295,6 +293,113 @@ class Subscription extends AbstractEntity
         $this->cardId = $cardId;
     }
 
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return Shipping
+     */
+    public function getShipping()
+    {
+        return $this->shipping;
+    }
+
+    /**
+     * @param Shipping $shipping
+     */
+    public function setShipping(Shipping $shipping)
+    {
+        $this->shipping = $shipping;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInvoice()
+    {
+        return $this->invoice;
+    }
+
+    /**
+     * @param mixed $invoice
+     */
+    public function setInvoice(Invoice $invoice)
+    {
+        $this->invoice = $invoice;
+    }
+
+    /**
+     * @return Charge[]
+     */
+    public function getCharges()
+    {
+        if (!is_array($this->charges)) {
+            return [];
+        }
+        return $this->charges;
+    }
+
+    /**
+     *
+     * @param  ChargeInterface $newCharge
+     * @return Subscription
+     */
+    public function addCharge(ChargeInterface $newCharge)
+    {
+        $charges = $this->getCharges();
+        //cant add a charge that was already added.
+        foreach ($charges as $charge) {
+            if ($charge->getMundipaggId()->equals(
+                $newCharge->getMundipaggId()
+            )
+            ) {
+                return $this;
+            }
+        }
+
+        $charges[] = $newCharge;
+        $this->charges = $charges;
+
+        return $this;
+    }
+
+    /**
+     * @param ChargeInterface[] $charges
+     */
+    public function setCharges($charges)
+    {
+        $this->charges = $charges;
+    }
+
+    /**
+     * @return Increment
+     */
+    public function getIncrement()
+    {
+        return $this->increment;
+    }
+
+    /**
+     * @param Increment $increment
+     */
+    public function setIncrement(Increment $increment)
+    {
+        $this->increment = $increment;
+    }
+
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -308,22 +413,79 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->cardId = $this->getCardId();
         $subscriptionRequest->installments = $this->getInstallments();
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
+        $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
+        $subscriptionRequest->description = $this->getDescription();
+        $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {
             $subscriptionRequest->items[] = $item->convertToSDKRequest();
         }
 
-        /*$shipping = $this->getShipping();
-        if ($shipping !== null) {
-            $subscriptionRequest->shipping = $shipping->convertToSDKRequest();
-        }*/
-
         return $subscriptionRequest;
+    }
+
+    public function getStatusValue()
+    {
+        if ($this->getStatus() !== null) {
+            return $this->getStatus()->getStatus();
+        }
+        return null;
+    }
+
+    public function getPlanIdValue()
+    {
+        if ($this->getPlanId() !== null) {
+            return $this->getPlanId()->getValue();
+        }
+        return null;
     }
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return [
+            "id" => $this->getId(),
+            "subscriptionId" => $this->getMundipaggId(),
+            "code" => $this->getCode(),
+            "status" => $this->getStatusValue(),
+            "paymentMethod" => $this->getPaymentMethod(),
+            "planId" => $this->getPlanIdValue(),
+            "intervalType" => $this->getIntervalType(),
+            "intervalCount" => $this->getIntervalCount(),
+            "installments" => $this->getInstallments(),
+            "billingType" => $this->getBillingType()
+        ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentCycle()
+    {
+        return $this->currentCycle;
+    }
+
+    /**
+     * @param mixed $currentCycle
+     */
+    public function setCurrentCycle(Cycle $currentCycle)
+    {
+        $this->currentCycle = $currentCycle;
+    }
+
+    /**
+     * @return ChargeInterface
+     */
+    public function getCurrentCharge()
+    {
+        return $this->currentCharge;
+    }
+
+    /**
+     * @param ChargeInterface
+     */
+    public function setCurrentCharge(ChargeInterface $currentCharge)
+    {
+        $this->currentCharge = $currentCharge;
     }
 }

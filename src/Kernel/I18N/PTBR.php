@@ -59,6 +59,8 @@ class PTBR extends AbstractI18NTable
             'years' => "anos",
             'discount' => "desconto",
             'Credit Card' => "Cartão de Crédito",
+            'Subscription invoice paid.' => 'Fatura de assinatura paga.',
+            'invoice' => 'fatura',
             'Subscription canceled with success!' => "Assinatura cancelada com sucesso!",
             'Error on cancel subscription' => "Erro ao cancelar a assinatura",
             'Subscription not found' => "Assinatura não encontrada",
@@ -68,6 +70,7 @@ class PTBR extends AbstractI18NTable
             'quarterly' => 'Trimestral',
             'yearly' => 'Anual',
             'biennial' => 'Bienal',
+            'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s',
             'weekly' => 'Semanal'
         ];
     }

@@ -33,6 +33,8 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     /** @var string */
     protected $updatedAt;
 
+    protected $increment;
+
     /** @var Repetition */
     protected $selectedRepetition;
 
@@ -171,6 +173,22 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     }
 
     /**
+     * @return Increment
+     */
+    public function getIncrement()
+    {
+        return $this->increment;
+    }
+
+    /**
+     * @param Increment $increment
+     */
+    public function setIncrement(Increment $increment)
+    {
+        $this->increment = $increment;
+    }
+
+    /**
      * @return string
      */
     public function getCreatedAt()
@@ -223,6 +241,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
             "quantity" => $this->getQuantity(),
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt(),
+            "increment" => $this->getIncrement()
         ];
     }
 
@@ -288,6 +307,13 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
         $items->cycles = $this->getCycles();
         $items->quantity = $this->getQuantity();
         $items->plan_item_id = $this->getId();
+        /**
+         * @todo Fix increments
+         * Array must be createad in another place
+         */
+        if ($this->getIncrement()) {
+            $items->increments[] = $this->getIncrement()->convertToSDKRequest();
+        }
 
         return $items;
     }

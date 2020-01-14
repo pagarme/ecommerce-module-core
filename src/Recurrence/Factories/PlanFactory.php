@@ -25,7 +25,7 @@ class PlanFactory implements FactoryInterface
 
     private function setMundipaggId($postData)
     {
-        if (isset($postData['plan_id'])) {
+        if (!empty($postData['plan_id'])) {
             $this->plan->setMundipaggId(new PlanId($postData['plan_id']));
             return;
         }
@@ -80,27 +80,24 @@ class PlanFactory implements FactoryInterface
 
     private function setCreditCard($postData)
     {
-        if (isset($postData['credit_card'])) {
-            $creditCard = $postData['credit_card'] == 'true' ? '1' : '0';
-            $this->plan->setCreditCard($creditCard);
+        if (isset($postData['credit_card']) && is_bool($postData['credit_card'])) {
+            $this->plan->setCreditCard($postData['credit_card']);
             return;
         }
     }
 
     private function setBoleto($postData)
     {
-        if (isset($postData['boleto'])) {
-            $boleto = $postData['boleto'] == 'true' ? '1' : '0';
-            $this->plan->setBoleto($boleto);
+        if (isset($postData['boleto']) && is_bool($postData['boleto'])) {
+            $this->plan->setBoleto($postData['boleto']);
             return;
         }
     }
 
     private function setAllowInstallments($postData)
     {
-        if (isset($postData['installments'])) {
-            $installments = $postData['installments'] == 'true' ? '1' : '0';
-            $this->plan->setAllowInstallments($installments);
+        if (isset($postData['installments']) && is_bool($postData['installments'])) {
+            $this->plan->setAllowInstallments($postData['installments']);
             return;
         }
     }
@@ -167,6 +164,14 @@ class PlanFactory implements FactoryInterface
         }
     }
 
+    private function setTrialDays($postData)
+    {
+        if (isset($postData['trial_period_days'])) {
+            $this->plan->setTrialPeriodDays((int) $postData['trial_period_days']);
+        }
+        return;
+    }
+
     /**
      *
      * @param  array $postData
@@ -194,12 +199,36 @@ class PlanFactory implements FactoryInterface
         $this->setStatus($postData);
         $this->setInterval();
         $this->setItems($postData);
+        $this->setTrialDays($postData);
 
         return $this->plan;
     }
 
     public function createFromDbData($dbData)
     {
-        return new Plan();
+        if (!is_array($dbData)) {
+            return;
+        }
+
+        $this->setMundipaggId($dbData);
+        $this->setIntervalType($dbData);
+        $this->setIntervalCount($dbData);
+        $this->setId($dbData);
+        $this->setName($dbData);
+        $this->setDescription($dbData);
+        $this->setBillingType($dbData);
+        $this->setProductId($dbData);
+        $this->setUpdatedAt($dbData);
+        $this->setCreatedAt($dbData);
+        $this->setStatus($dbData);
+        $this->setInterval();
+        $this->setItems($dbData);
+        $this->setTrialDays($dbData);
+
+        $this->plan->setCreditCard(boolval($dbData['credit_card']));
+        $this->plan->setAllowInstallments(boolval($dbData['installments']));
+        $this->plan->setBoleto(boolval($dbData['boleto']));
+
+        return $this->plan;
     }
 }

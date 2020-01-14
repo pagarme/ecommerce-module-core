@@ -72,6 +72,7 @@ class ProductSubscriptionRepository extends AbstractRepository
     {
         $repetitionRepository = new RepetitionRepository();
         foreach ($object->getRepetitions() as &$repetition) {
+            $repetition->setId(null);
             $repetition->setSubscriptionId($object->getId());
             $repetition = $repetitionRepository->save($repetition);
         }

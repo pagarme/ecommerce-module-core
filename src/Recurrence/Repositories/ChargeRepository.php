@@ -131,7 +131,10 @@ final class ChargeRepository extends AbstractRepository
         $charge = json_decode(json_encode($object));
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
 
-        $metadata = json_encode($charge->metadata);
+        $metadata = null;
+        if (!empty($charge->metadata)) {
+            $metadata = json_encode($charge->metadata);
+        }
 
         $query = "
             UPDATE $chargeTable SET
@@ -140,8 +143,7 @@ final class ChargeRepository extends AbstractRepository
               refunded_amount = {$charge->refundedAmount},                         
               canceled_amount = {$charge->canceledAmount},
               status = '{$charge->status}',
-              metadata = '{$metadata}',
-              customer_id = '{$charge->customerId}'
+              metadata = '{$metadata}'
             WHERE id = {$charge->id}
         ";
 
@@ -266,6 +268,36 @@ final class ChargeRepository extends AbstractRepository
 
         $charges = [];
         foreach ($result->rows as $row) {
+            $charges[] = $factory->createFromDbData($row);
+        }
+
+        return $charges;
+    }
+
+    public function findBySubscriptionId(AbstractValidString $subscriptionId)
+    {
+        $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
+
+        $id = $subscriptionId->getValue();
+
+        $query = "
+            SELECT 
+                *
+            FROM
+                $chargeTable as c  
+            WHERE subscription_id = '$id'
+        ";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        $charges = [];
+
+        foreach ($result->rows as $row) {
+            $factory = new ChargeFactory();
             $charges[] = $factory->createFromDbData($row);
         }
 

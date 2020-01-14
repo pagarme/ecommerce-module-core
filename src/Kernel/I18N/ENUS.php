@@ -59,6 +59,8 @@ class ENUS extends AbstractI18NTable
             'years' => null,
             'discount' => null,
             'Credit Card' => null,
+            'Subscription invoice paid.' => null,
+            'invoice' => null,
             'Subscription canceled with success!' => null,
             'Error on cancel subscription' => null,
             'Subscription not found' => null,
@@ -68,6 +70,7 @@ class ENUS extends AbstractI18NTable
             'quarterly' => null,
             'yearly' => null,
             'biennial' => null,
+            'Subscription created at Mundipagg. Id: %s' => null,
             'weekly' => null
         ];
     }

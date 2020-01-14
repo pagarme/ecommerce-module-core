@@ -28,12 +28,6 @@ class RecurrenceService
         return self::MAX_INSTALLMENTS_NUMBER;
     }
 
-    protected function getPlan($productId)
-    {
-        $planService = new PlanService();
-        return $planService->findByProductId($productId);
-    }
-
     protected function getProductSubscription($productId)
     {
         $productSubscriptionService = new ProductSubscriptionService();

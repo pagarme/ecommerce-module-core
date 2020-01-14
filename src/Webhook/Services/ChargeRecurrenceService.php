@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Webhook\Services;
 
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
@@ -18,6 +19,7 @@ use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
@@ -31,14 +33,9 @@ final class ChargeRecurrenceService extends AbstractHandlerService
      */
     public function handlePaid(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $orderFactory = new OrderFactory();
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
-
-        /**
-         * @var Order $order
-         */
-        $order = $this->order;
 
         /**
          * @var Charge $charge
@@ -57,6 +54,8 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         }
 
         $paidAmount = $transaction->getPaidAmount();
+        $platformOrder = $this->order->getPlatformOrder();
+
         if (!$charge->getStatus()->equals(ChargeStatus::paid())) {
             $charge->pay($paidAmount);
         }
@@ -65,21 +64,21 @@ final class ChargeRecurrenceService extends AbstractHandlerService
             $charge->setPaidAmount($paidAmount);
         }
 
-        $platformOrder = $this->order->getPlatformOrder();
-        if ($outdatedCharge == null) {
-            $this->order->setStatus(OrderStatus::processing());
-            $platformOrder->setState(OrderState::processing());
-        }
-
-        $orderRepository->save($this->order);
         $chargeRepository->save($charge);
 
-        $this->order->addCharge($charge);
+        $this->order->setCurrentCharge($charge);
 
         $history = $this->prepareHistoryComment($charge);
         $platformOrder->addHistoryComment($history);
 
-        $orderService->syncPlatformWith($this->order);
+        $platformOrderStatus = ucfirst(ChargeStatus::paid()->getStatus());
+        $realOrder = $orderFactory->createFromSubscriptionData(
+            $this->order,
+            $platformOrderStatus
+        );
+        $realOrder->addCharge($charge);
+
+        $orderService->syncPlatformWith($realOrder);
 
         $this->addWebHookReceivedHistory($webhook);
         $platformOrder->save();
@@ -100,7 +99,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
      */
     protected function handlePartialCanceled(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $orderFactory = new OrderFactory();
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
@@ -122,21 +121,33 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
 
         if ($outdatedCharge !== null) {
-            $outdatedCharge->addTransaction($transaction);
             $charge = $outdatedCharge;
         }
 
-        $charge->cancel($transaction->getAmount());
+        $cancelAmount = $charge->getCanceledAmount();
+        if ($transaction !== null) {
+            $charge->addTransaction($transaction);
+            $cancelAmount = $transaction->getAmount();
+        }
 
-        $orderRepository->save($order);
+        $charge->cancel($cancelAmount);
         $chargeRepository->save($charge);
 
+        $this->order->setCurrentCharge($charge);
 
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history);
 
-        $orderService->syncPlatformWith($order);
+        $platformOrderStatus = ucfirst($order->getPlatformOrder()->getPlatformOrder()->getStatus());
+        $realOrder = $orderFactory->createFromSubscriptionData(
+            $order,
+            $platformOrderStatus
+        );
+        $realOrder->addCharge($charge);
 
+        $orderService->syncPlatformWith($realOrder);
+
+        $this->addWebHookReceivedHistory($webhook);
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
             "message" => $returnMessage,
@@ -158,7 +169,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
     protected function handleRefunded(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $orderFactory = new OrderFactory();
         $chargeRepository = new ChargeRepository();
         $orderService = new OrderService();
 
@@ -191,21 +202,28 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $cancelAmount = $charge->getAmount();
         if ($transaction !== null) {
-            $outdatedCharge->addTransaction($transaction);
+            $charge->addTransaction($transaction);
             $cancelAmount = $transaction->getAmount();
         }
 
         $charge->cancel($cancelAmount);
-
-        $order->updateCharge($charge);
-
-        $orderRepository->save($order);
         $chargeRepository->save($charge);
+
+        $this->order->setCurrentCharge($charge);
 
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->syncPlatformWith($order);
 
+        $platformOrderStatus = ucfirst($order->getPlatformOrder()->getPlatformOrder()->getStatus());
+        $realOrder = $orderFactory->createFromSubscriptionData(
+            $order,
+            $platformOrderStatus
+        );
+        $realOrder->addCharge($charge);
+
+        $orderService->syncPlatformWith($realOrder);
+
+        $this->addWebHookReceivedHistory($webhook);
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
             "message" => $returnMessage,
@@ -256,39 +274,26 @@ final class ChargeRecurrenceService extends AbstractHandlerService
      */
     public function loadOrder(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $subscriptionRepository = new SubscriptionRepository();
         $apiService = new ApiService();
 
         /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
-        $subscriptionId = $webhook->getEntity()->getInvoice()->getSubscriptionId();
+        $subscriptionId = $charge->getInvoice()->getSubscriptionId();
         $subscription = $apiService->getSubscription(new SubscriptionId($subscriptionId));
 
-        $code = $subscription->getPlatformOrder()->getCode();
-        if (is_null($code)) {
+        if (is_null($subscription)) {
             throw new Exception('Code não foi encontrado', 400);
         }
 
-        $charge->setCode($code);
-        $charge->setCycleStart($subscription->getCycle()->getCycleStart());
-        $charge->setCycleEnd($subscription->getCycle()->getCycleEnd());
+        $charge->setCycleStart($subscription->getCurrentCycle()->getCycleStart());
+        $charge->setCycleEnd($subscription->getCurrentCycle()->getCycleEnd());
 
-        $order = $orderRepository->findByCode($charge->getCode());
+        $orderCode = $subscription->getPlatformOrder()->getCode();
+        $order = $subscriptionRepository->findByCode($orderCode);
         if ($order === null) {
-            $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-
-            /**
-             * @var PlatformOrderInterface $order
-             */
-            $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($charge->getCode());
-
-            $orderFactory = new OrderFactory();
-            $order = $orderFactory->createFromPlatformData(
-                $order,
-                $charge->getOrderId()->getValue()
-            );
+            throw new NotFoundException("Order #{$orderCode} not found.");
         }
 
         $this->order = $order;

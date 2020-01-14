@@ -22,14 +22,15 @@ class Migrate
     {
         $this->upRecurrenceProductSubscription();
         $this->upRecurrenceSubscriptionRepetitions();
+        $this->upRecurrenceSubProduct();
     }
 
     public function down()
     {
         $this->downRecurrenceProductSubscription();
         $this->downRecurrenceSubscriptionRepetitions();
+        $this->downRecurrenceSubProduct();
         $this->downConfigurationMigration();
-
     }
 
     public function runConfigurationMigration()
@@ -97,4 +98,22 @@ class Migrate
         $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_subscription_repetitions");
     }
 
+    public function upRecurrenceSubProduct()
+    {
+        $this->db->exec("CREATE TABLE IF NOT EXISTS mundipagg_module_core_recurrence_sub_products (
+                      id INTEGER PRIMARY KEY,
+                      product_id INTEGER,
+                      product_recurrence_id INTEGER,
+                      recurrence_type TEXT,
+                      cycles INTEGER NULLABLE,
+                      quantity INTEGER NULLABLE,
+                      trial_period_days INTEGER NULLABLE,
+                      created_at TIMESTAMP,
+                      updated_at TIMESTAMP)");
+    }
+
+    public function downRecurrenceSubProduct()
+    {
+        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_sub_products");
+    }
 }

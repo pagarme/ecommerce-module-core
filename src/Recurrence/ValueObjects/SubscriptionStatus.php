@@ -9,6 +9,7 @@ final class SubscriptionStatus extends AbstractValueObject
     const ACTIVE = 'active';
     const CANCELED = 'canceled';
     const FUTURE = 'future';
+    const FAILED = 'failed';
 
     /**
      * @var string 
@@ -38,6 +39,11 @@ final class SubscriptionStatus extends AbstractValueObject
     public static function future()
     {
         return new self(self::FUTURE);
+    }
+
+    public static function failed()
+    {
+        return new self(self::FAILED);
     }
 
     /**
