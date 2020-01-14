@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
@@ -37,7 +38,11 @@ class SubscriptionRepository extends AbstractRepository
         }
 
         $factory = new SubscriptionFactory();
-        return $factory->createFromDbData($result->row);
+        $subscription = $this->attachRelationships(
+            $factory->createFromDbData($result->row)
+        );
+
+        return $subscription;
     }
 
     public function findByCode($code)
@@ -59,7 +64,12 @@ class SubscriptionRepository extends AbstractRepository
         }
 
         $factory = new SubscriptionFactory();
-        return $factory->createFromDbData($result->row);
+
+        $subscription = $this->attachRelationships(
+            $factory->createFromDbData($result->row)
+        );
+
+        return $subscription;
     }
 
     /**
@@ -153,7 +163,11 @@ class SubscriptionRepository extends AbstractRepository
         }
 
         $factory = new SubscriptionFactory();
-        return $factory->createFromDBData($result->row);
+        $subscription = $this->attachRelationships(
+            $factory->createFromDbData($result->row)
+        );
+
+        return $subscription;
     }
 
     /**
@@ -182,7 +196,10 @@ class SubscriptionRepository extends AbstractRepository
 
         $listSubscription = [];
         foreach ($result->rows as $row) {
-            $subscription = $factory->createFromDBData($row);
+            $subscription = $this->attachRelationships(
+                $factory->createFromDbData($row)
+            );
+
             $listSubscription[] = $subscription;
         }
 
@@ -220,10 +237,27 @@ class SubscriptionRepository extends AbstractRepository
 
         $listSubscription = [];
         foreach ($result->rows as $row) {
-            $subscription = $factory->createFromDBData($row);
+            $subscription = $this->attachRelationships(
+                $factory->createFromDbData($row)
+            );
             $listSubscription[] = $subscription;
         }
 
         return $listSubscription;
+    }
+
+    protected function attachRelationships(Subscription $subscription)
+    {
+        if (!$subscription) {
+            return null;
+        }
+
+        $chargeFactory = new ChargeRepository();
+        $charges = $chargeFactory->findBySubscriptionId($subscription->getMundipaggId());
+
+        foreach ($charges as $charge) {
+            $subscription->addCharge($charge);
+        }
+        return $subscription;
     }
 }

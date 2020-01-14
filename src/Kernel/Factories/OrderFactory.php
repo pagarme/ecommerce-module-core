@@ -158,21 +158,16 @@ class OrderFactory implements FactoryInterface
         } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
-                $status
+                $platformOrderStatus
             );
         }
 
         $order->setStatus(OrderStatus::$platformOrderStatus());
         $order->setPlatformOrder($subscription->getPlatformOrder());
-        $order->addCharge($subscription->getCharge());
-        $order->setCustomer($subscription->getCustomer());
+        $order->addCharge($subscription->getCurrentCharge());
 
-        foreach ($subscription->getCharge() as $charge) {
-            $charge['order'] = [
-                'id' => $order->getMundipaggId()->getValue()
-            ];
-            $newCharge = $chargeFactory->createFromPostData($charge);
-            $order->addCharge($newCharge);
+        if ($subscription->getCustomer()) {
+            $order->setCustomer($subscription->getCustomer());
         }
 
         return $order;

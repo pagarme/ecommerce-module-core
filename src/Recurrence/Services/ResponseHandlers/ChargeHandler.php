@@ -60,7 +60,6 @@ final class ChargeHandler extends AbstractResponseHandler
 
         $orderService->syncPlatformWith($order);
 
-        $this->addWebHookReceivedHistory($webhook);
         $order->save();
     }
 
