@@ -26,6 +26,9 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS =>
                 'mundipagg_module_core_recurrence_sub_products',
+
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE =>
+                'mundipagg_module_core_recurrence_charge',
         ];
     }
 

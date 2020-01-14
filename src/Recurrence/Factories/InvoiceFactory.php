@@ -27,6 +27,19 @@ class InvoiceFactory implements FactoryInterface
         return $invoice;
     }
 
+    public function createFromCharge(Charge $charge)
+    {
+        $invoice = new Invoice();
+
+        $invoice->setMundipaggId(new InvoiceId($charge->getInvoiceId()));
+        $invoice->setSubscriptionId(new SubscriptionId($charge->getSubscriptionId()));
+        $invoice->setPaymentMethod($charge->getPaymentMethod()->getPaymentMethod());
+        $invoice->setAmount($charge->getAmount());
+        $invoice->setStatus($charge->getStatus());
+
+        return $invoice;
+    }
+
     public function createFromDbData($dbData)
     {
         // TODO: Implement createFromDbData() method.

@@ -4,6 +4,8 @@ namespace Mundipagg\Core\Recurrence\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
@@ -41,6 +43,20 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
             return;
         }
         $this->charge->setMundipaggId(new ChargeId($id));
+    }
+
+    private function setInvoiceId($invoiceId)
+    {
+        if (!empty($invoiceId)) {
+            $this->charge->setInvoiceId(new InvoiceId($invoiceId));
+        }
+    }
+
+    private function setSubscriptionId($subscriptionId)
+    {
+        if (!empty($subscriptionId)) {
+            $this->charge->setSubscriptionId(new SubscriptionId($subscriptionId));
+        }
     }
 
     private function setCode($code)
@@ -107,20 +123,33 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
             $invoiceFactory = new InvoiceFactory();
             $invoice = $invoiceFactory->createFromPostData($data['invoice']);
             $this->charge->setInvoice($invoice);
+            $this->charge->setInvoiceId($invoice->getMundipaggId()->getValue());
         }
     }
 
     private function setCycleStart($data)
     {
         if (!empty($data['cycle_start'])) {
-            $this->charge->setCycleStart($data['cycle_start']);
+
+            if ($data['cycle_start'] instanceOf \DateTime) {
+                $this->charge->setCycleStart($data['cycle_start']);
+                return $this;
+            }
+
+            $this->charge->setCycleStart(new \DateTime($data['cycle_start']));
+            return $this;
         }
     }
 
     private function setCycleEnd($data)
     {
         if (!empty($data['cycle_end'])) {
-            $this->charge->setCycleEnd($data['cycle_end']);
+            if ($data['cycle_start'] instanceOf \DateTime) {
+                $this->charge->setCycleEnd($data['cycle_end']);
+                return $this;
+            }
+            $this->charge->setCycleEnd(new \DateTime($data['cycle_end']));
+            return $this;
         }
     }
 
@@ -187,6 +216,9 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
     {
         $this->setId($dbData['id']);
         $this->setMundiPaggId($dbData['mundipagg_id']);
+        $this->setInvoice($dbData);
+        $this->setSubscriptionId($dbData['subscription_id']);
+        $this->setInvoiceId($dbData['invoice_id']);
         $this->setCode($dbData['code']);
         $this->setAmount($dbData['amount']);
         $this->charge->setPaidAmount(intval($dbData['paid_amount']));
@@ -194,14 +226,13 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setRefundedAmount($dbData['refunded_amount']);
         $this->setStatus($dbData);
         $this->setBoletoLink($dbData);
+        $this->setBoletoUrl($dbData); /** @todo Fixme **/
         $this->setCustomer($dbData);
-        $this->setInvoice($dbData);
         $this->setPaymentMethod($dbData);
-
-        if (!empty($dbData['metadata'])) {
-            $metadata = json_decode($dbData['metadata']);
-            $this->charge->setMetadata($metadata);
-        }
+        $this->setCycleStart($dbData);
+        $this->setCycleEnd($dbData);
+        $this->setInvoice($dbData);
+        $this->setMetadata($dbData);
 
         return $this->charge;
     }

@@ -72,6 +72,8 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     private $invoiceId;
 
+    private $subscriptionId;
+
     private $boletoLink;/** @fixme */
 
     private $boletoUrl;
@@ -500,12 +502,29 @@ final class Charge extends AbstractEntity implements ChargeInterface
      */
     public function getInvoiceId()
     {
-        if (empty($this->getInvoice())) {
-            return null;
-        }
-        return $this->getInvoice()->getMundipaggId();
+        return $this->invoiceId;
     }
 
+    public function setInvoiceId($invoiceId)
+    {
+        $this->invoiceId = $invoiceId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubscriptionId()
+    {
+        return $this->subscriptionId;
+    }
+
+    /**
+     * @param mixed $subscriptionId
+     */
+    public function setSubscriptionId($subscriptionId)
+    {
+        $this->subscriptionId = $subscriptionId;
+    }
     /**
      * @return mixed
      */

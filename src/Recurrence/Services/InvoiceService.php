@@ -4,9 +4,12 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Recurrence\ValueObjects\InvoiceIdValueObject;
+use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
+use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
+use Mundipagg\Core\Recurrence\ValueObjects\InvoiceStatus;
 
 class InvoiceService
 {
@@ -15,7 +18,6 @@ class InvoiceService
      * @var LocalizationService
      */
     private $i18n;
-    private $subscriptionItems;
     private $apiService;
 
     public function __construct()
@@ -30,44 +32,78 @@ class InvoiceService
 
     public function cancel($invoiceId)
     {
-        $logService = $this->getLogService();
         try {
-            $apiService = $this->getApiService();
+            $logService = $this->getLogService();
+            $charge = $this->getChargeRepository()
+                ->findByInvoiceId($invoiceId);
 
-            $invoice = new Invoice();
-            $invoiceId = new InvoiceIdValueObject($invoiceId);
+            if (!$charge) {
+                $message = 'Invoice not found';
 
-            $invoice->setMundipaggId($invoiceId);
+                $logService->info(
+                    null,
+                    $message . " ID {$invoiceId} ."
+                );
 
-            $logService->info(
-                null,
-                'Invoice cancel request | invoice id: ' . $invoiceId
-            );
+                //Code 404
+                throw new \Exception($message, 404);
+            }
 
-            $apiService->cancelInvoice($invoice);
+            if ($charge->getStatus()->getStatus() == InvoiceStatus::canceled()->getStatus()) {
+                $message = 'Invoice already canceled';
 
-            $return = [
-                "message" => 'Invoice canceled successfully',
-                "code" => 200
-            ];
+                return [
+                    "message" => $message,
+                    "code" => 200
+                ];
+            }
+            $invoiceFactory = new InvoiceFactory();
+            $invoice = $invoiceFactory->createFromCharge($charge);
 
-            $logService->info(
-                null,
-                'Invoice cancel response: ' . $return['message']
-            );
+            $return = $this->cancelInvoiceAtMundipagg($invoice);
+
+            $charge->setStatus(ChargeStatus::canceled());
+
+            $this->getChargeRepository()->save($charge);
 
             return $return;
+
         } catch (\Exception $exception) {
+            $logService = $this->getLogService();
+
             $logService->info(
                 null,
                 $exception->getMessage()
             );
 
-            return [
-                "message" => $exception->getMessage(),
-                "code" => 400
-            ];
+            throw $exception;
         }
+    }
+
+    public function cancelInvoiceAtMundipagg(Invoice $invoice)
+    {
+        $logService = $this->getLogService();
+        $apiService = $this->getApiService();
+
+        $logService->info(
+            null,
+            'Invoice cancel request | invoice id: ' .
+            $invoice->getMundipaggId()->getValue()
+        );
+
+        $apiService->cancelInvoice($invoice);
+
+        $return = [
+            "message" => 'Invoice canceled successfully',
+            "code" => 200
+        ];
+
+        $logService->info(
+            null,
+            'Invoice cancel response: ' . $return['message']
+        );
+
+        return $return;
     }
 
     public function getApiService()
@@ -78,5 +114,10 @@ class InvoiceService
     public function getLogService()
     {
         return new LogService('InvoiceService', true);
+    }
+
+    public function getChargeRepository()
+    {
+        return new ChargeRepository();
     }
 }

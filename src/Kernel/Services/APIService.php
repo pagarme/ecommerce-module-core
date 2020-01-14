@@ -361,7 +361,7 @@ class APIService
             $invoiceController->cancelInvoice($invoiceId);
 
         } catch (APIException $e) {
-            return $e->getMessage();
+            throw new \Exception($e->getMessage());
         }
     }
 }
