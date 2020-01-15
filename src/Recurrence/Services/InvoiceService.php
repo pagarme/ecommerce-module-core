@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
+use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\ValueObjects\InvoiceStatus;
@@ -60,9 +61,33 @@ class InvoiceService
             $invoiceFactory = new InvoiceFactory();
             $invoice = $invoiceFactory->createFromCharge($charge);
 
-            $return = $this->cancelInvoiceAtMundipagg($invoice);
+            $result = $this->cancelInvoiceAtMundipagg($invoice);
+
+            $return = [
+                "message" => 'Invoice canceled successfully',
+                "code" => 200
+            ];
+
+            $logService->info(
+                null,
+                'Invoice cancel response: ' . $return['message']
+            );
+
+            $chargeResult = $result->charge;
 
             $charge->setStatus(ChargeStatus::canceled());
+
+            if (isset($chargeResult->canceledAmount)) {
+                $charge->setCanceledAmount($chargeResult->canceledAmount);
+            }
+
+            if (isset($chargeResult->paidAmount)) {
+                $charge->setPaidAmount($chargeResult->paidAmount);
+            }
+
+            /**
+             * @todo Add canceled_at to charge
+             */
 
             $this->getChargeRepository()->save($charge);
 
@@ -91,19 +116,7 @@ class InvoiceService
             $invoice->getMundipaggId()->getValue()
         );
 
-        $apiService->cancelInvoice($invoice);
-
-        $return = [
-            "message" => 'Invoice canceled successfully',
-            "code" => 200
-        ];
-
-        $logService->info(
-            null,
-            'Invoice cancel response: ' . $return['message']
-        );
-
-        return $return;
+        return $apiService->cancelInvoice($invoice);
     }
 
     public function getApiService()

@@ -358,7 +358,7 @@ class APIService
             $request = new CreateInvoiceRequest();
 
             $invoiceController =  $this->apiClient->getInvoices();
-            $invoiceController->cancelInvoice($invoiceId);
+            return $invoiceController->cancelInvoice($invoiceId);
 
         } catch (APIException $e) {
             throw new \Exception($e->getMessage());

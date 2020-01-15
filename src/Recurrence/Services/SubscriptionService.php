@@ -394,6 +394,8 @@ final class SubscriptionService
         $charge = $chargeFactory->createFromPostData($chargeResponse);
 
         $charge->setInvoice($invoiceResponse);
+        $charge->setInvoiceId($invoiceResponse->getMundipaggId()->getValue());
+        $charge->setSubscriptionId($invoiceResponse->getSubscriptionId()->getValue());
 
         return $charge;
     }

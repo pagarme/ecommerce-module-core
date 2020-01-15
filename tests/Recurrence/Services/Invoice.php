@@ -7,10 +7,11 @@ use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Services\InvoiceService;
+use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
 use PHPUnit\Framework\TestCase;
 use Mundipagg\Core\Test\Mock\Concrete\PlatformCoreSetup;
 
-class Invoice extends TestCase
+class Invoice extends AbstractSetupTest
 {
     /**
      * @var InvoiceService
@@ -36,8 +37,14 @@ class Invoice extends TestCase
     public function testCancelShouldNotReturnAnError()
     {
         $apiMock = \Mockery::mock(APIService::class);
+        $result =  new \stdClass();
+        $result->charge = new \stdClass();
 
-        $apiMock->shouldReceive('cancelInvoice')->andReturnTrue();
+        $result->charge->canceledAmount = 500;
+        $result->charge->paidAmount = 500;
+
+        $apiMock->shouldReceive('cancelInvoice')->andReturn($result);
+
 
         $this->service->shouldReceive('getApiService')->andReturn($apiMock);
 

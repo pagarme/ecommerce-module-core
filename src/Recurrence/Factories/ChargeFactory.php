@@ -45,17 +45,19 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setMundipaggId(new ChargeId($id));
     }
 
-    private function setInvoiceId($invoiceId)
+    private function setInvoiceId($postData)
     {
-        if (!empty($invoiceId)) {
-            $this->charge->setInvoiceId(new InvoiceId($invoiceId));
+        if (!empty($postData['invoice_id'])) {
+            $this->charge->setInvoiceId(new InvoiceId($postData['invoice_id']));
         }
     }
 
-    private function setSubscriptionId($subscriptionId)
+    private function setSubscriptionId($postData)
     {
-        if (!empty($subscriptionId)) {
-            $this->charge->setSubscriptionId(new SubscriptionId($subscriptionId));
+        if (!empty($postData['subscription_id'])) {
+            $this->charge->setSubscriptionId(
+                new SubscriptionId($postData['subscription_id'])
+            );
         }
     }
 
@@ -203,6 +205,8 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setCycleEnd($postData);
         $this->setBoletoUrl($postData);
         $this->setMetadata($postData);
+        $this->setSubscriptionId($postData);
+        $this->setInvoiceId($postData);
 
         return $this->charge;
     }
@@ -217,8 +221,8 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->setId($dbData['id']);
         $this->setMundiPaggId($dbData['mundipagg_id']);
         $this->setInvoice($dbData);
-        $this->setSubscriptionId($dbData['subscription_id']);
-        $this->setInvoiceId($dbData['invoice_id']);
+        $this->setSubscriptionId($dbData);
+        $this->setInvoiceId($dbData);
         $this->setCode($dbData['code']);
         $this->setAmount($dbData['amount']);
         $this->charge->setPaidAmount(intval($dbData['paid_amount']));

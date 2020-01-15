@@ -26,10 +26,10 @@ class Migrate
 
     public function down()
     {
+        $this->downConfigurationMigration();
         $this->downRecurrenceProductSubscription();
         $this->downRecurrenceSubscriptionRepetitions();
         $this->downRecurrenceSubProduct();
-        $this->downConfigurationMigration();
         $this->downRecurrenceCharge();
     }
 
@@ -57,7 +57,7 @@ class Migrate
 
     public function downConfigurationMigration()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_configuration");
+        $this->db->exec("DROP TABLE IF EXISTS main.mundipagg_module_core_configuration");
     }
 
     public function upRecurrenceProductSubscription()
@@ -78,7 +78,7 @@ class Migrate
 
     public function downRecurrenceProductSubscription()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_products_subscription");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_products_subscription");
     }
 
     public function upRecurrenceSubscriptionRepetitions()
@@ -95,7 +95,7 @@ class Migrate
 
     public function downRecurrenceSubscriptionRepetitions()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_subscription_repetitions");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_subscription_repetitions");
     }
 
     public function upRecurrenceSubProduct()
@@ -114,7 +114,7 @@ class Migrate
 
     public function downRecurrenceSubProduct()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_sub_products");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_sub_products");
     }
 
     public function upRecurrenceCharge()
@@ -146,6 +146,6 @@ class Migrate
 
     public function downRecurrenceCharge()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_charge");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_charge");
     }
 }

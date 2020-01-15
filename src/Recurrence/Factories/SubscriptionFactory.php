@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
@@ -27,45 +28,26 @@ class SubscriptionFactory implements FactoryInterface
         $subscription = new Subscription();
 
         $subscription->setSubscriptionId(new SubscriptionId($postData['id']));
-        $subscription->setCode($postData['code']);
+        $subscription->setMundipaggId(new SubscriptionId($postData['id']));
         $subscription->setStatus(SubscriptionStatus::{$postData['status']}());
-        $subscription->setInstallments($postData['installments']);
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
+
+        $subscription->setCode($postData['code']);
+        $subscription->setInstallments($postData['installments']);
         $subscription->setIntervalType($postData['interval']);
         $subscription->setIntervalCount($postData['interval_count']);
-        $subscription->setMundipaggId(new SubscriptionId($postData['id']));
         $subscription->setPlatformOrder($this->getPlatformOrder($postData['code']));
+
+        $this->setCurrentCharge($postData, $subscription);
+        $this->setCustomer($postData, $subscription);
+        $this->setCurrentCycle($postData, $subscription);
 
         if (isset($postData['invoice'])) {
             $subscription->setInvoice($postData['invoice']);
         }
 
-        if (isset($postData['current_charge'])) {
-            $currentCharge = $postData['current_charge'];
-            if (!is_array($currentCharge)) {
-                $currentCharge = json_decode(json_encode($currentCharge), true);
-            }
-            $chargeFactory = new ChargeFactory();
-            $charge = $chargeFactory->createFromPostData($currentCharge);
-            $subscription->setCurrentCharge($charge);
-        }
-
         if (isset($postData['plan_id'])) {
             $subscription->setPlanId(new PlanId($postData['plan_id']));
-        }
-
-        if (isset($postData['customer'])) {
-
-            $customerFactory = new CustomerFactory();
-            $customer = $customerFactory->createFromPostData($postData['customer']);
-
-            $subscription->setCustomer($customer);
-        }
-
-        if (isset($postData['current_cycle'])) {
-            $cycleFactory = new CycleFactory();
-            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
-            $subscription->setCurrentCycle($cycle);
         }
 
         return $subscription;
@@ -141,5 +123,40 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setMundipaggId($subscriptionId);
 
         return $subscription;
+    }
+
+    private function setCurrentCharge($postData, & $subscription)
+    {
+        if (isset($postData['current_charge'])) {
+            $currentCharge = $postData['current_charge'];
+
+            if (!$currentCharge instanceof Charge) {
+                $currentCharge = json_decode(json_encode($currentCharge), true);
+                $chargeFactory = new ChargeFactory();
+                $currentCharge = $chargeFactory->createFromPostData($currentCharge);
+            }
+
+            $subscription->setCurrentCharge($currentCharge);
+        }
+    }
+
+    private function setCustomer($postData, & $subscription)
+    {
+        if (isset($postData['customer'])) {
+
+            $customerFactory = new CustomerFactory();
+            $customer = $customerFactory->createFromPostData($postData['customer']);
+
+            $subscription->setCustomer($customer);
+        }
+    }
+
+    private function setCurrentCycle($postData, & $subscription)
+    {
+        if (isset($postData['current_cycle'])) {
+            $cycleFactory = new CycleFactory();
+            $cycle = $cycleFactory->createFromPostData($postData['current_cycle']);
+            $subscription->setCurrentCycle($cycle);
+        }
     }
 }

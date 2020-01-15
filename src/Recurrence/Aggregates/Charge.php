@@ -567,6 +567,8 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $obj->customerId = $this->getCustomerId();
         $obj->boletoLink = $this->getBoletoLink(); /** @var @fixme boletoUrl */
         $obj->boletoUrl = $this->getBoletoUrl();
+        $obj->subscriptionId = $this->getSubscriptionId();
+        $obj->invoiceId = $this->getInvoiceId();
         return $obj;
     }
 
