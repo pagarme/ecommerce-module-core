@@ -41,6 +41,7 @@ interface ProductPlanInterface
 
     /**
      * @param string $allowInstallments
+     * @return ProductPlanInterface
      */
     public function setAllowInstallments($allowInstallments);
 
@@ -52,6 +53,7 @@ interface ProductPlanInterface
 
     /**
      * @param int $intervalCount
+     * @return ProductPlanInterface
      */
     public function setIntervalCount($intervalCount);
 
@@ -62,6 +64,7 @@ interface ProductPlanInterface
 
     /**
      * @param int $intervalType
+     * @return ProductPlanInterface
      */
     public function setIntervalType($intervalType);
 
