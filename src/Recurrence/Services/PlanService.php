@@ -35,19 +35,19 @@ class PlanService
 
     }
 
-    public function save($postData)
+    /**
+     * @param Plan $plan
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
+    public function save(Plan $plan)
     {
-        $planFactory = new PlanFactory();
-        $postData['status'] = 'ACTIVE';
-
-        $plan = $planFactory->createFromPostData($postData);
-
         $methodName = "createPlanAtMundipagg";
         if ($plan->getMundipaggId() !== null) {
             $methodName = "updatePlanAtMundipagg";
         }
 
         $result = $this->{$methodName}($plan);
+
         $planId = new PlanId($result->id);
         $plan->setMundipaggId($planId);
 
@@ -71,10 +71,17 @@ class PlanService
         return $result;
     }
 
+
     public function findById($id)
     {
         $planRepository = $this->getPlanRepository();
         return $planRepository->find($id);
+    }
+
+    public function findAll()
+    {
+        $planRepository = $this->getPlanRepository();
+        return $planRepository->listEntities(0, false);
     }
 
     public function findByProductId($id)
@@ -87,9 +94,11 @@ class PlanService
     {
         $planRepository = $this->getPlanRepository();
         $plan = $planRepository->find($id);
+
         if (empty($plan)) {
             throw new \Exception("Plan not found - ID : {$id} ");
         }
+
         return $planRepository->delete($plan);
     }
 
