@@ -29,8 +29,7 @@ commands:
           command: mkdir -p .git/hooks
       - run:
           name: Install dependecy-composer
-          command: |
-            php composer.phar require codacy/coverage
+          command: |            
             php composer.phar install      
       - persist_to_workspace:
           root: /
@@ -50,6 +49,7 @@ commands:
           command: |
             php composer.phar remove phpunit/phpunit --dev -n
             php composer.phar require phpunit/phpunit:7.5 --dev -n             
+            php composer.phar require codacy/coverage
   phpunit:
     steps:
       - run:
