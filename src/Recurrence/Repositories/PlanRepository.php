@@ -112,7 +112,37 @@ final class PlanRepository extends AbstractRepository
 
     public function listEntities($limit, $listDisabled)
     {
-        // TODO: Implement listEntities() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
+
+        $query = "SELECT * FROM {$table}";
+
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $listPlan = [];
+        foreach ($result->rows as $row) {
+            $factory = new PlanFactory();
+            $plan = $factory->createFromDbData($row);
+
+            $subProductRepository = new SubProductRepository();
+            $items = $subProductRepository->findByRecurrence($plan);
+
+            $plan->setItems($items);
+
+            $listPlan[] = $plan;
+        }
+
+        return $listPlan;
     }
 
     public function delete(AbstractEntity $object)
