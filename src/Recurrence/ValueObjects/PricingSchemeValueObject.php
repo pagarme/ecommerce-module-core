@@ -63,6 +63,9 @@ class PricingSchemeValueObject extends AbstractValueObject
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getPrice()
     {
         return $this->price;
