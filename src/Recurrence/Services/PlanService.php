@@ -32,22 +32,21 @@ class PlanService
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
-
     }
 
-    public function save($postData)
+    /**
+     * @param Plan $plan
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     */
+    public function save(Plan $plan)
     {
-        $planFactory = new PlanFactory();
-        $postData['status'] = 'ACTIVE';
-
-        $plan = $planFactory->createFromPostData($postData);
-
         $methodName = "createPlanAtMundipagg";
         if ($plan->getMundipaggId() !== null) {
             $methodName = "updatePlanAtMundipagg";
         }
 
         $result = $this->{$methodName}($plan);
+
         $planId = new PlanId($result->id);
         $plan->setMundipaggId($planId);
 
@@ -60,6 +59,7 @@ class PlanService
         $createPlanRequest = $plan->convertToSdkRequest();
         $planController = $this->mundipaggApi->getPlans();
         $result = $planController->createPlan($createPlanRequest);
+
         return $result;
     }
 
@@ -68,18 +68,29 @@ class PlanService
         $updatePlanRequest = $plan->convertToSdkRequest(true);
         $planController = $this->mundipaggApi->getPlans();
         $result = $planController->updatePlan($plan->getMundipaggId(), $updatePlanRequest);
+
         return $result;
     }
+
 
     public function findById($id)
     {
         $planRepository = $this->getPlanRepository();
+
         return $planRepository->find($id);
+    }
+
+    public function findAll()
+    {
+        $planRepository = $this->getPlanRepository();
+
+        return $planRepository->listEntities(0, false);
     }
 
     public function findByProductId($id)
     {
         $planRepository = $this->getPlanRepository();
+
         return $planRepository->findByProductId($id);
     }
 
@@ -87,9 +98,11 @@ class PlanService
     {
         $planRepository = $this->getPlanRepository();
         $plan = $planRepository->find($id);
+
         if (empty($plan)) {
             throw new \Exception("Plan not found - ID : {$id} ");
         }
+
         return $planRepository->delete($plan);
     }
 
@@ -102,5 +115,4 @@ class PlanService
     {
         return new MundiAPIClient($secretKey, $password);
     }
-
 }

@@ -22,7 +22,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     protected $name;
     /** @var string */
     protected $description;
-    /** @var int */
+    /** @var PricingSchemeValueObject */
     protected $pricingScheme;
     /** @var int */
     protected $quantity;
@@ -182,10 +182,12 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     /**
      * @param Increment $increment
+     * @return SubProduct
      */
     public function setIncrement(Increment $increment)
     {
         $this->increment = $increment;
+        return $this;
     }
 
     /**
@@ -198,10 +200,12 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     /**
      * @param \DateTime $createdAt
+     * @return SubProduct
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
@@ -214,10 +218,12 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     /**
      * @param \DateTime $updatedAt
+     * @return SubProduct
      */
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+        return $this;
     }
 
     /**
@@ -246,7 +252,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     }
 
     /**
-     * @return int
+     * @return \Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject
      */
     public function getPricingScheme()
     {
@@ -254,8 +260,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     }
 
     /**
-     * Price in cents
-     * @param int $price
+     * @param PricingSchemeValueObject $pricingScheme
      * @return SubProduct
      */
     public function setPricingScheme(PricingSchemeValueObject $pricingScheme)
@@ -292,12 +297,17 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     /**
      * @param Repetition $selectedRepetition
+     * @return SubProduct
      */
     public function setSelectedRepetition($selectedRepetition)
     {
         $this->selectedRepetition = $selectedRepetition;
+        return $this;
     }
 
+    /**
+     * @return \stdClass
+     */
     public function convertToSdkRequest()
     {
         $items = new \stdClass();
