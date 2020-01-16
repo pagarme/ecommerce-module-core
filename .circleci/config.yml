@@ -61,7 +61,7 @@ commands:
     steps:
       - run:
           name: Send to Codacy
-          command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml
+          command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml -v
 jobs:
   build-php56:
     working_directory: /app
