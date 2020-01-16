@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
@@ -101,8 +102,8 @@ final class ChargeRepository extends AbstractRepository
         $query .= "
             (
                 '{$object->getMundipaggId()->getValue()}',
-                '{$object->getInvoice()->getMundipaggId()->getValue()}',
-                '{$object->getInvoice()->getSubscriptionId()->getValue()}',
+                '{$object->getInvoiceId()}',
+                '{$object->getSubscriptionId()}',
                 '{$object->getCode()}',
                 {$object->getAmount()},
                 {$object->getPaidAmount()},
@@ -111,7 +112,7 @@ final class ChargeRepository extends AbstractRepository
                 '{$object->getStatus()->getStatus()}',
                 '{$metadata}', 
                 '{$object->getPaymentMethod()->getPaymentMethod()}',
-                '{$object->getLastTransaction()->getBoletoUrl()}',
+                '{$object->getBoletoUrl()}',
                '{$object->getCycleStart()->format('Y-m-d H:i:s')}',
                '{$object->getCycleEnd()->format('Y-m-d H:i:s')}' 
             );
@@ -148,13 +149,6 @@ final class ChargeRepository extends AbstractRepository
         ";
 
         $this->db->query($query);
-
-        //update Transactions;
-        $transactionRepository = new TransactionRepository();
-        foreach ($object->getTransactions() as $transaction) {
-            $transactionRepository->save($transaction);
-            $object->updateTransaction($transaction, true);
-        }
     }
 
     public function delete(AbstractEntity $object)
@@ -164,7 +158,47 @@ final class ChargeRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        // TODO: Implement find() method.
+        /** @todo Implement find() method. **/
+    }
+
+    public function findByInvoiceId($invoiceId)
+    {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE
+        );
+
+        $query = "
+            SELECT 
+                id,
+                mundipagg_id,
+                subscription_id,
+               invoice_id,
+               `code`,
+               amount,
+               paid_amount,
+               canceled_amount,
+               refunded_amount,
+               `status`,
+               metadata,
+               payment_method,
+               boleto_link,
+               cycle_start,
+               cycle_end
+                   
+            FROM `$table` WHERE invoice_id = '{$invoiceId}';
+            ";
+
+        $result = $this->db->fetch($query);
+
+        $factory = new ChargeFactory();
+
+        if (empty($result->row)) {
+            return null;
+        }
+
+        $charge =  $factory->createFromDbData($result->row);
+
+        return $charge;
     }
 
     public function listEntities($limit, $listDisabled)

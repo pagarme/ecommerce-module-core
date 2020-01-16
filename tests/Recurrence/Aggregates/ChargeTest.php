@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Payment\Aggregates\Customer;
@@ -42,6 +43,8 @@ class ChargeTest extends TestCase
         $this->charge->setCode('1234');
         $this->charge->setStatus(ChargeStatus::paid());
         $this->charge->setMetadata("metadata");
+        $this->charge->setInvoiceId(new InvoiceId('in_1234567890123457'));
+        $this->charge->setSubscriptionId(new SubscriptionId('sub_1234567890123457'));
 
         $customer = new Customer();
         $customer->setMundipaggId(Mockery::mock(CustomerId::class));
@@ -60,7 +63,6 @@ class ChargeTest extends TestCase
         $this->charge->setPaymentMethod(PaymentMethod::boleto());
         $this->charge->setCycleEnd(new \DateTime());
         $this->charge->setCycleStart(new \DateTime());
-
 
         $this->assertEquals(1, $this->charge->getId());
         $this->assertInstanceOf(ChargeId::class, $this->charge->getMundipaggId());

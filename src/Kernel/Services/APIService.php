@@ -7,6 +7,7 @@ use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCaptureChargeRequest;
 use MundiAPILib\Models\CreateChargeRequest;
+use MundiAPILib\Models\CreateInvoiceRequest;
 use MundiAPILib\Models\ListInvoicesResponse;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
@@ -347,6 +348,20 @@ class APIService
         } catch (\Exception $e) {
             $this->logService->exception($e);
             return $e;
+        }
+    }
+
+    public function cancelInvoice(Invoice &$invoice, $amount = 0)
+    {
+        try {
+            $invoiceId = $invoice->getMundipaggId()->getValue();
+            $request = new CreateInvoiceRequest();
+
+            $invoiceController =  $this->apiClient->getInvoices();
+            return $invoiceController->cancelInvoice($invoiceId);
+
+        } catch (APIException $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 }

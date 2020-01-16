@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mundipagg\Core\Test\Mock\Concrete;
-
 
 class Migrate
 {
@@ -23,14 +21,16 @@ class Migrate
         $this->upRecurrenceProductSubscription();
         $this->upRecurrenceSubscriptionRepetitions();
         $this->upRecurrenceSubProduct();
+        $this->upRecurrenceCharge();
     }
 
     public function down()
     {
+        $this->downConfigurationMigration();
         $this->downRecurrenceProductSubscription();
         $this->downRecurrenceSubscriptionRepetitions();
         $this->downRecurrenceSubProduct();
-        $this->downConfigurationMigration();
+        $this->downRecurrenceCharge();
     }
 
     public function runConfigurationMigration()
@@ -57,7 +57,7 @@ class Migrate
 
     public function downConfigurationMigration()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_configuration");
+        $this->db->exec("DROP TABLE IF EXISTS main.mundipagg_module_core_configuration");
     }
 
     public function upRecurrenceProductSubscription()
@@ -78,7 +78,7 @@ class Migrate
 
     public function downRecurrenceProductSubscription()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_products_subscription");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_products_subscription");
     }
 
     public function upRecurrenceSubscriptionRepetitions()
@@ -95,7 +95,7 @@ class Migrate
 
     public function downRecurrenceSubscriptionRepetitions()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_subscription_repetitions");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_subscription_repetitions");
     }
 
     public function upRecurrenceSubProduct()
@@ -114,6 +114,38 @@ class Migrate
 
     public function downRecurrenceSubProduct()
     {
-        $this->db->exec("DROP TABLE mundipagg_module_core_recurrence_sub_products");
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_sub_products");
+    }
+
+    public function upRecurrenceCharge()
+    {
+        $sql = "
+        create table if not exists mundipagg_module_core_recurrence_charge
+        (
+            id              INTEGER PRIMARY KEY,
+            mundipagg_id    TEXT, 
+            subscription_id TEXT,
+            invoice_id      TEXT,
+            code            TEXT,
+            amount          INTEGER,
+            paid_amount     INTEGER,
+            canceled_amount INTEGER,
+            refunded_amount INTEGER,
+            status          TEXT, 
+            metadata        TEXT,
+            payment_method  TEXT,
+            boleto_link     TEXT,
+            cycle_start     TIMESTAMP,
+            cycle_end       TIMESTAMP
+        )
+            ;
+        ";
+
+        $this->db->exec($sql);
+    }
+
+    public function downRecurrenceCharge()
+    {
+        $this->db->exec("DROP TABLE main.mundipagg_module_core_recurrence_charge");
     }
 }

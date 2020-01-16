@@ -2,6 +2,8 @@
 
 namespace Mundipagg\Core\Test\Recurrence\Factories;
 
+use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +22,8 @@ class ChargeFactoryTest extends TestCase
             'paid_amount' => 30000,
             'payment_method' => 'boleto',
             "status"=> "paid",
-            'cycle_start' => new \DateTime('2020-01-03'),
-            'cycle_end' => new \DateTime('2020-01-03'),
+            'cycle_start' => '2020-01-03',
+            'cycle_end' => '2020-01-03',
             'boleto_link' => "https://api.mundipagg.com/core/v1/transactions/tran_5Gr1OamfZIrOBnEA/pdf",
             "invoice"=> [
                 "id"=> "in_4QagkrZnupHek82A",
@@ -89,6 +91,8 @@ class ChargeFactoryTest extends TestCase
             'cycle_start' => '2020-01-03',
             'cycle_end' => '2020-01-03',
             'metadata' => 'metadata',
+            'subscription_id' => 'sub_1234567890123457',
+            'invoice_id' => 'in_1234567890123457'
         ];
 
         $charge = $factory->createFromDbData($dbData);
