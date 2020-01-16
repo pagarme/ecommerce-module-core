@@ -29,14 +29,8 @@ commands:
           command: mkdir -p .git/hooks
       - run:
           name: Install dependecy-composer
-          command: |
-            php composer.phar require codacy/coverage
-            php composer.phar remove phpunit/phpunit --dev -n
-            php composer.phar require phpunit/phpunit:7.5 --dev -n
-            php composer.phar install
-      - run:
-          name: Run PHPUnit
-          command: vendor/bin/phpunit --coverage-clover /app/build/logs/clover.xml
+          command: |            
+            php composer.phar install      
       - persist_to_workspace:
           root: /
           paths:
@@ -47,12 +41,27 @@ commands:
           name: Install xdebug
           command: |
             pecl install xdebug
-            docker-php-ext-enable xdebug  
+            docker-php-ext-enable xdebug                          
+  dependecy:
+    steps:
+      - run:
+          name: Dependecy PHP7.2
+          command: |
+            php composer.phar remove phpunit/phpunit --dev -n
+            php composer.phar require phpunit/phpunit:7.5 --dev -n             
+            php composer.phar require codacy/coverage
+  phpunit:
+    steps:
+      - run:
+          name: Run PHPUnit
+          command: vendor/bin/phpunit --coverage-clover /app/build/logs/clover.xml
+      - store_artifacts:
+          path: /app/build/logs    
   qa:
     steps:
       - run:
           name: Send to Codacy
-          command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml
+          command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml -v
 jobs:
   build-php56:
     working_directory: /app
@@ -62,6 +71,7 @@ jobs:
           APP_ENV: test
     steps:
       - build
+      - phpunit
 
   build-php72:
     working_directory: /app
@@ -72,6 +82,8 @@ jobs:
     steps:
       - xdebug
       - build
+      - dependecy
+      - phpunit
       - qa  
 
 workflows:
