@@ -105,6 +105,9 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     public function setInterval(IntervalValueObject $interval)
     {
         $this->interval = $interval;
+        $this->intervalType = $interval->getIntervalType();
+        $this->intervalCount = $interval->getIntervalCount();
+
         return $this;
     }
 
