@@ -32,7 +32,6 @@ class PlanService
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
-
     }
 
     /**
@@ -60,6 +59,7 @@ class PlanService
         $createPlanRequest = $plan->convertToSdkRequest();
         $planController = $this->mundipaggApi->getPlans();
         $result = $planController->createPlan($createPlanRequest);
+
         return $result;
     }
 
@@ -68,6 +68,7 @@ class PlanService
         $updatePlanRequest = $plan->convertToSdkRequest(true);
         $planController = $this->mundipaggApi->getPlans();
         $result = $planController->updatePlan($plan->getMundipaggId(), $updatePlanRequest);
+
         return $result;
     }
 
@@ -75,18 +76,21 @@ class PlanService
     public function findById($id)
     {
         $planRepository = $this->getPlanRepository();
+
         return $planRepository->find($id);
     }
 
     public function findAll()
     {
         $planRepository = $this->getPlanRepository();
+
         return $planRepository->listEntities(0, false);
     }
 
     public function findByProductId($id)
     {
         $planRepository = $this->getPlanRepository();
+
         return $planRepository->findByProductId($id);
     }
 
@@ -111,5 +115,4 @@ class PlanService
     {
         return new MundiAPIClient($secretKey, $password);
     }
-
 }
