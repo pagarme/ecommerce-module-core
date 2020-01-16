@@ -185,6 +185,7 @@ class PlatformCoreSetup extends AbstractModuleCoreSetup
                 'creditCardUpdateCustomer' => false,
                 'subscriptionInstallment' => false,
                 'checkoutConflictMessage' => false,
+                'showRecurrenceCurrencyWidget' => false,
             ]
         ];
 

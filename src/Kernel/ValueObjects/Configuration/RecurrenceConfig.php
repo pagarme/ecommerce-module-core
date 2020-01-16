@@ -27,9 +27,13 @@ final class RecurrenceConfig extends AbstractValueObject
     /** @var string */
     private $checkoutConflictMessage;
 
+    /** @var bool */
+    private $showRecurrenceCurrencyWidget;
+
     public function __construct(
         $enabled = false,
         $checkoutConflictMessage = "",
+        $showRecurrenceCurrencyWidget = false,
         $planSubscription = false,
         $singleSubscription = false,
         $paymentUpdateCustomer = false,
@@ -43,6 +47,7 @@ final class RecurrenceConfig extends AbstractValueObject
         $this->setCreditCardUpdateCustomerEnabled($creditCardUpdateCustomer);
         $this->setSubscriptionInstallmentEnabled($subscriptionInstallment);
         $this->setCheckoutConflictMessage($checkoutConflictMessage);
+        $this->setShowRecurrenceCurrencyWidget($showRecurrenceCurrencyWidget);
     }
 
     /**
@@ -96,6 +101,24 @@ final class RecurrenceConfig extends AbstractValueObject
     private function setPaymentUpdateCustomerEnabled($paymentUpdateCustomer)
     {
         $this->paymentUpdateCustomer = $paymentUpdateCustomer;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowRecurrenceCurrencyWidget()
+    {
+        return $this->showRecurrenceCurrencyWidget;
+    }
+
+    /**
+     * @param bool $showRecurrenceCurrencyWidget
+     * @return $this
+     */
+    private function setShowRecurrenceCurrencyWidget($showRecurrenceCurrencyWidget)
+    {
+        $this->showRecurrenceCurrencyWidget = $showRecurrenceCurrencyWidget;
         return $this;
     }
 
@@ -188,6 +211,7 @@ final class RecurrenceConfig extends AbstractValueObject
             $this->creditCardUpdateCustomer === $object->isCreditCardUpdateCustomerEnabled() &&
             $this->subscriptionInstallment === $object->isSubscriptionInstallmentEnabled() &&
             $this->checkoutConflictMessage === $object->getCheckoutConflictMessage();
+            $this->showRecurrenceCurrencyWidget === $object->isShowRecurrenceCurrencyWidget();
     }
 
     /**
@@ -208,6 +232,7 @@ final class RecurrenceConfig extends AbstractValueObject
         $obj->creditCardUpdateCustomer = $this->isCreditCardUpdateCustomerEnabled();
         $obj->subscriptionInstallment = $this->isSubscriptionInstallmentEnabled();
         $obj->checkoutConflictMessage = $this->getCheckoutConflictMessage();
+        $obj->showRecurrenceCurrencyWidget = $this->isShowRecurrenceCurrencyWidget();
 
         return $obj;
     }
