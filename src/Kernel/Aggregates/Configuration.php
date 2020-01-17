@@ -497,7 +497,23 @@ final class Configuration extends AbstractEntity
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
-        $this->cardStatementDescriptor = $cardStatementDescriptor;
+        $value =
+            str_replace("  ", "",
+                preg_replace(
+                    '/[^a-zA-Z0-9_ -]/s',
+                    '',
+                    $cardStatementDescriptor
+                )
+            );
+
+        if (strlen($value) > 22) {
+            throw new InvalidParamException(
+                'Invalid soft description',
+                $value
+            );
+        }
+
+        $this->cardStatementDescriptor = $value;
     }
 
     /**
