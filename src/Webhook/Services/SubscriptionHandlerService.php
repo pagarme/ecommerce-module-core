@@ -72,8 +72,8 @@ class SubscriptionHandlerService extends AbstractHandlerService
         $subscriptionId = $webhook->getEntity()->getSubscriptionId()->getValue();
         $subscriptionObject = $apiService->getSubscription(new SubscriptionId($subscriptionId));
 
-        if (is_null($subscriptionObject)) {
-            throw new Exception('Code não foi encontrado', 400);
+        if (!$subscriptionObject) {
+            throw new Exception('Code not found.', 400);
         }
 
         $subscription = $subscriptionRepository->findByCode($subscriptionObject->getCode());
