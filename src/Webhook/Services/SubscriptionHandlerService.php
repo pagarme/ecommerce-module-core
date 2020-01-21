@@ -8,8 +8,11 @@ use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Kernel\Services\OrderService;
+use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
@@ -26,27 +29,32 @@ class SubscriptionHandlerService extends AbstractHandlerService
         $subscriptionRepository = new SubscriptionRepository();
         $orderService = new OrderService();
         $i18n = new LocalizationService();
+        $orderFactory = new OrderFactory();
 
         /**
          * @var Subscription
          */
         $subscription = $webhook->getEntity();
 
-        $outdatedSubscription = $subscriptionRepository->findByMundipaggId(
-            $subscription->getMundipaggId()
-        );
+        $this->order->setStatus($subscription->getStatus());
 
-        if ($outdatedSubscription != null) {
-            $outdatedSubscription->setStatus($subscription->getStatus());
-            $subscription = $outdatedSubscription;
-        }
-
-        $subscriptionRepository->save($subscription);
+        $subscriptionRepository->save($this->order);
 
         $history = $i18n->getDashboard('Subscription canceled');
         $this->order->getPlatformOrder()->addHistoryComment($history);
 
-        $orderService->syncPlatformWith($this->order);
+        $platformOrderStatus = ucfirst(
+            $this->order->getPlatformOrder()
+                ->getPlatformOrder()
+                ->getStatus()
+        );
+
+        $realOrder = $orderFactory->createFromSubscriptionData(
+            $this->order,
+            $platformOrderStatus
+        );
+
+        $orderService->syncPlatformWith($realOrder);
 
         $result = [
             "message" => 'Subscription cancel registered',
@@ -56,42 +64,24 @@ class SubscriptionHandlerService extends AbstractHandlerService
         return $result;
     }
 
-    protected function loadOrder(Webhook $webhook)
+    public function loadOrder(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $subscriptionRepository = new SubscriptionRepository();
+        $apiService = new ApiService();
 
-        /**
-         * @var Order $order
-         */
-        $order = $webhook->getEntity();
-        $order = $orderRepository->findByCode($order->getCode());
-        if ($order === null) {
-            $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+        $subscriptionId = $webhook->getEntity()->getSubscriptionId()->getValue();
+        $subscriptionObject = $apiService->getSubscription(new SubscriptionId($subscriptionId));
 
-            /**
-             * @var Order $webhookOrder
-             */
-            $webhookOrder = $webhook->getEntity();
-
-            /**
-             * @var PlatformOrderInterface $order
-             */
-            $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($webhookOrder->getCode());
-
-            if ($order->getIncrementId() === null) {
-                throw new NotFoundException(
-                    "Order Not found!"
-                );
-            }
-
-            $orderFactory = new OrderFactory();
-            $order = $orderFactory->createFromPlatformData(
-                $order,
-                $webhookOrder->getMundipaggId()->getValue()
-            );
+        if (!$subscriptionObject) {
+            throw new Exception('Code not found.', 400);
         }
 
-        $this->order = $order;
+        $subscription = $subscriptionRepository->findByCode($subscriptionObject->getCode());
+        if ($subscription === null) {
+            $code = $subscriptionObject->getCode();
+            throw new NotFoundException("Subscription #{$code} not found.");
+        }
+
+        $this->order = $subscription;
     }
 }

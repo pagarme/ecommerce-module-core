@@ -122,7 +122,7 @@ class OrderFactory implements FactoryInterface
         $orderId
     )
     {
-        $order = new Order;
+        $order = new Order();
 
         $order->setMundipaggId(new OrderId($orderId));
 
@@ -164,7 +164,10 @@ class OrderFactory implements FactoryInterface
 
         $order->setStatus(OrderStatus::$platformOrderStatus());
         $order->setPlatformOrder($subscription->getPlatformOrder());
-        $order->addCharge($subscription->getCurrentCharge());
+
+        if ($subscription->getCurrentCharge()) {
+            $order->addCharge($subscription->getCurrentCharge());
+        }
 
         if ($subscription->getCustomer()) {
             $order->setCustomer($subscription->getCustomer());
