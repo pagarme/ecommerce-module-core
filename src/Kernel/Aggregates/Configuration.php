@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
@@ -497,14 +498,8 @@ final class Configuration extends AbstractEntity
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
-        $value =
-            str_replace("  ", "",
-                preg_replace(
-                    '/[^a-zA-Z0-9_ -]/s',
-                    '',
-                    $cardStatementDescriptor
-                )
-            );
+        $stringFunctions = new StringFunctionsHelper();
+        $value = $stringFunctions->removeSpecialCharacters($cardStatementDescriptor);
 
         if (strlen($value) > 22) {
             throw new InvalidParamException(
