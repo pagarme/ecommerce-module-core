@@ -108,15 +108,31 @@ final class OrderService
         $i18n = new LocalizationService();
 
         if (empty($results)) {
+            $order->setStatus(OrderStatus::canceled());
+            $order->getPlatformOrder()->setStatus(OrderStatus::canceled());
+
+            $orderRepository->save($order);
+            $order->getPlatformOrder()->save();
+
+            $statusOrderLabel = $order->getPlatformOrder()->getStatusLabel(
+                $order->getStatus()
+            );
+
+            $messageComplementEmail = $i18n->getDashboard(
+                'New order status: %s',
+                $statusOrderLabel
+            );
+
+            $sender = $order->getPlatformOrder()->sendEmail($messageComplementEmail);
+
             $order->getPlatformOrder()->addHistoryComment(
                 $i18n->getDashboard(
                     "Order '%s' canceled at Mundipagg",
                     $order->getMundipaggId()->getValue()
-                )
+                ),
+                $sender
             );
-            $order->setStatus(OrderStatus::canceled());
-            $orderRepository->save($order);
-            $order->getPlatformOrder()->save();
+
             return;
         }
 

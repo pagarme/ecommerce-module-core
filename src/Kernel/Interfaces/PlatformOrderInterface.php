@@ -22,7 +22,7 @@ interface PlatformOrderInterface
     public function setStatus(OrderStatus $status);
     public function getStatus();
     public function loadByIncrementId($incrementId);
-    public function addHistoryComment($message);
+    public function addHistoryComment($message, $notifyCustomer);
     public function getHistoryCommentCollection();
     public function setIsCustomerNotified();
     public function canInvoice();
@@ -82,4 +82,16 @@ interface PlatformOrderInterface
 
     /** @since 1.11.0 */
     public function getPaymentMethod();
+
+    /**
+     * @param string $message
+     * @return bool
+     */
+    public function sendEmail($message);
+
+    /**
+     * @param string $orderStatus
+     * @return string
+     */
+    public function getStatusLabel(OrderStatus $orderStatus);
 }

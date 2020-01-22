@@ -183,12 +183,24 @@ class ChargeService
                 $order->getPlatformOrder()->setState(OrderState::canceled());
                 $order->getPlatformOrder()->save();
 
-                $order->getPlatformOrder()->addHistoryComment(
-                    $i18n->getDashboard('Order canceled.')
-                );
-
                 $orderRepository->save($order);
                 $orderService->syncPlatformWith($order);
+
+                $statusOrderLabel = $platformOrder->getStatusLabel(
+                    $order->getStatus()
+                );
+
+                $messageComplementEmail = $i18n->getDashboard(
+                    'New order status: %s',
+                    $statusOrderLabel
+                );
+
+                $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+                $order->getPlatformOrder()->addHistoryComment(
+                    $i18n->getDashboard('Order canceled.'),
+                    $sender
+                );
             }
 
             $message = $i18n->getDashboard("Charge canceled with success");

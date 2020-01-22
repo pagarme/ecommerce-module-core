@@ -73,10 +73,12 @@ class ConfigurationFactory implements FactoryInterface
         }
         $antifraudEnabled = false;
         $antifraudMinAmount = 0;
-        if (isset($data->antifraudEnabled)) {
+
+        if (!empty($data->antifraudEnabled)) {
             $antifraudEnabled = $data->antifraudEnabled;
             $antifraudMinAmount = $data->antifraudMinAmount;
         }
+
         $config->setAntifraudEnabled($antifraudEnabled);
         $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
@@ -84,35 +86,39 @@ class ConfigurationFactory implements FactoryInterface
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
 
-        if (isset($data->methodsInherited)) {
+        if (!empty($data->sendMail)) {
+            $config->setSendMailEnabled($data->sendMail);
+        }
+
+        if (!empty($data->methodsInherited)) {
             $config->setMethodsInherited($data->methodsInherited);
         }
 
-        if (isset($data->inheritAll)) {
+        if (!empty($data->inheritAll)) {
             $config->setInheritAll($data->inheritAll);
         }
 
-        if (isset($data->storeId) && $data->storeId !== null) {
+        if (!empty($data->storeId) && $data->storeId !== null) {
             $config->setStoreId($data->storeId);
         }
 
-        if (isset($data->parentId)) {
+        if (!empty($data->parentId)) {
             $configurationRepository = new ConfigurationRepository();
             $configDefault = $configurationRepository->find($data->parentId);
             $config->setParentConfiguration($configDefault);
         }
 
         $isInstallmentsEnabled = false;
-        if (isset($data->installmentsEnabled)) {
+        if (!empty($data->installmentsEnabled)) {
             $isInstallmentsEnabled = $data->installmentsEnabled;
         }
         $config->setInstallmentsEnabled($isInstallmentsEnabled);
 
-        if (isset($data->enabled)) {
+        if (!empty($data->enabled)) {
             $config->setEnabled($data->enabled);
         }
 
-        if (isset($data->cardOperation)) {
+        if (!empty($data->cardOperation)) {
             $config->setCardOperation($data->cardOperation);
         }
 
@@ -122,7 +128,7 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
-        if (isset($data->keys) ) {
+        if (!empty($data->keys) ) {
             if (!isset($data->publicKey)) {
                 $index = Configuration::KEY_PUBLIC;
                 $data->publicKey = $data->keys->$index;
@@ -146,7 +152,7 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
-        if (isset($data->addressAttributes)) {
+        if (!empty($data->addressAttributes)) {
             $config->setAddressAttributes(
                 new AddressAttributes(
                     $data->addressAttributes->street,
@@ -157,30 +163,30 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
-        if (isset($data->cardStatementDescriptor)) {
+        if (!empty($data->cardStatementDescriptor)) {
             $config->setCardStatementDescriptor($data->cardStatementDescriptor);
         }
 
-        if (isset($data->boletoInstructions)) {
+        if (!empty($data->boletoInstructions)) {
             $config->setBoletoInstructions($data->boletoInstructions);
         }
 
-        if (isset($data->boletoBankCode)) {
+        if (!empty($data->boletoBankCode)) {
             $config->setBoletoBankCode($data->boletoBankCode);
         }
-        if (isset($data->boletoDueDays)) {
+        if (!empty($data->boletoDueDays)) {
             $config->setBoletoDueDays($data->boletoDueDays);
         }
 
-        if (isset($data->saveCards)) {
+        if (!empty($data->saveCards)) {
             $config->setSaveCards($data->saveCards);
         }
 
-        if (isset($data->multibuyer)) {
+        if (!empty($data->multibuyer)) {
             $config->setMultiBuyer($data->multibuyer);
         }
 
-        if (isset($data->recurrenceConfig)) {
+        if (!empty($data->recurrenceConfig)) {
             $config->setRecurrenceConfig(
                 (new RecurrenceConfigFactory())
                     ->createFromDbData($data->recurrenceConfig)
@@ -230,7 +236,6 @@ class ConfigurationFactory implements FactoryInterface
 
         return new HubAccessTokenKey($key);
     }
-
 
     /**
      *

@@ -39,4 +39,4 @@ Please, refer to [CONTRIBUTING](CONTRIBUTING.md)
 Open a new Issue following our issue template [ISSUE-TEMPLATE](ISSUE-TEMPLATE.md)
 
 ## Changelog
-See in [releases](https://github.com/mundipagg/ecommerce-module-core/releases)
+See in [releases](https://github.com/mundipagg/ecommerce-module-core/releases) 

@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
@@ -125,6 +126,11 @@ final class Configuration extends AbstractEntity
 
     /** @var string */
     private $boletoBankCode;
+
+    /**
+     * @var bool
+     */
+    private $sendMailEnabled;
 
     public function __construct()
     {
@@ -271,6 +277,19 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @param $sendMailEnable
+     * @return $this
+     */
+    public function setSendMailEnabled($sendMailEnable)
+    {
+        $this->sendMailEnabled = filter_var(
+            $sendMailEnable,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this;
+    }
+
+    /**
      *
      * @param  bool $twoCreditCardsEnabled
      * @return Configuration
@@ -314,6 +333,14 @@ final class Configuration extends AbstractEntity
     protected function isCreditCardEnabled()
     {
         return $this->creditCardEnabled;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSendMailEnabled()
+    {
+        return $this->sendMailEnabled;
     }
 
     /**
@@ -476,7 +503,17 @@ final class Configuration extends AbstractEntity
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
-        $this->cardStatementDescriptor = $cardStatementDescriptor;
+        $stringFunctions = new StringFunctionsHelper();
+        $value = $stringFunctions->removeSpecialCharacters($cardStatementDescriptor);
+
+        if (strlen($value) > 22) {
+            throw new InvalidParamException(
+                'Invalid soft description',
+                $value
+            );
+        }
+
+        $this->cardStatementDescriptor = $value;
     }
 
     /**
@@ -596,7 +633,8 @@ final class Configuration extends AbstractEntity
             "parentId" => $this->getParentId(),
             "parent" => $this->parentConfiguration,
             "inheritAll" => $this->isInheritedAll(),
-            "recurrenceConfig" => $this->getRecurrenceConfig()
+            "recurrenceConfig" => $this->getRecurrenceConfig(),
+            "sendMail" => $this->isSendMailEnabled()
         ];
     }
 

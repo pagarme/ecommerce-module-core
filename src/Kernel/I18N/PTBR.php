@@ -71,7 +71,9 @@ class PTBR extends AbstractI18NTable
             'yearly' => 'Anual',
             'biennial' => 'Bienal',
             'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s',
-            'weekly' => 'Semanal'
+            'weekly' => 'Semanal',
+            'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
+            'New order status: %s' => 'Novo status do pedido: %s'
         ];
     }
 }
