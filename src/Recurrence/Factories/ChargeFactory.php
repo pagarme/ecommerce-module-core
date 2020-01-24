@@ -167,6 +167,13 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         if (!empty($data['boleto_link'])) {
             $this->charge->setBoletoUrl($data['boleto_link']);
         }
+
+        if (
+            !empty($data['last_transaction']) &&
+            !empty($data['last_transaction']['url'])
+        ) {
+            $this->charge->setBoletoUrl($data['last_transaction']['url']);
+        }
     }
 
     /**
