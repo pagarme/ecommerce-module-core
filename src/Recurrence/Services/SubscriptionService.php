@@ -111,6 +111,7 @@ final class SubscriptionService
     private function extractSubscriptionDataFromOrder(PaymentOrder $order)
     {
         $subscription = new Subscription();
+        $config = MPSetup::getModuleConfiguration();
 
         $subscriptionSettings = $this->getSubscriptionSettings($order);
 
@@ -129,6 +130,7 @@ final class SubscriptionService
         $subscription->setCustomer($order->getCustomer());
         $subscription->setBillingType($subscriptionSettings->getBillingType());
         $subscription->setPaymentMethod($order->getPaymentMethod());
+        $subscription->setStatementDescriptor($config->getCardStatementDescriptor());
 
         return $subscription;
     }
