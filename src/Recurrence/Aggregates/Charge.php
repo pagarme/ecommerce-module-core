@@ -530,7 +530,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
      */
     public function getBoletoLink()
     {
-        return $this->boletoLink;
+        return $this->boletoUrl;
     }
 
     /**
@@ -538,7 +538,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
      */
     public function setBoletoLink($boletoLink)
     {
-        $this->boletoLink = $boletoLink;
+        $this->boletoUrl = $boletoLink;
     }
 
     /**
