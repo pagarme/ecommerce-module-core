@@ -18,17 +18,6 @@ interface ProductSubscriptionInterface
     /**
      * @return int
      */
-    public function getCycles();
-
-    /**
-     * @param int $id
-     * @return ProductSubscriptionInterface
-     */
-    public function setCycles($cycles);
-
-    /**
-     * @return int
-     */
     public function getProductId();
 
     /**

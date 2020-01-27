@@ -16,8 +16,6 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     protected $id = null;
     /** @var int */
     private $productId;
-    /** @var int */
-    private $cycles;
     /** @var boolean */
     private $creditCard = false;
     /** @var boolean */
@@ -240,7 +238,6 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
         $obj->billintType = $this->getBillingType();
         $obj->allowInstallments = $this->getAllowInstallments();
         $obj->repetitions = $this->getRepetitions();
-        $obj->cycles = $this->getCycles();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
 
@@ -267,24 +264,6 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     public function setSellAsNormalProduct($sellAsNormalProduct)
     {
         $this->sellAsNormalProduct = $sellAsNormalProduct;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCycles()
-    {
-        return $this->cycles;
-    }
-
-    /**
-     * @param int $cycles
-     * @return ProductSubscriptionInterface
-     */
-    public function setCycles($cycles)
-    {
-        $this->cycles = $cycles;
         return $this;
     }
 

@@ -36,7 +36,6 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setSellAsNormalProduct($postData);
         $this->setBillingType($postData);
         $this->setRepetitions($postData);
-        $this->setCycles($postData);
         $this->setUpdatedAt($postData);
         $this->setCreatedAt($postData);
 
@@ -61,7 +60,6 @@ class ProductSubscriptionFactory implements FactoryInterface
             ->setBoleto(boolval($dbData['boleto']))
             ->setAllowInstallments(boolval($dbData['allow_installments']))
             ->setSellAsNormalProduct(boolval($dbData['sell_as_normal_product']))
-            ->setCycles($dbData['cycles'])
             ->setBillingType($dbData['billing_type']);
 
         $this->setCreatedAt($dbData);
@@ -90,15 +88,6 @@ class ProductSubscriptionFactory implements FactoryInterface
 
             $this->productSubscription->addRepetition($repetitionEntity);
         }
-    }
-
-    protected function setCycles($postData)
-    {
-        if (empty($postData['cycles'])) {
-            return;
-        }
-
-        $this->productSubscription->setCycles($postData['cycles']);
     }
 
     private function setId($postData)

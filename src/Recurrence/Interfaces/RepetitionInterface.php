@@ -80,4 +80,15 @@ interface RepetitionInterface
      * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function setUpdatedAt(\DateTime $updatedAt);
+
+    /**
+     * @return int
+     */
+    public function getCycles();
+
+    /**
+     * @param int $cycles
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setCycles($cycles);
 }

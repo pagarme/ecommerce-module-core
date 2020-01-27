@@ -22,6 +22,8 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     protected $interval;
     /** @var int */
     protected $subscriptionId;
+    /** @var int */
+    protected $cycles;
     /** @var string */
     protected $createdAt;
     /** @var string */
@@ -162,6 +164,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
             'subscriptionId' => $this->getSubscriptionId(),
             'intervalCount' => $this->getIntervalCount(),
             'interval' => $this->getInterval(),
+            'cycles' => $this->getCycles(),
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt()
         ];
@@ -202,5 +205,29 @@ class Repetition extends AbstractEntity implements RepetitionInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCycles()
+    {
+        return $this->cycles;
+    }
+
+    /**
+     * @param int $cycles
+     * @return Repetition
+     * @throws \Exception
+     */
+    public function setCycles($cycles)
+    {
+        if ($cycles < 0) {
+            throw new \Exception(
+                "Cycles should be greater than or equal to 0: $cycles!"
+            );
+        }
+        $this->cycles = $cycles;
+        return $this;
     }
 }

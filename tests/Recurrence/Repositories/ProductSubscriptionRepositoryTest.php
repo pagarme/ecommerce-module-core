@@ -32,12 +32,12 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,
                     "interval" => "month",
-                    "recurrence_price"=> 50000
+                    "recurrence_price"=> 50000,
+                    "cycles" => 12
                 ],
                 [
                     "interval_count" => 2,
@@ -66,14 +66,12 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
     {
         $subscriptionProduct = $this->insertProductSubscription();
 
-        $subscriptionProduct->setCycles(20);
         $subscriptionProduct->setCreditCard(false);
 
         $this->repo->save($subscriptionProduct);
 
         $subscriptionProductUpdated = $this->repo->find($subscriptionProduct->getId());
 
-        $this->assertEquals(20, $subscriptionProductUpdated->getCycles());
         $this->assertFalse($subscriptionProductUpdated->getCreditCard());
     }
 
@@ -81,7 +79,6 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
     {
         $subscriptionProduct = $this->insertProductSubscription();
 
-        $subscriptionProduct->setCycles(20);
         $subscriptionProduct->setCreditCard(false);
 
         $repetition = (new Repetition)
@@ -95,7 +92,6 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
 
         $subscriptionProductUpdated = $this->repo->find($subscriptionProduct->getId());
 
-        $this->assertEquals(20, $subscriptionProductUpdated->getCycles());
         $this->assertCount(3, $subscriptionProduct->getRepetitions());
         $this->assertFalse($subscriptionProductUpdated->getCreditCard());
     }
@@ -129,7 +125,6 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,

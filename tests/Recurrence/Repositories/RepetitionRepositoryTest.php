@@ -48,7 +48,8 @@ class RepetitionRepositoryTest extends AbstractRepositoryTest
             "subscription_id" => "32",
             "interval_count" => 1,
             "interval" => "month",
-            "recurrence_price"=> 50000
+            "recurrence_price"=> 50000,
+            "cycles"=> 5
         ];
 
         $factory = new RepetitionFactory();
@@ -112,7 +113,8 @@ class RepetitionRepositoryTest extends AbstractRepositoryTest
             "subscription_id" => "23",
             "interval_count" => 1,
             "interval" => "month",
-            "recurrence_price"=> 50000
+            "recurrence_price"=> 50000,
+            "cycles"=> 5
         ];
 
         $factory = new RepetitionFactory();

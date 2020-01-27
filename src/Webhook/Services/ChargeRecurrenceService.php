@@ -80,7 +80,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $orderService->syncPlatformWith($realOrder);
 
-        $this->addWebHookReceivedHistory($webhook);
         $platformOrder->save();
 
         $returnMessage = $this->prepareReturnMessage($charge);
@@ -147,7 +146,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $orderService->syncPlatformWith($realOrder);
 
-        $this->addWebHookReceivedHistory($webhook);
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
             "message" => $returnMessage,
@@ -223,7 +221,6 @@ final class ChargeRecurrenceService extends AbstractHandlerService
 
         $orderService->syncPlatformWith($realOrder);
 
-        $this->addWebHookReceivedHistory($webhook);
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
             "message" => $returnMessage,

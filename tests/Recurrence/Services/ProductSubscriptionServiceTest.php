@@ -87,12 +87,12 @@ class ProductSubscriptionServiceTest extends AbstractSetupTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,
                     "interval" => "month",
-                    "recurrence_price"=> 50000
+                    "recurrence_price"=> 50000,
+                    "cycles" => 12
                 ],
                 [
                     "interval_count" => 2,
@@ -121,12 +121,12 @@ class ProductSubscriptionServiceTest extends AbstractSetupTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,
                     "interval" => "month",
-                    "recurrence_price"=> 50000
+                    "recurrence_price"=> 50000,
+                    "cycles" => 12
                 ],
                 [
                     "interval_count" => 2,
@@ -155,12 +155,12 @@ class ProductSubscriptionServiceTest extends AbstractSetupTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,
                     "interval" => "month",
-                    "recurrence_price"=> 50000
+                    "recurrence_price"=> 50000,
+                    "cycles" => 12
                 ],
                 [
                     "interval_count" => 2,
@@ -180,14 +180,14 @@ class ProductSubscriptionServiceTest extends AbstractSetupTest
         $product = $this->insertProductSubscription();
 
         $productResult = $this->service->findById($product->getId());
-        $this->assertEquals($product->getCycles(), $productResult->getCycles());
+        $this->assertTrue($productResult->getBoleto());
         $this->assertEquals($product, $productResult);
 
-        $product->setCycles(10);
+        $product->setBoleto(false);
 
         $result = $this->service->saveProductSubscription($product);
         $this->assertEquals($product->getProductId(), $result->getProductId());
-        $this->assertEquals(10, $result->getCycles());
+        $this->assertFalse($result->getBoleto());
     }
 
     private function insertProductSubscription()
@@ -198,12 +198,12 @@ class ProductSubscriptionServiceTest extends AbstractSetupTest
             "credit_card" => true,
             "allow_installments" => true,
             "sell_as_normal_product" => true,
-            "cycles" => 10,
             "repetitions" => [
                 [
                     "interval_count" => 1,
                     "interval" => "month",
-                    "recurrence_price"=> 50000
+                    "recurrence_price"=> 50000,
+                    "cycles" => 12
                 ],
                 [
                     "interval_count" => 2,

@@ -73,7 +73,6 @@ class ProductSubscriptionTest extends TestCase
     {
         $id = 1;
         $productId = "23";
-        $cycles = 20;
         $creditCard = true;
         $boleto = true;
         $allowInstallments = true;
@@ -84,7 +83,6 @@ class ProductSubscriptionTest extends TestCase
 
         $this->productSubscription->setId($id);
         $this->productSubscription->setProductId($productId);
-        $this->productSubscription->setCycles($cycles);
         $this->productSubscription->setCreditCard($creditCard);
         $this->productSubscription->setBoleto($boleto);
         $this->productSubscription->setAllowInstallments($allowInstallments);
@@ -95,7 +93,6 @@ class ProductSubscriptionTest extends TestCase
 
         $this->assertEquals($id, $this->productSubscription->getId());
         $this->assertEquals($productId, $this->productSubscription->getProductId());
-        $this->assertEquals($cycles, $this->productSubscription->getCycles());
         $this->assertTrue($this->productSubscription->getCreditCard());
         $this->assertTrue($this->productSubscription->getBoleto());
         $this->assertTrue($this->productSubscription->getAllowInstallments());
@@ -109,7 +106,6 @@ class ProductSubscriptionTest extends TestCase
     {
         $id = 1;
         $productId = "23";
-        $cycles = 20;
         $creditCard = true;
         $boleto = true;
         $allowInstallments = true;
@@ -120,7 +116,6 @@ class ProductSubscriptionTest extends TestCase
 
         $this->productSubscription->setId($id);
         $this->productSubscription->setProductId($productId);
-        $this->productSubscription->setCycles($cycles);
         $this->productSubscription->setCreditCard($creditCard);
         $this->productSubscription->setBoleto($boleto);
         $this->productSubscription->setAllowInstallments($allowInstallments);

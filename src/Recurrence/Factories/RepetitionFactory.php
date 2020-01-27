@@ -32,6 +32,7 @@ class RepetitionFactory implements FactoryInterface
         $this->setId($postData);
         $this->setSubscriptionId($postData);
         $this->setRecurrencePrice($postData);
+        $this->setCycles($postData);
         $this->setInterval($postData);
         $this->setIntervalCount($postData);
         $this->setCreatedAt($postData);
@@ -107,5 +108,14 @@ class RepetitionFactory implements FactoryInterface
     {
         return $this->createFromPostData($dbData);
         // TODO: Implement createFromDbData() method.
+    }
+
+    public function setCycles($postData)
+    {
+        if (empty($postData['cycles'])) {
+            return;
+        }
+
+        $this->repetition->setCycles((int) $postData['cycles']);
     }
 }
