@@ -59,7 +59,7 @@ class ChargeTest extends TestCase
 
         $this->charge->addTransaction($transaction);
         $this->charge->setBoletoUrl("urlBoleto");
-        $this->charge->setBoletoLink("linkBoleto");
+        $this->charge->setBoletoLink("urlBoleto");
         $this->charge->setPaymentMethod(PaymentMethod::boleto());
         $this->charge->setCycleEnd(new \DateTime());
         $this->charge->setCycleStart(new \DateTime());
@@ -79,7 +79,7 @@ class ChargeTest extends TestCase
         $this->assertInstanceOf(Invoice::class, $this->charge->getInvoice());
         $this->assertInstanceOf(InvoiceId::class, $this->charge->getInvoiceId());
         $this->assertCount(1, $this->charge->getTransactions());
-        $this->assertEquals("linkBoleto", $this->charge->getBoletoLink());
+        $this->assertEquals("urlBoleto", $this->charge->getBoletoLink());
         $this->assertEquals("urlBoleto", $this->charge->getBoletoUrl());
         $this->assertEquals(PaymentMethod::boleto(), $this->charge->getPaymentMethod());
         $this->assertInstanceOf(\DateTime::class, $this->charge->getCycleEnd());
