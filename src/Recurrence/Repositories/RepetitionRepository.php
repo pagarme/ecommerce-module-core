@@ -15,8 +15,6 @@ class RepetitionRepository extends AbstractRepository
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
-        $cycles = $object->getCycles() ?: '0';
-
         $query = "
             INSERT INTO $table (
                 `subscription_id`,
@@ -29,7 +27,7 @@ class RepetitionRepository extends AbstractRepository
                 '{$object->getInterval()}',
                 '{$object->getIntervalCount()}',
                 '{$object->getRecurrencePrice()}',
-                '{$cycles}'
+                '{$object->getCycles()}'
             )
         ";
 
