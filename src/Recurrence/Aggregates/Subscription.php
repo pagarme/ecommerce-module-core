@@ -71,6 +71,8 @@ class Subscription extends AbstractEntity
     private $cardId;
     private $shipping;
     private $invoice;
+    private $statementDescriptor;
+
     /**
      * @var Charge[]
      */
@@ -400,6 +402,22 @@ class Subscription extends AbstractEntity
         $this->increment = $increment;
     }
 
+    /**
+     * @return string
+     */
+    public function getStatementDescriptor()
+    {
+        return $this->statementDescriptor;
+    }
+
+    /**
+     * @param string $statementDescriptor
+     */
+    public function setStatementDescriptor($statementDescriptor)
+    {
+        $this->statementDescriptor = $statementDescriptor;
+    }
+
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -416,6 +434,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
         $subscriptionRequest->description = $this->getDescription();
         $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
+        $subscriptionRequest->statementDescriptor = $this->getStatementDescriptor();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {
