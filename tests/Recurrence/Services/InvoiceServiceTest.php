@@ -11,7 +11,7 @@ use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
 use PHPUnit\Framework\TestCase;
 use Mundipagg\Core\Test\Mock\Concrete\PlatformCoreSetup;
 
-class Invoice extends AbstractSetupTest
+class InvoiceServiceTest extends AbstractSetupTest
 {
     /**
      * @var InvoiceService
