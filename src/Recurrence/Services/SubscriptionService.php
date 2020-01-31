@@ -117,8 +117,7 @@ final class SubscriptionService
         $this->fillCreditCardData($subscription, $order);
         $this->fillSubscriptionItems(
             $subscription,
-            $order,
-            $subscriptionSettings
+            $order
         );
         $this->fillInterval($subscription);
         $this->fillBoletoData($subscription);
@@ -166,7 +165,7 @@ final class SubscriptionService
         return $items;
     }
 
-    private function extractSubscriptionItemsFromOrder($order, $recurrenceSettings)
+    private function extractSubscriptionItemsFromOrder($order)
     {
         $subscriptionItems = [];
 
@@ -222,11 +221,10 @@ final class SubscriptionService
         $subscription->setBoletoDays($boletoDays);
     }
 
-    private function fillSubscriptionItems(&$subscription, $order, $recurrenceSettings)
+    private function fillSubscriptionItems(&$subscription, $order)
     {
         $this->subscriptionItems = $this->extractSubscriptionItemsFromOrder(
-            $order,
-            $recurrenceSettings
+            $order
         );
         $subscription->setItems($this->subscriptionItems);
     }
