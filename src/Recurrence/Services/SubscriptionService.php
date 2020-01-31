@@ -175,10 +175,11 @@ final class SubscriptionService
         foreach ($order->getItems() as $item) {
             $subProduct = new SubProduct();
             $cycles = 1;
+            $selectedOption = $item->getSelectedOption();
 
-            if ($item->getSelectedOption()) {
-                $cycles = $recurrenceSettings->getCycles();
-                $subProduct->setSelectedRepetition($item->getSelectedOption());
+            if ($selectedOption) {
+                $cycles = $selectedOption->getCycles() ?: 0;
+                $subProduct->setSelectedRepetition($selectedOption);
             }
 
             if (!empty($cycles)) {

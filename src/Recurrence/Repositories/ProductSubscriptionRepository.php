@@ -16,8 +16,6 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
 
-        $cycles = $object->getCycles() ?: '0';
-
         $query = "
             INSERT INTO $table (
                 `product_id`,
@@ -25,7 +23,6 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `allow_installments`,
                 `boleto`,
                 `sell_as_normal_product`,
-                `cycles`,
                 `billing_type`
             ) VALUES (
                 '{$object->getProductId()}',
@@ -33,7 +30,6 @@ class ProductSubscriptionRepository extends AbstractRepository
                 '{$object->getAllowInstallments()}',
                 '{$object->getBoleto()}',
                 '{$object->getSellAsNormalProduct()}',
-                '{$cycles}',
                 '{$object->getBillingType()}'
             )
         ";
@@ -58,7 +54,6 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `allow_installments` = '{$object->getAllowInstallments()}',
                 `boleto` = '{$object->getBoleto()}',
                 `sell_as_normal_product` = '{$object->getSellAsNormalProduct()}',
-                `cycles` = '{$object->getCycles()}',
                 `billing_type` = '{$object->getBillingType()}'
             WHERE id = {$object->getId()}
         ";

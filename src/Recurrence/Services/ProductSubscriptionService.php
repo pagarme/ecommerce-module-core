@@ -44,7 +44,7 @@ class ProductSubscriptionService
         }
 
         $productSubscriptionRepository->save($productSubscription);
-        $this->getLogService()->info("Subscription created: " . $productSubscription->getId());
+        $this->getLogService()->info("Product subscription created: " . $productSubscription->getId());
 
         return $productSubscription;
     }

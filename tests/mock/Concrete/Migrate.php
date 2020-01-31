@@ -68,8 +68,7 @@ class Migrate
                       credit_card TEXT NULLABLE, 
                       allow_installments TEXT NULLABLE, 
                       boleto BOOLEAN NULLABLE, 
-                      sell_as_normal_product TEXT NULLABLE, 
-                      cycles INTEGER NULLABLE, 
+                      sell_as_normal_product TEXT NULLABLE,
                       billing_type TEXT NULLABLE NULLABLE, 
                       created_at TIMESTAMP, 
                       updated_at TIMESTAMP)");
@@ -89,6 +88,7 @@ class Migrate
                       `interval` TEXT NULLABLE, 
                       interval_count INTEGER NULLABLE, 
                       recurrence_price INTEGER NULLABLE,
+                      cycles INTEGER NULLABLE,
                       created_at TIMESTAMP, 
                       updated_at TIMESTAMP)");
     }

@@ -135,4 +135,19 @@ class RepetitionTest extends TestCase
 
         $this->assertTrue($repetition->checkRepetitionIsCompatible($repetition2));
     }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage  Cycles should be greater than or equal to 0: -10!
+     */
+    public function testShouldNotAddANegativeCycle()
+    {
+        $this->repetition->setCycles(-10);
+    }
+
+    public function testShouldSetCorrectCycle()
+    {
+        $this->repetition->setCycles(10);
+        $this->assertEquals(10, $this->repetition->getCycles());
+    }
 }

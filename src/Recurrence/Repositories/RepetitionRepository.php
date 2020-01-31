@@ -20,12 +20,14 @@ class RepetitionRepository extends AbstractRepository
                 `subscription_id`,
                 `interval`,
                 `interval_count`,
-                `recurrence_price`
+                `recurrence_price`,
+                `cycles`
             ) VALUES (
                 '{$object->getSubscriptionId()}',
                 '{$object->getInterval()}',
                 '{$object->getIntervalCount()}',
-                '{$object->getRecurrencePrice()}'
+                '{$object->getRecurrencePrice()}',
+                '{$object->getCycles()}'
             )
         ";
 
@@ -41,7 +43,8 @@ class RepetitionRepository extends AbstractRepository
                 `subscription_id` = '{$object->getSubscriptionId()}',
                 `interval` = '{$object->getInterval()}',
                 `interval_count` = '{$object->getIntervalCount()}',
-                `recurrence_price` = '{$object->getRecurrencePrice()}'
+                `recurrence_price` = '{$object->getRecurrencePrice()}',
+                `cycles` = '{$object->getCycles()}'
             WHERE id = {$object->getId()}
         ";
 
