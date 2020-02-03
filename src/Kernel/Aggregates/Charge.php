@@ -333,6 +333,11 @@ final class Charge extends AbstractEntity implements ChargeInterface
         return $newest;
     }
 
+    public function failed()
+    {
+        $this->status = ChargeStatus::failed();
+    }
+
     /**
      *
      * @param  Transaction $newTransaction
