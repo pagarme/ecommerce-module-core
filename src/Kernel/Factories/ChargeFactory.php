@@ -124,7 +124,7 @@ class ChargeFactory implements FactoryInterface
     private function extractTransactionsFromDbData($dbData)
     {
         $transactions = [];
-        if ($dbData['tran_id'] !== null) {
+        if (isset($dbData['tran_id']) && $dbData['tran_id'] !== null) {
             $tranId = explode(',', $dbData['tran_id']);
             $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
             $tranChargeId = explode(',', $dbData['tran_charge_id']);
