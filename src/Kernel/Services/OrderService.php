@@ -18,7 +18,7 @@ use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Unirest\Exception;
+use Exception;
 
 final class OrderService
 {
