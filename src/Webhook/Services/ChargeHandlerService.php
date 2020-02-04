@@ -50,11 +50,11 @@ final class ChargeHandlerService
     public function handle(Webhook $webhook)
     {
         $this->build($webhook->getComponent());
-        $multiMeiosCanceled = $this->tryCancelMultiMethods($webhook);
+        $multiMethodCanceled = $this->tryCancelMultiMethods($webhook);
 
         return array_merge(
             $this->listChargeHandleService->handle($webhook),
-            $multiMeiosCanceled
+            $multiMethodCanceled
         );
     }
 

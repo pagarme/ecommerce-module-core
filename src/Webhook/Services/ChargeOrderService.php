@@ -88,7 +88,7 @@ final class ChargeOrderService extends AbstractHandlerService
         $response = $this->tryCancelMultiMethodsWithOrder();
 
         $result = [
-            "message" => $returnMessage . '  '. $response,
+            "message" => $returnMessage . '  ' . $response,
             "code" => 200
         ];
 
