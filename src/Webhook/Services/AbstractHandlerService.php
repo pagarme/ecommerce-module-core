@@ -6,13 +6,14 @@ use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
+use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
 abstract class AbstractHandlerService
 {
     /**
-     * @var Order
+     * @var Order|Subscription
      */
     protected $order;
 
