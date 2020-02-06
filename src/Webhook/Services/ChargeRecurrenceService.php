@@ -3,10 +3,8 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
@@ -18,18 +16,49 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
-use Mundipagg\Core\Recurrence\Services\ProductSubscriptionService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Recurrence\Services\SubscriptionService;
-use Mundipagg\Core\Recurrence\Services\RepetitionService;
 
 final class ChargeRecurrenceService extends AbstractHandlerService
 {
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
+
+    /**
+     * @var MoneyService
+     */
+    private $moneyService;
+
+    /**
+     * @var OrderFactory
+     */
+    private $orderFactory;
+
+    /**
+     * @var ChargeRepository
+     */
+    private $chargeRepository;
+
+    /**
+     * @var OrderService
+     */
+    private $orderService;
+
+    /**
+     * ChargeRecurrenceService constructor.
+     */
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+        $this->moneyService = new MoneyService();
+        $this->orderFactory = new OrderFactory();
+        $this->chargeRepository = new ChargeRepository();
+        $this->orderService = new OrderService();
+    }
+
     /**
      * @param Webhook $webhook
      * @return array
@@ -263,22 +292,21 @@ final class ChargeRecurrenceService extends AbstractHandlerService
      */
     private function prepareHistoryCommentCreated(Charge $charge)
     {
-        $i18n = new LocalizationService();
-
-        $moneyService = new MoneyService();
-        $history = $i18n->getDashboard(
+        $history = $this->i18n->getDashboard(
             'Charge created: %.2f',
-            $moneyService->centsToFloat($charge->getAmount())
+            $this->moneyService->centsToFloat($charge->getAmount())
         );
 
-        $history = $i18n->getDashboard(
-            'Subscription invoice created: %.2f',
-            $moneyService->centsToFloat($charge->getAmount())
-        );
+        if ($charge->getSubscriptionId() != null) {
+            $history = $this->i18n->getDashboard(
+                'Subscription invoice created: %.2f',
+                $this->moneyService->centsToFloat($charge->getAmount())
+            );
+        }
 
         if ($charge->getBoletoUrl() != null) {
             $boletoUrl = $charge->getBoletoUrl();
-            $text = $i18n->getDashboard('Url boleto');
+            $text = $this->i18n->getDashboard('Url boleto');
 
             $history .= "<br><a href=\"{$boletoUrl}\">{$text}</a>";
         }
@@ -286,23 +314,22 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         return $history;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handleCreated(Webhook $webhook)
     {
-        $orderFactory = new OrderFactory();
-        $chargeRepository = new ChargeRepository();
-        $orderService = new OrderService();
-
         /**
          * @var Charge $charge
          */
         $charge = $webhook->getEntity();
 
-        $transaction = $charge->getLastTransaction();
-
         /**
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $chargeRepository->findByMundipaggId($charge->getMundipaggId());
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId($charge->getMundipaggId());
         if ($outdatedCharge !== null) {
             $outdatedCharge->addTransaction($charge->getLastTransaction());
             $charge = $outdatedCharge;
@@ -316,17 +343,17 @@ final class ChargeRecurrenceService extends AbstractHandlerService
             );
         }
 
-        $chargeRepository->save($charge);
+        $this->chargeRepository->save($charge);
 
         $this->order->setCurrentCharge($charge);
 
-        $realOrder = $orderFactory->createFromSubscriptionData(
+        $realOrder =  $this->orderFactory->createFromSubscriptionData(
             $this->order,
             $this->order->getPlatformOrder()->getStatus()
         );
 
         $realOrder->addCharge($charge);
-        $orderService->syncPlatformWith($realOrder);
+        $this->orderService->syncPlatformWith($realOrder);
 
         $sender = $this->sendEmailBoleto($charge, $realOrder->getCode(), $platformOrder);
 
@@ -342,6 +369,10 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         return $result;
     }
 
+    /**
+     * @param Charge $charge
+     * @return string
+     */
     private function prepareReturnMessageCreated(Charge $charge)
     {
         $message = 'Charge created';
