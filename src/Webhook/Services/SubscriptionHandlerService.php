@@ -21,7 +21,7 @@ class SubscriptionHandlerService extends AbstractHandlerService
 {
     protected function handleCreated(Webhook $webhook)
     {
-        throw new \Exception('Not implemented');
+        throw new NotFoundException('Webhook Not implemented');
     }
 
     protected function handleCanceled(Webhook $webhook)
