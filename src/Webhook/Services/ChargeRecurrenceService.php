@@ -18,11 +18,15 @@ use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
+use Mundipagg\Core\Recurrence\Services\ProductSubscriptionService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
+use Mundipagg\Core\Recurrence\Services\SubscriptionService;
+use Mundipagg\Core\Recurrence\Services\RepetitionService;
 
 final class ChargeRecurrenceService extends AbstractHandlerService
 {
@@ -252,10 +256,125 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         // no further action is needed.
     }
 
-    //@todo handleCreated
-    protected function handleCreated_TODO(Webhook $webhook)
+    /**
+     * @param Charge $charge
+     * @return string
+     * @throws InvalidParamException
+     */
+    private function prepareHistoryCommentCreated(Charge $charge)
     {
-        //@todo, but not with priority,
+        $i18n = new LocalizationService();
+
+        $moneyService = new MoneyService();
+        $history = $i18n->getDashboard(
+            'Charge created: %.2f',
+            $moneyService->centsToFloat($charge->getAmount())
+        );
+
+        $history = $i18n->getDashboard(
+            'Subscription invoice created: %.2f',
+            $moneyService->centsToFloat($charge->getAmount())
+        );
+
+        if ($charge->getBoletoUrl() != null) {
+            $boletoUrl = $charge->getBoletoUrl();
+            $text = $i18n->getDashboard('Url boleto');
+
+            $history .= "<br><a href=\"{$boletoUrl}\">{$text}</a>";
+        }
+
+        return $history;
+    }
+
+    protected function handleCreated(Webhook $webhook)
+    {
+        $orderFactory = new OrderFactory();
+        $chargeRepository = new ChargeRepository();
+        $orderService = new OrderService();
+
+        /**
+         * @var Charge $charge
+         */
+        $charge = $webhook->getEntity();
+
+        $transaction = $charge->getLastTransaction();
+
+        /**
+         * @var Charge $outdatedCharge
+         */
+        $outdatedCharge = $chargeRepository->findByMundipaggId($charge->getMundipaggId());
+        if ($outdatedCharge !== null) {
+            $outdatedCharge->addTransaction($charge->getLastTransaction());
+            $charge = $outdatedCharge;
+        }
+
+        $platformOrder = $this->order->getPlatformOrder();
+
+        if ($charge->getSubscriptionId() === null) {
+            $charge->setSubscriptionId(
+                $charge->getInvoice()->getSubscriptionId()->getValue()
+            );
+        }
+
+        $chargeRepository->save($charge);
+
+        $this->order->setCurrentCharge($charge);
+
+        $realOrder = $orderFactory->createFromSubscriptionData(
+            $this->order,
+            $this->order->getPlatformOrder()->getStatus()
+        );
+
+        $realOrder->addCharge($charge);
+        $orderService->syncPlatformWith($realOrder);
+
+        $sender = $this->sendEmailBoleto($charge, $realOrder->getCode(), $platformOrder);
+
+        $history = $this->prepareHistoryCommentCreated($charge);
+        $platformOrder->addHistoryComment($history, $sender);
+
+        $returnMessage = $this->prepareReturnMessageCreated($charge);
+        $result = [
+            "message" => $returnMessage,
+            "code" => 200
+        ];
+
+        return $result;
+    }
+
+    private function prepareReturnMessageCreated(Charge $charge)
+    {
+        $message = 'Charge created';
+        if ($charge->getBoletoUrl() != null) {
+            $message .= ' url boleto: ' . $charge->getBoletoUrl();
+        }
+
+        return $message;
+    }
+
+    /**
+     * @param Charge $charge
+     * @param string $codeOrder
+     * @param PlatformOrderInterface $platformOrder
+     * @return bool
+     */
+    private function sendEmailBoleto(
+        Charge $charge,
+        $codeOrder,
+        PlatformOrderInterface $platformOrder
+    ) {
+        if ($charge->getBoletoUrl() != null) {
+            $i18n = new LocalizationService();
+            $messageUrlBoletoEmail = $i18n->getDashboard(
+                "Charge for your order: %s \n %s",
+                $codeOrder,
+                $charge->getBoletoUrl()
+            );
+
+            return $platformOrder->sendEmail($messageUrlBoletoEmail);
+        }
+
+        return false;
     }
 
     //@todo handlePending
