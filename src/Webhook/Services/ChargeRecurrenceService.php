@@ -355,7 +355,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         $realOrder->addCharge($charge);
         $this->orderService->syncPlatformWith($realOrder);
 
-        $sender = $this->sendEmailBoleto($charge, $realOrder->getCode(), $platformOrder);
+        $sender = $this->sendBoletoEmail($charge, $realOrder->getCode(), $platformOrder);
 
         $history = $this->prepareHistoryCommentCreated($charge);
         $platformOrder->addHistoryComment($history, $sender);
@@ -389,7 +389,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
      * @param PlatformOrderInterface $platformOrder
      * @return bool
      */
-    private function sendEmailBoleto(
+    private function sendBoletoEmail(
         Charge $charge,
         $codeOrder,
         PlatformOrderInterface $platformOrder
