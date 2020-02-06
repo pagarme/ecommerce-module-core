@@ -74,7 +74,9 @@ class PTBR extends AbstractI18NTable
             'weekly' => 'Semanal',
             'semiannual' => 'Semestral',
             'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
-            'New order status: %s' => 'Novo status do pedido: %s'
+            'New order status: %s' => 'Novo status do pedido: %s',
+            'Subscription invoice created: %.2f' => 'Fatura de assinatura criada: %.2f',
+            'Url boleto' => 'Boleto url',
         ];
     }
 }
