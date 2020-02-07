@@ -228,6 +228,11 @@ final class ChargeOrderService extends AbstractHandlerService
         //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
     }
 
+    protected function handleAntifraudReproved(Webhook $webhook)
+    {
+        return $this->handlePaymentFailed($webhook);
+    }
+
     protected function handlePaymentFailed(Webhook $webhook)
     {
         $order = $this->order;
