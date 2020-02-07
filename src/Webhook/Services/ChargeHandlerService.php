@@ -3,8 +3,13 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Exception;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
+use Mundipagg\Core\Kernel\Factories\ChargeFactory;
+use Mundipagg\Core\Kernel\Responses\ServiceResponse;
+use Mundipagg\Core\Kernel\Services\APIService;
+use Mundipagg\Core\Kernel\Services\ChargeService;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
 
 final class ChargeHandlerService
@@ -45,6 +50,47 @@ final class ChargeHandlerService
     public function handle(Webhook $webhook)
     {
         $this->build($webhook->getComponent());
-        return $this->listChargeHandleService->handle($webhook);
+        $multiMethodCanceled = $this->tryCancelMultiMethods($webhook);
+
+        return array_merge(
+            $this->listChargeHandleService->handle($webhook),
+            $multiMethodCanceled
+        );
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @return array|ServiceResponse[]
+     * @throws InvalidParamException
+     * @throws Exception
+     */
+    public function tryCancelMultiMethods(Webhook $webhook)
+    {
+        /** @var Charge $charge  */
+        $charge = $webhook->getEntity();
+        $chargeService = new ChargeService();
+
+
+        /** @var Charge $chargeList */
+        $chargeList = $chargeService->findChargeWithOutOrder($charge->getCode());
+
+        if (empty($chargeList)) {
+            return [];
+        }
+
+        $chargeListPaid = $chargeService->getNotFailedOrCanceledCharges(
+            $chargeList
+        );
+
+        if (empty($chargeListPaid) && count($chargeList) <= 1) {
+            return [];
+        }
+
+        $listResponse = [];
+        foreach ($chargeListPaid as $charge) {
+            $listResponse[] = $chargeService->cancelJustAtMundiPagg($charge);
+        }
+
+        return $listResponse;
     }
 }

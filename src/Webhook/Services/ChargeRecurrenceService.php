@@ -3,10 +3,8 @@
 namespace Mundipagg\Core\Webhook\Services;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
@@ -21,11 +19,46 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 
 final class ChargeRecurrenceService extends AbstractHandlerService
 {
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
+
+    /**
+     * @var MoneyService
+     */
+    private $moneyService;
+
+    /**
+     * @var OrderFactory
+     */
+    private $orderFactory;
+
+    /**
+     * @var ChargeRepository
+     */
+    private $chargeRepository;
+
+    /**
+     * @var OrderService
+     */
+    private $orderService;
+
+    /**
+     * ChargeRecurrenceService constructor.
+     */
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+        $this->moneyService = new MoneyService();
+        $this->orderFactory = new OrderFactory();
+        $this->chargeRepository = new ChargeRepository();
+        $this->orderService = new OrderService();
+    }
+
     /**
      * @param Webhook $webhook
      * @return array
@@ -252,10 +285,127 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         // no further action is needed.
     }
 
-    //@todo handleCreated
-    protected function handleCreated_TODO(Webhook $webhook)
+    /**
+     * @param Charge $charge
+     * @return string
+     * @throws InvalidParamException
+     */
+    private function prepareHistoryCommentCreated(Charge $charge)
     {
-        //@todo, but not with priority,
+        $history = $this->i18n->getDashboard(
+            'Charge created: %.2f',
+            $this->moneyService->centsToFloat($charge->getAmount())
+        );
+
+        if ($charge->getSubscriptionId() != null) {
+            $history = $this->i18n->getDashboard(
+                'Subscription invoice created: %.2f',
+                $this->moneyService->centsToFloat($charge->getAmount())
+            );
+        }
+
+        if ($charge->getBoletoUrl() != null) {
+            $boletoUrl = $charge->getBoletoUrl();
+            $text = $this->i18n->getDashboard('Url boleto');
+
+            $history .= "<br><a href=\"{$boletoUrl}\">{$text}</a>";
+        }
+
+        return $history;
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
+    protected function handleCreated(Webhook $webhook)
+    {
+        /**
+         * @var Charge $charge
+         */
+        $charge = $webhook->getEntity();
+
+        /**
+         * @var Charge $outdatedCharge
+         */
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId($charge->getMundipaggId());
+        if ($outdatedCharge !== null) {
+            $outdatedCharge->addTransaction($charge->getLastTransaction());
+            $charge = $outdatedCharge;
+        }
+
+        $platformOrder = $this->order->getPlatformOrder();
+
+        if ($charge->getSubscriptionId() === null) {
+            $charge->setSubscriptionId(
+                $charge->getInvoice()->getSubscriptionId()->getValue()
+            );
+        }
+
+        $this->chargeRepository->save($charge);
+
+        $this->order->setCurrentCharge($charge);
+
+        $realOrder =  $this->orderFactory->createFromSubscriptionData(
+            $this->order,
+            $this->order->getPlatformOrder()->getStatus()
+        );
+
+        $realOrder->addCharge($charge);
+        $this->orderService->syncPlatformWith($realOrder);
+
+        $sender = $this->sendBoletoEmail($charge, $realOrder->getCode(), $platformOrder);
+
+        $history = $this->prepareHistoryCommentCreated($charge);
+        $platformOrder->addHistoryComment($history, $sender);
+
+        $returnMessage = $this->prepareReturnMessageCreated($charge);
+        $result = [
+            "message" => $returnMessage,
+            "code" => 200
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @param Charge $charge
+     * @return string
+     */
+    private function prepareReturnMessageCreated(Charge $charge)
+    {
+        $message = 'Charge created';
+        if ($charge->getBoletoUrl() != null) {
+            $message .= ' url boleto: ' . $charge->getBoletoUrl();
+        }
+
+        return $message;
+    }
+
+    /**
+     * @param Charge $charge
+     * @param string $codeOrder
+     * @param PlatformOrderInterface $platformOrder
+     * @return bool
+     */
+    private function sendBoletoEmail(
+        Charge $charge,
+        $codeOrder,
+        PlatformOrderInterface $platformOrder
+    ) {
+        if ($charge->getBoletoUrl() != null) {
+            $i18n = new LocalizationService();
+            $messageUrlBoletoEmail = $i18n->getDashboard(
+                "Charge for your order: %s \n %s",
+                $codeOrder,
+                $charge->getBoletoUrl()
+            );
+
+            return $platformOrder->sendEmail($messageUrlBoletoEmail);
+        }
+
+        return false;
     }
 
     //@todo handlePending

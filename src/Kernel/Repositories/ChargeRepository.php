@@ -204,4 +204,40 @@ final class ChargeRepository extends AbstractRepository
 
         return $factory->createFromDbData($result->row);
     }
+
+    /**
+     * @param $code
+     * @return Charge[]
+     * @throws \Exception
+     */
+    public function findChargeWithOutOrder($code)
+    {
+        $chargeTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_CHARGE
+        );
+
+        $orderTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_ORDER
+        );
+
+        $query = "SELECT charge.* 
+                    FROM `{$chargeTable}` as charge  
+               LEFT JOIN `{$orderTable}` as o on charge.order_id = o.mundipagg_id 
+                   WHERE o.id is null 
+                     AND charge.code = '{$code}'";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        $factory = new ChargeFactory();
+        $chargeList = [];
+        foreach ($result->rows as $chargedDb) {
+            $chargeList[] = $factory->createFromDbData($chargedDb);
+        }
+
+        return $chargeList;
+    }
 }

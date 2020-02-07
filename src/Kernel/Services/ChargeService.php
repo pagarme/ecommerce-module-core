@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Kernel\Services;
 
 use MundiAPILib\Models\GetChargeResponse;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Responses\ServiceResponse;
@@ -126,6 +127,32 @@ class ChargeService
         return new ServiceResponse(false, $resultApi);
     }
 
+    /**
+     * @param Charge $charge
+     * @return ServiceResponse
+     */
+    public function cancelJustAtMundiPagg(Charge $charge)
+    {
+        $this->logService->info("Call just Charge cancel");
+
+        $this->logService->info(
+            "Cancel charge on Mundipagg - " . $charge->getMundipaggId()->getValue()
+        );
+
+        $apiService = new APIService();
+        $resultApi = $apiService->cancelCharge($charge);
+
+        if ($resultApi === null) {
+            $i18n = new LocalizationService();
+
+            $message = $i18n->getDashboard("Charge canceled with success");
+            return new ServiceResponse(true, $message);
+        }
+
+        $this->logService->info("try call just Charge cancel");
+        return new ServiceResponse(false, $resultApi);
+    }
+
     public function cancel(Charge $charge, $amount = 0)
     {
 
@@ -138,7 +165,6 @@ class ChargeService
         $orderRepository = new OrderRepository();
         $orderService = new OrderService();
         $moneyService = new MoneyService();
-        $chargeHandlerService = new ChargeHandlerService();
         $i18n = new LocalizationService();
 
         $platformOrder = $order->getPlatformOrder();
@@ -155,7 +181,7 @@ class ChargeService
             $this->logService->info("Update Charge on Order");
             $order->updateCharge($charge);
             $orderRepository->save($order);
-            $history = $chargeHandlerService->prepareHistoryComment($charge);
+            $history = $this->prepareHistoryComment($charge);
 
             $this->logService->info("Adding history on Order");
             $order->getPlatformOrder()->addHistoryComment($history);
@@ -173,6 +199,7 @@ class ChargeService
             $platformOrderTotalRefunded = $moneyService->floatToCents(
                 $platformOrder->getTotalRefunded()
             );
+
             if (
                 $platformOrderGrandTotal === $platformOrderTotalCanceled ||
                 $platformOrderGrandTotal === $platformOrderTotalRefunded
@@ -208,5 +235,139 @@ class ChargeService
         }
 
         return new ServiceResponse(false, $resultApi);
+    }
+
+    /**
+     * @param Charge[] $listCharge
+     * @return Charge[]
+     */
+    public function getNotFailedOrCanceledCharges(array $listCharge)
+    {
+        $existStatusFailed = null;
+        $listChargesPaid = [];
+
+        $existStatusFailed = array_filter(
+            $listCharge,
+            function (Charge $charge) {
+                return (
+                    ($charge->getStatus()->getStatus() == 'failed')
+                );
+            }
+        );
+
+        if ($existStatusFailed != null) {
+            $listChargesPaid = array_filter(
+                $listCharge,
+                function (Charge $charge) {
+                    return (
+                        $charge->getStatus()->getStatus() == 'paid' ||
+                        $charge->getStatus()->getStatus() == 'underpaid' ||
+                        $charge->getStatus()->getStatus() == 'pending'
+                    );
+                });
+        }
+
+        return $listChargesPaid;
+    }
+
+    public function prepareHistoryComment(ChargeInterface $charge)
+    {
+        $i18n = new LocalizationService();
+        $moneyService = new MoneyService();
+
+        if (
+            $charge->getStatus()->equals(ChargeStatus::paid())
+            || $charge->getStatus()->equals(ChargeStatus::overpaid())
+            || $charge->getStatus()->equals(ChargeStatus::underpaid())
+        ) {
+            $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
+
+            $history = $i18n->getDashboard(
+                'Payment received: %.2f',
+                $amountInCurrency
+            );
+
+            $extraValue = $charge->getPaidAmount() - $charge->getAmount();
+            if ($extraValue > 0) {
+                $history .= ". " . $i18n->getDashboard(
+                        "Extra amount paid: %.2f",
+                        $moneyService->centsToFloat($extraValue)
+                    );
+            }
+
+            if ($extraValue < 0) {
+                $history .= ". " . $i18n->getDashboard(
+                        "Remaining amount: %.2f",
+                        $moneyService->centsToFloat(abs($extraValue))
+                    );
+            }
+
+            $refundedAmount = $charge->getRefundedAmount();
+            if ($refundedAmount > 0) {
+                $history = $i18n->getDashboard(
+                    'Refunded amount: %.2f',
+                    $moneyService->centsToFloat($refundedAmount)
+                );
+                $history .= " (" . $i18n->getDashboard('until now') . ")";
+            }
+
+            $canceledAmount = $charge->getCanceledAmount();
+            if ($canceledAmount > 0) {
+                $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
+
+                $history .= " ({$i18n->getDashboard('Partial Payment')}";
+                $history .= ". " .
+                    $i18n->getDashboard(
+                        'Canceled amount: %.2f',
+                        $amountCanceledInCurrency
+                    ) . ')';
+            }
+
+            return $history;
+        }
+
+        $amountInCurrency = $moneyService->centsToFloat($charge->getRefundedAmount());
+        $history = $i18n->getDashboard(
+            'Charge canceled.'
+        );
+
+        $history .= ' ' . $i18n->getDashboard(
+                'Refunded amount: %.2f',
+                $amountInCurrency
+            );
+
+        $history .= " (" . $i18n->getDashboard('until now') . ")";
+
+        return $history;
+    }
+
+    /**
+     * @param $code
+     * @return array|null
+     * @throws Exception
+     */
+    public function findChargeWithOutOrder($code)
+    {
+        $chargeRepository = new ChargeRepository();
+
+        try {
+            return $chargeRepository->findChargeWithOutOrder($code);
+        } catch (Exception $exception) {
+            throw new Exception($exception, $exception->getCode());
+        }
+    }
+
+    /**
+     * @param Charge $charge
+     * @throws Exception
+     */
+    public function save(Charge $charge)
+    {
+        $chargeRepository = new ChargeRepository();
+        try {
+            $chargeRepository->save($charge);
+        } catch (Exception $exception) {
+            throw new Exception($exception);
+        }
     }
 }
