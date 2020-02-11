@@ -83,6 +83,7 @@ class RepetitionTest extends TestCase
         $this->assertEquals($id, $this->repetition->getId());
         $this->assertEquals($subscriptionId, $this->repetition->getSubscriptionId());
         $this->assertEquals($interval, $this->repetition->getInterval());
+        $this->assertEquals($interval, $this->repetition->getIntervalType());
         $this->assertEquals($intervalCount, $this->repetition->getIntervalCount());
         $this->assertEquals($recurrencePrice, $this->repetition->getRecurrencePrice());
         $this->assertEquals($createdAt->format(Repetition::DATE_FORMAT), $this->repetition->getCreatedAt());

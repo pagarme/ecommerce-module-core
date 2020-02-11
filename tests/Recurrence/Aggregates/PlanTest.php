@@ -43,6 +43,8 @@ class PlanTest extends TestCase
         $allowInstallments = true;
         $createdAt = new \Datetime();
         $updatedAt = new \Datetime();
+        $intervalType = "month";
+        $intervalCount = 10;
 
         $this->plan->setId($id);
         $this->assertEquals($this->plan->getId(), $id);
@@ -85,6 +87,12 @@ class PlanTest extends TestCase
 
         $this->plan->setUpdatedAt($updatedAt);
         $this->assertInternalType('string', $this->plan->getUpdatedAt());
+
+        $this->plan->setIntervalType($intervalType);
+        $this->assertEquals($this->plan->getIntervalType(), $intervalType);
+
+        $this->plan->setIntervalCount($intervalCount);
+        $this->assertEquals($this->plan->getIntervalCount(), $intervalCount);
     }
 
     /**
@@ -267,5 +275,23 @@ class PlanTest extends TestCase
 
         $this->assertInstanceOf(UpdatePlanRequest::class, $sdkObject);
         $this->assertCount(2, $sdkObject->items);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage  Interval not find
+     */
+    public function testShouldReturnAnExceptionIfTrySetAnInvalidIntervalType()
+    {
+        $this->plan->setIntervalType("wrong interval Type");
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage  Interval count not compatible
+     */
+    public function testShouldReturnAnExceptionIfTrySetAnInvalidIntervalCount()
+    {
+        $this->plan->setIntervalCount("wrong interval count");
     }
 }

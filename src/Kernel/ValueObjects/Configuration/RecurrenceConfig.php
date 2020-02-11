@@ -4,7 +4,7 @@ namespace Mundipagg\Core\Kernel\ValueObjects\Configuration;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
-final class RecurrenceConfig extends AbstractValueObject
+class RecurrenceConfig extends AbstractValueObject
 {
     /** @var bool */
     private $enabled;
