@@ -37,9 +37,7 @@ class CompatibleRecurrenceProducts implements RuleInterface
             return;
         }
 
-        $messageConflictRecurrence = $this->i18n->getDashboard(
-            "The recurrence products should have the same payment configuration and the same interval"
-        );
+        $messageConflictRecurrence = $this->getMessageConflict();
 
         $productAreCompatible = $this->rulesCheckoutService->runRulesCheckoutSubscription(
             $productListInCart->getRecurrenceProduct(),
@@ -63,5 +61,12 @@ class CompatibleRecurrenceProducts implements RuleInterface
     public function setError($error)
     {
         $this->error = $error;
+    }
+
+    public function getMessageConflict()
+    {
+        return $this->i18n->getDashboard(
+            "The recurrence products should have the same payment configuration and the same interval"
+        );
     }
 }
