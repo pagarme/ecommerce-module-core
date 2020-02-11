@@ -6,21 +6,21 @@ use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Services\Rules\CurrentProduct;
-use Mundipagg\Core\Recurrence\Services\Rules\MoreThanOneRecurrenceProduct;
+use Mundipagg\Core\Recurrence\Services\Rules\NormalWithRecurrenceProduct;
 use Mundipagg\Core\Recurrence\Services\Rules\ProductListInCart;
 use PHPUnit\Framework\TestCase;
 
-class MoreThanOneRecurrenceProductTest extends TestCase
+class NormalWithRecurrenceProductTest extends TestCase
 {
-    public function testShouldReturnErrorIfTheConfigNotAllowHaveMoreThanOneRecurrenceProduct()
+    public function testShouldReturnErrorWhenTryingToAddANormalProductInTheCartContainingRecurrenceProduct()
     {
-        $currentProduct = $this->getCurrentProduct();
+        $currentProduct = $this->getCurrentProduct(true);
         $productListInCart = $this->getProductListInCart();
 
-        $errorMessage = "You cant add more than one recurrence product on the same shopping cart";
+        $errorMessage = "You cant add a simple product and a recurrence product on the same shopping cart";
         $recurrenceConfigMock = $this->getRecurrenceConfig(false, $errorMessage);
 
-        $rule = new MoreThanOneRecurrenceProduct($recurrenceConfigMock);
+        $rule = new NormalWithRecurrenceProduct($recurrenceConfigMock);
         $rule->run(
             $currentProduct,
             $productListInCart
@@ -30,13 +30,31 @@ class MoreThanOneRecurrenceProductTest extends TestCase
         $this->assertEquals($errorMessage, $rule->getError());
     }
 
-    public function testShouldNotReturnErrorBecauseTheConfigAllowHaveMoreThanOneRecurrenceProduct()
+    public function testShouldReturnErrorWhenTryingToAddARecurrenceProductInTheCartContainingNormalProduct()
+    {
+        $currentProduct = $this->getCurrentProduct();
+        $productListInCart = $this->getProductListInCart();
+
+        $errorMessage = "You cant add a simple product and a recurrence product on the same shopping cart";
+        $recurrenceConfigMock = $this->getRecurrenceConfig(false, $errorMessage);
+
+        $rule = new NormalWithRecurrenceProduct($recurrenceConfigMock);
+        $rule->run(
+            $currentProduct,
+            $productListInCart
+        );
+
+        $this->assertNotEmpty($rule->getError());
+        $this->assertEquals($errorMessage, $rule->getError());
+    }
+
+    public function testShouldNotReturnErrorBecauseIsConfiguredToAllowNormalAndRecurrenceProductAtTheSameShoppingCart()
     {
         $currentProduct = $this->getCurrentProduct();
         $productListInCart = $this->getProductListInCart();
         $recurrenceConfigMock = $this->getRecurrenceConfig();
 
-        $rule = new MoreThanOneRecurrenceProduct($recurrenceConfigMock);
+        $rule = new NormalWithRecurrenceProduct($recurrenceConfigMock);
         $rule->run(
             $currentProduct,
             $productListInCart
@@ -45,9 +63,14 @@ class MoreThanOneRecurrenceProductTest extends TestCase
         $this->assertEmpty($rule->getError());
     }
 
-    protected function getCurrentProduct()
+    protected function getCurrentProduct($normal = false)
     {
         $currentProduct = new CurrentProduct();
+
+        if ($normal) {
+            $currentProduct->setIsNormalProduct(true);
+            return $currentProduct;
+        }
 
         $productSubscription = new ProductSubscription();
         $repetitionSelected = new Repetition();
@@ -69,6 +92,9 @@ class MoreThanOneRecurrenceProductTest extends TestCase
         $productList->setRecurrenceProduct($productSubscription);
         $productList->setRepetition($repetition);
 
+        $normalProduct = new \stdClass();
+        $productList->addNormalProducts([$normalProduct]);
+
         return $productList;
     }
 
@@ -77,18 +103,19 @@ class MoreThanOneRecurrenceProductTest extends TestCase
         $recurrenceConfigMock = \Mockery::mock(RecurrenceConfig::class);
 
         $recurrenceConfigMock
-            ->shouldReceive('getConflictMessageRecurrenceProductWithRecurrenceProduct')
+            ->shouldReceive('getConflictMessageRecurrenceProductWithNormalProduct')
             ->andReturn($error);
 
         if ($allow) {
             $recurrenceConfigMock
-                ->shouldReceive('isPurchaseRecurrenceProductWithRecurrenceProduct')
+                ->shouldReceive('isPurchaseRecurrenceProductWithNormalProduct')
                 ->andReturnTrue();
 
             return $recurrenceConfigMock;
         }
+
         $recurrenceConfigMock
-            ->shouldReceive('isPurchaseRecurrenceProductWithRecurrenceProduct')
+            ->shouldReceive('isPurchaseRecurrenceProductWithNormalProduct')
             ->andReturnFalse();
 
         return $recurrenceConfigMock;
