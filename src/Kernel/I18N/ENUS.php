@@ -76,6 +76,7 @@ class ENUS extends AbstractI18NTable
             'New order status: %s' => null,
             'Subscription invoice created: %.2f' => null,
             'Url boleto' => null,
+            'The recurrence products should have the same payment configuration and the same interval' => null,
         ];
     }
 }

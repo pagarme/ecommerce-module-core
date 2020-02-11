@@ -77,6 +77,7 @@ class PTBR extends AbstractI18NTable
             'New order status: %s' => 'Novo status do pedido: %s',
             'Subscription invoice created: %.2f' => 'Fatura de assinatura criada: %.2f',
             'Url boleto' => 'Boleto url',
+            'The recurrence products should have the same payment configuration and the same interval' => 'Os produtos recorrentes devem ter a mesma configuração de pagamento e intervalo',
         ];
     }
 }
