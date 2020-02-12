@@ -9,6 +9,5 @@ interface RuleInterface
         ProductListInCart $productListInCart
     );
 
-    protected function setError($error);
     public function getError();
 }

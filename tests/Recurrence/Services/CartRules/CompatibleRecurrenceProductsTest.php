@@ -35,7 +35,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct->setProductSubscriptionSelected($productSubscriptionSelected);
         $currentProduct->setRepetitionSelected($repetitionSelected);
 
-        $errorExpected = "The recurrence products should have the same payment configuration and the same interval";
+        $errorExpected = "'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)";
 
         $rule = \Mockery::mock(
             'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
@@ -78,7 +78,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct->setProductSubscriptionSelected($productSubscriptionSelected);
         $currentProduct->setRepetitionSelected($repetitionSelected);
 
-        $errorExpected = "The recurrence products should have the same payment configuration and the same interval";
+        $errorExpected = "'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)";
 
         $rule = \Mockery::mock(
             'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'

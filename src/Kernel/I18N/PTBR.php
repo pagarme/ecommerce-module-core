@@ -77,7 +77,7 @@ class PTBR extends AbstractI18NTable
             'New order status: %s' => 'Novo status do pedido: %s',
             'Subscription invoice created: %.2f' => 'Fatura de assinatura criada: %.2f',
             'Url boleto' => 'Boleto url',
-            'The recurrence products should have the same payment configuration and the same interval' => 'Os produtos recorrentes devem ter a mesma configuração de pagamento e intervalo',
+            'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => 'Você só pode adicionar duas ou mais assinaturas que possuam o mesmo tipo de pagamento (cartão e ou boleto) e mesma frequência (mensal, semestral, anual...).',
         ];
     }
 }

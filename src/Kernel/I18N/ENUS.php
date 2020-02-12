@@ -76,7 +76,7 @@ class ENUS extends AbstractI18NTable
             'New order status: %s' => null,
             'Subscription invoice created: %.2f' => null,
             'Url boleto' => null,
-            'The recurrence products should have the same payment configuration and the same interval' => null,
+            'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => null,
         ];
     }
 }
