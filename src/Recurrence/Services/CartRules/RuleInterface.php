@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\Rules;
+namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
 interface RuleInterface
 {
@@ -9,6 +9,6 @@ interface RuleInterface
         ProductListInCart $productListInCart
     );
 
-    public function setError($error);
+    protected function setError($error);
     public function getError();
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\Rules;
+namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 
@@ -53,7 +53,7 @@ class NormalWithRecurrenceProduct implements RuleInterface
         return $this->error;
     }
 
-    public function setError($error)
+    protected function setError($error)
     {
         $this->error = $error;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\Rules;
+namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
 use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
 use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services\Rules;
+namespace Mundipagg\Core\Test\Recurrence\Services\CartRules;
 
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Services\Rules\CurrentProduct;
-use Mundipagg\Core\Recurrence\Services\Rules\ProductListInCart;
+use Mundipagg\Core\Recurrence\Services\CartRules\CurrentProduct;
+use Mundipagg\Core\Recurrence\Services\CartRules\ProductListInCart;
 use PHPUnit\Framework\TestCase;
 
 class CompatibleRecurrenceProductsTest extends  TestCase
@@ -38,7 +38,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $errorExpected = "The recurrence products should have the same payment configuration and the same interval";
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\Rules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -81,7 +81,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $errorExpected = "The recurrence products should have the same payment configuration and the same interval";
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\Rules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -124,7 +124,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct->setRepetitionSelected($repetitionSelected);
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\Rules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -144,7 +144,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct = new CurrentProduct();
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\Rules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')

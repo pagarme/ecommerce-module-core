@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\Rules;
+namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Recurrence\Services\RulesCheckoutService;
@@ -58,7 +58,7 @@ class CompatibleRecurrenceProducts implements RuleInterface
         return $this->error;
     }
 
-    public function setError($error)
+    protected function setError($error)
     {
         $this->error = $error;
     }
