@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Test\Recurrence\Aggregates;
 use Mockery;
 use MundiAPILib\Models\CreateSubscriptionRequest;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Payment\Aggregates\Address;
@@ -12,6 +13,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\ValueObjects\Phone;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Cycle;
 use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
@@ -57,6 +59,8 @@ class SubscriptionTest extends TestCase
         $this->subscription->setItems([new SubProduct]);
         $this->subscription->setShipping(new Shipping);
         $this->subscription->setIncrement(new Increment);
+        $this->subscription->setStatementDescriptor("Statement Descriptor");
+        $this->subscription->setCurrentCycle(new Cycle());
 
         $this->assertEquals(1, $this->subscription->getId());
         $this->assertEquals("1234", $this->subscription->getCode());
@@ -68,6 +72,7 @@ class SubscriptionTest extends TestCase
         $this->assertEquals("cardId", $this->subscription->getCardId());
         $this->assertEquals(3, $this->subscription->getBoletoDays());
         $this->assertEquals("Description", $this->subscription->getDescription());
+        $this->assertEquals("Statement Descriptor", $this->subscription->getStatementDescriptor());
 
         $this->assertEquals(Subscription::RECURRENCE_TYPE, $this->subscription->getRecurrenceType());
         $this->assertEquals(SubscriptionStatus::active(), $this->subscription->getStatus());
@@ -82,6 +87,7 @@ class SubscriptionTest extends TestCase
         $this->assertInstanceOf(Shipping::class, $this->subscription->getShipping());
         $this->assertInstanceOf(Increment::class, $this->subscription->getIncrement());
         $this->assertContainsOnlyInstancesOf(SubProduct::class, $this->subscription->getItems());
+        $this->assertInstanceOf(Cycle::class, $this->subscription->getCurrentCycle());
     }
 
     public function testReturnSubscriptionObjectSerialized()
@@ -131,5 +137,54 @@ class SubscriptionTest extends TestCase
         $sdkObject = $this->subscription->convertToSdkRequest();
         $this->assertInstanceOf(CreateSubscriptionRequest::class, $sdkObject);
         $this->assertCount(0, $sdkObject->items);
+    }
+
+    public function testShouldAddChargesOnSubscription()
+    {
+        $charge = new Charge();
+        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+
+        $charge2 = new Charge();
+        $charge2->setMundipaggId(new ChargeId("ch_abcdefghijklmnop"));
+
+        $this->subscription->addCharge($charge);
+        $this->subscription->addCharge($charge2);
+
+        $this->assertContainsOnlyInstancesOf(Charge::class, $this->subscription->getCharges());
+        $this->assertCount(2, $this->subscription->getCharges());
+    }
+
+    public function testShouldRetrurnAnEmptyArrayBecauseDoesNotHaveAnCharge()
+    {
+        $this->assertEmpty($this->subscription->getCharges());
+    }
+
+    public function testShouldNotAddAnChargeTwice()
+    {
+        $charge = new Charge();
+        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+
+        $this->subscription->addCharge($charge);
+        $this->subscription->addCharge($charge);
+
+        $this->assertContainsOnlyInstancesOf(Charge::class, $this->subscription->getCharges());
+        $this->assertCount(1, $this->subscription->getCharges());
+    }
+
+    public function testShouldSetAnArrayOfChargesOnSubscription()
+    {
+        $charge = new Charge();
+        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+
+        $charge2 = new Charge();
+        $charge2->setMundipaggId(new ChargeId("ch_abcdefghijklmnop"));
+
+        $this->subscription->setCharges([
+            $charge,
+            $charge2
+        ]);
+
+        $this->assertContainsOnlyInstancesOf(Charge::class, $this->subscription->getCharges());
+        $this->assertCount(2, $this->subscription->getCharges());
     }
 }

@@ -14,22 +14,43 @@ class RecurrenceConfigFactory implements FactoryCreateFromDbDataInterface
      */
     public function createFromDbData($data)
     {
-        if (!isset($data->enabled)) {
-            $data->enabled = false;
+
+        $recurrenceConfig = new RecurrenceConfig();
+
+        if (isset($data->enabled)) {
+            $recurrenceConfig->setEnabled((bool) $data->enabled);
         }
 
-        if (!isset($data->checkoutConflictMessage)) {
-            $data->checkoutConflictMessage = '';
+        if (isset($data->showRecurrenceCurrencyWidget)) {
+            $recurrenceConfig->setShowRecurrenceCurrencyWidget(
+                (bool) $data->showRecurrenceCurrencyWidget
+            );
         }
 
-        if (!isset($data->showRecurrenceCurrencyWidget)) {
-            $data->showRecurrenceCurrencyWidget = false;
+        if (isset($data->purchaseRecurrenceProductWithNormalProduct)) {
+            $recurrenceConfig->setPurchaseRecurrenceProductWithNormalProduct(
+                (bool) $data->purchaseRecurrenceProductWithNormalProduct
+            );
         }
 
-        return new RecurrenceConfig(
-            $data->enabled,
-            $data->checkoutConflictMessage,
-            $data->showRecurrenceCurrencyWidget
-        );
+        if (isset($data->conflictMessageRecurrenceProductWithNormalProduct)) {
+            $recurrenceConfig->setConflictMessageRecurrenceProductWithNormalProduct(
+                $data->conflictMessageRecurrenceProductWithNormalProduct
+            );
+        }
+
+        if (isset($data->purchaseRecurrenceProductWithRecurrenceProduct)) {
+            $recurrenceConfig->setPurchaseRecurrenceProductWithRecurrenceProduct(
+                $data->purchaseRecurrenceProductWithRecurrenceProduct
+            );
+        }
+
+        if (isset($data->conflictMessageRecurrenceProductWithRecurrenceProduct)) {
+            $recurrenceConfig->setConflictMessageRecurrenceProductWithRecurrenceProduct(
+                $data->conflictMessageRecurrenceProductWithRecurrenceProduct
+            );
+        }
+
+        return $recurrenceConfig;
     }
 }
