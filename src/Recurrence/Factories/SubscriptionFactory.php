@@ -84,6 +84,8 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setPaymentMethod(PaymentMethod::{$dbData['payment_method']}());
         $subscription->setIntervalType($dbData['interval_type']);
         $subscription->setIntervalCount($dbData['interval_count']);
+        $subscription->setCreatedAt($dbData['created_at']);
+        $subscription->setUpdatedAt($dbData['updated_at']);
 
         $subscription->setPlatformOrder($this->getPlatformOrder($dbData['code']));
 

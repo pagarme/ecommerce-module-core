@@ -72,6 +72,8 @@ class Subscription extends AbstractEntity
     private $shipping;
     private $invoice;
     private $statementDescriptor;
+    private $createdAt;
+    private $updatedAt;
 
     /**
      * @var Charge[]
@@ -416,6 +418,38 @@ class Subscription extends AbstractEntity
     public function setStatementDescriptor($statementDescriptor)
     {
         $this->statementDescriptor = $statementDescriptor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param mixed $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
     }
 
     public function convertToSdkRequest()
