@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Payment\ValueObjects\Discounts;
 use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
@@ -64,6 +65,8 @@ final class SubscriptionService
             $order = $orderService->extractPaymentOrderFromPlatformOrder($platformOrder);
             $subscription = $this->extractSubscriptionDataFromOrder($order);
 
+            $this->setDiscountCycleSubscription($subscription, $platformOrder);
+
             //Send through the APIService to mundipagg
             $subscriptionResponse = $this->apiService->createSubscription($subscription);
             $this->getSubscriptionMissingData($subscriptionResponse);
@@ -106,6 +109,20 @@ final class SubscriptionService
             $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
             throw new \Exception($frontMessage, 400);
         }
+    }
+
+    /**
+     * @param Subscription $subscription
+     * @param PlatformOrderInterface $platformOrder
+     */
+    private function setDiscountCycleSubscription(
+        Subscription $subscription,
+        PlatformOrderInterface $platformOrder
+    ) {
+        $discountOrder = $platformOrder->getPlatformOrder()->getDiscountAmount();
+
+        $discountSubscription = Discounts::FLAT((($discountOrder * -1) * 100), 1);
+        $subscription->setDiscounts([$discountSubscription]);
     }
 
     private function extractSubscriptionDataFromOrder(PaymentOrder $order)
