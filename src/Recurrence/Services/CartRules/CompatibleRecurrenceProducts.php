@@ -66,7 +66,7 @@ class CompatibleRecurrenceProducts implements RuleInterface
     public function getMessageConflict()
     {
         return $this->i18n->getDashboard(
-            "'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)"
+            "You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)"
         );
     }
 }
