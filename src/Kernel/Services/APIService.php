@@ -254,7 +254,7 @@ class APIService
 
         } catch (ErrorException $e) {
             $this->logService->exception($e);
-            return $e;
+            return null;
         }
     }
 

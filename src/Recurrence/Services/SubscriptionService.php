@@ -69,6 +69,14 @@ final class SubscriptionService
 
             //Send through the APIService to mundipagg
             $subscriptionResponse = $this->apiService->createSubscription($subscription);
+
+            if ($subscriptionResponse === null) {
+                $i18n = new LocalizationService();
+                $message = $i18n->getDashboard("Can't create order.");
+
+                throw new \Exception($message, 400);
+            }
+
             $this->getSubscriptionMissingData($subscriptionResponse);
 
             $subscriptionFactory = new SubscriptionFactory();
@@ -120,6 +128,10 @@ final class SubscriptionService
         PlatformOrderInterface $platformOrder
     ) {
         $discountOrder = $platformOrder->getPlatformOrder()->getDiscountAmount();
+
+        if ($discountOrder == 0) {
+           return;
+        }
 
         $discountSubscription = Discounts::FLAT((($discountOrder * -1) * 100), 1);
         $subscription->setDiscounts([$discountSubscription]);
