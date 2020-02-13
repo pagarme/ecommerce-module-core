@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Payment\Aggregates\Shipping;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Payment\ValueObjects\Discounts;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
@@ -85,6 +86,28 @@ class Subscription extends AbstractEntity
     private $increment;
 
     private $currentCycle;
+
+    /**
+     * @var Discounts[]
+     */
+    private $discounts;
+
+    /**
+     * @return Discounts[]
+     */
+    public function getDiscounts()
+    {
+        return $this->discounts;
+    }
+
+    /**
+     * @param Discounts[] $discounts
+     */
+    public function setDiscounts(array $discounts)
+    {
+        $this->discounts = $discounts;
+        return $this;
+    }
 
     /**
      * @return mixed
@@ -435,6 +458,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->description = $this->getDescription();
         $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
         $subscriptionRequest->statementDescriptor = $this->getStatementDescriptor();
+        $subscriptionRequest->discounts = $this->getDiscounts();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {
@@ -472,7 +496,8 @@ class Subscription extends AbstractEntity
             "intervalType" => $this->getIntervalType(),
             "intervalCount" => $this->getIntervalCount(),
             "installments" => $this->getInstallments(),
-            "billingType" => $this->getBillingType()
+            "billingType" => $this->getBillingType(),
+            "discounts" => $this->getDiscounts()
         ];
     }
 
