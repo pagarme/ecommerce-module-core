@@ -10,8 +10,8 @@ class UnprocessableWebhookException extends AbstractMundipaggCoreException
     /**
      * UnprocessableWebhookException constructor.
      */
-    public function __construct($message)
+    public function __construct($message, $code = 422)
     {
-        parent::__construct($message, 422);
+        parent::__construct($message, $code);
     }
 }
