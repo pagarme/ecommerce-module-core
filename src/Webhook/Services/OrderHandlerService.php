@@ -212,7 +212,8 @@ final class OrderHandlerService extends AbstractHandlerService
         if ($canBePaid === false) {
             $chargesStatuses = json_encode($chargesStatuses);
             throw new UnprocessableWebhookException(
-                "One or more charges of the order are in a state that is not compatible with an paid order. Charge Statuses: $chargesStatuses"
+                "One or more charges of the order are in a state that is not compatible with an paid order. Charge Statuses: $chargesStatuses",
+                500
             );
         }
     }
