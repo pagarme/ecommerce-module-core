@@ -13,16 +13,8 @@ use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class PlanService
 {
-    /** @var LogService  */
-    protected $logService;
-
     public function __construct()
     {
-        $this->logService = new LogService(
-            'PlanService',
-            true
-        );
-
         Magento2CoreSetup::bootstrap();
 
         $config = Magento2CoreSetup::getModuleConfiguration();
@@ -114,5 +106,13 @@ class PlanService
     public function getMundiAPIClient($secretKey, $password)
     {
         return new MundiAPIClient($secretKey, $password);
+    }
+
+    public function getLogService()
+    {
+        return new LogService(
+            'PlanService',
+            true
+        );
     }
 }

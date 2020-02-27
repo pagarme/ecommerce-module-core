@@ -202,7 +202,7 @@ final class PlanRepository extends AbstractRepository
         $subProducts = $subProductsRepository->findByRecurrence($plan);
 
         foreach ($subProducts as $subProduct) {
-            $plan->addItems($subProduct);
+            $plan->addItem($subProduct);
         }
 
         return $plan;

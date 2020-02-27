@@ -6,6 +6,8 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Payment\ValueObjects\Discounts;
 use Mundipagg\Core\Recurrence\Aggregates\Increment;
+use Mundipagg\Core\Recurrence\Aggregates\Plan;
+use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
@@ -145,10 +147,19 @@ final class SubscriptionService
         $subscriptionSettings = $this->getSubscriptionSettings($order);
 
         $this->fillCreditCardData($subscription, $order);
-        $this->fillSubscriptionItems(
-            $subscription,
-            $order
-        );
+
+        $subscriptionType = $this->getSubscriptionType($order);
+        if ($subscriptionType == ProductSubscription::RECURRENCE_TYPE) {
+            $this->fillSubscriptionItems(
+                $subscription,
+                $order
+            );
+        }
+
+        if ($subscriptionType == Plan::RECURRENCE_TYPE) {
+            $subscription->setPlanId();
+        }
+
         $this->fillInterval($subscription);
         $this->fillBoletoData($subscription);
         $this->fillDescription($subscription);
@@ -184,7 +195,7 @@ final class SubscriptionService
         $items = [];
 
         foreach ($order->getItems() as $product) {
-            if ($product->getSelectedOption()) {
+            if ($product->getType() !== null) {
                 $items[] =
                     $recurrenceService
                         ->getRecurrenceProductByProductId(
@@ -520,5 +531,20 @@ final class SubscriptionService
     public function getSubscriptionRepository()
     {
         return new SubscriptionRepository();
+    }
+
+    public function getSubscriptionType(PaymentOrder $order)
+    {
+        $type = null;
+        $items = $order->getItems();
+
+        if (empty($items)) {
+            return $type;
+        }
+
+        foreach ($items as $item) {
+            $type = $item->getType();
+        }
+        return $type;
     }
 }
