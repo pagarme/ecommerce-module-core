@@ -146,20 +146,20 @@ final class SubscriptionService
 
         $subscriptionSettings = $this->getSubscriptionSettings($order);
 
-        $plan = $this->extractPlanFromOrder($order);
-
         $this->fillCreditCardData($subscription, $order);
 
-        $this->fillSubscriptionItems(
-            $subscription,
-            $order,
-            $plan
-        );
+        $plan = $this->extractPlanFromOrder($order);
+        if ($plan == null) {
+            $this->fillDescription($subscription);
+            $this->fillSubscriptionItems(
+                $subscription,
+                $order
+            );
+        }
 
         $this->fillPlanId($subscription, $plan);
         $this->fillInterval($subscription, $plan);
         $this->fillBoletoData($subscription);
-        $this->fillDescription($subscription, $plan);
         $this->fillShipping($subscription, $order);
 
         $subscription->setCode($order->getCode());
@@ -258,7 +258,7 @@ final class SubscriptionService
         return $subscriptionItems;
     }
 
-    private function fillCreditCardData(&$subscription, $order)
+    private function fillCreditCardData($subscription, $order)
     {
         if ($this->paymentExists($order)) {
             $payments = $order->getPayments();
@@ -272,18 +272,14 @@ final class SubscriptionService
         }
     }
 
-    private function fillBoletoData(&$subscription)
+    private function fillBoletoData($subscription)
     {
         $boletoDays = MPSetup::getModuleConfiguration()->getBoletoDueDays();
         $subscription->setBoletoDays($boletoDays);
     }
 
-    private function fillSubscriptionItems(&$subscription, $order,Plan $plan = null)
+    private function fillSubscriptionItems($subscription, $order)
     {
-        if ($plan !== null) {
-            return;
-        }
-
         $this->subscriptionItems = $this->extractSubscriptionItemsFromOrder(
             $order
         );
@@ -298,7 +294,7 @@ final class SubscriptionService
         return null;
     }
 
-    private function fillInterval(&$subscription, Plan $plan = null)
+    private function fillInterval($subscription, Plan $plan = null)
     {
         if ($plan !== null) {
             $subscription->setIntervalType($plan->getIntervalType());
@@ -327,16 +323,12 @@ final class SubscriptionService
         $subscription->setIntervalCount($intervalCount);
     }
 
-    private function fillDescription(&$subscription, Plan $plan = null)
+    private function fillDescription($subscription)
     {
-        if ($plan !== null) {
-            return;
-        }
-
         $subscription->setDescription($this->subscriptionItems[0]->getDescription());
     }
 
-    private function fillShipping(&$subscription, $order)
+    private function fillShipping($subscription, $order)
     {
         $orderShipping = $order->getShipping();
         $subscription->setShipping($orderShipping);
@@ -421,14 +413,14 @@ final class SubscriptionService
     }
 
 
-    private function setPlatformOrderPending(&$platformOrder)
+    private function setPlatformOrderPending($platformOrder)
     {
         //First platform order status and state after subscription creation success
         $platformOrder->setState(OrderState::stateNew());
         $platformOrder->setStatus(OrderStatus::pending());
     }
 
-    private function getSubscriptionMissingData(&$subscriptionResponse, $subscription)
+    private function getSubscriptionMissingData($subscriptionResponse, $subscription)
     {
         $subscriptionResponse['invoice'] =
             $this->getInvoiceFromSubscriptionResponse(

@@ -150,7 +150,7 @@ final class PlanRepository extends AbstractRepository
         );
         $objectId = $mundipaggId->getValue();
 
-        $query = "SELECT * FROM $table WHERE plan_id = '$objectId' LIMIT 1";
+        $query = "SELECT * FROM $table WHERE plan_id = '{$objectId}' LIMIT 1";
 
         $result = $this->db->fetch($query);
 
