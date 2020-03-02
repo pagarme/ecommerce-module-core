@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Test\Recurrence\Services;
 
+use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
 use Mundipagg\Core\Recurrence\Services\RecurrenceService;
@@ -10,26 +11,41 @@ use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
 
 class RecurrenceServiceTest extends AbstractSetupTest
 {
+    /**
+     * @var \Mockery\Mock
+     */
+    protected $service;
+
+    public function setUp()
+    {
+        $logMock = \Mockery::mock(LogService::class);
+        $logMock->shouldReceive('info')->andReturnTrue();
+
+        $this->service = \Mockery::mock(RecurrenceService::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $this->service->shouldReceive('getLogService')->andReturn($logMock);
+
+        parent::setUp();
+    }
     public function testShouldReturnEmptyWhenTheRecurrenceProductNotExists()
     {
-        $recurrenceService = new RecurrenceService();
-        $this->assertEmpty($recurrenceService->getRecurrenceProductByProductId(10));
+        $this->service->shouldReceive('getProductPlan')->andReturnNull();
+        $this->assertEmpty($this->service->getRecurrenceProductByProductId(10));
     }
 
     public function testShouldReturnARecurrenceProductByProductId()
     {
         $recurrenceProduct = $this->insertProductSubscription();
 
-        $recurrenceService = new RecurrenceService();
-        $this->assertNotEmpty($recurrenceService->getRecurrenceProductByProductId($recurrenceProduct->getProductId()));
+        $this->assertNotEmpty($this->service->getRecurrenceProductByProductId($recurrenceProduct->getProductId()));
     }
 
     public function testShouldReturnMaxInstallmentByIntervalTypeMonth()
     {
         $interval = IntervalValueObject::month(7);
 
-        $recurrenceService = new RecurrenceService();
-        $maxInstallment = $recurrenceService->getMaxInstallmentByRecurrenceInterval($interval);
+        $maxInstallment = $this->service->getMaxInstallmentByRecurrenceInterval($interval);
 
         $this->assertEquals(7, $maxInstallment);
     }
@@ -38,8 +54,7 @@ class RecurrenceServiceTest extends AbstractSetupTest
     {
         $interval = IntervalValueObject::year(2);
 
-        $recurrenceService = new RecurrenceService();
-        $maxInstallment = $recurrenceService->getMaxInstallmentByRecurrenceInterval($interval);
+        $maxInstallment = $this->service->getMaxInstallmentByRecurrenceInterval($interval);
 
         $this->assertEquals(12, $maxInstallment);
     }

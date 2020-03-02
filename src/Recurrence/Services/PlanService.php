@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 use Mundipagg\Core\Recurrence\Repositories\PlanRepository;
@@ -13,16 +14,8 @@ use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class PlanService
 {
-    /** @var LogService  */
-    protected $logService;
-
     public function __construct()
     {
-        $this->logService = new LogService(
-            'PlanService',
-            true
-        );
-
         Magento2CoreSetup::bootstrap();
 
         $config = Magento2CoreSetup::getModuleConfiguration();
@@ -80,6 +73,13 @@ class PlanService
         return $planRepository->find($id);
     }
 
+    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    {
+        $planRepository = $this->getPlanRepository();
+
+        return $planRepository->findByMundipaggId($mundipaggId);
+    }
+
     public function findAll()
     {
         $planRepository = $this->getPlanRepository();
@@ -114,5 +114,13 @@ class PlanService
     public function getMundiAPIClient($secretKey, $password)
     {
         return new MundiAPIClient($secretKey, $password);
+    }
+
+    public function getLogService()
+    {
+        return new LogService(
+            'PlanService',
+            true
+        );
     }
 }

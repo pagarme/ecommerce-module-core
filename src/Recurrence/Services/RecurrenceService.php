@@ -9,13 +9,18 @@ class RecurrenceService
     const MAX_INSTALLMENTS_NUMBER = 12;
 
     //@todo Change the function name because we've change the name of subscription product to recurrence product
+
     public function getRecurrenceProductByProductId($productId)
     {
         $productSubscription = $this->getProductSubscription($productId);
         if ($productSubscription !== null) {
             return $productSubscription;
         }
-      
+
+        $productPlan = $this->getProductPlan($productId);
+        if ($productPlan !== null) {
+            return $productPlan;
+        }
         return null;
     }
 
@@ -31,6 +36,12 @@ class RecurrenceService
     protected function getProductSubscription($productId)
     {
         $productSubscriptionService = new ProductSubscriptionService();
+        return $productSubscriptionService->findByProductId($productId);
+    }
+
+    protected function getProductPlan($productId)
+    {
+        $productSubscriptionService = new PlanService();
         return $productSubscriptionService->findByProductId($productId);
     }
 }
