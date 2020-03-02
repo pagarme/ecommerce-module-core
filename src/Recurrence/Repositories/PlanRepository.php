@@ -99,15 +99,7 @@ final class PlanRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new PlanFactory();
-        $plan = $factory->createFromDbData($result->row);
-
-        $subProductRepository = new SubProductRepository();
-        $items = $subProductRepository->findByRecurrence($plan);
-
-        $plan->setItems($items);
-
-        return $plan;
+        return $this->genericFind($result->row);
     }
 
     public function listEntities($limit, $listDisabled)
@@ -131,15 +123,7 @@ final class PlanRepository extends AbstractRepository
 
         $listPlan = [];
         foreach ($result->rows as $row) {
-            $factory = new PlanFactory();
-            $plan = $factory->createFromDbData($row);
-
-            $subProductRepository = new SubProductRepository();
-            $items = $subProductRepository->findByRecurrence($plan);
-
-            $plan->setItems($items);
-
-            $listPlan[] = $plan;
+            $listPlan[] = $this->genericFind($row);
         }
 
         return $listPlan;
@@ -161,7 +145,20 @@ final class PlanRepository extends AbstractRepository
     }
     public function findByMundipaggId(AbstractValidString $mundipaggId)
     {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
+        );
+        $objectId = $mundipaggId->getValue();
 
+        $query = "SELECT * FROM $table WHERE plan_id = '$objectId' LIMIT 1";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        return $this->genericFind($result->row);
     }
 
     public function deleteSubproducts(AbstractEntity &$object)
@@ -194,16 +191,18 @@ final class PlanRepository extends AbstractRepository
         if ($result->num_rows == 0) {
             return null;
         }
+        return $this->genericFind($result->row);
+    }
 
+    private function genericFind($row)
+    {
         $factory = new PlanFactory();
-        $plan = $factory->createFromDbData($result->row);
+        $plan = $factory->createFromDbData($row);
 
         $subProductsRepository = new SubProductRepository();
         $subProducts = $subProductsRepository->findByRecurrence($plan);
 
-        foreach ($subProducts as $subProduct) {
-            $plan->addItem($subProduct);
-        }
+        $plan->setItems($subProducts);
 
         return $plan;
     }

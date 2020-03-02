@@ -79,7 +79,7 @@ final class SubscriptionService
                 throw new \Exception($message, 400);
             }
 
-            $this->getSubscriptionMissingData($subscriptionResponse);
+            $this->getSubscriptionMissingData($subscriptionResponse, $subscription);
 
             $subscriptionFactory = new SubscriptionFactory();
             if (!$this->checkResponseStatus($subscriptionResponse)) {
@@ -146,23 +146,20 @@ final class SubscriptionService
 
         $subscriptionSettings = $this->getSubscriptionSettings($order);
 
+        $plan = $this->extractPlanFromOrder($order);
+
         $this->fillCreditCardData($subscription, $order);
 
-        $subscriptionType = $this->getSubscriptionType($order);
-        if ($subscriptionType == ProductSubscription::RECURRENCE_TYPE) {
-            $this->fillSubscriptionItems(
-                $subscription,
-                $order
-            );
-        }
+        $this->fillSubscriptionItems(
+            $subscription,
+            $order,
+            $plan
+        );
 
-        if ($subscriptionType == Plan::RECURRENCE_TYPE) {
-            $subscription->setPlanId();
-        }
-
-        $this->fillInterval($subscription);
+        $this->fillPlanId($subscription, $plan);
+        $this->fillInterval($subscription, $plan);
         $this->fillBoletoData($subscription);
-        $this->fillDescription($subscription);
+        $this->fillDescription($subscription, $plan);
         $this->fillShipping($subscription, $order);
 
         $subscription->setCode($order->getCode());
@@ -172,6 +169,24 @@ final class SubscriptionService
         $subscription->setStatementDescriptor($config->getCardStatementDescriptor());
 
         return $subscription;
+    }
+
+    private function extractPlanFromOrder(PaymentOrder $order)
+    {
+        $planId = $order->getItems()[0]->getMundipaggId();
+        if (!$planId) {
+            return null;
+        }
+
+        $code = $order->getItems()[0]->getCode();
+
+        $planService = new PlanService();
+        $plan = $planService->findByProductId($code);
+        if (!$plan) {
+            return null;
+        }
+
+        return $plan;
     }
 
     private function getSubscriptionSettings($order)
@@ -263,16 +278,34 @@ final class SubscriptionService
         $subscription->setBoletoDays($boletoDays);
     }
 
-    private function fillSubscriptionItems(&$subscription, $order)
+    private function fillSubscriptionItems(&$subscription, $order,Plan $plan = null)
     {
+        if ($plan !== null) {
+            return;
+        }
+
         $this->subscriptionItems = $this->extractSubscriptionItemsFromOrder(
             $order
         );
         $subscription->setItems($this->subscriptionItems);
     }
 
-    private function fillInterval(&$subscription)
+    private function fillPlanId($subscription, $plan)
     {
+        if ($plan !== null) {
+            $subscription->setPlanId($plan->getMundipaggId());
+        }
+        return null;
+    }
+
+    private function fillInterval(&$subscription, Plan $plan = null)
+    {
+        if ($plan !== null) {
+            $subscription->setIntervalType($plan->getIntervalType());
+            $subscription->setIntervalCount($plan->getIntervalCount());
+            return;
+        }
+
         /**
          * @todo Subscription Intervals are comming from subscription items
          */
@@ -294,8 +327,12 @@ final class SubscriptionService
         $subscription->setIntervalCount($intervalCount);
     }
 
-    private function fillDescription(&$subscription)
+    private function fillDescription(&$subscription, Plan $plan = null)
     {
+        if ($plan !== null) {
+            return;
+        }
+
         $subscription->setDescription($this->subscriptionItems[0]->getDescription());
     }
 
@@ -391,7 +428,7 @@ final class SubscriptionService
         $platformOrder->setStatus(OrderStatus::pending());
     }
 
-    private function getSubscriptionMissingData(&$subscriptionResponse)
+    private function getSubscriptionMissingData(&$subscriptionResponse, $subscription)
     {
         $subscriptionResponse['invoice'] =
             $this->getInvoiceFromSubscriptionResponse(
@@ -400,11 +437,14 @@ final class SubscriptionService
         $subscriptionResponse['current_charge'] = $this->getChargeFromInvoiceResponse(
             $subscriptionResponse['invoice']
         );
+
+        $subscriptionResponse['plan_id'] = $subscription->getPlanIdValue();
     }
 
     /**
      * @param $subscriptionResponse
      * @return Invoice
+     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
      */
     private function getInvoiceFromSubscriptionResponse($subscriptionResponse)
     {
@@ -531,20 +571,5 @@ final class SubscriptionService
     public function getSubscriptionRepository()
     {
         return new SubscriptionRepository();
-    }
-
-    public function getSubscriptionType(PaymentOrder $order)
-    {
-        $type = null;
-        $items = $order->getItems();
-
-        if (empty($items)) {
-            return $type;
-        }
-
-        foreach ($items as $item) {
-            $type = $item->getType();
-        }
-        return $type;
     }
 }

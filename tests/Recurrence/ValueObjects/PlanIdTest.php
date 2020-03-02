@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\ValueObjects\Id;
+namespace Mundipagg\Core\Test\Recurrence\ValueObjects;
 
 use Mundipagg\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ class PlanIdTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId
+     * @covers \Mundipagg\Core\Recurrence\ValueObjects\PlanId
      *
      * @uses   \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
      * @uses   \Mundipagg\Core\Kernel\Exceptions\InvalidParamException

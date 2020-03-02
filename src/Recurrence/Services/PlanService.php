@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 use Mundipagg\Core\Recurrence\Repositories\PlanRepository;
@@ -70,6 +71,13 @@ class PlanService
         $planRepository = $this->getPlanRepository();
 
         return $planRepository->find($id);
+    }
+
+    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    {
+        $planRepository = $this->getPlanRepository();
+
+        return $planRepository->findByMundipaggId($mundipaggId);
     }
 
     public function findAll()
