@@ -150,11 +150,11 @@ final class SubscriptionService
 
         $plan = $this->extractPlanFromOrder($order);
         if ($plan == null) {
-            $this->fillDescription($subscription);
             $this->fillSubscriptionItems(
                 $subscription,
                 $order
             );
+            $this->fillDescription($subscription);
         }
 
         $this->fillPlanId($subscription, $plan);
