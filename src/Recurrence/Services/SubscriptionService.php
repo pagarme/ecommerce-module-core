@@ -27,9 +27,9 @@ use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
 use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 
 final class SubscriptionService
 {
@@ -372,7 +372,6 @@ final class SubscriptionService
         return new $responseClass;
     }
 
-
     private function setPlatformOrderPending(&$platformOrder)
     {
         //First platform order status and state after subscription creation success
@@ -520,5 +519,11 @@ final class SubscriptionService
     public function getSubscriptionRepository()
     {
         return new SubscriptionRepository();
+    }
+
+    public function getSavedSubscription(SubscriptionId $subscriptionId)
+    {
+        $subscriptionRepository = new SubscriptionRepository();
+        return $subscriptionRepository->findByMundipaggId($subscriptionId);
     }
 }
