@@ -129,7 +129,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     public function setName($name)
     {
         if (preg_match('/[^a-zA-Z0-9 ]+/i', $name)) {
-            throw new \Exception("The field name must not use special characters.");
+            $name = preg_replace('/[^a-zA-Z0-9 ]+/i', '', $name);
         }
 
         $this->name = substr($name, 0, 256);

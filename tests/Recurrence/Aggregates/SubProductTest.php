@@ -79,13 +79,10 @@ class SubProductTest extends TestCase
         $this->assertInstanceOf(Increment::class, $this->subProduct->getIncrement());
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage  The field name must not use special characters.
-     */
-    public function testShouldNotAddANameWithSpecialCharacters()
+    public function testShouldSpecialCharactersFromName()
     {
-        $this->subProduct->setName("á$$#@");
+        $this->subProduct->setName("nameá$$#@");
+        $this->assertEquals('name', $this->subProduct->getName());
     }
 
     public function testShouldSetCorrectNAme()
