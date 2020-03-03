@@ -32,6 +32,7 @@ use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 final class SubscriptionService
 {
