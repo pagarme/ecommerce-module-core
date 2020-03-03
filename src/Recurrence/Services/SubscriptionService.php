@@ -420,7 +420,7 @@ final class SubscriptionService
         $platformOrder->setStatus(OrderStatus::pending());
     }
 
-    private function getSubscriptionMissingData($subscriptionResponse, $subscription)
+    private function getSubscriptionMissingData(&$subscriptionResponse, $subscription)
     {
         $subscriptionResponse['invoice'] =
             $this->getInvoiceFromSubscriptionResponse(
