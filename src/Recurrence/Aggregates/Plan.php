@@ -432,7 +432,9 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
             $planRequest->paymentMethods[] = 'boleto';
         }
 
-        //$planRequest->trialPeriodDays
+        $planRequest->installments = $this->getInstallmentsRequest();
+
+        $planRequest->trialPeriodDays = $this->getTrialPeriodDays();
 
         $items = $this->getItems();
         if ($items !== null) {
@@ -443,6 +445,14 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
         }
 
         return $planRequest;
+    }
+
+    public function getInstallmentsRequest()
+    {
+        if ($this->getIntervalType() == IntervalValueObject::INTERVAL_TYPE_MONTH) {
+            return range(1, $this->getIntervalCount());
+        }
+        return range(1, 12);
     }
 
     public function getCurrency()
