@@ -11,8 +11,9 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
+use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 
@@ -48,6 +49,7 @@ class SubscriptionFactory implements FactoryInterface
 
         if (isset($postData['plan_id'])) {
             $subscription->setPlanId(new PlanId($postData['plan_id']));
+            $subscription->setRecurrenceType(Plan::RECURRENCE_TYPE);
         }
 
         return $subscription;
@@ -103,7 +105,7 @@ class SubscriptionFactory implements FactoryInterface
             $subscription->setCurrentCharge($charge);
         }
 
-        if (isset($dbData['plan_id'])) {
+        if (!empty($dbData['plan_id'])) {
             $subscription->setPlanId(new PlanId($dbData['plan_id']));
         }
 

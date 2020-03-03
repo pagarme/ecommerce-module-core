@@ -344,6 +344,12 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
         return $this;
     }
 
+    public function addItem(SubProduct $item)
+    {
+        $this->items[] = $item;
+        return $this;
+    }
+
     /**
      * @return SubProduct
      */

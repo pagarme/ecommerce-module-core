@@ -14,7 +14,7 @@ use Mundipagg\Core\Payment\ValueObjects\Discounts;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
@@ -93,6 +93,8 @@ class Subscription extends AbstractEntity
      * @var Discounts[]
      */
     private $discounts;
+
+    private $recurrenceType = ProductSubscription::RECURRENCE_TYPE;
 
     /**
      * @return Discounts[]
@@ -206,7 +208,13 @@ class Subscription extends AbstractEntity
 
     public function getRecurrenceType()
     {
-        return self::RECURRENCE_TYPE;
+        return $this->recurrenceType;
+    }
+
+    public function setRecurrenceType($type)
+    {
+        $this->recurrenceType = $type;
+        return $this;
     }
 
     public function setIntervalType($intervalType)
@@ -493,6 +501,7 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
         $subscriptionRequest->statementDescriptor = $this->getStatementDescriptor();
         $subscriptionRequest->discounts = $this->getDiscounts();
+        $subscriptionRequest->planId = $this->getPlanIdValue();
 
         $subscriptionRequest->items = [];
         foreach ($this->getItems() as $item) {

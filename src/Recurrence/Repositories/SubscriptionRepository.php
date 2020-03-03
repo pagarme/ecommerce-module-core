@@ -92,7 +92,8 @@ class SubscriptionRepository extends AbstractRepository
                 payment_method,
                 recurrence_type,
                 interval_type,
-                interval_count
+                interval_count,
+                plan_id
             )
           VALUES
         ";
@@ -107,7 +108,8 @@ class SubscriptionRepository extends AbstractRepository
                 '{$object->getPaymentMethod()}',
                 '{$object->getRecurrenceType()}',
                 '{$object->getIntervalType()}',
-                '{$object->getIntervalCount()}'
+                '{$object->getIntervalCount()}',
+                '{$object->getPlanIdValue()}'
             );
         ";
 

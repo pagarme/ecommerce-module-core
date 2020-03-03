@@ -21,6 +21,8 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
 
     private $selectedOption;
 
+    private $type;
+
     /**
      * @return string
      */
@@ -142,5 +144,16 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     {
         $pow = pow(10, $precision);
         return (ceil($pow*$value)+ceil($pow*$value-ceil($pow*$value)))/$pow;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 }

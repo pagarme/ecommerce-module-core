@@ -18,7 +18,7 @@ use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\ValueObjects\Id\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use PHPUnit\Framework\TestCase;
 
