@@ -30,6 +30,7 @@ final class CardBrand extends AbstractValueObject
     CONST ALELO = "Alelo";
     CONST BANESE = "Banese";
     CONST CABAL = "Cabal";
+    CONST SODEXO = "Sodexo";
 
     private $name;
 
@@ -151,6 +152,11 @@ final class CardBrand extends AbstractValueObject
     static public function cabal()
     {
         return new self(self::CABAL);
+    }
+
+    static public function sodexo()
+    {
+        return new self(self::SODEXO);
     }
 
     /**
