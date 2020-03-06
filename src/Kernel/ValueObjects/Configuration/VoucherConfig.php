@@ -7,6 +7,9 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 
 class VoucherConfig extends AbstractValueObject
 {
+    const CARD_OPERATION_AUTH_ONLY = 'auth_only';
+    const CARD_OPERATION_AUTH_AND_CAPTURE = 'auth_and_capture';
+
     /** @var bool */
     private $enabled;
 
@@ -144,6 +147,11 @@ class VoucherConfig extends AbstractValueObject
     {
         $this->title = $title;
         return $this;
+    }
+
+    public function isCapture()
+    {
+        return $this->getCardOperation() === self::CARD_OPERATION_AUTH_AND_CAPTURE;
     }
 
     /**

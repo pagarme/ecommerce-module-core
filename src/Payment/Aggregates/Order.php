@@ -101,7 +101,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         $replace = str_replace('_', '', $paymentMethodName);
         $paymentMethodObject = $replace . 'PaymentMethod';
 
-        $this->paymentMethod = $this->$paymentMethodObject();;
+        $this->paymentMethod = $this->$paymentMethodObject();
     }
 
     /**
@@ -336,5 +336,10 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     private function boletoPaymentMethod()
     {
         return PaymentMethod::boleto();
+    }
+
+    private function voucherPaymentMethod()
+    {
+        return PaymentMethod::voucher();
     }
 }

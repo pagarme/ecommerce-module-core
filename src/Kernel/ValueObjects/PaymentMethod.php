@@ -9,6 +9,7 @@ final class PaymentMethod extends AbstractValueObject
     const CREDIT_CARD = 'credit_card';
     const BOLETO = 'boleto';
     const DEBIT_CARD = 'debit_card';
+    const VOUCHER = 'voucher';
 
     /**
      * @var string
@@ -38,6 +39,11 @@ final class PaymentMethod extends AbstractValueObject
     static public function debit_card()
     {
         return new self(self::DEBIT_CARD);
+    }
+
+    static public function voucher()
+    {
+        return new self(self::VOUCHER);
     }
 
     /**
