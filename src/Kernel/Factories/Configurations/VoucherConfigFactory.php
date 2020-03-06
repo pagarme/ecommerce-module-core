@@ -23,6 +23,10 @@ class VoucherConfigFactory implements FactoryCreateFromDbDataInterface
             $voucherConfig->setEnabled((bool) $data->enabled);
         }
 
+        if (!empty($data->title)) {
+            $voucherConfig->setTitle($data->title);
+        }
+
         if (!empty($data->cardOperation)) {
             $voucherConfig->setCardOperation($data->cardOperation);
         }

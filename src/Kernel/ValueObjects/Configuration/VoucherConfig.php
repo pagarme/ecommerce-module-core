@@ -11,6 +11,9 @@ class VoucherConfig extends AbstractValueObject
     private $enabled;
 
     /** @var string */
+    private $title;
+
+    /** @var string */
     private $cardOperation;
 
     /** @var string */
@@ -126,6 +129,24 @@ class VoucherConfig extends AbstractValueObject
     }
 
     /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return VoucherConfig
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
      * To check the structural equality of value objects,
      * this method should be implemented in this class children.
      *
@@ -152,6 +173,7 @@ class VoucherConfig extends AbstractValueObject
     {
         return [
             "enabled" => $this->enabled,
+            "title" => $this->getTitle(),
             "cardOperation" => $this->getCardOperation(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "saveCards" => $this->isSaveCards(),
