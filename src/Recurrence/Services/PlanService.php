@@ -103,6 +103,13 @@ class PlanService
             throw new \Exception("Plan not found - ID : {$id} ");
         }
 
+        try {
+            $planController = $this->mundipaggApi->getPlans();
+            $planController->deletePlan($plan->getMundipaggId());
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
         return $planRepository->delete($plan);
     }
 
