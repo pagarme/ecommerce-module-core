@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Mundipagg\Core\Kernel\Factories\Configurations;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\FactoryCreateFromDbDataInterface;

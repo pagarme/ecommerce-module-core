@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
@@ -132,6 +133,9 @@ final class Configuration extends AbstractEntity
      */
     private $sendMailEnabled;
 
+    /** @var VoucherConfig */
+    private $voucherConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -163,6 +167,22 @@ final class Configuration extends AbstractEntity
     public function setRecurrenceConfig(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
+    }
+
+    /**
+     * @return VoucherConfig
+     */
+    public function getVoucherConfig()
+    {
+        return $this->voucherConfig;
+    }
+
+    /**
+     * @param VoucherConfig $voucherConfig
+     */
+    public function setVoucherConfig(VoucherConfig $voucherConfig)
+    {
+        $this->voucherConfig = $voucherConfig;
     }
 
     protected function isEnabled()
@@ -363,8 +383,8 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  CardConfig $installmentConfig
-     * @throws Exception
+     * @param CardConfig $newCardConfig
+     * @throws InvalidParamException
      */
     public function addCardConfig(CardConfig $newCardConfig)
     {
@@ -500,6 +520,7 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param string $cardStatementDescriptor
+     * @throws InvalidParamException
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
@@ -634,7 +655,8 @@ final class Configuration extends AbstractEntity
             "parent" => $this->parentConfiguration,
             "inheritAll" => $this->isInheritedAll(),
             "recurrenceConfig" => $this->getRecurrenceConfig(),
-            "sendMail" => $this->isSendMailEnabled()
+            "sendMail" => $this->isSendMailEnabled(),
+            "voucherConfig" => $this->getVoucherConfig()
         ];
     }
 

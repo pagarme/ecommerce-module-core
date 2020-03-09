@@ -11,11 +11,13 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 final class PaymentFactory
 {
@@ -36,7 +38,8 @@ final class PaymentFactory
     {
         $this->primitiveFactories = [
             'createCreditCardPayments',
-            'createBoletoPayments'
+            'createBoletoPayments',
+            'createVoucherPayments',
         ];
 
         $this->moduleConfig = MPSetup::getModuleConfiguration();
@@ -73,7 +76,7 @@ final class PaymentFactory
 
         $payments = [];
         foreach ($cardsData as $cardData) {
-            $payment = $this->createBaseCardPayment($cardData);
+            $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
 
             if ($payment === null) {
                 continue;
@@ -95,6 +98,48 @@ final class PaymentFactory
             $payment->setAmount(
                 $this->getAmountWithInterestForCreditCard($payment)
             );
+
+            $payment->setStatementDescriptor($this->cardStatementDescriptor);
+
+            $payments[] = $payment;
+        }
+
+        return $payments;
+    }
+
+    private function createVoucherPayments($data)
+    {
+        $cardDataIndex = NewVoucherPayment::getBaseCode();
+
+        if (!isset($data->$cardDataIndex)) {
+            return [];
+        }
+
+        $capture = $this->moduleConfig
+            ->getVoucherConfig()
+            ->isCapture();
+
+        $cardsData = $data->$cardDataIndex;
+
+        $payments = [];
+        foreach ($cardsData as $cardData) {
+            $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
+
+            if ($payment === null) {
+                continue;
+            }
+
+            $customer = $this->createCustomer($cardData);
+            if ($customer !== null) {
+                $payment->setCustomer($customer);
+            }
+
+            $brand = $cardData->brand;
+            $payment->setBrand(CardBrand::$brand());
+
+            $payment->setCapture($capture);
+            $payment->setAmount($cardData->amount);
+            $payment->setInstallments($cardData->installments);
 
             $payment->setStatementDescriptor($this->cardStatementDescriptor);
 
@@ -170,12 +215,12 @@ final class PaymentFactory
      * @param $identifier
      * @return AbstractCreditCardPayment|null
      */
-    private function createBaseCardPayment($data)
+    private function createBaseCardPayment($data, $method)
     {
         $identifier = $data->identifier;
         try {
             $cardToken = new CardToken($identifier);
-            $payment =  new NewCreditCardPayment();
+            $payment =  $this->getNewPaymentMethod($method);
             $payment->setIdentifier($cardToken);
 
             if (isset($data->saveOnSuccess)) {
@@ -189,7 +234,7 @@ final class PaymentFactory
 
         try {
             $cardId = new CardId($identifier);
-            $payment =  new SavedCreditCardPayment();
+            $payment =  $this->getSavedPaymentMethod($method);
             $payment->setIdentifier($cardId);
             $owner = new CustomerId($data->customerId);
             $payment->setOwner($owner);
@@ -201,5 +246,27 @@ final class PaymentFactory
         }
 
         return null;
+    }
+
+    /**
+     * @param $method
+     * @return SavedCreditCardPayment
+     * @todo Add voucher saved payment
+     */
+    private function getSavedPaymentMethod($method)
+    {
+        return new SavedCreditCardPayment();
+    }
+
+    /**
+     * @param $method
+     * @return NewCreditCardPayment|NewVoucherPayment
+     */
+    private function getNewPaymentMethod($method)
+    {
+        if ($method == PaymentMethod::CREDIT_CARD) {
+            return new NewCreditCardPayment();
+        }
+        return new NewVoucherPayment();
     }
 }
