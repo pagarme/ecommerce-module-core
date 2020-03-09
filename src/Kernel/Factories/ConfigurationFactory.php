@@ -200,13 +200,6 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
-        if (!empty($data->recurrenceConfig)) {
-            $config->setRecurrenceConfig(
-                (new RecurrenceConfigFactory())
-                    ->createFromDbData($data->recurrenceConfig)
-            );
-        }
-
         if (!empty($data->voucherConfig)) {
             $config->setVoucherConfig(
                 (new VoucherConfigFactory)
