@@ -23,13 +23,15 @@ class SubProductRepository extends AbstractRepository
                 `product_recurrence_id`,
                 `recurrence_type`,
                 `cycles`,
-                `quantity`
+                `quantity`,
+                `mundipagg_id`
             ) VALUES (
                 '{$object->getProductId()}',
                 '{$object->getProductRecurrenceId()}',
                 '{$object->getRecurrenceType()}',
                 '{$object->getCycles()}',
-                '{$object->getQuantity()}'
+                '{$object->getQuantity()}',
+                '{$object->getMundipaggIdValue()}'
             )
         ";
 

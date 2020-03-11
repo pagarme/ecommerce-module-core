@@ -108,6 +108,7 @@ class Migrate
                       cycles INTEGER NULLABLE,
                       quantity INTEGER NULLABLE,
                       trial_period_days INTEGER NULLABLE,
+                      mundipagg_id    TEXT, 
                       created_at TIMESTAMP,
                       updated_at TIMESTAMP)");
     }

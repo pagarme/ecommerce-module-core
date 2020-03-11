@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Services;
 
+use MundiAPILib\Models\GetPlanItemResponse;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Services\LogService;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
@@ -10,6 +11,7 @@ use Mundipagg\Core\Recurrence\Factories\PlanFactory;
 use Mundipagg\Core\Recurrence\Repositories\PlanRepository;
 use MundiAPILib\Models\CreatePlanRequest;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanItemId;
 use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class PlanService
@@ -52,6 +54,7 @@ class PlanService
         $createPlanRequest = $plan->convertToSdkRequest();
         $planController = $this->mundipaggApi->getPlans();
         $result = $planController->createPlan($createPlanRequest);
+        $this->setItemsId($plan, $result);
 
         return $result;
     }
@@ -60,11 +63,48 @@ class PlanService
     {
         $updatePlanRequest = $plan->convertToSdkRequest(true);
         $planController = $this->mundipaggApi->getPlans();
+
+        $this->updateItemsAtMundipagg($plan, $planController);
         $result = $planController->updatePlan($plan->getMundipaggId(), $updatePlanRequest);
 
         return $result;
     }
 
+    protected function setItemsId(Plan $plan, $result)
+    {
+        $resultItems = $result->items;
+        foreach ($resultItems as $resultItem) {
+            $this->updateItems($plan, $resultItem);
+        }
+    }
+
+    protected function updateItems(Plan $plan, GetPlanItemResponse $resultItem)
+    {
+        $planItems = $plan->getItems();
+        foreach ($planItems as $planItem) {
+            if ($this->isItemEqual($planItem, $resultItem)) {
+                $planItem->setMundipaggId(
+                  new PlanItemId($resultItem->id)
+                );
+            }
+        }
+    }
+
+    protected function isItemEqual($planItem, $resultItem)
+    {
+        return $planItem->getName() == $resultItem->name;
+    }
+
+    protected function updateItemsAtMundipagg(Plan $plan, $planController)
+    {
+        foreach ($plan->getItems() as $item) {
+            $planController->updatePlanItem(
+                $plan->getMundipaggId(),
+                $item->getMundipaggId(),
+                $item->convertToSdkRequest()
+            );
+        }
+    }
 
     public function findById($id)
     {
