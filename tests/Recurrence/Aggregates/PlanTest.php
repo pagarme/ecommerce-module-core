@@ -155,43 +155,16 @@ class PlanTest extends TestCase
         $this->assertEquals(10, $this->plan->getTrialPeriodDays());
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage  Boleto should be 1 or 0 Passed value: wrong
-     */
-    public function testShouldNotAddAnWrongValueToBoleto()
-    {
-        $this->plan->setBoleto("wrong");
-    }
-
     public function testShouldSetCorrectValueToBoleto()
     {
         $this->plan->setBoleto("1");
         $this->assertEquals("1", $this->plan->getBoleto());
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage  Credit card should be 1 or 0! Passed value:
-     */
-    public function testShouldNotAddAnWrongValueToCreditCard()
-    {
-        $this->plan->setCreditCard("wrong");
-    }
-
     public function testShouldSetCorrectValueToCreditCard()
     {
         $this->plan->setCreditCard("1");
         $this->assertEquals("1", $this->plan->getCreditCard());
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage  Allow installments should be 1 or 0! Passed value:
-     */
-    public function testShouldNotAddAnWrongValueToAllowInstallments()
-    {
-        $this->plan->setAllowInstallments("wrong");
     }
 
     public function testShouldSetCorrectValueToAllowInstallments()

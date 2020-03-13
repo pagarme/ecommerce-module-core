@@ -101,4 +101,22 @@ class SubProductRepository extends AbstractRepository
 
         return $subProducts;
     }
+
+    public function findByRecurrenceIdAndProductId($recurrenceId, $productId)
+    {
+        $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
+
+        $query = "SELECT * FROM $table" .
+            " WHERE product_recurrence_id = {$recurrenceId}" .
+            " AND product_id = '{$productId}'";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $subProductFactory = new SubProductFactory();
+        return $subProductFactory->createFromDbData($result->row);
+    }
 }

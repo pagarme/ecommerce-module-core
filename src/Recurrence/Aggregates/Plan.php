@@ -50,6 +50,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param int $id
+     * @return Plan
      */
     public function setId($id)
     {
@@ -67,6 +68,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param string $name
+     * @return Plan
      */
     public function setName($name)
     {
@@ -84,6 +86,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param string $description
+     * @return Plan
      */
     public function setDescription($description)
     {
@@ -101,6 +104,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param IntervalValueObject $interval
+     * @return Plan
      */
     public function setInterval(IntervalValueObject $interval)
     {
@@ -114,6 +118,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     /**
      * @param string $interval
      * @return $this
+     * @throws \Exception
      */
     public function setIntervalType($intervalType)
     {
@@ -173,6 +178,8 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param int $productId
+     * @return Plan
+     * @throws InvalidParamException
      */
     public function setProductId($productId)
     {
@@ -195,16 +202,11 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     }
 
     /**
-     * @param string $creditCard true or false
+     * @param bool $creditCard
+     * @return Plan
      */
     public function setCreditCard($creditCard)
     {
-        if ($creditCard != '1' && $creditCard != '0') {
-            throw new InvalidParamException(
-                "Credit card should be 1 or 0!",
-                $creditCard
-            );
-        }
         $this->creditCard = $creditCard;
         return $this;
     }
@@ -218,16 +220,11 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     }
 
     /**
-     * @param string $boleto 1 or 0
+     * @param bool $boleto
+     * @return Plan
      */
     public function setBoleto($boleto)
     {
-        if ($boleto != '1' && $boleto != '0') {
-            throw new InvalidParamException(
-                "Boleto should be 1 or 0",
-                $boleto
-            );
-        }
         $this->boleto = $boleto;
         return $this;
     }
@@ -242,6 +239,8 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param string $status
+     * @return Plan
+     * @throws InvalidParamException
      */
     public function setStatus($status)
     {
@@ -265,6 +264,8 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param string $billingType
+     * @return Plan
+     * @throws InvalidParamException
      */
     public function setBillingType($billingType)
     {
@@ -287,16 +288,11 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     }
 
     /**
-     * @param string $allowInstallments 1 or 0
+     * @param bool $allowInstallments
+     * @return Plan
      */
     public function setAllowInstallments($allowInstallments)
     {
-        if ($allowInstallments != '1' && $allowInstallments != '0') {
-            throw new InvalidParamException(
-                "Allow installments should be 1 or 0!",
-                $allowInstallments
-            );
-        }
         $this->allowInstallments = $allowInstallments;
         return $this;
     }
@@ -311,6 +307,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param \DateTime $createdAt
+     * @return Plan
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -328,6 +325,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param \DateTime $updatedAt
+     * @return Plan
      */
     public function setUpdatedAt(\DateTime $updatedAt)
     {
@@ -337,6 +335,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
     /**
      * @param array $items An array of Subproducts aggregate
+     * @return Plan
      */
     public function setItems(array $items)
     {
@@ -434,7 +433,9 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
 
         $planRequest->installments = $this->getInstallmentsRequest();
 
-        $planRequest->trialPeriodDays = $this->getTrialPeriodDays();
+        if (!empty($this->getTrialPeriodDays())) {
+            $planRequest->trialPeriodDays = $this->getTrialPeriodDays();
+        }
 
         $items = $this->getItems();
         if ($items !== null) {

@@ -331,6 +331,9 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
         return $items;
     }
 
+    /**
+     * @return string|null
+     */
     public function getMundipaggIdValue()
     {
         if (empty($this->getMundipaggId())) {
