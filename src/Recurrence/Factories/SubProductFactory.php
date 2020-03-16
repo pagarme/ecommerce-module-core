@@ -8,6 +8,7 @@ use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
 use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Recurrence\ValueObjects\PlanItemId;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 
 class SubProductFactory implements FactoryInterface
@@ -34,6 +35,7 @@ class SubProductFactory implements FactoryInterface
         }
 
         $this->setId($postData);
+        $this->setMundipaggId($postData);
         $this->setProductId($postData);
         $this->setProductRecurrenceId($postData);
         $this->setRecurrenceType($postData);
@@ -63,6 +65,15 @@ class SubProductFactory implements FactoryInterface
     {
         if (!empty($postData['id'])) {
             $this->subProduct->setId($postData['id']);
+        }
+    }
+
+    public function setMundipaggId($postData)
+    {
+        if (!empty($postData['mundipagg_id'])) {
+            $this->subProduct->setMundipaggId(
+                new PlanItemId($postData['mundipagg_id'])
+            );
         }
     }
 

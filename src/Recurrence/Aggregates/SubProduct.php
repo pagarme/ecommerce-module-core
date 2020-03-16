@@ -247,7 +247,8 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
             "quantity" => $this->getQuantity(),
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt(),
-            "increment" => $this->getIncrement()
+            "increment" => $this->getIncrement(),
+            "mundipaggId" => $this->getMundipaggIdValue(),
         ];
     }
 
@@ -317,6 +318,8 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
         $items->cycles = $this->getCycles();
         $items->quantity = $this->getQuantity();
         $items->plan_item_id = $this->getId();
+        $items->id = $this->getMundipaggIdValue();
+        $items->status = "active";
         /**
          * @todo Fix increments
          * Array must be createad in another place
@@ -326,5 +329,16 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
         }
 
         return $items;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMundipaggIdValue()
+    {
+        if (empty($this->getMundipaggId())) {
+            return null;
+        }
+        return $this->getMundipaggId()->getValue();
     }
 }
