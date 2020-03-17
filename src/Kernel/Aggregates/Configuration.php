@@ -5,7 +5,6 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use Exception;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
@@ -25,37 +24,37 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $enabled;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $boletoEnabled;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $creditCardEnabled;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $twoCreditCardsEnabled;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $boletoCreditCardEnabled;
     /**
      *
-     * @var bool 
+     * @var bool
      */
     private $testMode;
     /**
      *
-     * @var GUID 
+     * @var GUID
      */
     private $hubInstallId;
 
@@ -114,7 +113,7 @@ final class Configuration extends AbstractEntity
     private $saveCards;
 
     /** @var bool */
-    private $multibuyer;
+    private $multiBuyer;
 
     /** @var RecurrenceConfig */
     private $recurrenceConfig;
@@ -122,15 +121,10 @@ final class Configuration extends AbstractEntity
     /** @var bool */
     private $installmentsDefaultConfig;
 
-    /**
-     * @var bool
-     */
-    private $sendMailEnabled;
-
     public function __construct()
     {
         $this->saveCards = false;
-        $this->multibuyer = false;
+        $this->multiBuyer = false;
         $this->cardConfigs = [];
         $this->methodsInherited = [];
 
@@ -225,7 +219,7 @@ final class Configuration extends AbstractEntity
      *
      * @return bool
      */
-    protected function isHubEnabled()
+    public function isHubEnabled()
     {
         if ($this->hubInstallId === null) {
             return false;
@@ -238,7 +232,7 @@ final class Configuration extends AbstractEntity
         $this->hubInstallId = $hubInstallId;
     }
 
-    protected function getHubInstallId()
+    public function getHubInstallId()
     {
         return $this->hubInstallId;
     }
@@ -266,19 +260,6 @@ final class Configuration extends AbstractEntity
     {
         $this->creditCardEnabled = filter_var(
             $creditCardEnabled,
-            FILTER_VALIDATE_BOOLEAN
-        );
-        return $this;
-    }
-
-    /**
-     * @param $sendMailEnable
-     * @return $this
-     */
-    public function setSendMailEnabled($sendMailEnable)
-    {
-        $this->sendMailEnabled = filter_var(
-            $sendMailEnable,
             FILTER_VALIDATE_BOOLEAN
         );
         return $this;
@@ -328,14 +309,6 @@ final class Configuration extends AbstractEntity
     protected function isCreditCardEnabled()
     {
         return $this->creditCardEnabled;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSendMailEnabled()
-    {
-        return $this->sendMailEnabled;
     }
 
     /**
@@ -498,17 +471,7 @@ final class Configuration extends AbstractEntity
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
-        $stringFunctions = new StringFunctionsHelper();
-        $value = $stringFunctions->removeSpecialCharacters($cardStatementDescriptor);
-
-        if (strlen($value) > 22) {
-            throw new InvalidParamException(
-                'Invalid soft description',
-                $value
-            );
-        }
-
-        $this->cardStatementDescriptor = $value;
+        $this->cardStatementDescriptor = $cardStatementDescriptor;
     }
 
     /**
@@ -548,15 +511,15 @@ final class Configuration extends AbstractEntity
      */
     public function isMultiBuyer()
     {
-        return $this->multibuyer;
+        return $this->multiBuyer;
     }
 
     /**
-     * @param bool $multibuyer
+     * @param bool $multiBuyer
      */
-    public function setMultiBuyer($multibuyer)
+    public function setMultiBuyer($multiBuyer)
     {
-        $this->multibuyer = $multibuyer;
+        $this->multiBuyer = $multiBuyer;
     }
 
     /**
@@ -576,7 +539,7 @@ final class Configuration extends AbstractEntity
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "saveCards" => $this->isSaveCards(),
-            "multibuyer" => $this->isMultiBuyer(),
+            "multiBuyer" => $this->isMultiBuyer(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,
             "testMode" => $this->testMode,
@@ -594,8 +557,7 @@ final class Configuration extends AbstractEntity
             "parentId" => $this->getParentId(),
             "parent" => $this->parentConfiguration,
             "inheritAll" => $this->isInheritedAll(),
-            "recurrenceConfig" => $this->getRecurrenceConfig(),
-            "sendMail" => $this->isSendMailEnabled()
+            "recurrenceConfig" => $this->getRecurrenceConfig()
         ];
     }
 
@@ -701,7 +663,11 @@ final class Configuration extends AbstractEntity
         $targetObject = $this;
 
         $actions = ['is', 'get'];
-        $useDefault = in_array($method, $this->getMethodsInherited());
+        $useDefault = in_array($method, $targetObject->getMethodsInherited());
+
+        if ($this->isMethodsIgnoringFather($method, $methodSplited, $actions, $targetObject)) {
+            return call_user_func([$targetObject, $method], $arguments);
+        }
 
         if ((in_array($methodSplited[0], $actions) && $useDefault) || $this->isInheritedAll()) {
             if ($this->parentConfiguration !== null) {
@@ -710,5 +676,19 @@ final class Configuration extends AbstractEntity
         }
 
         return call_user_func([$targetObject, $method], $arguments);
+    }
+
+    private function isMethodsIgnoringFather($method, $methodSplited, $actions, $targetObject) {
+        $methodsIgnoringFather = ["getSecretKey","getPublicKey","isHubEnabled"];
+
+        if (
+            in_array($method, $methodsIgnoringFather) &&
+            (in_array($methodSplited[0], $actions)) &&
+            $targetObject->getHubInstallId() !== null
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
