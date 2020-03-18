@@ -34,6 +34,14 @@ class UninstallCommand extends AbstractCommand
         $cleanConfig = json_encode($cleanConfig);
         $configFactory = new ConfigurationFactory();
         $cleanConfig = $configFactory->createFromJsonData($cleanConfig);
+
+        $method = $cleanConfig->getMethodsInherited();
+
+        $methodInherited = array_merge($method, ['getSecretKey', 'getPublicKey', 'isHubEnabled']);
+
+        $cleanConfig->setMethodsInherited(array_unique($methodInherited));
+
+
         $cleanConfig->setId($moduleConfig->getId());
         MPSetup::setModuleConfiguration($cleanConfig);
         
