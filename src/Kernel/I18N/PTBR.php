@@ -78,6 +78,9 @@ class PTBR extends AbstractI18NTable
             'Subscription invoice created: %.2f' => 'Fatura de assinatura criada: %.2f',
             'Url boleto' => 'Boleto url',
             'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => 'Você só pode adicionar duas ou mais assinaturas que possuam o mesmo tipo de pagamento (cartão e ou boleto) e mesma frequência (mensal, semestral, anual...).',
+            'Must be has one product plan on cart' => 'Só pode ter um produto plano no carrinho',
+            "It's not possible to have any other product with a product plan" => 'Não é possível ter nenhum outro tipo de produto no carrinho, junto com um produto plano',
+            'You must have only one product plan in the cart' => 'Você só pode ter um produto plano no carrinho',
         ];
     }
 }

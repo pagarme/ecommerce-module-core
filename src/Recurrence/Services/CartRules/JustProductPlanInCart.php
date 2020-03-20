@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
+use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Recurrence\Services\CartRules\CurrentProduct;
 
 class JustProductPlanInCart implements RuleInterface
@@ -10,6 +11,16 @@ class JustProductPlanInCart implements RuleInterface
      * @var string
      */
     private $error;
+
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
+
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+    }
 
     public function run(
         CurrentProduct $currentProduct,
@@ -36,8 +47,8 @@ class JustProductPlanInCart implements RuleInterface
         }
 
         if ($foundError) {
-            $this->error = "It's not possible to have any" .
-                "other product with a product plan";
+            $this->error = $this->i18n->getDashboard("It's not possible to have" .
+                " any other product with a product plan");
         }
     }
 
