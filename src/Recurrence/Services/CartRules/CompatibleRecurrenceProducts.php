@@ -19,6 +19,8 @@ class CompatibleRecurrenceProducts implements RuleInterface
 
     private $error;
 
+    CONST DEFAULT_MESSAGE = "This product is not compatible with recurrence product in the cart";
+
     public function __construct()
     {
         $this->rulesCheckoutService = new RulesCheckoutService();
@@ -38,6 +40,10 @@ class CompatibleRecurrenceProducts implements RuleInterface
         }
 
         $messageConflictRecurrence = $this->getMessageConflict();
+
+        if (empty($messageConflictRecurrence)) {
+            $messageConflictRecurrence = self::DEFAULT_MESSAGE;
+        }
 
         $productAreCompatible = $this->rulesCheckoutService->runRulesCheckoutSubscription(
             $productListInCart->getRecurrenceProduct(),

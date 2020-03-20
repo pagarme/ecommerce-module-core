@@ -12,6 +12,9 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
     protected $recurrenceConfig;
     private $error;
 
+    CONST DEFAULT_MESSAGE = "It's not possible to add ".
+    "recurrence product with another recurrence product";
+
     public function __construct(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
@@ -28,6 +31,10 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
         $messageConflictRecurrence =
             $this->recurrenceConfig
                 ->getConflictMessageRecurrenceProductWithRecurrenceProduct();
+
+        if (empty($messageConflictRecurrence)) {
+            $messageConflictRecurrence = self::DEFAULT_MESSAGE;
+        }
 
         if (
             !$canAddRecurrenceProductWithRecurrenceProduct  &&
