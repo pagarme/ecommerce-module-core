@@ -12,6 +12,8 @@ class NormalWithRecurrenceProduct implements RuleInterface
     protected $recurrenceConfig;
     private $error;
 
+    CONST DEFAULT_MESSAGE = "It's not possible to add recurrence product with product normal";
+
     public function __construct(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
@@ -28,6 +30,10 @@ class NormalWithRecurrenceProduct implements RuleInterface
         $messageConflictRecurrence =
             $this->recurrenceConfig
                 ->getConflictMessageRecurrenceProductWithNormalProduct();
+
+        if (empty($messageConflictRecurrence)) {
+            $messageConflictRecurrence = self::DEFAULT_MESSAGE;
+        }
 
         if (
             !$canAddNormalProductWithRecurrenceProduct  &&
