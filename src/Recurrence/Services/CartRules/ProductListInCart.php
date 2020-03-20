@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Recurrence\Services\CartRules;
 
 use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
+use Mundipagg\Core\Recurrence\Interfaces\ProductPlanInterface;
 use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
 
 class ProductListInCart
@@ -18,6 +19,11 @@ class ProductListInCart
 
     /** @var array ProductSubscriptionInterface */
     private $recurrenceProducts = [];
+
+    /**
+     * @var ProductPlanInterface[]
+     */
+    private $productPlan = [];
 
     /**
      * @return ProductSubscriptionInterface
@@ -49,6 +55,22 @@ class ProductListInCart
     public function addRecurrenceProduct(ProductSubscriptionInterface $recurrenceProduct)
     {
         $this->recurrenceProducts[] = $recurrenceProduct;
+    }
+
+    /**
+     * @param ProductPlanInterface $productPlan
+     */
+    public function addProductPlan(ProductPlanInterface $productPlan)
+    {
+        $this->productPlan[] = $productPlan;
+    }
+
+    /**
+     * @return ProductPlanInterface[]
+     */
+    public function getProductsPlan()
+    {
+        return $this->productPlan;
     }
 
     /**
