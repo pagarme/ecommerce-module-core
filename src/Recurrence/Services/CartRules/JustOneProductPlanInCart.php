@@ -32,7 +32,7 @@ class JustOneProductPlanInCart implements RuleInterface
     ) {
         if ($currentProduct->getQuantity() > 1) {
             $this->error = $this->i18n->getDashboard(
-                'Must be has one product plan on cart'
+                'You must have only one product plan in the cart'
             );
         }
     }
