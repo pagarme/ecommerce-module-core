@@ -116,7 +116,6 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     {
         $this->validatePaymentInvariants($payment);
         $this->blockOverPaymentAttempt($payment);
-        $this->setCaptureFlag($payment);
 
         $payment->setOrder($this);
 
@@ -317,15 +316,6 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         }
 
         return $orderRequest;
-    }
-
-    private function setCaptureFlag(AbstractPayment &$payment)
-    {
-        $capture = MPSetup::getModuleConfiguration()->isCapture();
-
-        if (method_exists($payment, 'setCapture')) {
-            $payment->setCapture($capture);
-        }
     }
 
     private function creditcardPaymentMethod()
