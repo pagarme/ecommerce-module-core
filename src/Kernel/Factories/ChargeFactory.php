@@ -162,9 +162,10 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
                     'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
-                    'card_data' => $this->treatCardData($tranCardData, $index),
+                    'card_data' => $this->treatCreditCardData($tranCardData, $index),
                     'tran_data' => $this->handleTransactionData($tranData, $index)
                 ];
+
                 $transactions[] = $transaction;
             }
         }
@@ -177,7 +178,7 @@ class ChargeFactory implements FactoryInterface
      * @param int $index
      * @return string|null
      */
-    private function treatCardData(array $tranCardData, $index)
+    private function treatCreditCardData(array $tranCardData, $index)
     {
         if (!isset($tranCardData[$index])) {
             return null;
