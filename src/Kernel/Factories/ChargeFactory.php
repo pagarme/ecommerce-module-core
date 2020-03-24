@@ -162,7 +162,7 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
                     'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
-                    'card_data' => $this->treatCreditCardData($tranCardData, $index),
+                    'card_data' => $this->handleCreditCardData($tranCardData, $index),
                     'tran_data' => $this->handleTransactionData($tranData, $index)
                 ];
 
