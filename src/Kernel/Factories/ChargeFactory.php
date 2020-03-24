@@ -178,7 +178,7 @@ class ChargeFactory implements FactoryInterface
      * @param int $index
      * @return string|null
      */
-    private function treatCreditCardData(array $tranCardData, $index)
+    private function handleCreditCardData(array $tranCardData, $index)
     {
         if (!isset($tranCardData[$index])) {
             return null;
