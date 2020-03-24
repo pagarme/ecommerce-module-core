@@ -185,12 +185,12 @@ class ChargeFactory implements FactoryInterface
         return $tranCardData[$index];
     }
 
-    private function treatTranData(array $tranCardData, $index)
+    private function treatTranData(array $tranData, $index)
     {
-        if (!isset($tranCardData[$index])) {
+        if (!isset($tranData[$index])) {
             return null;
         }
-        return $tranCardData[$index];
+        return $tranData[$index];
     }
 
     /**
