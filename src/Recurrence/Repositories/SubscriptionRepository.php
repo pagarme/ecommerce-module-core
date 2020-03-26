@@ -10,6 +10,7 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class SubscriptionRepository extends AbstractRepository
@@ -114,6 +115,18 @@ class SubscriptionRepository extends AbstractRepository
         ";
 
         $this->db->query($query);
+
+        if (!empty($object->getItems())) {
+            $this->saveSubscriptionItem($object->getItems());
+        }
+    }
+
+    protected function saveSubscriptionItem($items)
+    {
+        foreach ($items as $item) {
+            $subscriptionItemsRepository = new SubscriptionItemRepository();
+            $subscriptionItemsRepository->save($item);
+        }
     }
 
     /**

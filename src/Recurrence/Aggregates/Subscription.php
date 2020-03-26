@@ -275,9 +275,14 @@ class Subscription extends AbstractEntity
         return $this->items;
     }
 
-    public function setItems(array $items)
+    public function setItems($items)
     {
         $this->items = $items;
+    }
+
+    public function addItem(SubscriptionItem $item)
+    {
+        $this->items[] = $item;
     }
 
     /**

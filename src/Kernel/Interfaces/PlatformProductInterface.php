@@ -11,4 +11,5 @@ interface PlatformProductInterface
     public function getStatus();
     public function getImages();
     public function getPrice();
+    public function loadByEntityId($entityId);
 }

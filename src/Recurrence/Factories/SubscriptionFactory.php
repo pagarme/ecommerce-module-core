@@ -13,6 +13,7 @@ use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Mundipagg\Core\Recurrence\Services\RecurrenceService;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
@@ -52,7 +53,36 @@ class SubscriptionFactory implements FactoryInterface
             $subscription->setRecurrenceType(Plan::RECURRENCE_TYPE);
         }
 
+        if (!empty($postData['items'])) {
+            foreach ($postData['items'] as $item) {
+                $item['code'] = $this->getProductCode($item, $subscription); //@TODO Fix when Mark1 implement code
+                $item['subscription_id'] = $postData['id'];
+                $subscriptionItemFactory = new SubscriptionItemFactory();
+                $subscriptionItem = $subscriptionItemFactory->createFromPostData($item);
+                $subscription->addItem($subscriptionItem);
+            }
+        }
+
         return $subscription;
+    }
+
+    /**
+     * @todo Remove when be implemented code on mark1
+     */
+    private function getProductCode($item, $subscription)
+    {
+        if (!empty($item['code'])) {
+            return $item['code'];
+        }
+        $productName = $item['name'];
+
+        $recurrenceService = new RecurrenceService();
+        $product = $recurrenceService->getProductByNameAndRecurrenceType(
+            $productName,
+            $subscription
+        );
+
+        return $product->getProductId();
     }
 
     private function getPlatformOrder($code)
