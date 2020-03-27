@@ -19,6 +19,8 @@ final class ChargeRepository extends AbstractRepository
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
         $id = $orderId->getValue();
+        
+        $this->db->query("SET group_concat_max_len = 8096;");
 
         $query = "
             SELECT 
@@ -37,7 +39,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
                 GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
-                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data,
+                GROUP_CONCAT(t.transaction_data SEPARATOR '---') as tran_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
@@ -168,6 +171,8 @@ final class ChargeRepository extends AbstractRepository
 
         $id = $mundipaggId->getValue();
 
+        $this->db->query("SET group_concat_max_len = 8096;");
+
         $query = "
             SELECT 
                 c.*, 
@@ -185,7 +190,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
                 GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
-                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data,
+                GROUP_CONCAT(t.transaction_data SEPARATOR '---') as tran_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
