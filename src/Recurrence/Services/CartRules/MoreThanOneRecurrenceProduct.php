@@ -36,14 +36,49 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
             $messageConflictRecurrence = self::DEFAULT_MESSAGE;
         }
 
+        $sameRecurrenceProduct = $this->checkIsSameRecurrenceProduct(
+            $currentProduct,
+            $productListInCart
+        );
+
         if (
-            !$canAddRecurrenceProductWithRecurrenceProduct  &&
-            (!$currentProduct->isNormalProduct() && !empty($productListInCart->getRecurrenceProducts()))
+            !$canAddRecurrenceProductWithRecurrenceProduct &&
+            (
+                !$currentProduct->isNormalProduct() &&
+                !empty($productListInCart->getRecurrenceProducts())
+            ) &&
+            !$sameRecurrenceProduct
         ) {
             $this->setError($messageConflictRecurrence);
         }
 
         return;
+    }
+
+    /**
+     * @param CurrentProduct $currentProduct
+     * @param ProductListInCart $productListInCart
+     * @return bool
+     */
+    private function checkIsSameRecurrenceProduct(
+        CurrentProduct $currentProduct,
+        ProductListInCart $productListInCart
+    ) {
+        foreach ($productListInCart->getRecurrenceProducts() as $product) {
+            $productSubscriptionSelected =
+                $currentProduct->getProductSubscriptionSelected();
+
+            $repetionSelected = $currentProduct->getRepetitionSelected();
+
+            if (
+                ($product->getProductId() == $productSubscriptionSelected->getProductId()) &&
+                ($repetionSelected->getId() == $productListInCart->getRepetition()->getId())
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getError()
