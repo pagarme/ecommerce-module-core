@@ -86,7 +86,7 @@ interface ProductPlanInterface
 
     /**
      * @param \Mundipagg\Core\Recurrence\Aggregates\SubProduct[] $items
-     * @return mixed
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Plan
      */
     public function setItems(array $items);
 

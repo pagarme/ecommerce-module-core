@@ -35,6 +35,9 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface,Pro
     private $items;
     private $trialPeriodDays;
 
+    /**
+     * @return string
+     */
     public function getRecurrenceType()
     {
         return self::RECURRENCE_TYPE;
