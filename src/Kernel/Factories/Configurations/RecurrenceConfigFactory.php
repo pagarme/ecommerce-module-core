@@ -51,6 +51,10 @@ class RecurrenceConfigFactory implements FactoryCreateFromDbDataInterface
             );
         }
 
+        if (isset($data->decreaseStock)) {
+            $recurrenceConfig->setDecreaseStock($data->decreaseStock);
+        }
+
         return $recurrenceConfig;
     }
 }
