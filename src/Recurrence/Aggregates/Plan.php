@@ -12,7 +12,7 @@ use Mundipagg\Core\Kernel\ValueObjects\NumericString;
 use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
 use Mundipagg\Core\Recurrence\Interfaces\ProductPlanInterface;
 
-final class Plan extends AbstractEntity implements RecurrenceEntityInterface,ProductPlanInterface
+final class Plan extends AbstractEntity implements RecurrenceEntityInterface, ProductPlanInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
     const RECURRENCE_TYPE = "plan";
