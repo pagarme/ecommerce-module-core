@@ -13,31 +13,91 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Recurrence\Aggregates\Invoice;
 use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
+use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
+use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionItemId;
 
 class InvoiceFactory implements FactoryInterface
 {
+    /** @var Invoice  */
+    public $invoice;
+
+    public function __construct()
+    {
+        $this->invoice = new Invoice();
+    }
     public function createFromPostData($postData)
     {
         $postData = json_decode(json_encode($postData));
-        $invoice = new Invoice();
+        $this->invoice->setMundipaggId(new InvoiceId($postData->id));
+        $this->setSubscriptionId($postData);
+        $this->setItems($postData);
+        $this->setCycle($postData);
 
-        $invoice->setMundipaggId(new InvoiceId($postData->id));
-        $invoice->setSubscriptionId(new SubscriptionId($postData->subscriptionId));
+        return $this->invoice;
+    }
 
-        return $invoice;
+    protected function setCycle($postData)
+    {
+        if (empty($postData->cycle)) {
+            return;
+        }
+
+        $cycleData = (array) $postData->cycle;
+        $cycleFactory = new CycleFactory();
+        $cycle = $cycleFactory->createFromPostData($cycleData);
+        $this->invoice->setCycle($cycle);
+    }
+
+    protected function setItems($postData)
+    {
+        if (!empty($postData->items)) {
+            foreach ($postData->items as $item) {
+                $this->setItem($item);
+            }
+        }
+    }
+
+    protected function setItem($item)
+    {
+        if (empty($item->name)) {
+            return;
+        }
+
+        $subscriptionItem = new SubscriptionItem();
+        $subscriptionItem->setMundipaggId(
+            new SubscriptionItemId($item->subscription_item_id)
+        );
+        $subscriptionItem->setQuantity($item->quantity);
+
+        $this->invoice->addItem($subscriptionItem);
+
+    }
+
+    protected function setSubscriptionId($postData)
+    {
+        if (!empty($postData->subscriptionId)) {
+            $subscriptionId = new SubscriptionId($postData->subscriptionId);
+            $this->invoice->setSubscriptionId($subscriptionId);
+            return;
+        }
+
+        if (!empty($postData->subscription->id)) {
+            $subscriptionId = new SubscriptionId($postData->subscription->id);
+            $this->invoice->setSubscriptionId($subscriptionId);
+            return;
+        }
+
     }
 
     public function createFromCharge(Charge $charge)
     {
-        $invoice = new Invoice();
+        $this->invoice->setMundipaggId(new InvoiceId($charge->getInvoiceId()));
+        $this->invoice->setSubscriptionId(new SubscriptionId($charge->getSubscriptionId()));
+        $this->invoice->setPaymentMethod($charge->getPaymentMethod()->getPaymentMethod());
+        $this->invoice->setAmount($charge->getAmount());
+        $this->invoice->setStatus($charge->getStatus());
 
-        $invoice->setMundipaggId(new InvoiceId($charge->getInvoiceId()));
-        $invoice->setSubscriptionId(new SubscriptionId($charge->getSubscriptionId()));
-        $invoice->setPaymentMethod($charge->getPaymentMethod()->getPaymentMethod());
-        $invoice->setAmount($charge->getAmount());
-        $invoice->setStatus($charge->getStatus());
-
-        return $invoice;
+        return $this->invoice;
     }
 
     public function createFromDbData($dbData)
@@ -57,26 +117,25 @@ class InvoiceFactory implements FactoryInterface
             throw new \Exception("Can't get invoice data", 400);
         }
         $data = $postData->data[0];
-        $invoice = new Invoice();
 
-        $invoice->setMundipaggId(new InvoiceId($data->id));
-        $invoice->setId($data->id); /** Just filling missing field  **/
-        $invoice->setSubscriptionId(new SubscriptionId($data->subscription->id));
-        $invoice->setAmount($data->amount);
-        $invoice->setStatus($data->status);
-        $invoice->setpaymentMethod($data->payment_method);
-        $invoice->setInstallments($data->installments);
-        $invoice->setTotalDiscount($data->total_discount);
-        $invoice->setTotalIncrement($data->total_increment);
-        $this->setCustomer($data, $invoice);
-        $this->setCharge($data, $invoice);
+        $this->invoice->setMundipaggId(new InvoiceId($data->id));
+        $this->invoice->setId($data->id); /** Just filling missing field  **/
+        $this->invoice->setSubscriptionId(new SubscriptionId($data->subscription->id));
+        $this->invoice->setAmount($data->amount);
+        $this->invoice->setStatus($data->status);
+        $this->invoice->setpaymentMethod($data->payment_method);
+        $this->invoice->setInstallments($data->installments);
+        $this->invoice->setTotalDiscount($data->total_discount);
+        $this->invoice->setTotalIncrement($data->total_increment);
+        $this->setCustomer($data, $this->invoice);
+        $this->setCharge($data, $this->invoice);
 
         if (isset($data->cycle)) {
             $cycleFactory = new CycleFactory();
             $cycle = $cycleFactory->createFromPostData((array) $data->cycle);
-            $invoice->setCycle($cycle);
+            $this->invoice->setCycle($cycle);
         }
-        return $invoice;
+        return $this->invoice;
     }
 
     private function setCustomer($data, &$invoice)
@@ -84,7 +143,7 @@ class InvoiceFactory implements FactoryInterface
         $customer = new Customer();
         $customerId = new CustomerId($data->customer->id);
         $customer->setMundipaggId($customerId);
-        $invoice->setCustomer($customer);
+        $this->invoice->setCustomer($customer);
     }
 
     private function setCharge($data, &$invoice)
@@ -93,6 +152,6 @@ class InvoiceFactory implements FactoryInterface
         $chargeId = new ChargeId($data->charge->id);
         $charge->setMundipaggId($chargeId);
         $charge->setAmount($data->charge->amount);
-        $invoice->setCharge($charge);
+        $this->invoice->setCharge($charge);
     }
 }

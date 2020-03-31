@@ -11,6 +11,7 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
+use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
 use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class SubscriptionRepository extends AbstractRepository
@@ -269,10 +270,16 @@ class SubscriptionRepository extends AbstractRepository
 
         $chargeFactory = new ChargeRepository();
         $charges = $chargeFactory->findBySubscriptionId($subscription->getMundipaggId());
-
         foreach ($charges as $charge) {
             $subscription->addCharge($charge);
         }
+
+        $subscriptionItemFactory = new SubscriptionItemRepository();
+        $subscriptionItems = $subscriptionItemFactory->findBySubscriptionId($subscription->getMundipaggId());
+        foreach ($subscriptionItems as $subscriptionItem) {
+            $subscription->addItem($subscriptionItem);
+        }
+
         return $subscription;
     }
 }

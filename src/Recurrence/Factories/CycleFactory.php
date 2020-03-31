@@ -9,6 +9,13 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
 
 class CycleFactory implements FactoryInterface
 {
+    private $cycle;
+
+    public function __construct()
+    {
+        $this->cycle = new Cycle();
+    }
+
     /**
      * @param array $postData
      * @return AbstractEntity|Cycle
@@ -16,13 +23,12 @@ class CycleFactory implements FactoryInterface
      */
     public function createFromPostData($postData)
     {
-        $cycle = new Cycle();
+        $this->cycle->setCycleId(new CycleId($postData['id']));
+        $this->cycle->setCycleStart(new \DateTime($postData['start_at']));
+        $this->cycle->setCycleEnd(new \DateTime($postData['end_at']));
+        $this->setCycle($postData);
 
-        $cycle->setCycleId(new CycleId($postData['id']));
-        $cycle->setCycleStart(new \DateTime($postData['start_at']));
-        $cycle->setCycleEnd(new \DateTime($postData['end_at']));
-
-        return $cycle;
+        return $this->cycle;
     }
 
     public function createFromDbData($dbData)
@@ -34,5 +40,12 @@ class CycleFactory implements FactoryInterface
         $cycle->setCycleEnd(new \DateTime($dbData['end_at']));
 
         return $cycle;
+    }
+
+    public function setCycle($postData)
+    {
+        if (!empty($postData['cycle'])) {
+            $this->cycle->setCycle($postData['cycle']);
+        }
     }
 }

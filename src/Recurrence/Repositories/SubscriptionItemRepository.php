@@ -10,7 +10,7 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Recurrence\Aggregates\Charge;
 use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Mundipagg\Core\Recurrence\Factories\SubscriptionItemFactory;
 
 class SubscriptionItemRepository extends AbstractRepository
 {
@@ -43,6 +43,35 @@ class SubscriptionItemRepository extends AbstractRepository
         return $subscriptionItem;
     }
 
+    public function findBySubscriptionId(AbstractValidString $mundipaggId)
+    {
+        $subscriptionItemTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_ITEM
+        );
+        $id = $mundipaggId->getValue();
+
+        $query = "
+            SELECT *
+              FROM {$subscriptionItemTable}
+             WHERE subscription_id = '{$id}'
+        ";
+
+        $result = $this->db->fetch($query);
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $factory = new SubscriptionItemFactory();
+
+        $listSubscriptionItem = [];
+        foreach ($result->rows as $row) {
+            $subscriptionItem = $factory->createFromDbData($row);
+            $listSubscriptionItem[] = $subscriptionItem;
+        }
+
+        return $listSubscriptionItem;
+    }
+
     public function findByCode($code)
     {
         $subscriptionItemTable = $this->db->getTable(
@@ -60,7 +89,7 @@ class SubscriptionItemRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new SubscriptionFactory();
+        $factory = new SubscriptionItemFactory();
 
         $subscriptionItem = $factory->createFromDbData($result->row);
 
@@ -146,7 +175,7 @@ class SubscriptionItemRepository extends AbstractRepository
             return null;
         }
 
-        $factory = new SubscriptionFactory();
+        $factory = new SubscriptionItemFactory();
 
         $subscriptionItem = $factory->createFromDbData($result->row);
 

@@ -36,8 +36,9 @@ class SubscriptionItemFactory implements FactoryInterface
     {
         $subscriptionItem = new SubscriptionItem();
 
-        $subscriptionItem->setSubscriptionId(new SubscriptionId($dbData['id']));
-        $subscriptionItem->setMundipaggId(new SubscriptionItemId($dbData['id']));
+        $subscriptionItem->setId($dbData["id"]);
+        $subscriptionItem->setSubscriptionId(new SubscriptionId($dbData['subscription_id']));
+        $subscriptionItem->setMundipaggId(new SubscriptionItemId($dbData['mundipagg_id']));
         $subscriptionItem->setCode($dbData['code']);
         $subscriptionItem->setQuantity($dbData['quantity']);
 

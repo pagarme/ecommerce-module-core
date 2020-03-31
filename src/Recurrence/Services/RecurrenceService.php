@@ -6,7 +6,9 @@ use Mundipagg\Core\Kernel\Interfaces\PlatformProductInterface;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
 use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
 use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Mundipagg\Core\Recurrence\Repositories\SubscriptionItemRepository;
 use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionItemId;
 use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class RecurrenceService
@@ -53,7 +55,7 @@ class RecurrenceService
     /**
      * @todo Remove when be implemented code on mark1
      */
-    public function getProductByNameAndRecurrenceType($productName, $subscription)
+    public function getSubProductByNameAndRecurrenceType($productName, $subscription)
     {
         $recurrenceType = $subscription->getRecurrenceType();
 
@@ -64,6 +66,18 @@ class RecurrenceService
 
             return $this->getProductByName($productName, $plan);
         }
+    }
+
+    /**
+     * @todo Remove when be implemented code on mark1
+     */
+    public function getSubscriptionItemByProductId($subscriptionItemId)
+    {
+        $subscriptionItemRepository = new SubscriptionItemRepository();
+        return $subscriptionItemRepository->findByMundipaggId(
+            new SubscriptionItemId($subscriptionItemId)
+        );
+
     }
 
     /**

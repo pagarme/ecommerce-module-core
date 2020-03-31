@@ -20,6 +20,32 @@ class Invoice extends AbstractEntity
     private $cycle;
 
     /**
+     * @var SubscriptionItem[]
+     */
+    private $items;
+
+    /**
+     * @return SubscriptionItem[]
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param SubscriptionItem[] $items
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+    }
+
+    public function addItem(SubscriptionItem $item)
+    {
+        $this->items[] = $item;
+    }
+
+    /**
      * @var SubscriptionId
      */
     private $subscriptionId;

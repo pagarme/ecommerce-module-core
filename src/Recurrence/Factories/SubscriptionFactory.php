@@ -74,15 +74,36 @@ class SubscriptionFactory implements FactoryInterface
         if (!empty($item['code'])) {
             return $item['code'];
         }
-        $productName = $item['name'];
 
+        return $this->getCode($item, $subscription);
+    }
+
+    /**
+     * @todo Remove when be implemented code on mark1
+     */
+    private function getCode($item, $subscription)
+    {
+        $productName = $item['name'];
         $recurrenceService = new RecurrenceService();
-        $product = $recurrenceService->getProductByNameAndRecurrenceType(
+
+        $subProduct = $recurrenceService->getSubProductByNameAndRecurrenceType(
             $productName,
             $subscription
         );
 
-        return $product->getProductId();
+        if ($subProduct) {
+            return $subProduct->getProductId();
+        }
+
+        $subscriptionItem = $recurrenceService->getSubscriptionItemByProductId(
+            $item['id']
+        );
+
+        if ($subscriptionItem) {
+            return $subscriptionItem->getCode();
+        }
+
+        return null;
     }
 
     private function getPlatformOrder($code)

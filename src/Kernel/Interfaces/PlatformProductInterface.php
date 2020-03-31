@@ -12,4 +12,5 @@ interface PlatformProductInterface
     public function getImages();
     public function getPrice();
     public function loadByEntityId($entityId);
+    public function decreaseStock($quantity);
 }
