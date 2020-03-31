@@ -170,11 +170,17 @@ class Repetition extends AbstractEntity implements RepetitionInterface
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getIntervalType()
     {
         return $this->interval;
     }
 
+    /**
+     * @return string
+     */
     public function getIntervalTypeLabel()
     {
         //@todo change to a class formater maybe
@@ -184,6 +190,9 @@ class Repetition extends AbstractEntity implements RepetitionInterface
         return $this->interval;
     }
 
+    /**
+     * @return mixed
+     */
     public function getAvailablesInterval()
     {
         return [

@@ -9,6 +9,17 @@ interface ProductPlanInterface
     /**
      * @return int
      */
+    public function getId();
+
+    /**
+     * @param int $id
+     * @return ProductPlanInterface
+     */
+    public function setId($id);
+
+    /**
+     * @return int
+     */
     public function getProductId();
 
     /**
@@ -86,7 +97,7 @@ interface ProductPlanInterface
 
     /**
      * @param \Mundipagg\Core\Recurrence\Aggregates\SubProduct[] $items
-     * @return mixed
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Plan
      */
     public function setItems(array $items);
 
