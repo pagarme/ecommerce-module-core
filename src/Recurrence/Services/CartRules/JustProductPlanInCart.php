@@ -28,21 +28,21 @@ class JustProductPlanInCart implements RuleInterface
     ) {
         $foundError = false;
 
-        if (
-            !$currentProduct->isNormalProduct() &&
-            (
-                !empty($productListInCart->getNormalProducts()) ||
-                !empty($productListInCart->getProductsPlan())
-            )
-        ) {
-            $foundError = true;
-        }
-
         if (!empty($productListInCart->getProductsPlan())) {
             $foundError = true;
         }
 
-        if (!empty($productListInCart->getRecurrenceProducts())) {
+        if (
+            !empty($productListInCart->getNormalProducts()) &&
+            $currentProduct->getProductPlanSelected() !== null
+        ) {
+            $foundError = true;
+        }
+
+        if (
+            !empty($productListInCart->getRecurrenceProducts()) &&
+            $currentProduct->getProductPlanSelected() !== null
+        ) {
             $foundError = true;
         }
 

@@ -36,8 +36,11 @@ class NormalWithRecurrenceProduct implements RuleInterface
         }
 
         if (
-            !$canAddNormalProductWithRecurrenceProduct  &&
-            ($currentProduct->isNormalProduct() && !empty($productListInCart->getRecurrenceProducts()))
+            !$canAddNormalProductWithRecurrenceProduct &&
+            (
+                $currentProduct->isNormalProduct() &&
+                !empty($productListInCart->getRecurrenceProducts())
+            )
         ) {
             $this->setError($messageConflictRecurrence);
             return;
@@ -45,7 +48,10 @@ class NormalWithRecurrenceProduct implements RuleInterface
 
         if (
             !$canAddNormalProductWithRecurrenceProduct  &&
-            (!$currentProduct->isNormalProduct() && !empty($productListInCart->getNormalProducts()))
+            (
+                !$currentProduct->isNormalProduct() &&
+                !empty($productListInCart->getNormalProducts())
+            )
         ) {
             $this->setError($messageConflictRecurrence);
             return;

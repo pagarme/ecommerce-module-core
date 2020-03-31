@@ -144,6 +144,7 @@ class ChargeFactory implements FactoryInterface
             $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
             $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
             $tranCardData = explode('---', $dbData['tran_card_data']);
+            $tranData = explode('---', $dbData['tran_data']);
 
             foreach ($tranId as $index => $id) {
                 $transaction = [
@@ -161,8 +162,10 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
                     'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
-                    'card_data' => $this->treatCardData($tranCardData, $index)
+                    'card_data' => $this->handleCreditCardData($tranCardData, $index),
+                    'tran_data' => $this->handleTransactionData($tranData, $index)
                 ];
+
                 $transactions[] = $transaction;
             }
         }
@@ -175,12 +178,20 @@ class ChargeFactory implements FactoryInterface
      * @param int $index
      * @return string|null
      */
-    private function treatCardData(array $tranCardData, $index)
+    private function handleCreditCardData(array $tranCardData, $index)
     {
         if (!isset($tranCardData[$index])) {
             return null;
         }
         return $tranCardData[$index];
+    }
+
+    private function handleTransactionData(array $tranData, $index)
+    {
+        if (!isset($tranData[$index])) {
+            return null;
+        }
+        return $tranData[$index];
     }
 
     /**

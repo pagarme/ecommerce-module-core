@@ -65,6 +65,10 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
         ProductListInCart $productListInCart
     ) {
         foreach ($productListInCart->getRecurrenceProducts() as $product) {
+            if ($currentProduct->isNormalProduct()) {
+                return false;
+            }
+
             $productSubscriptionSelected =
                 $currentProduct->getProductSubscriptionSelected();
 

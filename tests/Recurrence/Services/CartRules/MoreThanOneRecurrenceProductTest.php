@@ -52,6 +52,8 @@ class MoreThanOneRecurrenceProductTest extends TestCase
         $productSubscription = new ProductSubscription();
         $repetitionSelected = new Repetition();
 
+        $repetitionSelected->setId(2);
+
         $currentProduct->setProductSubscriptionSelected($productSubscription);
         $currentProduct->setRepetitionSelected($repetitionSelected);
 
