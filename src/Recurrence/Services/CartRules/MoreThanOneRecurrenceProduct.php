@@ -13,7 +13,7 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
     private $error;
 
     CONST DEFAULT_MESSAGE = "It's not possible to add ".
-    "recurrence product with another recurrence product";
+    "recurrence product with another product recurrence";
 
     public function __construct(RecurrenceConfig $recurrenceConfig)
     {
@@ -72,12 +72,7 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
             $productSubscriptionSelected =
                 $currentProduct->getProductSubscriptionSelected();
 
-            $repetionSelected = $currentProduct->getRepetitionSelected();
-
-            if (
-                ($product->getProductId() == $productSubscriptionSelected->getProductId()) &&
-                ($repetionSelected->getId() == $productListInCart->getRepetition()->getId())
-            ) {
+            if ($product->getProductId() == $productSubscriptionSelected->getProductId()) {
                 return true;
             }
         }
@@ -85,11 +80,17 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
         return false;
     }
 
+    /**
+     * @return string
+     */
     public function getError()
     {
         return $this->error;
     }
 
+    /**
+     * @param string $error
+     */
     protected function setError($error)
     {
         $this->error = $error;
