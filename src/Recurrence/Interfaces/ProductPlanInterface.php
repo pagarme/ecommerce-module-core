@@ -9,6 +9,17 @@ interface ProductPlanInterface
     /**
      * @return int
      */
+    public function getId();
+
+    /**
+     * @param int $id
+     * @return ProductPlanInterface
+     */
+    public function setId($id);
+
+    /**
+     * @return int
+     */
     public function getProductId();
 
     /**
