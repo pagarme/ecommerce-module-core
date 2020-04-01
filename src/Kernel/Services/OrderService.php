@@ -24,9 +24,15 @@ final class OrderService
 {
     private $logService;
 
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
+
     public function __construct()
     {
         $this->logService = new OrderLogService();
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
@@ -336,5 +342,14 @@ final class OrderService
 
             $chargeService->save($charge);
         }
+    }
+
+    /**
+     * @return Order|null
+     * @throws InvalidParamException
+     */
+    public function getOrderByMundiPaggId(OrderId $orderId)
+    {
+        return $this->orderRepository->findByMundipaggId($orderId);
     }
 }

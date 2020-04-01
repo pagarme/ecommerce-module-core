@@ -25,12 +25,14 @@ class JustOneProductPlanInCart implements RuleInterface
         $this->i18n = new LocalizationService();
     }
 
-
     public function run(
         CurrentProduct $currentProduct,
         ProductListInCart $productListInCart
     ) {
-        if ($currentProduct->getQuantity() > 1) {
+        if (
+            $currentProduct->getQuantity() > 1 &&
+            $currentProduct->getProductPlanSelected() !== null
+        ) {
             $this->error = $this->i18n->getDashboard(
                 'You must have only one product plan in the cart'
             );

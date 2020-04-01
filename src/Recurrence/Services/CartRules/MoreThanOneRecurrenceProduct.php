@@ -13,7 +13,7 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
     private $error;
 
     CONST DEFAULT_MESSAGE = "It's not possible to add ".
-    "recurrence product with another recurrence product";
+    "recurrence product with another product recurrence";
 
     public function __construct(RecurrenceConfig $recurrenceConfig)
     {
@@ -36,9 +36,18 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
             $messageConflictRecurrence = self::DEFAULT_MESSAGE;
         }
 
+        $sameRecurrenceProduct = $this->checkIsSameRecurrenceProduct(
+            $currentProduct,
+            $productListInCart
+        );
+
         if (
-            !$canAddRecurrenceProductWithRecurrenceProduct  &&
-            (!$currentProduct->isNormalProduct() && !empty($productListInCart->getRecurrenceProducts()))
+            !$canAddRecurrenceProductWithRecurrenceProduct &&
+            (
+                !$currentProduct->isNormalProduct() &&
+                !empty($productListInCart->getRecurrenceProducts())
+            ) &&
+            !$sameRecurrenceProduct
         ) {
             $this->setError($messageConflictRecurrence);
         }
@@ -46,11 +55,42 @@ class MoreThanOneRecurrenceProduct implements RuleInterface
         return;
     }
 
+    /**
+     * @param CurrentProduct $currentProduct
+     * @param ProductListInCart $productListInCart
+     * @return bool
+     */
+    private function checkIsSameRecurrenceProduct(
+        CurrentProduct $currentProduct,
+        ProductListInCart $productListInCart
+    ) {
+        foreach ($productListInCart->getRecurrenceProducts() as $product) {
+            if ($currentProduct->isNormalProduct()) {
+                return false;
+            }
+
+            $productSubscriptionSelected =
+                $currentProduct->getProductSubscriptionSelected();
+
+            if ($product->getProductId() == $productSubscriptionSelected->getProductId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
     public function getError()
     {
         return $this->error;
     }
 
+    /**
+     * @param string $error
+     */
     protected function setError($error)
     {
         $this->error = $error;

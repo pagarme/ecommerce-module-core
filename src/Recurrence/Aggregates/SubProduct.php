@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Recurrence\Aggregates;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Recurrence\Interfaces\SubProductEntityInterface;
 use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
+use Mundipagg\Core\Recurrence\Aggregates\Repetition;
 
 class SubProduct extends AbstractEntity implements SubProductEntityInterface
 {
@@ -35,7 +36,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     protected $increment;
 
-    /** @var Repetition */
+    /** @var \Mundipagg\Core\Recurrence\Aggregates\Repetition */
     protected $selectedRepetition;
 
     /**
@@ -289,7 +290,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     }
 
     /**
-     * @return Repetition
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
      */
     public function getSelectedRepetition()
     {
