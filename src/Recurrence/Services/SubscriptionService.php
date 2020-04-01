@@ -242,6 +242,8 @@ final class SubscriptionService
             }
 
             $subProduct->setDescription($item->getDescription());
+            $subProduct->setName($item->getName());
+            $subProduct->setProductId($item->getCode());
             $subProduct->setQuantity($item->getQuantity());
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
             $subProduct->setPricingScheme($pricingScheme);
@@ -431,6 +433,35 @@ final class SubscriptionService
         );
 
         $subscriptionResponse['plan_id'] = $subscription->getPlanIdValue();
+
+        $this->setProductIdOnSubscriptionItems($subscriptionResponse, $subscription); //@todo Remove when be implemented the "code" on mark1
+    }
+
+    /**
+    * @todo Remove when be implemented the "code" on mark1
+    */
+    private function setProductIdOnSubscriptionItems(&$subscriptionResponse, $subscription)
+    {
+        if ($subscription->getRecurrenceType() == Plan::RECURRENCE_TYPE) {
+            return;
+        }
+
+        foreach ($subscriptionResponse['items'] as &$item) {
+            $item['code'] = $this->getProductCode($item, $subscription);
+        }
+    }
+
+    /**
+     * @todo Remove when be implemented the "code" on mark1
+     */
+    private function getProductCode(&$item, $subscription)
+    {
+        foreach ($subscription->getItems() as $subItem) {
+            if ($item['name'] == $subItem->getName()) {
+                return $subItem->getProductId();
+            }
+        }
+        return null;
     }
 
     /**

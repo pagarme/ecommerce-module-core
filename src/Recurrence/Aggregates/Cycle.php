@@ -24,6 +24,22 @@ class Cycle extends AbstractEntity
     private $cycleEnd;
 
     /**
+     * @var int
+     */
+    private $cycle;
+
+    public function getCycle()
+    {
+        return $this->cycle;
+    }
+
+    public function setCycle($cycle)
+    {
+        $this->cycle = $cycle;
+        return $this;
+    }
+
+    /**
      * @return CycleId
      */
     public function getCycleId()
