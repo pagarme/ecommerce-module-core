@@ -15,6 +15,7 @@ class MoreThanOneRecurrenceProductTest extends TestCase
     public function testShouldReturnErrorIfTheConfigNotAllowHaveMoreThanOneRecurrenceProduct()
     {
         $currentProduct = $this->getCurrentProduct();
+        $currentProduct->getProductSubscriptionSelected()->setProductId(10);
         $productListInCart = $this->getProductListInCart();
 
         $errorMessage = "You cant add more than one recurrence product on the same shopping cart";
@@ -25,9 +26,23 @@ class MoreThanOneRecurrenceProductTest extends TestCase
             $currentProduct,
             $productListInCart
         );
-
         $this->assertNotEmpty($rule->getError());
         $this->assertEquals($errorMessage, $rule->getError());
+    }
+
+    public function testShouldBeAbleToAddTheSameProductMoreThanOneTime()
+    {
+        $currentProduct = $this->getCurrentProduct();
+        $productListInCart = $this->getProductListInCart();
+
+        $recurrenceConfigMock = $this->getRecurrenceConfig(false);
+
+        $rule = new MoreThanOneRecurrenceProduct($recurrenceConfigMock);
+        $rule->run(
+            $currentProduct,
+            $productListInCart
+        );
+        $this->assertEmpty($rule->getError());
     }
 
     public function testShouldNotReturnErrorBecauseTheConfigAllowHaveMoreThanOneRecurrenceProduct()
