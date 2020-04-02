@@ -321,9 +321,11 @@ final class OrderHandler extends AbstractResponseHandler
             if ($lastTransaction === null) {
                 continue;
             }
+
             if (
-                !$lastTransaction->getTransactionType()->equals(
-                    TransactionType::creditCard()
+                !(
+                    $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
+                    $lastTransaction->getTransactionType()->equals(TransactionType::voucher())
                 )
             ) {
                 continue; //save only credit card transactions;
