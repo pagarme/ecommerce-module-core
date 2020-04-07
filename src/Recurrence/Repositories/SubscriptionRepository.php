@@ -276,6 +276,11 @@ class SubscriptionRepository extends AbstractRepository
 
         $subscriptionItemFactory = new SubscriptionItemRepository();
         $subscriptionItems = $subscriptionItemFactory->findBySubscriptionId($subscription->getMundipaggId());
+
+        if ($subscriptionItems === null) {
+            return $subscription;
+        }
+
         foreach ($subscriptionItems as $subscriptionItem) {
             $subscription->addItem($subscriptionItem);
         }
