@@ -24,6 +24,27 @@ class RecurrenceConfig extends AbstractValueObject
     /** @var string */
     private $conflictMessageRecurrenceProductWithRecurrenceProduct;
 
+    /** @var bool */
+    private $decreaseStock;
+
+    /**
+     * @return bool
+     */
+    public function isDecreaseStock()
+    {
+        return $this->decreaseStock;
+    }
+
+    /**
+     * @param bool $decreaseStock
+     * @return RecurrenceConfig
+     */
+    public function setDecreaseStock($decreaseStock)
+    {
+        $this->decreaseStock = $decreaseStock;
+        return $this;
+    }
+
     /**
      * @return bool
      */
@@ -177,6 +198,8 @@ class RecurrenceConfig extends AbstractValueObject
 
         $obj->conflictMessageRecurrenceProductWithRecurrenceProduct =
             $this->getConflictMessageRecurrenceProductWithRecurrenceProduct();
+
+        $obj->decreaseStock = $this->isDecreaseStock();
 
         return $obj;
     }
