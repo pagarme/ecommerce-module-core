@@ -11,6 +11,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\DebitConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
@@ -136,6 +137,9 @@ final class Configuration extends AbstractEntity
     /** @var VoucherConfig */
     private $voucherConfig;
 
+    /** @var DebitConfig */
+    private $debitConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -167,6 +171,22 @@ final class Configuration extends AbstractEntity
     public function setRecurrenceConfig(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
+    }
+
+    /**
+     * @return DebitConfig
+     */
+    public function getDebitConfig()
+    {
+        return $this->debitConfig;
+    }
+
+    /**
+     * @param DebitConfig $debitConfig
+     */
+    public function setDebitConfig(DebitConfig $debitConfig)
+    {
+        $this->debitConfig = $debitConfig;
     }
 
     /**
@@ -656,7 +676,8 @@ final class Configuration extends AbstractEntity
             "inheritAll" => $this->isInheritedAll(),
             "recurrenceConfig" => $this->getRecurrenceConfig(),
             "sendMail" => $this->isSendMailEnabled(),
-            "voucherConfig" => $this->getVoucherConfig()
+            "voucherConfig" => $this->getVoucherConfig(),
+            "debitConfig" => $this->getDebitConfig()
         ];
     }
 
