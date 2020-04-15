@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Kernel\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Factories\Configurations\DebitConfigFactory;
 use Mundipagg\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
 use Mundipagg\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
@@ -204,6 +205,13 @@ class ConfigurationFactory implements FactoryInterface
             $config->setVoucherConfig(
                 (new VoucherConfigFactory)
                 ->createFromDbData($data->voucherConfig)
+            );
+        }
+
+        if (!empty($data->debitConfig)) {
+            $config->setDebitConfig(
+                (new DebitConfigFactory)
+                    ->createFromDbData($data->debitConfig)
             );
         }
 
