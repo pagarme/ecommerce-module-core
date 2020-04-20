@@ -53,10 +53,29 @@ class PlanService
     {
         $createPlanRequest = $plan->convertToSdkRequest();
         $planController = $this->mundipaggApi->getPlans();
-        $result = $planController->createPlan($createPlanRequest);
-        $this->setItemsId($plan, $result);
 
-        return $result;
+        try {
+            $logService = $this->getLogService();
+            $logService->info(
+                'Create plan request: ' .
+                json_encode($createPlanRequest, JSON_PRETTY_PRINT)
+            );
+
+            $result = $planController->createPlan($createPlanRequest);
+
+            $logService->info(
+                'Create plan response: ' .
+                json_encode($result, JSON_PRETTY_PRINT)
+            );
+
+            $this->setItemsId($plan, $result);
+
+            return $result;
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+
     }
 
     public function updatePlanAtMundipagg(Plan $plan)
