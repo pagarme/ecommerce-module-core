@@ -7,7 +7,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 
-final class NewCreditCardPayment extends AbstractCreditCardPayment
+class NewCreditCardPayment extends AbstractCreditCardPayment
 {
     /** @var bool */
     private $saveOnSuccess;
