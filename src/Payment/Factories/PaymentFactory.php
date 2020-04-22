@@ -11,6 +11,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
@@ -40,6 +41,7 @@ final class PaymentFactory
             'createCreditCardPayments',
             'createBoletoPayments',
             'createVoucherPayments',
+            'createDebitCardPayments',
         ];
 
         $this->moduleConfig = MPSetup::getModuleConfiguration();
@@ -70,41 +72,75 @@ final class PaymentFactory
             return [];
         }
 
-        $capture = $this->moduleConfig->isCapture();
-
         $cardsData = $data->$cardDataIndex;
 
         $payments = [];
         foreach ($cardsData as $cardData) {
-            $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
-
-            if ($payment === null) {
-                continue;
-            }
-
-            $customer = $this->createCustomer($cardData);
-            if ($customer !== null) {
-                $payment->setCustomer($customer);
-            }
-
-            $brand = $cardData->brand;
-            $payment->setBrand(CardBrand::$brand());
-
-            $payment->setCapture($capture);
-            $payment->setAmount($cardData->amount);
-            $payment->setInstallments($cardData->installments);
-
-            //setting amount with interest
-            $payment->setAmount(
-                $this->getAmountWithInterestForCreditCard($payment)
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $this->moduleConfig
             );
-
-            $payment->setStatementDescriptor($this->cardStatementDescriptor);
-
-            $payments[] = $payment;
         }
 
         return $payments;
+    }
+
+    private function createDebitCardPayments($data)
+    {
+        $cardDataIndex = NewDebitCardPayment::getBaseCode();
+
+        if (!isset($data->$cardDataIndex)) {
+            return [];
+        }
+
+        $config = $this->moduleConfig->getDebitConfig();
+        $cardsData = $data->$cardDataIndex;
+
+        $payments = [];
+        foreach ($cardsData as $cardData) {
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $config
+            );
+        }
+
+        return $payments;
+    }
+
+    private function createBasePayments(
+        $cardData,
+        $cardDataIndex,
+        $config
+    )
+    {
+        $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
+
+        if ($payment === null) {
+            return;
+        }
+
+        $customer = $this->createCustomer($cardData);
+        if ($customer !== null) {
+            $payment->setCustomer($customer);
+        }
+
+        $brand = $cardData->brand;
+        $payment->setBrand(CardBrand::$brand());
+
+        $payment->setAmount($cardData->amount);
+        $payment->setInstallments($cardData->installments);
+
+        //setting amount with interest
+        $payment->setAmount(
+            $this->getAmountWithInterestForCreditCard($payment)
+        );
+
+        $payment->setCapture($config->isCapture());
+        $payment->setStatementDescriptor($config->getCardStatementDescriptor());
+
+        return $payment;
     }
 
     private function createVoucherPayments($data)
@@ -115,35 +151,18 @@ final class PaymentFactory
             return [];
         }
 
-        $capture = $this->moduleConfig
-            ->getVoucherConfig()
-            ->isCapture();
+        $config = $this->moduleConfig
+            ->getVoucherConfig();
 
         $cardsData = $data->$cardDataIndex;
 
         $payments = [];
         foreach ($cardsData as $cardData) {
-            $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
-
-            if ($payment === null) {
-                continue;
-            }
-
-            $customer = $this->createCustomer($cardData);
-            if ($customer !== null) {
-                $payment->setCustomer($customer);
-            }
-
-            $brand = $cardData->brand;
-            $payment->setBrand(CardBrand::$brand());
-
-            $payment->setCapture($capture);
-            $payment->setAmount($cardData->amount);
-            $payment->setInstallments($cardData->installments);
-
-            $payment->setStatementDescriptor($this->cardStatementDescriptor);
-
-            $payments[] = $payment;
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $config
+            );
         }
 
         return $payments;
@@ -264,9 +283,16 @@ final class PaymentFactory
      */
     private function getNewPaymentMethod($method)
     {
-        if ($method == PaymentMethod::CREDIT_CARD) {
-            return new NewCreditCardPayment();
+        $payments = [
+            PaymentMethod::CREDIT_CARD => new NewCreditCardPayment(),
+            PaymentMethod::VOUCHER => new NewVoucherPayment(),
+            PaymentMethod::DEBIT_CARD => new NewDebitCardPayment(),
+        ];
+
+        if (!empty($payments[$method])) {
+            return $payments[$method];
         }
-        return new NewVoucherPayment();
+
+        return new NewCreditCardPayment();
     }
 }
