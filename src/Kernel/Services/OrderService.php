@@ -331,6 +331,10 @@ final class OrderService
      */
     private function persistListChargeFailed($response)
     {
+        if (empty($response['charges'])) {
+            return;
+        }
+
         $chargeFactory = new ChargeFactory();
         $chargeService = new ChargeService();
 
