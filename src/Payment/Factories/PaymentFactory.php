@@ -134,7 +134,10 @@ final class PaymentFactory
 
         //setting amount with interest
         $payment->setAmount(
-            $this->getAmountWithInterestForCreditCard($payment)
+            $this->getAmountWithInterestForCreditCard(
+                $payment,
+                $config
+            )
         );
 
         $payment->setCapture($config->isCapture());
@@ -181,7 +184,8 @@ final class PaymentFactory
     }
 
     private function getAmountWithInterestForCreditCard(
-        AbstractCreditCardPayment $payment
+        AbstractCreditCardPayment $payment,
+        $config
     )
     {
         $installmentService = new InstallmentService();
@@ -189,7 +193,8 @@ final class PaymentFactory
         $validInstallments = $installmentService->getInstallmentsFor(
             null,
             $payment->getBrand(),
-            $payment->getAmount()
+            $payment->getAmount(),
+            $config
         );
 
         foreach ($validInstallments as $validInstallment) {
