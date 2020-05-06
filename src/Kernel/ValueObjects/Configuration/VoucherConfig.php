@@ -126,7 +126,7 @@ class VoucherConfig extends AbstractValueObject
      *
      * @return CardConfig[]
      */
-    protected function getCardConfigs()
+    public function getCardConfigs()
     {
         return $this->cardConfigs !== null ? $this->cardConfigs : [];
     }
