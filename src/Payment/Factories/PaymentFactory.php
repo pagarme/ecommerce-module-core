@@ -19,6 +19,7 @@ use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedDebitCardPayment;
 
 final class PaymentFactory
 {
@@ -274,12 +275,21 @@ final class PaymentFactory
 
     /**
      * @param $method
-     * @return SavedCreditCardPayment
+     * @return SavedCreditCardPayment|SavedDebitCardPayment
      * @todo Add voucher saved payment
      */
     private function getSavedPaymentMethod($method)
     {
-        return new SavedCreditCardPayment();
+        $payments = [
+            PaymentMethod::CREDIT_CARD => new SavedCreditCardPayment(),
+            PaymentMethod::DEBIT_CARD => new SavedDebitCardPayment(),
+        ];
+
+        if (isset($payments[$method])) {
+            return $payments[$method];
+        }
+
+        throw new \Exception("payment method saved not found", 400);
     }
 
     /**
