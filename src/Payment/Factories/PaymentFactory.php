@@ -14,11 +14,13 @@ use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedDebitCardPayment;
 
 final class PaymentFactory
 {
@@ -251,8 +253,9 @@ final class PaymentFactory
                 $payment->setSaveOnSuccess($data->saveOnSuccess);
             }
             return $payment;
-        } catch (\Throwable $e)
-        {
+        } catch(\Exception $e) {
+
+        } catch (\Throwable $e) {
 
         }
 
@@ -260,12 +263,18 @@ final class PaymentFactory
             $cardId = new CardId($identifier);
             $payment =  $this->getSavedPaymentMethod($method);
             $payment->setIdentifier($cardId);
+
+            if (isset($data->cvvCard)) {
+                $payment->setCvv($data->cvvCard);
+            }
+
             $owner = new CustomerId($data->customerId);
             $payment->setOwner($owner);
 
             return $payment;
-        } catch (\Throwable $e)
-        {
+        } catch(\Exception $e) {
+
+        } catch (\Throwable $e) {
 
         }
 
@@ -274,12 +283,22 @@ final class PaymentFactory
 
     /**
      * @param $method
-     * @return SavedCreditCardPayment
+     * @return SavedCreditCardPayment|SavedVoucherCardPayment|SavedDebitCardPayment
      * @todo Add voucher saved payment
      */
     private function getSavedPaymentMethod($method)
     {
-        return new SavedCreditCardPayment();
+        $payments = [
+            PaymentMethod::CREDIT_CARD => new SavedCreditCardPayment(),
+            PaymentMethod::DEBIT_CARD => new SavedDebitCardPayment(),
+            PaymentMethod::VOUCHER => new SavedVoucherCardPayment(),
+        ];
+
+        if (isset($payments[$method])) {
+            return $payments[$method];
+        }
+
+        throw new \Exception("payment method saved not found", 400);
     }
 
     /**

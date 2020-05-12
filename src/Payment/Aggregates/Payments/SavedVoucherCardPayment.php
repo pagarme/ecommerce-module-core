@@ -6,12 +6,12 @@ use MundiAPILib\Models\CreateCreditCardPaymentRequest;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
+use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
-final class SavedCreditCardPayment extends AbstractCreditCardPayment
+final class SavedVoucherCardPayment extends AbstractCreditCardPayment
 {
     /** @var CustomerId */
     private $owner;
-
     private $cvv;
 
     /**
@@ -28,6 +28,16 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
     public function setOwner(CustomerId $owner)
     {
         $this->owner = $owner;
+    }
+
+    public function setCvv($cvv)
+    {
+        $this->cvv = $cvv;
+    }
+
+    public function getCvv()
+    {
+        return $this->cvv;
     }
 
     public function jsonSerialize()
@@ -53,16 +63,6 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
         $this->setIdentifier($cardId);
     }
 
-    public function setCvv($cvv)
-    {
-        $this->cvv = $cvv;
-    }
-
-    public function getCvv()
-    {
-        return $this->cvv;
-    }
-
     /**
      * @return CreateCreditCardPaymentRequest
      */
@@ -70,8 +70,17 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
     {
         $paymentRequest = parent::convertToPrimitivePaymentRequest();
 
+        $card = new \StdClass();
+        $card->cvv = $this->getCvv();
+
+        $paymentRequest->card = $card;
         $paymentRequest->cardId = $this->getIdentifier()->getValue();
 
         return $paymentRequest;
+    }
+
+    static public function getBaseCode()
+    {
+        return PaymentMethod::voucher()->getMethod();
     }
 }

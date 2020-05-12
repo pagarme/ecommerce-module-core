@@ -6,13 +6,12 @@ use MundiAPILib\Models\CreateCreditCardPaymentRequest;
 use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
+use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
-final class SavedCreditCardPayment extends AbstractCreditCardPayment
+final class SavedDebitCardPayment extends AbstractCreditCardPayment
 {
     /** @var CustomerId */
     private $owner;
-
-    private $cvv;
 
     /**
      * @return CustomerId
@@ -53,14 +52,9 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
         $this->setIdentifier($cardId);
     }
 
-    public function setCvv($cvv)
+    static public function getBaseCode()
     {
-        $this->cvv = $cvv;
-    }
-
-    public function getCvv()
-    {
-        return $this->cvv;
+        return PaymentMethod::debitCard()->getMethod();
     }
 
     /**
