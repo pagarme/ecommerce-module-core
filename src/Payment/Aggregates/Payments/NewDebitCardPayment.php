@@ -11,6 +11,15 @@ use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 class NewDebitCardPayment extends NewCreditCardPayment
 {
+    /** @var bool */
+    private $saveOnSuccess;
+
+    public function __construct()
+    {
+        $this->saveOnSuccess = false;
+        parent::__construct();
+    }
+
     static public function getBaseCode()
     {
         return PaymentMethod::debitCard()->getMethod();
@@ -29,5 +38,25 @@ class NewDebitCardPayment extends NewCreditCardPayment
         }
 
         $this->installments = $installments;
+    }
+
+    public function isSaveOnSuccess()
+    {
+        $order = $this->getOrder();
+        if ($order === null) {
+            return false;
+        }
+
+        if (!MPSetup::getModuleConfiguration()->getDebitConfig()->isSaveCards()) {
+            return false;
+        }
+
+        $customer = $this->getCustomer();
+
+        if ($customer === null) {
+            return false;
+        }
+
+        return $this->saveOnSuccess;
     }
 }
