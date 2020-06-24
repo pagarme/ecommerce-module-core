@@ -253,12 +253,12 @@ final class SubscriptionService
 
             $increment = new Increment();
 
-            $amountShipping = 0;
+            $shippingAmount = 0;
             if($order->getShipping() != null) {
-                $amountShipping = $order->getShipping()->getAmount();
+                $shippingAmount = $order->getShipping()->getAmount();
             }
 
-            $increment->setValue($amountShipping);
+            $increment->setValue($shippingAmount);
             $increment->setIncrementType('flat');
             $increment->setCycles($cycles);
 
