@@ -503,7 +503,11 @@ class Subscription extends AbstractEntity
         $subscriptionRequest->boletoDueDays = $this->getBoletoDays();
         $subscriptionRequest->paymentMethod = $this->getPaymentMethod();
         $subscriptionRequest->description = $this->getDescription();
-        $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
+
+        if ($this->getShipping() != null) {
+            $subscriptionRequest->shipping = $this->getShipping()->convertToSDKRequest();
+        }
+
         $subscriptionRequest->statementDescriptor = $this->getStatementDescriptor();
         $subscriptionRequest->discounts = $this->getDiscounts();
         $subscriptionRequest->planId = $this->getPlanIdValue();
