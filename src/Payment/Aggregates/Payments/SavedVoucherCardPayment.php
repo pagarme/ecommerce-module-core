@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use MundiAPILib\Models\CreateCardRequest;
 
 final class SavedVoucherCardPayment extends AbstractCreditCardPayment
 {
@@ -70,8 +71,9 @@ final class SavedVoucherCardPayment extends AbstractCreditCardPayment
     {
         $paymentRequest = parent::convertToPrimitivePaymentRequest();
 
-        $card = new \StdClass();
+        $card = new CreateCardRequest();
         $card->cvv = $this->getCvv();
+        $card->holderDocument = $this->getCustomer()->getDocument();
 
         $paymentRequest->card = $card;
         $paymentRequest->cardId = $this->getIdentifier()->getValue();
