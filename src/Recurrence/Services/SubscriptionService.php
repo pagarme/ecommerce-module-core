@@ -161,7 +161,10 @@ final class SubscriptionService
         $this->fillPlanId($subscription, $plan);
         $this->fillInterval($subscription, $plan);
         $this->fillBoletoData($subscription);
-        $this->fillShipping($subscription, $order);
+
+        if ($order->getShipping() != null) {
+            $this->fillShipping($subscription, $order);
+        }
 
         $subscription->setCode($order->getCode());
         $subscription->setCustomer($order->getCustomer());
@@ -249,7 +252,13 @@ final class SubscriptionService
             $subProduct->setPricingScheme($pricingScheme);
 
             $increment = new Increment();
-            $increment->setValue($order->getShipping()->getAmount());
+
+            $amountShipping = 0;
+            if($order->getShipping() != null) {
+                $amountShipping = $order->getShipping()->getAmount();
+            }
+
+            $increment->setValue($amountShipping);
             $increment->setIncrementType('flat');
             $increment->setCycles($cycles);
 
