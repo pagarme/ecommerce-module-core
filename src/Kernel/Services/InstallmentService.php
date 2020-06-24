@@ -34,8 +34,13 @@ final class InstallmentService
             $amount = $value;
         }
 
+        $installmentsEnabled = false;
         if ($config == null) {
             $config = MPSetup::getModuleConfiguration();
+
+            if ($config->isInstallmentsEnabled()) {
+                $installmentsEnabled = true;
+            }
         }
 
         $useDefaultInstallmentsConfig = $this->getUseDefaultInstallments($config);
@@ -67,6 +72,10 @@ final class InstallmentService
             $i++
         ) {
             $installments[] = new Installment($i, $amount, 0);
+        }
+
+        if (!$installmentsEnabled) {
+            return array_slice($installments, 0, 1);
         }
 
         for (
