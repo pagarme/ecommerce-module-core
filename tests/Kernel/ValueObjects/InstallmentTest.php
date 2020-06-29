@@ -39,8 +39,8 @@ class InstallmentTest extends TestCase
         $base->times = 2;
         $base->baseTotal = 25;
         $base->interest = 0.3;
-        $base->total = 33;
-        $base->value = 17;
+        $base->total = 32.5;
+        $base->value = 16.25;
 
         $installment = new Installment(
             $base->times,

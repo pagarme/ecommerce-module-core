@@ -38,6 +38,14 @@ final class InstallmentService
             $config = MPSetup::getModuleConfiguration();
         }
 
+        $installmentsEnabled = false;
+        if (
+            method_exists($config, 'isInstallmentsEnabled') &&
+            $config->isInstallmentsEnabled()
+        ) {
+            $installmentsEnabled = true;
+        }
+
         $useDefaultInstallmentsConfig = $this->getUseDefaultInstallments($config);
 
         $baseBrand = CardBrand::nobrand();
@@ -67,6 +75,10 @@ final class InstallmentService
             $i++
         ) {
             $installments[] = new Installment($i, $amount, 0);
+        }
+
+        if (!$installmentsEnabled) {
+            return array_slice($installments, 0, 1);
         }
 
         for (

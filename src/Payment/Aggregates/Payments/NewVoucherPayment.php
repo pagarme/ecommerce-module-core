@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use MundiAPILib\Models\CreateCardRequest;
 
 final class NewVoucherPayment extends AbstractCreditCardPayment
 {
@@ -76,13 +77,15 @@ final class NewVoucherPayment extends AbstractCreditCardPayment
     protected function convertToPrimitivePaymentRequest()
     {
         $paymentRequest = parent::convertToPrimitivePaymentRequest();
+        $paymentRequest->card = new CreateCardRequest();
 
+        $paymentRequest->card->holderDocument = $this->getCustomer()->getDocument();
         $paymentRequest->cardToken = $this->getIdentifier()->getValue();
 
         return $paymentRequest;
     }
 
-    static public function getBaseCode()
+    public static function getBaseCode()
     {
         return PaymentMethod::voucher()->getMethod();
     }
