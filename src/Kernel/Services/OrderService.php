@@ -356,4 +356,13 @@ final class OrderService
     {
         return $this->orderRepository->findByMundipaggId($orderId);
     }
+
+    /**
+     * @param string $platformOrderID
+     * @return Order|null
+     */
+    public function getOrderByPlatformId($platformOrderID)
+    {
+        return $this->orderRepository->findByPlatformId($platformOrderID);
+    }
 }
