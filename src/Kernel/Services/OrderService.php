@@ -197,13 +197,16 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            if (!$this->checkResponseStatus($response)) {
-                $this->persistListChargeFailed($response);
+            $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
+            if (!$this->checkResponseStatus($response)) {
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
-                throw new \Exception($message, 400);
+                if (!$forceCreateOrder) {
+                    $this->persistListChargeFailed($response);
+                    throw new \Exception($message, 400);
+                }
             }
 
             $platformOrder->save();
@@ -355,5 +358,14 @@ final class OrderService
     public function getOrderByMundiPaggId(OrderId $orderId)
     {
         return $this->orderRepository->findByMundipaggId($orderId);
+    }
+
+    /**
+     * @param string $platformOrderID
+     * @return Order|null
+     */
+    public function getOrderByPlatformId($platformOrderID)
+    {
+        return $this->orderRepository->findByPlatformId($platformOrderID);
     }
 }
