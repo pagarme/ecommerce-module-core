@@ -250,7 +250,8 @@ class ChargeService
             $listCharge,
             function (Charge $charge) {
                 return (
-                    ($charge->getStatus()->getStatus() == 'failed')
+                    ($charge->getStatus()->getStatus() == 'failed') ||
+                    ($charge->getStatus()->getStatus() == 'canceled')
                 );
             }
         );
@@ -364,6 +365,7 @@ class ChargeService
     public function save(Charge $charge)
     {
         $chargeRepository = new ChargeRepository();
+
         try {
             $chargeRepository->save($charge);
         } catch (Exception $exception) {

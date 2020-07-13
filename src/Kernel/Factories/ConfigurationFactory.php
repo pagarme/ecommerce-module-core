@@ -87,6 +87,7 @@ class ConfigurationFactory implements FactoryInterface
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
+        $config->setCreateOrderEnabled($data->createOrder);
 
         if (!empty($data->sendMail)) {
             $config->setSendMailEnabled($data->sendMail);
