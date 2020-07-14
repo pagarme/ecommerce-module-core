@@ -250,8 +250,7 @@ class ChargeService
             $listCharge,
             function (Charge $charge) {
                 return (
-                    ($charge->getStatus()->getStatus() == 'failed') ||
-                    ($charge->getStatus()->getStatus() == 'canceled')
+                    ($charge->getStatus()->getStatus() == 'failed')
                 );
             }
         );
