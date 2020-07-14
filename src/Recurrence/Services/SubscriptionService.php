@@ -79,9 +79,7 @@ final class SubscriptionService
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
-                if (!$forceCreateOrder) {
-                    throw new \Exception($message, 400);
-                }
+                throw new \Exception($message, 400);
             }
 
             $this->getSubscriptionMissingData($subscriptionResponse, $subscription);
@@ -102,7 +100,9 @@ final class SubscriptionService
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
-                throw new \Exception($message, 400);
+                if (!$forceCreateOrder) {
+                    throw new \Exception($message, 400);
+                }
             }
 
             $platformOrder->save();
