@@ -404,7 +404,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
-    public function isCreateOrderEnabled()
+    protected function isCreateOrderEnabled()
     {
         return $this->createOrderEnabled;
     }
