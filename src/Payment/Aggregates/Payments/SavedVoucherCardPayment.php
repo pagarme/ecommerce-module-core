@@ -87,7 +87,7 @@ final class SavedVoucherCardPayment extends AbstractCreditCardPayment
         return PaymentMethod::voucher()->getMethod();
     }
 
-    public function setInstallments(int $installments)
+    public function setInstallments($installments)
     {
         if ($installments < 1) {
             throw new InvalidParamException(
