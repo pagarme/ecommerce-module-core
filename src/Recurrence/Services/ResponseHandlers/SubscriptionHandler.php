@@ -102,6 +102,37 @@ final class SubscriptionHandler extends AbstractResponseHandler
         return true;
     }
 
+    private function handleSubscriptionStatusFailed(Subscription $subscription)
+    {
+        $order = $this->order;
+
+        $order->setStatus(OrderStatus::canceled());
+
+        $platformOrder = $subscription->getPlatformOrder();
+        $platformOrder->setState(OrderState::canceled());
+        $platformOrder->save();
+
+        $i18n = new LocalizationService();
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard(
+                'Subscription payment failed at Mundipagg. Id: %s',
+                $subscription->getMundipaggId()->getValue()
+            )
+        );
+
+        $subscriptionRepository = new SubscriptionRepository();
+        $subscriptionRepository->save($subscription);
+
+        $orderService = new OrderService();
+        $orderService->syncPlatformWith($order);
+
+        $platformOrder->addHistoryComment(
+            $i18n->getDashboard('Subscription canceled.')
+        );
+
+        return true;
+    }
+
     private function handleSubscriptionStatus(Order $order)
     {
         $platformOrder = $order->getPlatformOrder();

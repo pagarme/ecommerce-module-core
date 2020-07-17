@@ -49,7 +49,7 @@ abstract class AbstractEntity implements JsonSerializable
 
     /**
      *
-     * @return Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
+     * @return \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
      */
     public function getMundipaggId()
     {
