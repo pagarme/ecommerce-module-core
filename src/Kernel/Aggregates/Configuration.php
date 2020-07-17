@@ -134,6 +134,11 @@ final class Configuration extends AbstractEntity
      */
     private $sendMailEnabled;
 
+    /**
+     * @var bool
+     */
+    private $createOrderEnabled;
+
     /** @var VoucherConfig */
     private $voucherConfig;
 
@@ -330,6 +335,19 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @param $createOrderEnabled
+     * @return $this
+     */
+    public function setCreateOrderEnabled($createOrderEnabled)
+    {
+        $this->createOrderEnabled = filter_var(
+            $createOrderEnabled,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this;
+    }
+
+    /**
      *
      * @param  bool $twoCreditCardsEnabled
      * @return Configuration
@@ -381,6 +399,14 @@ final class Configuration extends AbstractEntity
     public function isSendMailEnabled()
     {
         return $this->sendMailEnabled;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCreateOrderEnabled()
+    {
+        return $this->createOrderEnabled;
     }
 
     /**
@@ -676,6 +702,7 @@ final class Configuration extends AbstractEntity
             "inheritAll" => $this->isInheritedAll(),
             "recurrenceConfig" => $this->getRecurrenceConfig(),
             "sendMail" => $this->isSendMailEnabled(),
+            "createOrder" => $this->isCreateOrderEnabled(),
             "voucherConfig" => $this->getVoucherConfig(),
             "debitConfig" => $this->getDebitConfig()
         ];

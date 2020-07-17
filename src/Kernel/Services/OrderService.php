@@ -197,13 +197,17 @@ final class OrderService
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            if (!$this->checkResponseStatus($response)) {
-                $this->persistListChargeFailed($response);
+            $originalResponse = $response;
+            $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
+            if (!$this->checkResponseStatus($response)) {
                 $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
 
-                throw new \Exception($message, 400);
+                if (!$forceCreateOrder) {
+                    $this->persistListChargeFailed($response);
+                    throw new \Exception($message, 400);
+                }
             }
 
             $platformOrder->save();
@@ -217,6 +221,10 @@ final class OrderService
             $handler->handle($response, $order);
 
             $platformOrder->save();
+
+            if ($forceCreateOrder && !$this->checkResponseStatus($originalResponse)) {
+                throw new \Exception("Can't create order.", 400);
+            }
 
             return [$response];
         } catch (\Exception $e) {

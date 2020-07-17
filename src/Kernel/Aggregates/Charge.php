@@ -123,7 +123,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
             $this->setRefundedAmount($amountRefunded);
 
             //if all the paid amount was canceled, the charge should be canceled.
-            if ($amount === $this->paidAmount) {
+            if ($amount == $this->paidAmount) {
                 $this->status = ChargeStatus::canceled();
             }
 

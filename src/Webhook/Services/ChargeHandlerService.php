@@ -88,7 +88,7 @@ final class ChargeHandlerService
 
         $listResponse = [];
         foreach ($chargeListPaid as $charge) {
-            $listResponse[] = $chargeService->cancelJustAtMundiPagg($charge);
+            $listResponse[] = ($chargeService->cancelJustAtMundiPagg($charge))->getMessage();
         }
 
         return $listResponse;

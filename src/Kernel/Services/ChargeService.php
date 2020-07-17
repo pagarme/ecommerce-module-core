@@ -364,6 +364,7 @@ class ChargeService
     public function save(Charge $charge)
     {
         $chargeRepository = new ChargeRepository();
+
         try {
             $chargeRepository->save($charge);
         } catch (Exception $exception) {
