@@ -32,6 +32,6 @@ trait WithAmountTrait
                 $amount
             );
         }
-        $this->amount = $amount;
+        $this->amount = (int) $amount;
     }
 }
