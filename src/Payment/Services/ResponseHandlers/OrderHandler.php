@@ -97,6 +97,14 @@ final class OrderHandler extends AbstractResponseHandler
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
+        foreach ($order->getCharges() as $key => $charge) {
+            $position = $key + 1;
+            $platformOrder->setAdditionalInformation(
+                "cc_tid_{$position}",
+                $charge->getLastTransaction()->getAcquirerTid()
+            );
+        }
+
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
                 'Order created at Mundipagg. Id: %s',

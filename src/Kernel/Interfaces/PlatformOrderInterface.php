@@ -23,6 +23,13 @@ interface PlatformOrderInterface
     public function getStatus();
     public function loadByIncrementId($incrementId);
     public function addHistoryComment($message, $notifyCustomer);
+
+    /**
+     * @param $name
+     * @param $value
+     * @return void
+     */
+    public function setAdditionalInformation($name, $value);
     public function getHistoryCommentCollection();
     public function setIsCustomerNotified();
     public function canInvoice();
