@@ -98,9 +98,11 @@ final class OrderHandler extends AbstractResponseHandler
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
         foreach ($order->getCharges() as $key => $charge) {
-            $position = $key + 1;
+
+            $nameForTwoCards = ['first', 'second'];
+            $name = $nameForTwoCards[$key];
             $platformOrder->setAdditionalInformation(
-                "cc_tid_{$position}",
+                "cc_tid_{$name}",
                 $charge->getLastTransaction()->getAcquirerTid()
             );
         }
@@ -114,6 +116,30 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         return true;
+    }
+
+    private function setTidAndNsuAdditionalInformation($charges)
+    {
+        foreach ($charges as $key => $charge) {
+            $nameForTwoCards = ['first', 'second'];
+            $name = $nameForTwoCards[$key];
+
+
+            $platformOrder->setAdditionalInformation(
+                "cc_tid_{$name}",
+                $charge->getLastTransaction()->getAcquirerTid()
+            );
+
+            $platformOrder->setAdditionalInformation(
+                "cc_nsu_authorization_{$name}",
+                $charge->getLastTransaction()->getAcquirerTid()
+            );
+
+            $platformOrder->setAdditionalInformation(
+                "cc_nsu_capture_{$name}",
+                $charge->getLastTransaction()->getAcquirerTid()
+            );
+        }
     }
 
     /**
