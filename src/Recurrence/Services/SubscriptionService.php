@@ -73,13 +73,13 @@ final class SubscriptionService
             //Send through the APIService to mundipagg
             $subscriptionResponse = $this->apiService->createSubscription($subscription);
 
+            $i18n = new LocalizationService();
+
             $originalSubscriptionResponse = $subscriptionResponse;
             $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
             if ($subscriptionResponse === null) {
-                $i18n = new LocalizationService();
                 $message = $i18n->getDashboard("Can't create order.");
-
                 throw new \Exception($message, 400);
             }
 
@@ -98,10 +98,8 @@ final class SubscriptionService
                     $this->cancelSubscriptionAtMundipagg($failedSubscription);
                 }
 
-                $i18n = new LocalizationService();
-                $message = $i18n->getDashboard("Can't create order.");
-
                 if (!$forceCreateOrder) {
+                    $message = $i18n->getDashboard("Can't create order.");
                     throw new \Exception($message, 400);
                 }
             }
@@ -120,7 +118,8 @@ final class SubscriptionService
                 $forceCreateOrder &&
                 !$this->checkResponseStatus($originalSubscriptionResponse)
             ) {
-                throw new \Exception("Can't create order.", 400);
+                $message = $i18n->getDashboard("Can't create order.");
+                throw new \Exception($message, 400);
             }
 
             return [$response];

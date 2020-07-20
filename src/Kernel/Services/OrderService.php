@@ -193,6 +193,8 @@ final class OrderService
             //build PaymentOrder based on platformOrder
             $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
 
+            $i18n = new LocalizationService();
+
             //Send through the APIService to mundipagg
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
@@ -200,14 +202,11 @@ final class OrderService
             $originalResponse = $response;
             $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
-            if (!$this->checkResponseStatus($response)) {
-                $i18n = new LocalizationService();
-                $message = $i18n->getDashboard("Can't create order.");
+            if (!$forceCreateOrder && !$this->checkResponseStatus($response)) {
+                $this->persistListChargeFailed($response);
 
-                if (!$forceCreateOrder) {
-                    $this->persistListChargeFailed($response);
-                    throw new \Exception($message, 400);
-                }
+                $message = $i18n->getDashboard("Can't create order.");
+                throw new \Exception($message, 400);
             }
 
             $platformOrder->save();
@@ -223,7 +222,8 @@ final class OrderService
             $platformOrder->save();
 
             if ($forceCreateOrder && !$this->checkResponseStatus($originalResponse)) {
-                throw new \Exception("Can't create order.", 400);
+                $message = $i18n->getDashboard("Can't create order.");
+                throw new \Exception($message, 400);
             }
 
             return [$response];
