@@ -75,7 +75,6 @@ final class SubscriptionService
 
             $i18n = new LocalizationService();
 
-            $originalSubscriptionResponse = $subscriptionResponse;
             $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
             if ($subscriptionResponse === null) {
@@ -84,6 +83,8 @@ final class SubscriptionService
             }
 
             $this->getSubscriptionMissingData($subscriptionResponse, $subscription);
+
+            $originalSubscriptionResponse = $subscriptionResponse;
 
             $subscriptionFactory = new SubscriptionFactory();
             if (!$this->checkResponseStatus($subscriptionResponse)) {
