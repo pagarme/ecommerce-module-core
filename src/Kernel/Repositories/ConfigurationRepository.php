@@ -13,6 +13,15 @@ class ConfigurationRepository extends AbstractRepository
     protected function create(AbstractEntity &$object)
     {
         $jsonEncoded = json_encode($object);
+
+        $jsonEncoded = trim(
+            preg_replace(
+                '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m',
+                ' ',
+                $jsonEncoded
+            )
+        );
+
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);
@@ -36,6 +45,15 @@ class ConfigurationRepository extends AbstractRepository
         }
 
         $jsonEncoded = json_encode($object);
+
+        $jsonEncoded = trim(
+            preg_replace(
+                '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m',
+                ' ',
+                $jsonEncoded
+            )
+        );
+
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);
