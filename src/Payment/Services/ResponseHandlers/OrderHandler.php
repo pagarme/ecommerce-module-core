@@ -99,7 +99,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
-        $this->addAdditionalInformation($order->getCharges(), $platformOrder);
+        $platformOrder->addAdditionalInformation($order->getCharges());
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
@@ -168,7 +168,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
-        $this->addAdditionalInformation($order->getCharges(), $platformOrder);
+        $platformOrder->addAdditionalInformation($order->getCharges());
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard('Order paid.') .
@@ -366,28 +366,6 @@ final class OrderHandler extends AbstractResponseHandler
                     );
 
                 }
-            }
-        }
-    }
-
-    /**
-     * @param Charge[] $charges
-     * @param PlatformOrderInterface $platformOrder
-     */
-    private function addAdditionalInformation(
-        array $charges,
-        PlatformOrderInterface $platformOrder
-    ) {
-        $chargesAddtionalInformation = $platformOrder->extractAdditionalChargeInformation(
-            $charges
-        );
-
-        foreach ($chargesAddtionalInformation as $chargesInformation) {
-            foreach ($chargesInformation as $propertyName => $value) {
-                $platformOrder->setAdditionalInformation(
-                    $propertyName,
-                    $value
-                );
             }
         }
     }

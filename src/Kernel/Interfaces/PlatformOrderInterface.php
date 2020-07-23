@@ -34,9 +34,15 @@ interface PlatformOrderInterface
 
     /**
      * @param Charge[] $charges
-     * @return array
+     * @return array[['key' => value]]
      */
     public function extractAdditionalChargeInformation(array $charges);
+
+    /**
+     * @param Charge[] $charges
+     * @return mixed
+     */
+    public function addAdditionalInformation(array $charges);
     public function getHistoryCommentCollection();
     public function setIsCustomerNotified();
     public function canInvoice();
