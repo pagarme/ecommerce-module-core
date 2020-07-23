@@ -18,6 +18,7 @@ use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -370,7 +371,7 @@ final class OrderHandler extends AbstractResponseHandler
     }
 
     /**
-     * @param \Mundipagg\Core\Kernel\Aggregates\Charge[] $charges
+     * @param Charge[] $charges
      * @param PlatformOrderInterface $platformOrder
      */
     private function addAdditionalInformation(
