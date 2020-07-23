@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
@@ -97,15 +98,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
-        foreach ($order->getCharges() as $key => $charge) {
-
-            $nameForTwoCards = ['first', 'second'];
-            $name = $nameForTwoCards[$key];
-            $platformOrder->setAdditionalInformation(
-                "cc_tid_{$name}",
-                $charge->getLastTransaction()->getAcquirerTid()
-            );
-        }
+        $this->addAdditionalInformation($order->getCharges(), $platformOrder);
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
@@ -116,30 +109,6 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         return true;
-    }
-
-    private function setTidAndNsuAdditionalInformation($charges)
-    {
-        foreach ($charges as $key => $charge) {
-            $nameForTwoCards = ['first', 'second'];
-            $name = $nameForTwoCards[$key];
-
-
-            $platformOrder->setAdditionalInformation(
-                "cc_tid_{$name}",
-                $charge->getLastTransaction()->getAcquirerTid()
-            );
-
-            $platformOrder->setAdditionalInformation(
-                "cc_nsu_authorization_{$name}",
-                $charge->getLastTransaction()->getAcquirerTid()
-            );
-
-            $platformOrder->setAdditionalInformation(
-                "cc_nsu_capture_{$name}",
-                $charge->getLastTransaction()->getAcquirerTid()
-            );
-        }
     }
 
     /**
@@ -197,6 +166,8 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+        $this->addAdditionalInformation($order->getCharges(), $platformOrder);
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard('Order paid.') .
@@ -269,7 +240,7 @@ final class OrderHandler extends AbstractResponseHandler
             $historyData[$charge->getMundipaggId()->getValue()] = $lastTransaction->getAcquirerMessage();
 
         }
-        $acquirerMessages = rtrim($acquirerMessages, ', ') ;
+        $acquirerMessages = rtrim($acquirerMessages, ', ');
 
         $this->logService->orderInfo(
             $order->getCode(),
@@ -327,7 +298,7 @@ final class OrderHandler extends AbstractResponseHandler
         $customer = $createdOrder->getCustomer();
 
         //save only registered customers;
-        if(empty($customer) || $customer->getCode() === null) {
+        if (empty($customer) || $customer->getCode() === null) {
             return;
         }
 
@@ -357,11 +328,11 @@ final class OrderHandler extends AbstractResponseHandler
             }
 
             if (
-                !(
-                    $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
-                    $lastTransaction->getTransactionType()->equals(TransactionType::voucher()) ||
-                    $lastTransaction->getTransactionType()->equals(TransactionType::debitCard())
-                )
+            !(
+                $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
+                $lastTransaction->getTransactionType()->equals(TransactionType::voucher()) ||
+                $lastTransaction->getTransactionType()->equals(TransactionType::debitCard())
+            )
             ) {
                 continue; //save only credit card transactions;
             }
@@ -394,6 +365,28 @@ final class OrderHandler extends AbstractResponseHandler
                     );
 
                 }
+            }
+        }
+    }
+
+    /**
+     * @param \Mundipagg\Core\Kernel\Aggregates\Charge[] $charges
+     * @param PlatformOrderInterface $platformOrder
+     */
+    private function addAdditionalInformation(
+        array $charges,
+        PlatformOrderInterface $platformOrder
+    ) {
+        $chargesAddtionalInformation = $platformOrder->extractAdditionalChargeInformation(
+            $charges
+        );
+
+        foreach ($chargesAddtionalInformation as $chargesInformation) {
+            foreach ($chargesInformation as $propertyName => $value) {
+                $platformOrder->setAdditionalInformation(
+                    $propertyName,
+                    $value
+                );
             }
         }
     }

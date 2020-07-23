@@ -9,6 +9,7 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Item;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Mundipagg\Core\Payment\Aggregates\Shipping;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
 
 interface PlatformOrderInterface
 {
@@ -30,6 +31,12 @@ interface PlatformOrderInterface
      * @return void
      */
     public function setAdditionalInformation($name, $value);
+
+    /**
+     * @param Charge[] $charges
+     * @return array
+     */
+    public function extractAdditionalChargeInformation(array $charges);
     public function getHistoryCommentCollection();
     public function setIsCustomerNotified();
     public function canInvoice();
@@ -38,6 +45,11 @@ interface PlatformOrderInterface
     public function isCanceled();
     public function setPlatformOrder($platformOrder);
     public function getPlatformOrder();
+
+    /**
+     * @return string
+     */
+    public function getPaymentMethodPlatform();
     public function getIncrementId();
     public function payAmount($amount);
     public function refundAmount($amountToRefund);
