@@ -77,8 +77,6 @@ final class NewVoucherPayment extends AbstractCreditCardPayment
     protected function convertToPrimitivePaymentRequest()
     {
         $paymentRequest = parent::convertToPrimitivePaymentRequest();
-        $paymentRequest->card = new CreateCardRequest();
-
         $paymentRequest->card->holderDocument = $this->getCustomer()->getDocument();
         $paymentRequest->cardToken = $this->getIdentifier()->getValue();
 

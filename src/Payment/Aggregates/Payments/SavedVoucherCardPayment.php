@@ -72,11 +72,8 @@ final class SavedVoucherCardPayment extends AbstractCreditCardPayment
     {
         $paymentRequest = parent::convertToPrimitivePaymentRequest();
 
-        $card = new CreateCardRequest();
-        $card->cvv = $this->getCvv();
-        $card->holderDocument = $this->getCustomer()->getDocument();
-
-        $paymentRequest->card = $card;
+        $paymentRequest->card->cvv = $this->getCvv();
+        $paymentRequest->card->holderDocument = $this->getCustomer()->getDocument();
         $paymentRequest->cardId = $this->getIdentifier()->getValue();
 
         return $paymentRequest;
