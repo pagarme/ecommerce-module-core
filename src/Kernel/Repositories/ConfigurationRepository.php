@@ -16,7 +16,7 @@ class ConfigurationRepository extends AbstractRepository
      * @param string $jsonEncoded
      * @return string
      */
-    private function treatJsonString($jsonEncoded)
+    private function removeSpecialCharacters($jsonEncoded)
     {
         return trim(
             preg_replace(
@@ -31,7 +31,7 @@ class ConfigurationRepository extends AbstractRepository
     {
         $jsonEncoded = json_encode($object);
 
-        $jsonEncoded = $this->treatJsonString($jsonEncoded);
+        $jsonEncoded = $this->removeSpecialCharacters($jsonEncoded);
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);
@@ -55,7 +55,7 @@ class ConfigurationRepository extends AbstractRepository
         }
 
         $jsonEncoded = json_encode($object);
-        $jsonEncoded = $this->treatJsonString($jsonEncoded);
+        $jsonEncoded = $this->removeSpecialCharacters($jsonEncoded);
 
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
