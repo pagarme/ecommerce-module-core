@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
 use Mundipagg\Core\Kernel\Services\InvoiceService;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
@@ -17,6 +18,7 @@ use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
 use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
+use Mundipagg\Core\Kernel\Aggregates\Charge;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -97,6 +99,8 @@ final class OrderHandler extends AbstractResponseHandler
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
 
+        $platformOrder->addAdditionalInformation($order->getCharges());
+
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
                 'Order created at Mundipagg. Id: %s',
@@ -163,6 +167,8 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         $sender = $platformOrder->sendEmail($messageComplementEmail);
+
+        $platformOrder->addAdditionalInformation($order->getCharges());
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard('Order paid.') .
@@ -235,7 +241,7 @@ final class OrderHandler extends AbstractResponseHandler
             $historyData[$charge->getMundipaggId()->getValue()] = $lastTransaction->getAcquirerMessage();
 
         }
-        $acquirerMessages = rtrim($acquirerMessages, ', ') ;
+        $acquirerMessages = rtrim($acquirerMessages, ', ');
 
         $this->logService->orderInfo(
             $order->getCode(),
@@ -293,7 +299,7 @@ final class OrderHandler extends AbstractResponseHandler
         $customer = $createdOrder->getCustomer();
 
         //save only registered customers;
-        if(empty($customer) || $customer->getCode() === null) {
+        if (empty($customer) || $customer->getCode() === null) {
             return;
         }
 
@@ -323,11 +329,11 @@ final class OrderHandler extends AbstractResponseHandler
             }
 
             if (
-                !(
-                    $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
-                    $lastTransaction->getTransactionType()->equals(TransactionType::voucher()) ||
-                    $lastTransaction->getTransactionType()->equals(TransactionType::debitCard())
-                )
+            !(
+                $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
+                $lastTransaction->getTransactionType()->equals(TransactionType::voucher()) ||
+                $lastTransaction->getTransactionType()->equals(TransactionType::debitCard())
+            )
             ) {
                 continue; //save only credit card transactions;
             }
