@@ -10,18 +10,28 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 
 class ConfigurationRepository extends AbstractRepository
 {
-    protected function create(AbstractEntity &$object)
-    {
-        $jsonEncoded = json_encode($object);
+    private $pattern = '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m';
 
-        $jsonEncoded = trim(
+    /**
+     * @param string $jsonEncoded
+     * @return string
+     */
+    private function treatJsonString($jsonEncoded)
+    {
+        return trim(
             preg_replace(
-                '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m',
+                $this->pattern,
                 ' ',
                 $jsonEncoded
             )
         );
+    }
 
+    protected function create(AbstractEntity &$object)
+    {
+        $jsonEncoded = json_encode($object);
+
+        $jsonEncoded = $this->treatJsonString($jsonEncoded);
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);
@@ -45,14 +55,7 @@ class ConfigurationRepository extends AbstractRepository
         }
 
         $jsonEncoded = json_encode($object);
-
-        $jsonEncoded = trim(
-            preg_replace(
-                '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m',
-                ' ',
-                $jsonEncoded
-            )
-        );
+        $jsonEncoded = $this->treatJsonString($jsonEncoded);
 
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
