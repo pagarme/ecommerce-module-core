@@ -14,7 +14,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
-use Mundipagg\Core\Webhook\Services\ChargeHandlerService;
+use Mundipagg\Core\Webhook\Services\ChargeOrderService;
 use Unirest\Exception;
 
 class ChargeService
@@ -79,7 +79,7 @@ class ChargeService
         $this->logService->info("Charge capture");
         $orderRepository = new OrderRepository();
         $orderService = new OrderService();
-        $chargeHandlerService = new ChargeHandlerService();
+        $chargeOrderService = new ChargeOrderService();
 
         $platformOrder = $order->getPlatformOrder();
 
@@ -108,7 +108,7 @@ class ChargeService
             $orderRepository->save($order);
 
             $this->logService->info("Adding history on Order");
-            $history = $chargeHandlerService->prepareHistoryComment($charge);
+            $history = $chargeOrderService->prepareHistoryComment($charge);
             $platformOrder->addHistoryComment($history);
 
             $this->logService->info("Synchronizing with platform Order");
@@ -119,7 +119,7 @@ class ChargeService
             $orderHandlerService = new OrderHandler();
             $orderHandlerService->handle($order);
 
-            $message = $chargeHandlerService->prepareReturnMessage($charge);
+            $message = $chargeOrderService->prepareReturnMessage($charge);
 
             return new ServiceResponse(true, $message);
         }
