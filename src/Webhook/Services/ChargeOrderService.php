@@ -42,6 +42,15 @@ final class ChargeOrderService extends AbstractHandlerService
          */
         $order = $this->order;
 
+        if ($order->getStatus()->equals(OrderStatus::canceled())) {
+            $result = [
+                "message" => "It is not possible to pay an order that was already canceled.",
+                "code" => 200
+            ];
+
+            return $result;
+        }
+
         /**
          *
          * @var Charge|ChargeInterface $charge
