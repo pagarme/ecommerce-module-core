@@ -29,10 +29,16 @@ class APIService
     private $apiClient;
     private $logService;
 
+    /**
+     * @var OrderResilienceService
+     */
+    private $orderResilienceService;
+
     public function __construct()
     {
         $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
+        $this->orderResilienceService = new OrderResilienceService($this->apiClient);
     }
 
     public function getCharge(ChargeId $chargeId)
@@ -117,17 +123,12 @@ class APIService
             $orderRequest
         );
 
-        $orderController = $this->getOrderController();
-
         try {
-            $response = $orderController->createOrder($orderRequest);
-            $this->logService->orderInfo(
-                $order->getCode(),
-                'Create order Response',
-                $response
+            return $this->orderResilienceService->createOrderResilience(
+                $orderRequest,
+                $this->uuidv4(),
+                3
             );
-
-            return json_decode(json_encode($response), true);
 
         } catch (ErrorException $e) {
             $this->logService->exception($e);
@@ -135,6 +136,23 @@ class APIService
                 "message" => $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function uuidv4()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     private function getRequestMetaData()
