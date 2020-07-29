@@ -193,7 +193,9 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setZipCode($zipCode)
     {
+        $zipCode = str_replace('-', '', $zipCode);
         $this->zipCode = substr($zipCode, 0, 16);
+
         return $this;
     }
 
