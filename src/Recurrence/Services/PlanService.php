@@ -21,7 +21,12 @@ class PlanService
         Magento2CoreSetup::bootstrap();
 
         $config = Magento2CoreSetup::getModuleConfiguration();
-        $secretKey = $config->getSecretKey()->getValue();
+
+        $secretKey = null;
+        if ($config->getSecretKey() != null) {
+            $secretKey = $config->getSecretKey()->getValue();
+        }
+
         $password = '';
 
         \MundiAPILib\Configuration::$basicAuthPassword = '';

@@ -191,7 +191,10 @@ class APIService
     {
         $config = MPSetup::getModuleConfiguration();
 
-        $secretKey = $config->getSecretKey()->getValue();
+        $secretKey = null;
+        if ($config->getSecretKey() != null) {
+            $secretKey = $config->getSecretKey()->getValue();
+        }
         $password = '';
 
         \MundiAPILib\Configuration::$basicAuthPassword = '';
