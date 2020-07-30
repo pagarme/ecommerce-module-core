@@ -83,6 +83,10 @@ class SubscriptionFactory implements FactoryInterface
      */
     private function getCode($item, $subscription)
     {
+        if(empty($item['name'])) {
+            return null;
+        }
+
         $productName = $item['name'];
         $recurrenceService = new RecurrenceService();
 
