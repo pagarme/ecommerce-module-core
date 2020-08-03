@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
+use MundiAPILib\Models\CreateCardRequest;
 use MundiAPILib\Models\CreateSubscriptionRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
@@ -488,6 +489,9 @@ class Subscription extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
+    /**
+     * @return CreateSubscriptionRequest
+     */
     public function convertToSdkRequest()
     {
         $subscriptionRequest = new CreateSubscriptionRequest();
@@ -516,6 +520,11 @@ class Subscription extends AbstractEntity
         foreach ($this->getItems() as $item) {
             $subscriptionRequest->items[] = $item->convertToSDKRequest();
         }
+
+        $card = new CreateCardRequest();
+        $card->billingAddress = $this->getCustomer()->getAddress()->convertToSDKRequest();
+
+        $subscriptionRequest->card = $card;
 
         return $subscriptionRequest;
     }
@@ -554,7 +563,7 @@ class Subscription extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return Cycle
      */
     public function getCurrentCycle()
     {
@@ -562,7 +571,7 @@ class Subscription extends AbstractEntity
     }
 
     /**
-     * @param mixed $currentCycle
+     * @param Cycle $currentCycle
      */
     public function setCurrentCycle(Cycle $currentCycle)
     {
@@ -578,7 +587,7 @@ class Subscription extends AbstractEntity
     }
 
     /**
-     * @param ChargeInterface
+     * @param ChargeInterface $currentCharge
      */
     public function setCurrentCharge(ChargeInterface $currentCharge)
     {
