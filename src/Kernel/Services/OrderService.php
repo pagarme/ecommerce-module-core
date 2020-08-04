@@ -71,9 +71,10 @@ final class OrderService
         }
 
         //@todo In the future create a core status machine with the platform
-        if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
-            $platformOrder->setStatus($orderStatus);
-        }
+//        if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
+//            $platformOrder->setStatus($orderStatus);
+//        }
+        $platformOrder->setStatus($orderStatus);
 
         $platformOrder->save();
     }

@@ -81,10 +81,13 @@ final class OrderHandlerService extends AbstractHandlerService
         $invoiceService = new InvoiceService();
         $invoiceService->cancelInvoicesFor($order);
 
+//        $order->setStatus(OrderStatus::canceled());
+//        if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
+//            $order->getPlatformOrder()->setState(OrderState::canceled());
+//        }
+
         $order->setStatus(OrderStatus::canceled());
-        if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
-            $order->getPlatformOrder()->setState(OrderState::canceled());
-        }
+        $order->getPlatformOrder()->setState(OrderState::canceled());
 
         $orderRepository = new OrderRepository();
         $orderRepository->save($order);
