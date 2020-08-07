@@ -28,7 +28,7 @@ final class MoneyService
     public function floatToCents($amount)
     {
         $amount = (float) $amount;
-        return intval(round($amount * 100));
+        return (int) round($amount * 100, 2);
     }
 
     public function removeSeparators($amount)
