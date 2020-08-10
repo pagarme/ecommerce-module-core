@@ -207,7 +207,9 @@ class ChargeService
                 $this->logService->info("Change Order status");
 
                 $order->setStatus(OrderStatus::canceled());
-                $order->getPlatformOrder()->setState(OrderState::canceled());
+                if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
+                    $order->getPlatformOrder()->setState(OrderState::canceled());
+                }
                 $order->getPlatformOrder()->save();
 
                 $orderRepository->save($order);
