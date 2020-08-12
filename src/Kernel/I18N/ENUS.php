@@ -79,6 +79,7 @@ class ENUS extends AbstractI18NTable
             'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => null,
             "It's not possible to have any other product with a product plan" => null,
             'You must have only one product plan in the cart' => null,
+            'Mundipagg module should be configured on Websites scope, please change to website scope to apply these changes' => null
         ];
     }
 }
