@@ -116,11 +116,14 @@ final class InstallmentService
             );
         }
 
+        $moneyService = new MoneyService();
+
         $formattedValue = MPSetup::formatToCurrency(
-            $installment->getValue() / 100
+            $moneyService->centsToFloat((int) $installment->getValue())
         );
+
         $formattedTotal = MPSetup::formatToCurrency(
-            $installment->getTotal() / 100
+            $moneyService->centsToFloat((int) $installment->getTotal())
         );
 
         $label = $i18n->getDashboard(
