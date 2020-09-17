@@ -111,7 +111,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
         $realOrder->addCharge($charge);
 
-        $orderService->syncPlatformWith($realOrder);
+        $orderService->syncPlatformWith($realOrder, false);
 
         $platformOrder->save();
 
@@ -177,7 +177,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
         $realOrder->addCharge($charge);
 
-        $orderService->syncPlatformWith($realOrder);
+        $orderService->syncPlatformWith($realOrder, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
@@ -252,7 +252,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
         $realOrder->addCharge($charge);
 
-        $orderService->syncPlatformWith($realOrder);
+        $orderService->syncPlatformWith($realOrder, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
         $result = [
@@ -353,7 +353,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         );
 
         $realOrder->addCharge($charge);
-        $this->orderService->syncPlatformWith($realOrder);
+        $this->orderService->syncPlatformWith($realOrder, false);
 
         $sender = $this->sendBoletoEmail($charge, $realOrder->getCode(), $platformOrder);
 

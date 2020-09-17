@@ -58,7 +58,7 @@ final class ChargeHandler extends AbstractResponseHandler
         $history = $this->prepareHistoryComment($charge);
         $order->addHistoryComment($history);
 
-        $orderService->syncPlatformWith($order);
+        $orderService->syncPlatformWith($order, false);
 
         $order->save();
     }

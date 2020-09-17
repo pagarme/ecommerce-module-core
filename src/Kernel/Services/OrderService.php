@@ -38,8 +38,9 @@ final class OrderService
     /**
      *
      * @param Order $order
+     * @param bool $changeStatus
      */
-    public function syncPlatformWith(Order $order)
+    public function syncPlatformWith(Order $order, $changeStatus = true)
     {
         $moneyService = new MoneyService();
 
@@ -65,6 +66,16 @@ final class OrderService
         $platformOrder->setTotalRefunded($refundedAmount);
         $platformOrder->setBaseTotalRefunded($refundedAmount);
 
+        if ($changeStatus) {
+            $this->changeOrderStatus($order);
+        }
+
+        $platformOrder->save();
+    }
+
+    public function changeOrderStatus(Order $order)
+    {
+        $platformOrder = $order->getPlatformOrder();
         $orderStatus = $order->getStatus();
         if ($orderStatus->equals(OrderStatus::paid())) {
             $orderStatus = OrderStatus::processing();
@@ -74,10 +85,7 @@ final class OrderService
         if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
             $platformOrder->setStatus($orderStatus);
         }
-
-        $platformOrder->save();
     }
-
     public function updateAcquirerData(Order $order)
     {
         $dataServiceClass =
