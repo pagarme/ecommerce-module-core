@@ -187,7 +187,7 @@ class ChargeService
             $order->getPlatformOrder()->addHistoryComment($history);
 
             $this->logService->info("Synchronizing with platform Order");
-            $orderService->syncPlatformWith($orde, false);
+            $orderService->syncPlatformWith($order, false);
 
             $platformOrderGrandTotal = $moneyService->floatToCents(
                 $platformOrder->getGrandTotal()
