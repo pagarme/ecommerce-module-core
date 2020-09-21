@@ -112,7 +112,7 @@ class ChargeService
             $platformOrder->addHistoryComment($history);
 
             $this->logService->info("Synchronizing with platform Order");
-            $orderService->syncPlatformWith($order);
+            $orderService->syncPlatformWith($order, false);
 
             $this->logService->info("Change Order status");
             $order->setStatus(OrderStatus::paid());
@@ -187,7 +187,7 @@ class ChargeService
             $order->getPlatformOrder()->addHistoryComment($history);
 
             $this->logService->info("Synchronizing with platform Order");
-            $orderService->syncPlatformWith($order);
+            $orderService->syncPlatformWith($order, false);
 
             $platformOrderGrandTotal = $moneyService->floatToCents(
                 $platformOrder->getGrandTotal()
@@ -213,7 +213,7 @@ class ChargeService
                 $order->getPlatformOrder()->save();
 
                 $orderRepository->save($order);
-                $orderService->syncPlatformWith($order);
+                $orderService->syncPlatformWith($order, false);
 
                 $statusOrderLabel = $platformOrder->getStatusLabel(
                     $order->getStatus()

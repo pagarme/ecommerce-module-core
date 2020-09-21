@@ -87,7 +87,7 @@ final class ChargeOrderService extends AbstractHandlerService
         $history = $this->prepareHistoryComment($charge);
         $this->order->getPlatformOrder()->addHistoryComment($history);
 
-        $orderService->syncPlatformWith($order);
+        $orderService->syncPlatformWith($order, false);
 
         $this->addWebHookReceivedHistory($webhook);
         $platformOrder->save();
@@ -143,7 +143,7 @@ final class ChargeOrderService extends AbstractHandlerService
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->syncPlatformWith($order);
+        $orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
@@ -214,7 +214,7 @@ final class ChargeOrderService extends AbstractHandlerService
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->syncPlatformWith($order);
+        $orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
@@ -275,7 +275,7 @@ final class ChargeOrderService extends AbstractHandlerService
         $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history, false);
-        $orderService->syncPlatformWith($order);
+        $orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
