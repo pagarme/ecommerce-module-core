@@ -24,7 +24,7 @@ trait WithAmountTrait
      * @param int $amount
      * @throws InvalidParamException
      */
-    public function setAmount(int $amount)
+    public function setAmount($amount)
     {
         if ($amount < 0) {
             throw new InvalidParamException(
@@ -32,6 +32,6 @@ trait WithAmountTrait
                 $amount
             );
         }
-        $this->amount = $amount;
+        $this->amount = (int) $amount;
     }
 }

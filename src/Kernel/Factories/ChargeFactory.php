@@ -36,19 +36,13 @@ class ChargeFactory implements FactoryInterface
         $charge->setAmount($postData['amount']);
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
         $charge->setPaidAmount($paidAmount);
-        $charge->setOrderId(new OrderId($postData['order']['id']));
 
-        $lastTransactionData = null;
-        if (isset($postData['last_transaction'])) {
-            $lastTransactionData = $postData['last_transaction'];
+        if (!empty($postData['order']['id'])) {
+            $orderId = $postData['order']['id'];
+            $charge->setOrderId(new OrderId($orderId));
         }
 
-        if ($lastTransactionData !== null) {
-            $transactionFactory = new TransactionFactory();
-            $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
-            $lastTransaction->setChargeId($charge->getMundipaggId());
-            $charge->addTransaction($lastTransaction);
-        }
+        $this->setLastTransaction($postData, $charge);
 
         try {
             ChargeStatus::$status();
@@ -130,7 +124,7 @@ class ChargeFactory implements FactoryInterface
     private function extractTransactionsFromDbData($dbData)
     {
         $transactions = [];
-        if ($dbData['tran_id'] !== null) {
+        if (isset($dbData['tran_id']) && $dbData['tran_id'] !== null) {
             $tranId = explode(',', $dbData['tran_id']);
             $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
             $tranChargeId = explode(',', $dbData['tran_charge_id']);
@@ -150,6 +144,7 @@ class ChargeFactory implements FactoryInterface
             $tranAcquirerMessage = explode(',', $dbData['tran_acquirer_message']);
             $tranBoletoUrl = explode(',', $dbData['tran_boleto_url']);
             $tranCardData = explode('---', $dbData['tran_card_data']);
+            $tranData = explode('---', $dbData['tran_data']);
 
             foreach ($tranId as $index => $id) {
                 $transaction = [
@@ -167,8 +162,10 @@ class ChargeFactory implements FactoryInterface
                     'acquirer_message' => $tranAcquirerMessage[$index],
                     'created_at' => $tranCreatedAt[$index],
                     'boleto_url' => $this->treatBoletoUrl($tranBoletoUrl, $index),
-                    'card_data' => $this->treatCardData($tranCardData, $index)
+                    'card_data' => $this->handleCreditCardData($tranCardData, $index),
+                    'tran_data' => $this->handleTransactionData($tranData, $index)
                 ];
+
                 $transactions[] = $transaction;
             }
         }
@@ -181,12 +178,20 @@ class ChargeFactory implements FactoryInterface
      * @param int $index
      * @return string|null
      */
-    private function treatCardData(array $tranCardData, $index)
+    private function handleCreditCardData(array $tranCardData, $index)
     {
         if (!isset($tranCardData[$index])) {
             return null;
         }
         return $tranCardData[$index];
+    }
+
+    private function handleTransactionData(array $tranData, $index)
+    {
+        if (!isset($tranData[$index])) {
+            return null;
+        }
+        return $tranData[$index];
     }
 
     /**
@@ -200,5 +205,22 @@ class ChargeFactory implements FactoryInterface
             return null;
         }
         return $tranBoletoUrl[$index];
+    }
+
+    private function setLastTransaction($postData, &$charge)
+    {
+        $lastTransactionData = null;
+        if (isset($postData['last_transaction'])) {
+            $lastTransactionData = $postData['last_transaction'];
+        }
+
+        if ($lastTransactionData !== null) {
+            $transactionFactory = new TransactionFactory();
+            $lastTransaction = $transactionFactory->createFromPostData(
+                $lastTransactionData
+            );
+            $lastTransaction->setChargeId($charge->getMundipaggId());
+            $charge->addTransaction($lastTransaction);
+        }
     }
 }

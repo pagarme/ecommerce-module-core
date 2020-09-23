@@ -13,11 +13,17 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     use WithAmountTrait;
 
     /** @var string */
+    private $name;
+    /** @var string */
     private $description;
     /** @var integer */
     private $quantity;
     /** @var string */
     private $code;
+
+    private $selectedOption;
+
+    private $type;
 
     /**
      * @return string
@@ -32,7 +38,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
         $this->code = substr($code, 0, 52);
     }
 
-       /**
+    /**
      * @return string
      */
     public function getDescription()
@@ -46,6 +52,25 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     public function setDescription($description)
     {
         $this->description = substr($description, 0, 256);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        if (preg_match('/[^a-zA-Z0-9 ]+/i', $name)) {
+            $name = preg_replace('/[^a-zA-Z0-9 ]+/i', '', $name);
+        }
+        $this->name = $name;
     }
 
     /**
@@ -72,6 +97,22 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     }
 
     /**
+     * @return mixed
+     */
+    public function getSelectedOption()
+    {
+        return $this->selectedOption;
+    }
+
+    /**
+     * @param mixed $selectedOption
+     */
+    public function setSelectedOption($selectedOption)
+    {
+        $this->selectedOption = $selectedOption;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -84,6 +125,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
 
         $obj->amount = $this->amount;
         $obj->description = $this->description;
+        $obj->name = $this->name;
         $obj->quantity = $this->quantity;
 
         return $obj;
@@ -124,5 +166,16 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
     {
         $pow = pow(10, $precision);
         return (ceil($pow*$value)+ceil($pow*$value-ceil($pow*$value)))/$pow;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 }

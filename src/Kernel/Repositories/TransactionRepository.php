@@ -43,6 +43,8 @@ final class TransactionRepository extends AbstractRepository
 
         $cardData = json_encode($simpleObject->cardData);
 
+        $transactionData = json_encode($object->getPostData());
+
         $query = "
           INSERT INTO 
             $transactionTable 
@@ -60,7 +62,8 @@ final class TransactionRepository extends AbstractRepository
                 status,
                 created_at,
                 boleto_url,
-                card_data
+                card_data,
+                transaction_data
             )
           VALUES 
         ";
@@ -79,7 +82,8 @@ final class TransactionRepository extends AbstractRepository
                 '{$simpleObject->status}',
                 '{$simpleObject->createdAt}',
                 '{$simpleObject->boletoUrl}',
-                '{$cardData}'
+                '{$cardData}',
+                '{$transactionData}'
             );
         ";
 

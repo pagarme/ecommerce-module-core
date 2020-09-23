@@ -14,6 +14,7 @@ final class PaymentMethod extends AbstractValueObject
     const SAFETY_PAY = 'safetyPay';
     const CHECKOUT = 'checkout';
     const CASH = 'cash';
+    const DEBIT_CARD = 'debitCard';
 
     private $method;
 
@@ -30,6 +31,11 @@ final class PaymentMethod extends AbstractValueObject
     static public function creditCard()
     {
         return new self(self::CREDIT_CARD);
+    }
+
+    static public function debitCard()
+    {
+        return new self(self::DEBIT_CARD);
     }
 
     static public function boleto()

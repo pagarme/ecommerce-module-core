@@ -11,11 +11,16 @@ use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Mundipagg\Core\Payment\Aggregates\Payments\SavedDebitCardPayment;
 
 final class PaymentFactory
 {
@@ -36,7 +41,9 @@ final class PaymentFactory
     {
         $this->primitiveFactories = [
             'createCreditCardPayments',
-            'createBoletoPayments'
+            'createBoletoPayments',
+            'createVoucherPayments',
+            'createDebitCardPayments',
         ];
 
         $this->moduleConfig = MPSetup::getModuleConfiguration();
@@ -67,38 +74,100 @@ final class PaymentFactory
             return [];
         }
 
-        $capture = $this->moduleConfig->isCapture();
+        $cardsData = $data->$cardDataIndex;
+
+        $payments = [];
+        foreach ($cardsData as $cardData) {
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $this->moduleConfig
+            );
+        }
+
+        return $payments;
+    }
+
+    private function createDebitCardPayments($data)
+    {
+        $cardDataIndex = NewDebitCardPayment::getBaseCode();
+
+        if (!isset($data->$cardDataIndex)) {
+            return [];
+        }
+
+        $config = $this->moduleConfig->getDebitConfig();
+        $cardsData = $data->$cardDataIndex;
+
+        $payments = [];
+        foreach ($cardsData as $cardData) {
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $config
+            );
+        }
+
+        return $payments;
+    }
+
+    private function createBasePayments(
+        $cardData,
+        $cardDataIndex,
+        $config
+    )
+    {
+        $payment = $this->createBaseCardPayment($cardData, $cardDataIndex);
+
+        if ($payment === null) {
+            return;
+        }
+
+        $customer = $this->createCustomer($cardData);
+        if ($customer !== null) {
+            $payment->setCustomer($customer);
+        }
+
+        $brand = $cardData->brand;
+        $payment->setBrand(CardBrand::$brand());
+
+        $payment->setAmount($cardData->amount);
+        $payment->setInstallments($cardData->installments);
+
+        //setting amount with interest
+        $payment->setAmount(
+            $this->getAmountWithInterestForCreditCard(
+                $payment,
+                $config
+            )
+        );
+
+        $payment->setCapture($config->isCapture());
+        $payment->setStatementDescriptor($config->getCardStatementDescriptor());
+
+        return $payment;
+    }
+
+    private function createVoucherPayments($data)
+    {
+        $cardDataIndex = NewVoucherPayment::getBaseCode();
+
+        if (!isset($data->$cardDataIndex)) {
+            return [];
+        }
+
+        $config = $this->moduleConfig
+            ->getVoucherConfig();
 
         $cardsData = $data->$cardDataIndex;
 
         $payments = [];
         foreach ($cardsData as $cardData) {
-            $payment = $this->createBaseCardPayment($cardData);
-
-            if ($payment === null) {
-                continue;
-            }
-
-            $customer = $this->createCustomer($cardData);
-            if ($customer !== null) {
-                $payment->setCustomer($customer);
-            }
-
-            $brand = $cardData->brand;
-            $payment->setBrand(CardBrand::$brand());
-
-            $payment->setCapture($capture);
-            $payment->setAmount($cardData->amount);
-            $payment->setInstallments($cardData->installments);
-
-            //setting amount with interest
-            $payment->setAmount(
-                $this->getAmountWithInterestForCreditCard($payment)
+            $payments[] = $this->createBasePayments(
+                $cardData,
+                $cardDataIndex,
+                $config
             );
-
-            $payment->setStatementDescriptor($this->cardStatementDescriptor);
-
-            $payments[] = $payment;
         }
 
         return $payments;
@@ -117,7 +186,8 @@ final class PaymentFactory
     }
 
     private function getAmountWithInterestForCreditCard(
-        AbstractCreditCardPayment $payment
+        AbstractCreditCardPayment $payment,
+        $config
     )
     {
         $installmentService = new InstallmentService();
@@ -125,7 +195,8 @@ final class PaymentFactory
         $validInstallments = $installmentService->getInstallmentsFor(
             null,
             $payment->getBrand(),
-            $payment->getAmount()
+            $payment->getAmount(),
+            $config
         );
 
         foreach ($validInstallments as $validInstallment) {
@@ -170,36 +241,82 @@ final class PaymentFactory
      * @param $identifier
      * @return AbstractCreditCardPayment|null
      */
-    private function createBaseCardPayment($data)
+    private function createBaseCardPayment($data, $method)
     {
         $identifier = $data->identifier;
         try {
             $cardToken = new CardToken($identifier);
-            $payment =  new NewCreditCardPayment();
+            $payment =  $this->getNewPaymentMethod($method);
             $payment->setIdentifier($cardToken);
 
             if (isset($data->saveOnSuccess)) {
                 $payment->setSaveOnSuccess($data->saveOnSuccess);
             }
             return $payment;
-        } catch (\Throwable $e)
-        {
+        } catch(\Exception $e) {
+
+        } catch (\Throwable $e) {
 
         }
 
         try {
             $cardId = new CardId($identifier);
-            $payment =  new SavedCreditCardPayment();
+            $payment =  $this->getSavedPaymentMethod($method);
             $payment->setIdentifier($cardId);
+
+            if (isset($data->cvvCard)) {
+                $payment->setCvv($data->cvvCard);
+            }
+
             $owner = new CustomerId($data->customerId);
             $payment->setOwner($owner);
 
             return $payment;
-        } catch (\Throwable $e)
-        {
+        } catch(\Exception $e) {
+
+        } catch (\Throwable $e) {
 
         }
 
         return null;
+    }
+
+    /**
+     * @param $method
+     * @return SavedCreditCardPayment|SavedVoucherCardPayment|SavedDebitCardPayment
+     * @todo Add voucher saved payment
+     */
+    private function getSavedPaymentMethod($method)
+    {
+        $payments = [
+            PaymentMethod::CREDIT_CARD => new SavedCreditCardPayment(),
+            PaymentMethod::DEBIT_CARD => new SavedDebitCardPayment(),
+            PaymentMethod::VOUCHER => new SavedVoucherCardPayment(),
+        ];
+
+        if (isset($payments[$method])) {
+            return $payments[$method];
+        }
+
+        throw new \Exception("payment method saved not found", 400);
+    }
+
+    /**
+     * @param $method
+     * @return NewCreditCardPayment|NewVoucherPayment
+     */
+    private function getNewPaymentMethod($method)
+    {
+        $payments = [
+            PaymentMethod::CREDIT_CARD => new NewCreditCardPayment(),
+            PaymentMethod::VOUCHER => new NewVoucherPayment(),
+            PaymentMethod::DEBIT_CARD => new NewDebitCardPayment(),
+        ];
+
+        if (!empty($payments[$method])) {
+            return $payments[$method];
+        }
+
+        return new NewCreditCardPayment();
     }
 }

@@ -5,8 +5,10 @@ namespace Mundipagg\Core\Kernel\Services;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
+use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Aggregates\Customer;
@@ -14,23 +16,31 @@ use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
 use Mundipagg\Core\Payment\ValueObjects\CustomerType;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
-
+use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Exception;
 
 final class OrderService
 {
     private $logService;
 
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
+
     public function __construct()
     {
         $this->logService = new OrderLogService();
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
      *
      * @param Order $order
+     * @param bool $changeStatus
      */
-    public function syncPlatformWith(Order $order)
+    public function syncPlatformWith(Order $order, $changeStatus = true)
     {
         $moneyService = new MoneyService();
 
@@ -56,17 +66,26 @@ final class OrderService
         $platformOrder->setTotalRefunded($refundedAmount);
         $platformOrder->setBaseTotalRefunded($refundedAmount);
 
+        if ($changeStatus) {
+            $this->changeOrderStatus($order);
+        }
+
+        $platformOrder->save();
+    }
+
+    public function changeOrderStatus(Order $order)
+    {
+        $platformOrder = $order->getPlatformOrder();
         $orderStatus = $order->getStatus();
         if ($orderStatus->equals(OrderStatus::paid())) {
             $orderStatus = OrderStatus::processing();
         }
 
-        $platformOrder->setStatus($orderStatus);
-        //@todo $platformOrder->setState($order->getState());
-
-        $platformOrder->save();
+        //@todo In the future create a core status machine with the platform
+        if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
+            $platformOrder->setStatus($orderStatus);
+        }
     }
-
     public function updateAcquirerData(Order $order)
     {
         $dataServiceClass =
@@ -74,8 +93,8 @@ final class OrderService
 
         /**
          *
- * @var AbstractDataService $dataService
-*/
+         * @var AbstractDataService $dataService
+         */
         $dataService = new $dataServiceClass();
 
         $dataService->updateAcquirerData($order);
@@ -162,6 +181,11 @@ final class OrderService
         }
     }
 
+    /**
+     * @param PlatformOrderInterface $platformOrder
+     * @return array
+     * @throws \Exception
+     */
     public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
     {
         try {
@@ -179,14 +203,19 @@ final class OrderService
             //build PaymentOrder based on platformOrder
             $order =  $this->extractPaymentOrderFromPlatformOrder($platformOrder);
 
+            $i18n = new LocalizationService();
+
             //Send through the APIService to mundipagg
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
-            if (!$this->checkResponseStatus($response)) {
-                $i18n = new LocalizationService();
-                $message = $i18n->getDashboard("Can't create order.");
+            $originalResponse = $response;
+            $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
+            if (!$forceCreateOrder && !$this->checkResponseStatus($response)) {
+                $this->persistListChargeFailed($response);
+
+                $message = $i18n->getDashboard("Can't create order.");
                 throw new \Exception($message, 400);
             }
 
@@ -202,13 +231,19 @@ final class OrderService
 
             $platformOrder->save();
 
+            if ($forceCreateOrder && !$this->checkResponseStatus($originalResponse)) {
+                $message = $i18n->getDashboard("Can't create order.");
+                throw new \Exception($message, 400);
+            }
+
             return [$response];
-        } catch(\Exception $e) {
-                $exceptionHandler = new ErrorExceptionHandler;
-                $paymentOrder = new PaymentOrder;
-                $paymentOrder->setCode($platformOrder->getcode());
-                $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
-                throw new \Exception($frontMessage, 400);
+        } catch (\Exception $e) {
+            $exceptionHandler = new ErrorExceptionHandler();
+            $paymentOrder = new PaymentOrder();
+            $paymentOrder->setCode($platformOrder->getcode());
+            $frontMessage = $exceptionHandler->handle($e, $paymentOrder);
+
+            throw new \Exception($frontMessage, 400);
         }
     }
 
@@ -225,10 +260,9 @@ final class OrderService
         return new $responseClass;
     }
 
-    private function extractPaymentOrderFromPlatformOrder(
+    public function extractPaymentOrderFromPlatformOrder(
         PlatformOrderInterface $platformOrder
-    )
-    {
+    ) {
         $moduleConfig = MPSetup::getModuleConfiguration();
 
         $moneyService = new MoneyService();
@@ -245,6 +279,7 @@ final class OrderService
         );
         $order->setCustomer($platformOrder->getCustomer());
         $order->setAntifraudEnabled($moduleConfig->isAntifraudEnabled());
+        $order->setPaymentMethod($platformOrder->getPaymentMethod());
 
         $payments = $platformOrder->getPaymentMethodCollection();
         foreach ($payments as $payment) {
@@ -277,7 +312,7 @@ final class OrderService
      * @param PlatformOrderInterface $platformOrder
      * @return \stdClass
      */
-    private function getOrderInfo(PlatformOrderInterface $platformOrder)
+    public function getOrderInfo(PlatformOrderInterface $platformOrder)
     {
         $orderInfo = new \stdClass();
         $orderInfo->grandTotal = $platformOrder->getGrandTotal();
@@ -305,5 +340,47 @@ final class OrderService
         }
 
         return true;
+    }
+
+    /**
+     * @param $response
+     * @throws InvalidParamException
+     * @throws Exception
+     */
+    private function persistListChargeFailed($response)
+    {
+        if (empty($response['charges'])) {
+            return;
+        }
+
+        $chargeFactory = new ChargeFactory();
+        $chargeService = new ChargeService();
+
+        foreach ($response['charges'] as $chargeResponse) {
+            $order = ['order' => ['id' => $response['id']]];
+            $charge = $chargeFactory->createFromPostData(
+                array_merge($chargeResponse, $order)
+            );
+
+            $chargeService->save($charge);
+        }
+    }
+
+    /**
+     * @return Order|null
+     * @throws InvalidParamException
+     */
+    public function getOrderByMundiPaggId(OrderId $orderId)
+    {
+        return $this->orderRepository->findByMundipaggId($orderId);
+    }
+
+    /**
+     * @param string $platformOrderID
+     * @return Order|null
+     */
+    public function getOrderByPlatformId($platformOrderID)
+    {
+        return $this->orderRepository->findByPlatformId($platformOrderID);
     }
 }

@@ -31,7 +31,9 @@ abstract class AbstractRepository
         }
         if ($objectId === null) {
             $createResult = $this->create($object);
-            $object->setId($this->db->getLastId());
+            if (!$object->getId()) {
+                $object->setId($this->db->getLastId());
+            }
             return $createResult;
         }
 

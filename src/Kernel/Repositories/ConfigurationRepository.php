@@ -10,9 +10,28 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 
 class ConfigurationRepository extends AbstractRepository
 {
+    private $pattern = '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m';
+
+    /**
+     * @param string $jsonEncoded
+     * @return string
+     */
+    private function removeSpecialCharacters($jsonEncoded)
+    {
+        return trim(
+            preg_replace(
+                $this->pattern,
+                ' ',
+                $jsonEncoded
+            )
+        );
+    }
+
     protected function create(AbstractEntity &$object)
     {
         $jsonEncoded = json_encode($object);
+
+        $jsonEncoded = $this->removeSpecialCharacters($jsonEncoded);
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);
@@ -36,6 +55,8 @@ class ConfigurationRepository extends AbstractRepository
         }
 
         $jsonEncoded = json_encode($object);
+        $jsonEncoded = $this->removeSpecialCharacters($jsonEncoded);
+
         $preparedObject = json_decode($jsonEncoded);
         $preparedObject->parent = null;
         $jsonEncoded = json_encode($preparedObject);

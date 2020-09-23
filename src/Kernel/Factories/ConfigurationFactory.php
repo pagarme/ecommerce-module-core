@@ -4,12 +4,14 @@ namespace Mundipagg\Core\Kernel\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Factories\Configurations\DebitConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
@@ -85,6 +87,11 @@ class ConfigurationFactory implements FactoryInterface
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
+
+        if (empty($data->createOrder)){
+            $data->createOrder = false;
+        }
+        $config->setCreateOrderEnabled($data->createOrder);
 
         if (!empty($data->sendMail)) {
             $config->setSendMailEnabled($data->sendMail);
@@ -171,6 +178,13 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoInstructions($data->boletoInstructions);
         }
 
+        if (!empty($data->boletoBankCode)) {
+            $config->setBoletoBankCode($data->boletoBankCode);
+        }
+        if (!empty($data->boletoDueDays)) {
+            $config->setBoletoDueDays($data->boletoDueDays);
+        }
+
         if (!empty($data->saveCards)) {
             $config->setSaveCards($data->saveCards);
         }
@@ -181,20 +195,28 @@ class ConfigurationFactory implements FactoryInterface
 
         if (!empty($data->recurrenceConfig)) {
             $config->setRecurrenceConfig(
-                new RecurrenceConfig(
-                    $data->recurrenceConfig->planSubscription,
-                    $data->recurrenceConfig->singleSubscription,
-                    $data->recurrenceConfig->paymentUpdateCustomer,
-                    $data->recurrenceConfig->creditCardUpdateCustomer,
-                    $data->recurrenceConfig->subscriptionInstallment,
-                    $data->recurrenceConfig->checkoutConflitMessage
-                )
+                (new RecurrenceConfigFactory())
+                    ->createFromDbData($data->recurrenceConfig)
             );
         }
 
         if (isset($data->installmentsDefaultConfig)) {
             $config->setInstallmentsDefaultConfig(
                 $data->installmentsDefaultConfig
+            );
+        }
+
+        if (!empty($data->voucherConfig)) {
+            $config->setVoucherConfig(
+                (new VoucherConfigFactory)
+                ->createFromDbData($data->voucherConfig)
+            );
+        }
+
+        if (!empty($data->debitConfig)) {
+            $config->setDebitConfig(
+                (new DebitConfigFactory)
+                    ->createFromDbData($data->debitConfig)
             );
         }
 
@@ -235,7 +257,6 @@ class ConfigurationFactory implements FactoryInterface
 
         return new HubAccessTokenKey($key);
     }
-
 
     /**
      *

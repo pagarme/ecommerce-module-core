@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Core\Kernel\Services;
 
+use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
@@ -20,7 +21,8 @@ final class InstallmentService
     public function getInstallmentsFor(
         Order $order = null,
         CardBrand $brand = null,
-        $value = null
+        $value = null,
+        $config = null
     ) {
         $amount = 0;
         if($order !== null) {
@@ -32,15 +34,26 @@ final class InstallmentService
             $amount = $value;
         }
 
-        $useDefaultInstallmentsConfig =
-            MPSetup::getModuleConfiguration()->isInstallmentsDefaultConfig();
+        if ($config == null) {
+            $config = MPSetup::getModuleConfiguration();
+        }
+
+        $installmentsEnabled = false;
+        if (
+            method_exists($config, 'isInstallmentsEnabled') &&
+            $config->isInstallmentsEnabled()
+        ) {
+            $installmentsEnabled = true;
+        }
+
+        $useDefaultInstallmentsConfig = $this->getUseDefaultInstallments($config);
 
         $baseBrand = CardBrand::nobrand();
         if ($brand !== null && !$useDefaultInstallmentsConfig) {
             $baseBrand = $brand;
         }
 
-        $cardConfigs = MPSetup::getModuleConfiguration()->getCardConfigs();
+        $cardConfigs = $config->getCardConfigs();
 
         $brandConfig = null;
 
@@ -64,6 +77,10 @@ final class InstallmentService
             $installments[] = new Installment($i, $amount, 0);
         }
 
+        if (!$installmentsEnabled) {
+            return array_slice($installments, 0, 1);
+        }
+
         for (
             $i = $brandConfig->getMaxInstallmentWithoutInterest() + 1,
             $interestCicle = 0;
@@ -79,6 +96,14 @@ final class InstallmentService
         return $this->filterInstallmentsByMinValue($installments, $brandConfig);
     }
 
+    public function getUseDefaultInstallments($config)
+    {
+        if ($config == null || $config instanceof AbstractEntity) {
+            return MPSetup::getModuleConfiguration()->isInstallmentsDefaultConfig();
+        }
+        return false;
+    }
+
     public function getLabelFor(Installment $installment)
     {
         $i18n = new LocalizationService();
@@ -91,11 +116,14 @@ final class InstallmentService
             );
         }
 
+        $moneyService = new MoneyService();
+
         $formattedValue = MPSetup::formatToCurrency(
-            $installment->getValue() / 100
+            $moneyService->centsToFloat((int) $installment->getValue())
         );
+
         $formattedTotal = MPSetup::formatToCurrency(
-            $installment->getTotal() / 100
+            $moneyService->centsToFloat((int) $installment->getTotal())
         );
 
         $label = $i18n->getDashboard(
@@ -125,7 +153,5 @@ final class InstallmentService
                     $installment->getValue() >= $brandConfig->getMinValue();
             }
         );
-
-
     }
 }

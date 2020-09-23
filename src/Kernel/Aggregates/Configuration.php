@@ -9,6 +9,8 @@ use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\DebitConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
@@ -96,7 +98,6 @@ final class Configuration extends AbstractEntity
     /** @var string */
     private $boletoInstructions;
 
-
     /** @var string */
     private $storeId;
 
@@ -120,6 +121,28 @@ final class Configuration extends AbstractEntity
 
     /** @var bool */
     private $installmentsDefaultConfig;
+
+    /** @var int */
+    private $boletoDueDays;
+
+    /** @var string */
+    private $boletoBankCode;
+
+    /**
+     * @var bool
+     */
+    private $sendMailEnabled;
+
+    /**
+     * @var bool
+     */
+    private $createOrderEnabled;
+
+    /** @var VoucherConfig */
+    private $voucherConfig;
+
+    /** @var DebitConfig */
+    private $debitConfig;
 
     public function __construct()
     {
@@ -152,6 +175,38 @@ final class Configuration extends AbstractEntity
     public function setRecurrenceConfig(RecurrenceConfig $recurrenceConfig)
     {
         $this->recurrenceConfig = $recurrenceConfig;
+    }
+
+    /**
+     * @return DebitConfig
+     */
+    public function getDebitConfig()
+    {
+        return $this->debitConfig;
+    }
+
+    /**
+     * @param DebitConfig $debitConfig
+     */
+    public function setDebitConfig(DebitConfig $debitConfig)
+    {
+        $this->debitConfig = $debitConfig;
+    }
+
+    /**
+     * @return VoucherConfig
+     */
+    public function getVoucherConfig()
+    {
+        return $this->voucherConfig;
+    }
+
+    /**
+     * @param VoucherConfig $voucherConfig
+     */
+    public function setVoucherConfig(VoucherConfig $voucherConfig)
+    {
+        $this->voucherConfig = $voucherConfig;
     }
 
     protected function isEnabled()
@@ -266,6 +321,32 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @param $sendMailEnable
+     * @return $this
+     */
+    public function setSendMailEnabled($sendMailEnable)
+    {
+        $this->sendMailEnabled = filter_var(
+            $sendMailEnable,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this;
+    }
+
+    /**
+     * @param $createOrderEnabled
+     * @return $this
+     */
+    public function setCreateOrderEnabled($createOrderEnabled)
+    {
+        $this->createOrderEnabled = filter_var(
+            $createOrderEnabled,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this;
+    }
+
+    /**
      *
      * @param  bool $twoCreditCardsEnabled
      * @return Configuration
@@ -312,6 +393,22 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return bool
+     */
+    public function isSendMailEnabled()
+    {
+        return $this->sendMailEnabled;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCreateOrderEnabled()
+    {
+        return $this->createOrderEnabled;
+    }
+
+    /**
      *
      * @return bool
      */
@@ -331,8 +428,8 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  CardConfig $installmentConfig
-     * @throws Exception
+     * @param CardConfig $newCardConfig
+     * @throws InvalidParamException
      */
     public function addCardConfig(CardConfig $newCardConfig)
     {
@@ -468,6 +565,7 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param string $cardStatementDescriptor
+     * @throws InvalidParamException
      */
     public function setCardStatementDescriptor($cardStatementDescriptor)
     {
@@ -523,6 +621,38 @@ final class Configuration extends AbstractEntity
     }
 
     /**
+     * @return int
+     */
+    public function getBoletoDueDays()
+    {
+        return $this->boletoDueDays;
+    }
+
+    /**
+     * @param int $boletoDueDays
+     */
+    public function setBoletoDueDays($boletoDueDays)
+    {
+        $this->boletoDueDays = $boletoDueDays;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBoletoBankCode()
+    {
+        return $this->boletoBankCode;
+    }
+
+    /**
+     * @param string $boletoBankCode
+     */
+    public function setBoletoBankCode($boletoBankCode)
+    {
+        $this->boletoBankCode = $boletoBankCode;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -551,13 +681,19 @@ final class Configuration extends AbstractEntity
             "installmentsDefaultConfig" => $this->isInstallmentsDefaultConfig(),
             "cardStatementDescriptor" => $this->getCardStatementDescriptor(),
             "boletoInstructions" => $this->getBoletoInstructions(),
+            "boletoDueDays" => $this->getBoletoDueDays(),
+            "boletoBankCode" => $this->getBoletoBankCode(),
             "cardConfigs" => $this->getCardConfigs(),
             "storeId" => $this->getStoreId(),
             "methodsInherited" => $this->getMethodsInherited(),
             "parentId" => $this->getParentId(),
             "parent" => $this->parentConfiguration,
             "inheritAll" => $this->isInheritedAll(),
-            "recurrenceConfig" => $this->getRecurrenceConfig()
+            "recurrenceConfig" => $this->getRecurrenceConfig(),
+            "sendMail" => $this->isSendMailEnabled(),
+            "createOrder" => $this->isCreateOrderEnabled(),
+            "voucherConfig" => $this->getVoucherConfig(),
+            "debitConfig" => $this->getDebitConfig()
         ];
     }
 

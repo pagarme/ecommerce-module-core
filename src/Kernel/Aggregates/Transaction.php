@@ -419,6 +419,7 @@ final class Transaction extends AbstractEntity
         $obj->installments = $this->getInstallments();
         $obj->boletoUrl = $this->getBoletoUrl();
         $obj->cardData = $this->getCardData();
+        $obj->postData = $this->getPostData();
 
         return $obj;
     }

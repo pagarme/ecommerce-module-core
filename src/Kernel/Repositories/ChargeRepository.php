@@ -19,6 +19,8 @@ final class ChargeRepository extends AbstractRepository
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
         $id = $orderId->getValue();
+        
+        $this->db->query("SET group_concat_max_len = 8096;");
 
         $query = "
             SELECT 
@@ -37,7 +39,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
                 GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
-                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data,
+                GROUP_CONCAT(t.transaction_data SEPARATOR '---') as tran_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
@@ -168,6 +171,8 @@ final class ChargeRepository extends AbstractRepository
 
         $id = $mundipaggId->getValue();
 
+        $this->db->query("SET group_concat_max_len = 8096;");
+
         $query = "
             SELECT 
                 c.*, 
@@ -185,7 +190,8 @@ final class ChargeRepository extends AbstractRepository
                 GROUP_CONCAT(t.status) as tran_status,
                 GROUP_CONCAT(t.created_at) as tran_created_at,
                 GROUP_CONCAT(t.boleto_url) as tran_boleto_url,
-                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data
+                GROUP_CONCAT(t.card_data SEPARATOR '---') as tran_card_data,
+                GROUP_CONCAT(t.transaction_data SEPARATOR '---') as tran_data
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
@@ -203,5 +209,41 @@ final class ChargeRepository extends AbstractRepository
         $factory = new ChargeFactory();
 
         return $factory->createFromDbData($result->row);
+    }
+
+    /**
+     * @param $code
+     * @return Charge[]
+     * @throws \Exception
+     */
+    public function findChargeWithOutOrder($code)
+    {
+        $chargeTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_CHARGE
+        );
+
+        $orderTable = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_ORDER
+        );
+
+        $query = "SELECT charge.* 
+                    FROM `{$chargeTable}` as charge  
+               LEFT JOIN `{$orderTable}` as o on charge.order_id = o.mundipagg_id 
+                   WHERE o.id is null 
+                     AND charge.code = '{$code}'";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        $factory = new ChargeFactory();
+        $chargeList = [];
+        foreach ($result->rows as $chargedDb) {
+            $chargeList[] = $factory->createFromDbData($chargedDb);
+        }
+
+        return $chargeList;
     }
 }

@@ -1,8 +1,8 @@
 {
   "name": "mundipagg/ecommerce-module-core",
-  "description": "Core component for Mundipagg e-commerce platforms modules.",
+  "description": "Core component for Mundipagg e-commerce platform modules.",
   "license": "MIT",
-  "version": "1.12.2",
+  "version": "2.4.8",
   "authors": [
     {
       "name": "MundiPagg Embeddables Team",
@@ -17,9 +17,10 @@
     "ext-json": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.7.27",
     "mockery/mockery": "1.2.4",
-    "nesbot/carbon": "1.39.0"
+    "nesbot/carbon": "1.39.0",
+    "ext-pdo": "*",
+    "phpunit/phpunit": "5.7.27"
   },
   "autoload": {
     "psr-4": {
@@ -35,6 +36,7 @@
     "post-update-cmd": [
       "cp 'hooks/pre-commit' '.git/hooks/pre-commit'"
     ],
-    "tests": "vendor/bin/phpunit --colors=always"
+    "tests": "vendor/bin/phpunit --colors=always",
+    "tests-coverage": "vendor/bin/phpunit --colors=always --coverage-html ./tests/report"
   }
 }
