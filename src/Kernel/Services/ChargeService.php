@@ -189,50 +189,8 @@ class ChargeService
             $this->logService->info("Synchronizing with platform Order");
             $orderService->syncPlatformWith($order, false);
 
-            $platformOrderGrandTotal = $moneyService->floatToCents(
-                $platformOrder->getGrandTotal()
-            );
-            $platformOrderTotalCanceled = $moneyService->floatToCents(
-                $platformOrder->getTotalCanceled()
-            );
-
-            $platformOrderTotalRefunded = $moneyService->floatToCents(
-                $platformOrder->getTotalRefunded()
-            );
-
-            if (
-                $platformOrderGrandTotal === $platformOrderTotalCanceled ||
-                $platformOrderGrandTotal === $platformOrderTotalRefunded
-            ) {
-                $this->logService->info("Change Order status");
-
-                $order->setStatus(OrderStatus::canceled());
-                if (!$order->getPlatformOrder()->getState()->equals(OrderState::closed())) {
-                    $order->getPlatformOrder()->setState(OrderState::canceled());
-                }
-                $order->getPlatformOrder()->save();
-
-                $orderRepository->save($order);
-                $orderService->syncPlatformWith($order, false);
-
-                $statusOrderLabel = $platformOrder->getStatusLabel(
-                    $order->getStatus()
-                );
-
-                $messageComplementEmail = $i18n->getDashboard(
-                    'New order status: %s',
-                    $statusOrderLabel
-                );
-
-                $sender = $platformOrder->sendEmail($messageComplementEmail);
-
-                $order->getPlatformOrder()->addHistoryComment(
-                    $i18n->getDashboard('Order canceled.'),
-                    $sender
-                );
-            }
-
             $message = $i18n->getDashboard("Charge canceled with success");
+            $this->logService->info($message);
             return new ServiceResponse(true, $message);
         }
 
