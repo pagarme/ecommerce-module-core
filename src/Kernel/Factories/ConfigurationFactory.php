@@ -59,20 +59,8 @@ class ConfigurationFactory implements FactoryInterface
         $config = new Configuration();
         $data = json_decode($json);
 
-        foreach ($data->cardConfigs as $cardConfig) {
-            $brand = strtolower($cardConfig->brand);
-            $config->addCardConfig(
-                new CardConfig(
-                    $cardConfig->enabled,
-                    CardBrand::$brand(),
-                    $cardConfig->maxInstallment,
-                    $cardConfig->maxInstallmentWithoutInterest,
-                    $cardConfig->initialInterest,
-                    $cardConfig->incrementalInterest,
-                    $cardConfig->minValue
-                )
-            );
-        }
+        $this->createCardConfigs($data, $config);
+
         $antifraudEnabled = false;
         $antifraudMinAmount = 0;
 
@@ -223,6 +211,25 @@ class ConfigurationFactory implements FactoryInterface
         return $config;
     }
 
+    private function createCardConfigs($data,Configuration $config)
+    {
+        try {
+            foreach ($data->cardConfigs as $cardConfig) {
+                $brand = strtolower($cardConfig->brand);
+                $config->addCardConfig(
+                    new CardConfig(
+                        $cardConfig->enabled,
+                        CardBrand::$brand(),
+                        $cardConfig->maxInstallment,
+                        $cardConfig->maxInstallmentWithoutInterest,
+                        $cardConfig->initialInterest,
+                        $cardConfig->incrementalInterest,
+                        $cardConfig->minValue
+                    )
+                );
+            }
+        } catch (Exception $e) {}
+    }
 
     private function createPublicKey($key)
     {
