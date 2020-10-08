@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Transaction;
 use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\TransactionFactory;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
@@ -43,7 +44,9 @@ final class TransactionRepository extends AbstractRepository
 
         $cardData = json_encode($simpleObject->cardData);
 
-        $transactionData = json_encode($object->getPostData());
+        $transactionData = (new StringFunctionsHelper)->cleanStrToDb(
+            json_encode($object->getPostData())
+        );
 
         $query = "
           INSERT INTO 
