@@ -43,7 +43,7 @@ final class TransactionRepository extends AbstractRepository
 
         $cardData = json_encode($simpleObject->cardData);
 
-        $transactionData = json_encode($object->getPostData());
+        $transactionData = str_replace("'", "`", json_encode($object->getPostData()));
 
         $query = "
           INSERT INTO 
