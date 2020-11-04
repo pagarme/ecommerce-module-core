@@ -17,6 +17,7 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
+use Mundipagg\Core\Maintenance\Services\ConfigInfoRetrieverService;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
 use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
@@ -26,13 +27,26 @@ use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
 
 class APIService
 {
+    /**
+     * @var MundiAPIClient
+     */
     private $apiClient;
+
+    /**
+     * @var OrderLogService
+     */
     private $logService;
+
+    /**
+     * @var ConfigInfoRetrieverService
+     */
+    private $configInfoRetrieverService;
 
     public function __construct()
     {
         $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
+        $this->configInfoRetrieverService = new ConfigInfoRetrieverService();
     }
 
     public function getCharge(ChargeId $chargeId)
@@ -104,6 +118,14 @@ class APIService
         $orderRequest = $order->convertToSDKRequest();
         $orderRequest->metadata = $this->getRequestMetaData();
         $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
+
+        $configInfo = $this->configInfoRetrieverService->retrieveInfo("");
+
+        $this->logService->orderInfo(
+            $order->getCode(),
+            "Snapshot config from {$publicKey}",
+            $configInfo
+        );
 
         $message =
             'Create order Request from ' .
