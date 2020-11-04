@@ -111,6 +111,11 @@ class APIService
         }
     }
 
+    /**
+     * @param Order $order
+     * @return array|mixed
+     * @throws APIException
+     */
     public function createOrder(Order $order)
     {
         $endpoint = $this->getAPIBaseEndpoint();
