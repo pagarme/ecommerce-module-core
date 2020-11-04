@@ -40,13 +40,13 @@ class APIService
     /**
      * @var ConfigInfoRetrieverService
      */
-    private $configInfoRetrieverService;
+    private $configInfoService;
 
     public function __construct()
     {
         $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
-        $this->configInfoRetrieverService = new ConfigInfoRetrieverService();
+        $this->configInfoService = new ConfigInfoRetrieverService();
     }
 
     public function getCharge(ChargeId $chargeId)
@@ -119,7 +119,7 @@ class APIService
         $orderRequest->metadata = $this->getRequestMetaData();
         $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
 
-        $configInfo = $this->configInfoRetrieverService->retrieveInfo("");
+        $configInfo = $this->configInfoService->retrieveInfo("");
 
         $this->logService->orderInfo(
             $order->getCode(),
