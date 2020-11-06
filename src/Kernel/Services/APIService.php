@@ -2,21 +2,23 @@
 
 namespace Mundipagg\Core\Kernel\Services;
 
+use Exception;
 use MundiAPILib\APIException;
+use MundiAPILib\Configuration;
+use MundiAPILib\Controllers\CustomersController;
+use MundiAPILib\Controllers\OrdersController;
 use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCaptureChargeRequest;
-use MundiAPILib\Models\CreateChargeRequest;
-use MundiAPILib\Models\CreateInvoiceRequest;
-use MundiAPILib\Models\ListInvoicesResponse;
 use MundiAPILib\MundiAPIClient;
+use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
 use Mundipagg\Core\Maintenance\Services\ConfigInfoRetrieverService;
 use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Aggregates\Order;
@@ -42,11 +44,17 @@ class APIService
      */
     private $configInfoService;
 
+    /**
+     * @var OrderCreationService
+     */
+    private $orderCreationService;
+
     public function __construct()
     {
         $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
         $this->configInfoService = new ConfigInfoRetrieverService();
+        $this->orderCreationService = new OrderCreationService($this->apiClient);
     }
 
     public function getCharge(ChargeId $chargeId)
@@ -68,7 +76,6 @@ class APIService
             );
 
             return json_decode(json_encode($response), true);
-
         } catch (APIException $e) {
             return $e->getMessage();
         }
@@ -86,7 +93,7 @@ class APIService
             }
 
             $chargeController = $this->getChargeController();
-            $result = $chargeController->cancelCharge($chargeId, $request);
+            $chargeController->cancelCharge($chargeId, $request);
             $charge->cancel($amount);
 
             return null;
@@ -99,13 +106,11 @@ class APIService
     {
         try {
             $chargeId = $charge->getMundipaggId()->getValue();
-            $request = new CreateCaptureChargeRequest;
+            $request = new CreateCaptureChargeRequest();
             $request->amount = $amount;
 
             $chargeController = $this->getChargeController();
-            $result = $chargeController->captureCharge($chargeId, $request);
-
-            return $result;
+            return $chargeController->captureCharge($chargeId, $request);
         } catch (APIException $e) {
             return $e->getMessage();
         }
@@ -114,7 +119,7 @@ class APIService
     /**
      * @param Order $order
      * @return array|mixed
-     * @throws APIException
+     * @throws Exception
      */
     public function createOrder(Order $order)
     {
@@ -144,24 +149,34 @@ class APIService
             $orderRequest
         );
 
-        $orderController = $this->getOrderController();
-
         try {
-            $response = $orderController->createOrder($orderRequest);
-            $this->logService->orderInfo(
-                $order->getCode(),
-                'Create order Response',
-                $response
+            return $this->orderCreationService->createOrder(
+                $orderRequest,
+                $this->uuidv4(),
+                3
             );
-
-            return json_decode(json_encode($response), true);
-
         } catch (ErrorException $e) {
             $this->logService->exception($e);
-            return [
-                "message" => $e->getMessage()
-            ];
+            return ["message" => $e->getMessage()];
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function uuidv4()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     private function getRequestMetaData()
@@ -176,6 +191,12 @@ class APIService
         return $metadata;
     }
 
+    /**
+     * @param OrderId $orderId
+     * @return AbstractEntity|\Mundipagg\Core\Kernel\Aggregates\Order|string
+     * @throws InvalidParamException
+     * @throws NotFoundException
+     */
     public function getOrder(OrderId $orderId)
     {
         try {
@@ -185,6 +206,7 @@ class APIService
             $orderData = json_decode(json_encode($orderData), true);
 
             $orderFactory = new OrderFactory();
+
             return $orderFactory->createFromPostData($orderData);
         } catch (APIException $e) {
             return $e->getMessage();
@@ -197,8 +219,7 @@ class APIService
     }
 
     /**
-     *
-     * @return \MundiAPILib\Controllers\OrdersController
+     * @return OrdersController
      */
     private function getOrderController()
     {
@@ -206,8 +227,7 @@ class APIService
     }
 
     /**
-     *
-     * @return \MundiAPILib\Controllers\CustomersController
+     * @return CustomersController
      */
     private function getCustomerController()
     {
@@ -224,14 +244,14 @@ class APIService
         }
         $password = '';
 
-        \MundiAPILib\Configuration::$basicAuthPassword = '';
+        Configuration::$basicAuthPassword = '';
 
         return new MundiAPIClient($secretKey, $password);
     }
 
     private function getAPIBaseEndpoint()
     {
-        return \MundiAPILib\Configuration::$BASEURI;
+        return Configuration::$BASEURI;
     }
 
     public function updateCustomer(Customer $customer)
@@ -252,6 +272,11 @@ class APIService
         return $this->apiClient->getInvoices();
     }
 
+    /**
+     * @param Subscription $subscription
+     * @return mixed|null
+     * @throws APIException
+     */
     public function createSubscription(Subscription $subscription)
     {
         $endpoint = $this->getAPIBaseEndpoint();
@@ -272,7 +297,7 @@ class APIService
             $subscriptionRequest
         );
 
-       $subscriptionController = $this->getSubscriptionController();
+        $subscriptionController = $this->getSubscriptionController();
 
         try {
             $response = $subscriptionController->createSubscription($subscriptionRequest);
@@ -283,13 +308,17 @@ class APIService
             );
 
             return json_decode(json_encode($response), true);
-
         } catch (ErrorException $e) {
             $this->logService->exception($e);
             return null;
         }
     }
 
+    /**
+     * @param SubscriptionId $subscriptionId
+     * @return AbstractEntity|Subscription|string
+     * @throws InvalidParamException
+     */
     public function getSubscription(SubscriptionId $subscriptionId)
     {
         try {
@@ -311,9 +340,8 @@ class APIService
     }
 
     /**
-     * Get subscription invoice
      * @param SubscriptionId $subscriptionId
-     * @return ListInvoicesResponse
+     * @return mixed|string
      */
     public function getSubscriptionInvoice(SubscriptionId $subscriptionId)
     {
@@ -339,8 +367,7 @@ class APIService
                 $response
             );
 
-            return json_decode(json_encode($response), true);;
-
+            return json_decode(json_encode($response), true);
         } catch (APIException $e) {
             return $e->getMessage();
         }
@@ -376,24 +403,27 @@ class APIService
             );
 
             return json_decode(json_encode($response), true);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logService->exception($e);
             return $e;
         }
     }
 
+    /**
+     * @param Invoice $invoice
+     * @param int $amount
+     * @return mixed
+     * @throws APIException
+     */
     public function cancelInvoice(Invoice &$invoice, $amount = 0)
     {
         try {
             $invoiceId = $invoice->getMundipaggId()->getValue();
-            $request = new CreateInvoiceRequest();
+            $invoiceController = $this->apiClient->getInvoices();
 
-            $invoiceController =  $this->apiClient->getInvoices();
             return $invoiceController->cancelInvoice($invoiceId);
-
         } catch (APIException $e) {
-            throw new \Exception($e->getMessage());
+            throw $e;
         }
     }
 }
