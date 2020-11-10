@@ -146,4 +146,20 @@ class StringFunctionsHelper
             strip_tags($str)
         );
     }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function removeLineBreaks($text)
+    {
+        $pattern = '/\\\s+\\\s\\\r\\\n|\\\r|\\\n\\\r|\\\n/m';
+        return trim(
+            preg_replace(
+                $pattern,
+                ' ',
+                $text
+            )
+        );
+    }
 }
