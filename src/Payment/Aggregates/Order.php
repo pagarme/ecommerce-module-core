@@ -328,6 +328,11 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         return PaymentMethod::boleto();
     }
 
+    private function pixPaymentMethod()
+    {
+        return PaymentMethod::pix();
+    }
+
     private function voucherPaymentMethod()
     {
         return PaymentMethod::voucher();

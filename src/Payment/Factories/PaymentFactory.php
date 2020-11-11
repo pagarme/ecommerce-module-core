@@ -13,6 +13,7 @@ use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
+use Mundipagg\Core\Payment\Aggregates\Payments\PixPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Mundipagg\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
 use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
@@ -44,6 +45,7 @@ final class PaymentFactory
             'createBoletoPayments',
             'createVoucherPayments',
             'createDebitCardPayments',
+            'createPixPayments',
         ];
 
         $this->moduleConfig = MPSetup::getModuleConfiguration();
@@ -230,6 +232,36 @@ final class PaymentFactory
             $payment->setAmount($boletoData->amount);
             $payment->setBank($this->boletoBank);
             $payment->setInstructions($this->boletoInstructions);
+
+            $payments[] = $payment;
+        }
+
+        return $payments;
+    }
+
+    private function createPixPayments($data)
+    {
+        $pixDataIndex = PixPayment::getBaseCode();
+
+        if (!isset($data->$pixDataIndex)) {
+            return [];
+        }
+
+        $pixData = $data->$pixDataIndex;
+
+        $payments = [];
+        foreach ($pixData as $value) {
+            $payment = new PixPayment();
+
+            // $this->moduleConfig->pixConfig->getExpireIn();
+            $payment->setExpiresIn(500000);
+
+            $customer = $this->createCustomer($value);
+            if ($customer !== null) {
+                $payment->setCustomer($customer);
+            }
+
+            $payment->setAmount($value->amount);
 
             $payments[] = $payment;
         }
