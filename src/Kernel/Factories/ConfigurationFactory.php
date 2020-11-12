@@ -211,7 +211,7 @@ class ConfigurationFactory implements FactoryInterface
 
         if (!empty($data->pixConfig)) {
             $config->setPixConfig(
-                (new PixConfigFactory)->createFromDbData($data->pixConfig)
+                (new PixConfigFactory())->createFromDbData($data->pixConfig)
             );
         }
 
