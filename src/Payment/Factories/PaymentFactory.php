@@ -253,8 +253,8 @@ final class PaymentFactory
         foreach ($pixData as $value) {
             $payment = new PixPayment();
 
-            // $this->moduleConfig->pixConfig->getExpireIn();
-            $payment->setExpiresIn(500000);
+            $expiresIn = $this->moduleConfig->getPixConfig()->getExpirationQrCode();
+            $payment->setExpiresIn($expiresIn);
 
             $customer = $this->createCustomer($value);
             if ($customer !== null) {
