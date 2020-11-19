@@ -287,7 +287,7 @@ final class SubscriptionService
         if ($this->paymentExists($order)) {
             $payments = $order->getPayments();
 
-            $subscription->setCardToken(
+            $subscription->setCardId(
                 $this->extractCreditCardTokenFromPayment($payments[0])
             );
             $subscription->setInstallments(

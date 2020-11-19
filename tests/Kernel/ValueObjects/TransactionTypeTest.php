@@ -23,6 +23,10 @@ class TransactionTypeTest extends TestCase
         'DEBIT_CARD' => [
             'method' => 'debitCard',
             'value' => "debit_card"
+        ],
+        'PIX' => [
+            'method' => 'pix',
+            'value' => "pix"
         ]
     ];
 
