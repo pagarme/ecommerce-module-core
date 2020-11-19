@@ -521,6 +521,17 @@ class Subscription extends AbstractEntity
             $subscriptionRequest->items[] = $item->convertToSDKRequest();
         }
 
+        $this->setCardData($subscriptionRequest);
+
+        return $subscriptionRequest;
+    }
+
+    private function setCardData(CreateSubscriptionRequest $subscriptionRequest)
+    {
+        if($subscriptionRequest->paymentMethod == PaymentMethod::BOLETO){
+            return;
+        }
+
         $card = new CreateCardRequest();
         if ($this->getCustomer()->getAddress() != null) {
             $card->billingAddress = $this->getCustomer()->getAddress()->convertToSDKRequest();
@@ -528,7 +539,6 @@ class Subscription extends AbstractEntity
 
         $subscriptionRequest->card = $card;
 
-        return $subscriptionRequest;
     }
 
     public function getStatusValue()
