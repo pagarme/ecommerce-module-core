@@ -532,6 +532,14 @@ class Subscription extends AbstractEntity
             return;
         }
 
+        if(!empty($subscriptionRequest->cardId)){
+            return;
+        }
+
+        if(!empty($subscriptionRequest->cardToken)){
+            return;
+        }
+
         $card = new CreateCardRequest();
         if ($this->getCustomer()->getAddress() != null) {
             $card->billingAddress = $this->getCustomer()->getAddress()->convertToSDKRequest();
