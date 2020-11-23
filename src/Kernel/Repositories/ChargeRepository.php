@@ -7,6 +7,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\ChargeFactory;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 
@@ -58,7 +59,15 @@ final class ChargeRepository extends AbstractRepository
         $factory = new ChargeFactory();
 
         $charges = [];
-        foreach ($result->rows as $row) {
+        foreach ($result->rows as &$row) {
+            $row['tran_card_data'] = StringFunctionsHelper::removeLineBreaks(
+                $row['tran_card_data']
+            );
+
+            $row['tran_data'] = StringFunctionsHelper::removeLineBreaks(
+                $row['tran_data']
+            );
+
             $charges[] = $factory->createFromDbData($row);
         }
 
