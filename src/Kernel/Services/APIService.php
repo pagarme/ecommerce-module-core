@@ -5,11 +5,13 @@ namespace Mundipagg\Core\Kernel\Services;
 use Exception;
 use MundiAPILib\APIException;
 use MundiAPILib\Configuration;
+use MundiAPILib\Controllers\ChargesController;
 use MundiAPILib\Controllers\CustomersController;
 use MundiAPILib\Controllers\OrdersController;
 use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCaptureChargeRequest;
+use MundiAPILib\Models\CreateOrderRequest;
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
@@ -152,7 +154,7 @@ class APIService
         try {
             return $this->orderCreationService->createOrder(
                 $orderRequest,
-                $this->uuidv4(),
+                $this->generateIdempotencyKey($orderRequest),
                 3
             );
         } catch (ErrorException $e) {
@@ -162,21 +164,12 @@ class APIService
     }
 
     /**
+     * @param CreateOrderRequest $orderRequest
      * @return string
      */
-    private function uuidv4()
+    private function generateIdempotencyKey(CreateOrderRequest $orderRequest)
     {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
-        );
+        return sha1($orderRequest->customer->document . $orderRequest->code);
     }
 
     private function getRequestMetaData()
@@ -213,6 +206,9 @@ class APIService
         }
     }
 
+    /**
+     * @return ChargesController
+     */
     private function getChargeController()
     {
         return $this->apiClient->getCharges();
