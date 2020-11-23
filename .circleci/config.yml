@@ -62,6 +62,10 @@ commands:
       - run:
           name: Send to Codacy
           command: php vendor/bin/codacycoverage clover /app/build/logs/clover.xml -v
+      - run:
+          name: Send to Codacy - sh
+          command: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l PHP -r /app/build/logs/clover.xml --project-token ${CODACY_PROJECT_TOKEN}    
+          
 jobs:
   build-php56:
     working_directory: /app
