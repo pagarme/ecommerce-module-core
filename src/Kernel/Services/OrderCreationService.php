@@ -21,7 +21,7 @@ class OrderCreationService
     /**
      * @var int
      */
-    private $attempt = 1;
+    private $generalAttempt = 1;
 
     public function __construct(MundiAPIClient $mundiAPIClient)
     {
@@ -32,14 +32,14 @@ class OrderCreationService
     /**
      * @param CreateOrderRequest $orderRequest
      * @param string $idempotencyKey
-     * @param int $retry
+     * @param int $attempt
      * @return string|bool - json string
      * @throws Exception
      */
     public function createOrder(
         CreateOrderRequest $orderRequest,
         $idempotencyKey,
-        $retry = 1
+        $attempt = 1
     ) {
         $resilience = false;
         $response = null;
@@ -54,22 +54,22 @@ class OrderCreationService
             $resilience = $this->checkRunResilience($exception);
         }
 
-        if ($resilience && $retry > 1) {
+        if ($resilience && $attempt > 1) {
             sleep(3);
 
-            $currentTime = ($retry - 1);
-            $this->attempt += 1;
+            $currentAttempt = ($attempt - 1);
+            $this->generalAttempt++;
 
             $this->logService->orderInfo(
                 $orderRequest->code,
-                "Try create order Request attempts: {$this->attempt}",
+                "Try create order Request attempts: {$this->generalAttempt}",
                 [$messageLog]
             );
 
             return $this->createOrder(
                 $orderRequest,
                 $idempotencyKey,
-                $currentTime
+                $currentAttempt
             );
         }
 
