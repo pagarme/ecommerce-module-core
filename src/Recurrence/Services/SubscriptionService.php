@@ -4,6 +4,8 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Payment\ValueObjects\CardId;
+use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\Discounts;
 use Mundipagg\Core\Recurrence\Aggregates\Increment;
 use Mundipagg\Core\Recurrence\Aggregates\Plan;
@@ -287,11 +289,26 @@ final class SubscriptionService
         if ($this->paymentExists($order)) {
             $payments = $order->getPayments();
 
-            $subscription->setCardId(
-                $this->extractCreditCardTokenFromPayment($payments[0])
-            );
+            $identify = $this->extractCreditCardIdentifyFromPayment($payments[0]);
+
+            if (is_a($identify, CardToken::class)) {
+                $subscription->setCardToken(
+                    $identify->getValue()
+                );
+            }
+
+            if (is_a($identify, CardId::class)) {
+                $subscription->setCardId(
+                    $identify->getValue()
+                );
+            }
+
             $subscription->setInstallments(
                 $this->extractInstallmentsFromPayment($payments[0])
+            );
+
+            $subscription->setMetadata(
+                $this->extractSaveOnSuccessFromPayment($payments[0])
             );
         }
     }
@@ -368,13 +385,18 @@ final class SubscriptionService
         return false;
     }
 
-    private function extractCreditCardTokenFromPayment($payment)
+    private function extractCreditCardIdentifyFromPayment($payment)
     {
         if (method_exists($payment, 'getIdentifier')) {
-            return $payment->getIdentifier()->getValue();
+            return $payment->getIdentifier();
         }
 
         return null;
+    }
+
+    private function extractSaveOnSuccessFromPayment($payment)
+    {
+        return ['saveOnSuccess' => $payment->isSaveOnSuccess()];
     }
 
     private function extractInstallmentsFromPayment($payment)

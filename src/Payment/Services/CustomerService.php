@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Payment\Services;
 use Mundipagg\Core\Kernel\Interfaces\PlatformCustomerInterface;
 use Mundipagg\Core\Kernel\Services\APIService;
 use Mundipagg\Core\Kernel\Services\LogService;
+use Mundipagg\Core\Payment\Aggregates\Customer;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 
@@ -41,5 +42,28 @@ class CustomerService
 
         $customerRepository = new CustomerRepository();
         $customerRepository->deleteByCode($customer->getCode());
+    }
+
+    /**
+     * @param Customer $customer
+     */
+    public function saveCustomer(Customer $customer)
+    {
+
+        if (empty($customer) || $customer->getCode() === null) {
+            return;
+        }
+
+        $customerRepository = new CustomerRepository();
+
+        if ($customerRepository->findByCode($customer->getCode()) !== null) {
+            $customerRepository->deleteByCode($customer->getCode());
+        }
+
+        if (
+            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
+        ) {
+            $customerRepository->save($customer);
+        }
     }
 }

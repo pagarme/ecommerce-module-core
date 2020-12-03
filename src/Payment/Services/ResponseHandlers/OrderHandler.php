@@ -19,6 +19,8 @@ use Mundipagg\Core\Payment\Factories\SavedCardFactory;
 use Mundipagg\Core\Payment\Repositories\CustomerRepository;
 use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Payment\Services\CardService;
+use Mundipagg\Core\Payment\Services\CustomerService;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -40,7 +42,8 @@ final class OrderHandler extends AbstractResponseHandler
         $orderRepository = new OrderRepository();
         $orderRepository->save($createdOrder);
 
-        $this->saveCustomer($createdOrder);
+        $customerService = new CustomerService();
+        $customerService->saveCustomer($createdOrder->getCustomer());
 
         return $this->$statusHandler($createdOrder);
     }
@@ -119,14 +122,15 @@ final class OrderHandler extends AbstractResponseHandler
     private function handleOrderStatusPaid(Order $order)
     {
         $invoiceService = new InvoiceService();
+        $cardService = new CardService();
 
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
         $invoice = $invoiceService->createInvoiceFor($order);
         if ($invoice !== null) {
-
+            // create payment service to complete payment
             $this->completePayment($order, $invoice);
 
-            $this->saveCards($order);
+            $cardService->saveCards($order);
 
             return true;
         }
@@ -289,84 +293,5 @@ final class OrderHandler extends AbstractResponseHandler
         );
 
         return "One or more charges weren't authorized. Please try again.";
-    }
-
-    /**
-     * @param PaymentOrder $paymentOrder
-     */
-    private function saveCustomer(Order $createdOrder)
-    {
-        $customer = $createdOrder->getCustomer();
-
-        //save only registered customers;
-        if (empty($customer) || $customer->getCode() === null) {
-            return;
-        }
-
-        $customerRepository = new CustomerRepository();
-
-        if ($customerRepository->findByCode($customer->getCode()) !== null) {
-            $customerRepository->deleteByCode($customer->getCode());
-        }
-
-        if (
-            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
-        ) {
-            $customerRepository->save($customer);
-        }
-    }
-
-    private function saveCards(Order $order)
-    {
-        $savedCardFactory = new SavedCardFactory();
-        $savedCardRepository = new SavedCardRepository();
-        $charges = $order->getCharges();
-
-        foreach ($charges as $charge) {
-            $lastTransaction = $charge->getLastTransaction();
-            if ($lastTransaction === null) {
-                continue;
-            }
-
-            if (
-            !(
-                $lastTransaction->getTransactionType()->equals(TransactionType::creditCard()) ||
-                $lastTransaction->getTransactionType()->equals(TransactionType::voucher()) ||
-                $lastTransaction->getTransactionType()->equals(TransactionType::debitCard())
-            )
-            ) {
-                continue; //save only credit card transactions;
-            }
-
-            $metadata = $charge->getMetadata();
-            $saveOnSuccess =
-                isset($metadata->saveOnSuccess) &&
-                $metadata->saveOnSuccess === "true";
-
-            if (
-                !empty($lastTransaction->getCardData()) &&
-                $saveOnSuccess &&
-                $order->getCustomer()->getMundipaggId()->equals(
-                    $charge->getCustomer()->getMundipaggId()
-                )
-            ) {
-                $postData =
-                    json_decode(json_encode($lastTransaction->getCardData()));
-                $postData->owner =
-                    $charge->getCustomer()->getMundipaggId();
-
-                $savedCard = $savedCardFactory->createFromTransactionJson($postData);
-                if (
-                    $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
-                ) {
-                    $savedCardRepository->save($savedCard);
-                    $this->logService->orderInfo(
-                        $order->getCode(),
-                        "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
-                    );
-
-                }
-            }
-        }
     }
 }
