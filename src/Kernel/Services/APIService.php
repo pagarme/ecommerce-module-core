@@ -163,15 +163,6 @@ class APIService
         }
     }
 
-    /**
-     * @param CreateOrderRequest $orderRequest
-     * @return string
-     */
-    private function generateIdempotencyKey(CreateOrderRequest $orderRequest)
-    {
-        return sha1($orderRequest->customer->document . $orderRequest->code);
-    }
-
     private function getRequestMetaData()
     {
         $versionService = new VersionService();
