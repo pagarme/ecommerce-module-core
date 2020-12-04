@@ -98,6 +98,36 @@ class Subscription extends AbstractEntity
     private $recurrenceType = ProductSubscription::RECURRENCE_TYPE;
 
     /**
+     * @var array
+     */
+    private $metadata;
+
+    /**
+     * @return array
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array $metadata
+     * @return Subscription
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    public function addMetaData($metadata)
+    {
+        $newMetaData = array_merge($this->getMetadata(), $metadata);
+        $this->setMetadata($newMetaData);
+        return $this;
+    }
+
+    /**
      * @return Discounts[]
      */
     public function getDiscounts()
@@ -522,6 +552,8 @@ class Subscription extends AbstractEntity
         }
 
         $this->setCardData($subscriptionRequest);
+
+        $subscriptionRequest->metadata = $this->getMetadata();
 
         return $subscriptionRequest;
     }
