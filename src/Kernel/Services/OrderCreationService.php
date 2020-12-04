@@ -41,7 +41,7 @@ class OrderCreationService
         $idempotencyKey,
         $attempt = 1
     ) {
-        $resilience = false;
+        $shouldRetry = false;
         $response = null;
         $messageLog = "";
 
@@ -51,10 +51,10 @@ class OrderCreationService
             $response = $orderController->createOrder($orderRequest, $idempotencyKey);
         } catch (Exception $exception) {
             $messageLog = $exception->getMessage();
-            $resilience = $this->checkRunResilience($exception);
+            $shouldRetry = $this->shouldRetry($exception);
         }
 
-        if ($resilience && $attempt > 1) {
+        if ($shouldRetry && $attempt > 1) {
             sleep(3);
 
             $currentAttempt = ($attempt - 1);
@@ -90,7 +90,7 @@ class OrderCreationService
      * @param Exception $exception
      * @return bool
      */
-    private function checkRunResilience(Exception $exception)
+    private function shouldRetry(Exception $exception)
     {
         $resilience = false;
 

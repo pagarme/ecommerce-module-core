@@ -127,6 +127,14 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     }
 
     /**
+     * @return string
+     */
+    public function generateIdempotencyKey()
+    {
+        return sha1($this->getCustomer()->getDocument() . $this->getCode());
+    }
+
+    /**
      * @return bool
      */
     public function isPaymentSumCorrect()

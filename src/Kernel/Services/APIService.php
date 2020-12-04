@@ -154,7 +154,7 @@ class APIService
         try {
             return $this->orderCreationService->createOrder(
                 $orderRequest,
-                $this->generateIdempotencyKey($orderRequest),
+                $order->generateIdempotencyKey(),
                 3
             );
         } catch (ErrorException $e) {
