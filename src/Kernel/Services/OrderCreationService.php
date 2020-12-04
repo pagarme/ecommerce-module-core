@@ -92,16 +92,16 @@ class OrderCreationService
      */
     private function shouldRetry(Exception $exception)
     {
-        $resilience = false;
+        $shouldRetry = false;
 
         if (($exception->getCode() < 200) || ($exception->getCode() > 208)) {
-            $resilience = true;
+            $shouldRetry = true;
         }
 
         if ($exception->getCode() == 422 || $exception->getCode() == 401) {
-            $resilience = false;
+            $shouldRetry = false;
         }
 
-        return $resilience;
+        return $shouldRetry;
     }
 }
