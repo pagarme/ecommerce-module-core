@@ -213,6 +213,11 @@ final class OrderService
             $forceCreateOrder = MPSetup::getModuleConfiguration()->isCreateOrderEnabled();
 
             if (!$forceCreateOrder && !$this->checkResponseStatus($response)) {
+                $this->logService->orderInfo(
+                    $platformOrder->getCode(),
+                    "Can't create order. - Force Create Order: {$forceCreateOrder} | Order or charge status failed",
+                    $orderInfo
+                );
                 $this->persistListChargeFailed($response);
 
                 $message = $i18n->getDashboard("Can't create order.");
@@ -232,12 +237,22 @@ final class OrderService
             $platformOrder->save();
 
             if ($forceCreateOrder && !$this->checkResponseStatus($originalResponse)) {
+                $this->logService->orderInfo(
+                    $platformOrder->getCode(),
+                    "Can't create order. - Force Create Order: {$forceCreateOrder} | Order or charge status failed",
+                    $orderInfo
+                );
                 $message = $i18n->getDashboard("Can't create order.");
                 throw new \Exception($message, 400);
             }
 
             return [$response];
         } catch (\Exception $e) {
+            $this->logService->orderInfo(
+                $platformOrder->getCode(),
+                $e->getMessage(),
+                $orderInfo
+            );
             $exceptionHandler = new ErrorExceptionHandler();
             $paymentOrder = new PaymentOrder();
             $paymentOrder->setCode($platformOrder->getcode());
@@ -287,10 +302,13 @@ final class OrderService
         }
 
         if (!$order->isPaymentSumCorrect()) {
-            throw new \Exception(
-                'The sum of payments is different than the order amount!',
-                400
+            $message = 'The sum of payments is different than the order amount!';
+            $this->logService->orderInfo(
+                $platformOrder->getCode(),
+                $message,
+                $orderInfo
             );
+            throw new \Exception($message,400);
         }
 
         $items = $platformOrder->getItemCollection();

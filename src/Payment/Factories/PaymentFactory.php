@@ -239,6 +239,11 @@ final class PaymentFactory
         return $payments;
     }
 
+    /**
+     * @param array $data
+     * @return PixPayment[]
+     * @throws InvalidParamException
+     */
     private function createPixPayments($data)
     {
         $pixDataIndex = PixPayment::getBaseCode();

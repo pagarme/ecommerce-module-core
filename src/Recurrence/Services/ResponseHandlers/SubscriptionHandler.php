@@ -5,6 +5,8 @@ namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
 use \Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Payment\Aggregates\Customer;
+use Mundipagg\Core\Payment\Services\CardService;
+use Mundipagg\Core\Payment\Services\CustomerService;
 use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
 use Mundipagg\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
 use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
@@ -58,7 +60,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $subscriptionRepository = new SubscriptionRepository();
         $subscriptionRepository->save($subscription);
-        $this->saveCustomer($subscription->getCustomer());
+
+        $customerService = new CustomerService();
+        $customerService->saveCustomer($subscription->getCustomer());
 
         return $this->$statusHandler($subscription);
     }
@@ -66,13 +70,17 @@ final class SubscriptionHandler extends AbstractResponseHandler
     private function handleSubscriptionStatusPaid(Subscription $subscription)
     {
         $invoiceService = new InvoiceService();
+        $cardService = new CardService();
 
         $order = $this->order;
 
         $cantCreateReason = $invoiceService->getInvoiceCantBeCreatedReason($order);
         $platformInvoice = $invoiceService->createInvoiceFor($order);
         if ($platformInvoice !== null) {
+            // create payment service to complete payment
             $this->completePayment($order, $subscription, $platformInvoice);
+
+            $cardService->saveCards($order);
 
             return true;
         }
@@ -179,29 +187,6 @@ final class SubscriptionHandler extends AbstractResponseHandler
 
         $orderService = new OrderService();
         $orderService->syncPlatformWith($order);
-    }
-
-    /**
-     * @param PaymentOrder $paymentOrder
-     */
-    private function saveCustomer(Customer $customer)
-    {
-        //save only registered customers;
-        if(empty($customer) || $customer->getCode() === null) {
-            return;
-        }
-
-        $customerRepository = new CustomerRepository();
-
-        if ($customerRepository->findByCode($customer->getCode()) !== null) {
-            $customerRepository->deleteByCode($customer->getCode());
-        }
-
-        if (
-            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
-        ) {
-            $customerRepository->save($customer);
-        }
     }
 
     private function getSubscriptionStatusFromCharge(Subscription $subscription)

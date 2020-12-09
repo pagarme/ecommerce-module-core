@@ -2,13 +2,8 @@
 
 namespace Mundipagg\Core\Payment\Aggregates\Payments;
 
-use MundiAPILib\Models\CreateBoletoPaymentRequest;
 use MundiAPILib\Models\CreatePixPaymentRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
-use Mundipagg\Core\Payment\ValueObjects\PixBank;
 use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
 
 final class PixPayment extends AbstractPayment
