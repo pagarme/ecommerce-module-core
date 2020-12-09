@@ -295,6 +295,10 @@ final class SubscriptionService
                 $subscription->setCardToken(
                     $identify->getValue()
                 );
+
+                $subscription->setMetadata(
+                    $this->extractSaveOnSuccessFromPayment($payments[0])
+                );
             }
 
             if (is_a($identify, CardId::class)) {
@@ -305,10 +309,6 @@ final class SubscriptionService
 
             $subscription->setInstallments(
                 $this->extractInstallmentsFromPayment($payments[0])
-            );
-
-            $subscription->setMetadata(
-                $this->extractSaveOnSuccessFromPayment($payments[0])
             );
         }
     }
