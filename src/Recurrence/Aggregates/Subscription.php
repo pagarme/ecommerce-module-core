@@ -100,7 +100,7 @@ class Subscription extends AbstractEntity
     /**
      * @var array
      */
-    private $metadata;
+    private $metadata = [];
 
     /**
      * @return array
