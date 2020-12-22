@@ -666,7 +666,7 @@ final class Configuration extends AbstractEntity
      */
     public function setBoletoDueDays($boletoDueDays)
     {
-        $this->boletoDueDays = $boletoDueDays;
+        $this->boletoDueDays = (int) $boletoDueDays;
     }
 
     /**

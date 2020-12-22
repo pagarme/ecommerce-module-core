@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Recurrence\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
 use Mundipagg\Core\Payment\ValueObjects\CardId;
 use Mundipagg\Core\Payment\ValueObjects\CardToken;
 use Mundipagg\Core\Payment\ValueObjects\Discounts;
@@ -174,7 +175,7 @@ final class SubscriptionService
 
         $this->fillPlanId($subscription, $plan);
         $this->fillInterval($subscription, $plan);
-        $this->fillBoletoData($subscription);
+        $this->fillBoletoData($subscription, $order);
 
         if ($order->getShipping() != null) {
             $this->fillShipping($subscription, $order);
@@ -313,8 +314,12 @@ final class SubscriptionService
         }
     }
 
-    private function fillBoletoData($subscription)
+    private function fillBoletoData($subscription, PaymentOrder $order)
     {
+        if ($order->getPaymentMethod() != PaymentMethod::boleto()) {
+            return;
+        }
+        
         $boletoDays = MPSetup::getModuleConfiguration()->getBoletoDueDays();
         $subscription->setBoletoDays($boletoDays);
     }
