@@ -175,7 +175,10 @@ final class SubscriptionService
 
         $this->fillPlanId($subscription, $plan);
         $this->fillInterval($subscription, $plan);
-        $this->fillBoletoData($subscription, $order);
+
+        if ($order->getPaymentMethod() == PaymentMethod::boleto()) {
+            $this->fillBoletoData($subscription);
+        }
 
         if ($order->getShipping() != null) {
             $this->fillShipping($subscription, $order);
@@ -314,12 +317,8 @@ final class SubscriptionService
         }
     }
 
-    private function fillBoletoData($subscription, PaymentOrder $order)
+    private function fillBoletoData($subscription)
     {
-        if ($order->getPaymentMethod() != PaymentMethod::boleto()) {
-            return;
-        }
-        
         $boletoDays = MPSetup::getModuleConfiguration()->getBoletoDueDays();
         $subscription->setBoletoDays($boletoDays);
     }
