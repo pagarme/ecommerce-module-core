@@ -4,12 +4,15 @@ namespace Mundipagg\Core\Kernel\Factories;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Mundipagg\Core\Kernel\Factories\Configurations\DebitConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\PixConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
 use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
 use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
 use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
 use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
@@ -57,20 +60,8 @@ class ConfigurationFactory implements FactoryInterface
         $config = new Configuration();
         $data = json_decode($json);
 
-        foreach ($data->cardConfigs as $cardConfig) {
-            $brand = strtolower($cardConfig->brand);
-            $config->addCardConfig(
-                new CardConfig(
-                    $cardConfig->enabled,
-                    CardBrand::$brand(),
-                    $cardConfig->maxInstallment,
-                    $cardConfig->maxInstallmentWithoutInterest,
-                    $cardConfig->initialInterest,
-                    $cardConfig->incrementalInterest,
-                    $cardConfig->minValue
-                )
-            );
-        }
+        $this->createCardConfigs($data, $config);
+
         $antifraudEnabled = false;
         $antifraudMinAmount = 0;
 
@@ -85,6 +76,11 @@ class ConfigurationFactory implements FactoryInterface
         $config->setCreditCardEnabled($data->creditCardEnabled);
         $config->setBoletoCreditCardEnabled($data->boletoCreditCardEnabled);
         $config->setTwoCreditCardsEnabled($data->twoCreditCardsEnabled);
+
+        if (empty($data->createOrder)){
+            $data->createOrder = false;
+        }
+        $config->setCreateOrderEnabled($data->createOrder);
 
         if (!empty($data->sendMail)) {
             $config->setSendMailEnabled($data->sendMail);
@@ -171,6 +167,13 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoInstructions($data->boletoInstructions);
         }
 
+        if (!empty($data->boletoBankCode)) {
+            $config->setBoletoBankCode($data->boletoBankCode);
+        }
+        if (!empty($data->boletoDueDays)) {
+            $config->setBoletoDueDays((int) $data->boletoDueDays);
+        }
+
         if (!empty($data->saveCards)) {
             $config->setSaveCards($data->saveCards);
         }
@@ -181,14 +184,8 @@ class ConfigurationFactory implements FactoryInterface
 
         if (!empty($data->recurrenceConfig)) {
             $config->setRecurrenceConfig(
-                new RecurrenceConfig(
-                    $data->recurrenceConfig->planSubscription,
-                    $data->recurrenceConfig->singleSubscription,
-                    $data->recurrenceConfig->paymentUpdateCustomer,
-                    $data->recurrenceConfig->creditCardUpdateCustomer,
-                    $data->recurrenceConfig->subscriptionInstallment,
-                    $data->recurrenceConfig->checkoutConflitMessage
-                )
+                (new RecurrenceConfigFactory())
+                    ->createFromDbData($data->recurrenceConfig)
             );
         }
 
@@ -198,9 +195,48 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
+        if (!empty($data->voucherConfig)) {
+            $config->setVoucherConfig(
+                (new VoucherConfigFactory)
+                ->createFromDbData($data->voucherConfig)
+            );
+        }
+
+        if (!empty($data->debitConfig)) {
+            $config->setDebitConfig(
+                (new DebitConfigFactory)
+                    ->createFromDbData($data->debitConfig)
+            );
+        }
+
+        if (!empty($data->pixConfig)) {
+            $config->setPixConfig(
+                (new PixConfigFactory())->createFromDbData($data->pixConfig)
+            );
+        }
+
         return $config;
     }
 
+    private function createCardConfigs($data,Configuration $config)
+    {
+        try {
+            foreach ($data->cardConfigs as $cardConfig) {
+                $brand = strtolower($cardConfig->brand);
+                $config->addCardConfig(
+                    new CardConfig(
+                        $cardConfig->enabled,
+                        CardBrand::$brand(),
+                        $cardConfig->maxInstallment,
+                        $cardConfig->maxInstallmentWithoutInterest,
+                        $cardConfig->initialInterest,
+                        $cardConfig->incrementalInterest,
+                        $cardConfig->minValue
+                    )
+                );
+            }
+        } catch (Exception $e) {}
+    }
 
     private function createPublicKey($key)
     {
@@ -235,7 +271,6 @@ class ConfigurationFactory implements FactoryInterface
 
         return new HubAccessTokenKey($key);
     }
-
 
     /**
      *

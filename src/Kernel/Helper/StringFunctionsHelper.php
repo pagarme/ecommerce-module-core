@@ -105,6 +105,19 @@ class StringFunctionsHelper
     ];
 
     /**
+     * @var array specialCharacters
+     */
+    private $specialCharacters = [
+        '!' => '',
+        '@' => '',
+        '#' => '',
+        '$' => '',
+        '%' => '',
+        '&' => '',
+        '*' => ''
+    ];
+
+    /**
      * This method will remove all accentiation of your string
      *
      * @param string $str
@@ -113,10 +126,42 @@ class StringFunctionsHelper
      */
     final public function removeSpecialCharacters($str)
     {
+        $str = strtr($str, $this->unwanted);
+        $str = strtr($str, $this->specialCharacters);
+
         return preg_replace(
             "/[^a-zA-Z ]/",
             '',
-            strtr($str, $this->unwanted)
+            $str
         );
+    }
+
+    public function cleanStrToDb($str)
+    {
+        $str = strtr($str, $this->specialCharacters);
+
+        return str_replace(
+            "'",
+            "`",
+            strip_tags($str)
+        );
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function removeLineBreaks($text)
+    {
+        $pattern = '/\\\s+\\\s\\\r\\\n|\\\r|\\\t|\\\n\\\r|\\\n/m';
+        $textCleanBreakLines = trim(
+            preg_replace(
+                $pattern,
+                ' ',
+                $text
+            )
+        );
+
+        return str_replace(chr(9), '', $textCleanBreakLines);
     }
 }

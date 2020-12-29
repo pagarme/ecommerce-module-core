@@ -8,8 +8,10 @@ use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
+use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
 
-final class Charge extends AbstractEntity
+final class Charge extends AbstractEntity implements ChargeInterface
 {
     use WithCustomerTrait;
 
@@ -121,7 +123,7 @@ final class Charge extends AbstractEntity
             $this->setRefundedAmount($amountRefunded);
 
             //if all the paid amount was canceled, the charge should be canceled.
-            if ($amount === $this->paidAmount) {
+            if ($amount == $this->paidAmount) {
                 $this->status = ChargeStatus::canceled();
             }
 
@@ -332,6 +334,11 @@ final class Charge extends AbstractEntity
         return $newest;
     }
 
+    public function failed()
+    {
+        $this->status = ChargeStatus::failed();
+    }
+
     /**
      *
      * @param  Transaction $newTransaction
@@ -384,6 +391,37 @@ final class Charge extends AbstractEntity
         }
 
         $this->addTransaction($updatedTransaction);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAcquirerTidCapturedAndAutorize()
+    {
+        $transactions = $this->getTransactions();
+
+        $NSU = [
+            'captured' => null,
+            'authorized' => null
+        ];
+
+        foreach ($transactions as $transaction) {
+            if ($transaction->getStatus()->equals(TransactionStatus::captured())) {
+                $NSU['captured'] = $transaction->getAcquirerNsu();
+                continue;
+            }
+
+            $NSU['authorized'] = $transaction->getAcquirerNsu();;
+        }
+
+        if (
+            ($NSU['captured'] !== null) &&
+            $NSU['captured'] == $NSU['authorized']
+        ) {
+            $NSU['authorized'] = null;
+        }
+
+        return $NSU;
     }
 
     /**

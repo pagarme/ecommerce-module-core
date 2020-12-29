@@ -3,6 +3,7 @@
 namespace Mundipagg\Core\Kernel\Aggregates;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
@@ -104,10 +105,10 @@ final class Order extends AbstractEntity
 
     /**
      *
-     * @param  Charge $newCharge
+     * @param  ChargeInterface $newCharge
      * @return Order
      */
-    public function addCharge(Charge $newCharge)
+    public function addCharge(ChargeInterface $newCharge)
     {
         $charges = $this->getCharges();
         //cant add a charge that was already added.
@@ -126,7 +127,7 @@ final class Order extends AbstractEntity
         return $this;  
     }
 
-    public function updateCharge(Charge $updatedCharge, $overwriteId = false)
+    public function updateCharge(ChargeInterface $updatedCharge, $overwriteId = false)
     {
         $charges = $this->getCharges();
 

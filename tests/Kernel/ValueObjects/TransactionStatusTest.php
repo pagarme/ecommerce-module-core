@@ -59,7 +59,23 @@ class TransactionStatusTest extends TestCase
         'OVERPAID' => [
             'method' => 'overpaid',
             'value' => 'overpaid'
-        ],  
+        ],
+        'PARTIAL_REFUNDED' => [
+            'method' => 'partialRefunded',
+            'value' => 'partial_refunded'
+        ],
+        'WAITING_PAYMENT' => [
+            'method' => 'waitingPayment',
+            'value' => 'waiting_payment'
+        ],
+        'PENDING_REFUND' => [
+            'method' => 'pendingRefund',
+            'value' => 'pending_refund'
+        ],
+        'EXPIRED' => [
+            'method' => 'expired',
+            'value' => 'expired'
+        ]
     ];
 
     /**

@@ -20,6 +20,10 @@ final class TransactionStatus extends AbstractValueObject
     const UNDERPAID = 'underpaid';
     const PAID = 'paid';
     const OVERPAID = 'overpaid';
+    const PARTIAL_REFUNDED = 'partial_refunded';
+    const WAITING_PAYMENT = 'waiting_payment';
+    const PENDING_REFUND = 'pending_refund';
+    const EXPIRED = 'expired';
 
     /**
      *
@@ -35,6 +39,11 @@ final class TransactionStatus extends AbstractValueObject
     private function __construct($status)
     {
         $this->setStatus($status);
+    }
+
+    public static function partialRefunded()
+    {
+        return new self(self::PARTIAL_REFUNDED);
     }
 
     public static function partialCapture()
@@ -100,6 +109,21 @@ final class TransactionStatus extends AbstractValueObject
     public static function failed()
     {
         return new self(self::FAILED);
+    }
+
+    public static function waitingPayment()
+    {
+        return new self(self::WAITING_PAYMENT);
+    }
+
+    public static function pendingRefund()
+    {
+        return new self(self::PENDING_REFUND);
+    }
+
+    public static function expired()
+    {
+        return new self(self::EXPIRED);
     }
 
     /**

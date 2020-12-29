@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateAddressRequest;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\Services\LocalizationService;
 use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
@@ -71,7 +72,11 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             $number
         );
 
-        $this->number = substr($numberWithoutComma, 0, 15);
+        $numberWithoutLineBreaks = StringFunctionsHelper::removeLineBreaks(
+            $numberWithoutComma
+        );
+
+        $this->number = substr($numberWithoutLineBreaks, 0, 15);
 
         if (empty($this->number)) {
 
@@ -108,10 +113,13 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             $street
         );
 
-        $this->street = substr($streetWithoutComma, 0, 64);
+        $streetWithoutLineBreaks = StringFunctionsHelper::removeLineBreaks(
+            $streetWithoutComma
+        );
+
+        $this->street = substr($streetWithoutLineBreaks, 0, 64);
 
         if (empty($this->street)) {
-
             $inputName = $this->i18n->getDashboard('street');
             $message = $this->i18n->getDashboard(
                 "The %s should not be empty!",
@@ -145,7 +153,11 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
             $neighborhood
         );
 
-        $this->neighborhood = substr($neighborhoodWithoutComma, 0, 64);
+        $neighborhoodWithoutLineBreaks = StringFunctionsHelper::removeLineBreaks(
+            $neighborhoodWithoutComma
+        );
+
+        $this->neighborhood = substr($neighborhoodWithoutLineBreaks, 0, 64);
 
         if (empty($this->neighborhood)) {
 
@@ -175,7 +187,8 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setComplement($complement)
     {
-        $this->complement = substr($complement, 0, 64);
+        $complementWithoutLineBreaks = StringFunctionsHelper::removeLineBreaks($complement);
+        $this->complement = substr($complementWithoutLineBreaks, 0, 64);
         return $this;
     }
 
@@ -193,7 +206,9 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
      */
     public function setZipCode($zipCode)
     {
+        $zipCode = str_replace('-', '', $zipCode);
         $this->zipCode = substr($zipCode, 0, 16);
+
         return $this;
     }
 

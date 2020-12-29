@@ -98,7 +98,7 @@ class TransactionFactory implements FactoryInterface
         $installments = null;
         if (isset($postData['card'])) {
             $brand = $postData['card']['brand'];
-            $installments = $postData['installments'];
+            $installments = isset($postData['installments']) ? $postData['installments'] : 1;
 
             $transaction->setBrand($brand);
             $transaction->setInstallments($installments);

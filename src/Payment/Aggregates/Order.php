@@ -10,11 +10,14 @@ use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Mundipagg\Core\Payment\Traits\WithAmountTrait;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
 
 final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
     use WithAmountTrait;
     use WithCustomerTrait;
+
+    private $paymentMethod;
 
     /** @var string */
     private $code;
@@ -26,6 +29,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     private $payments;
     /** @var boolean */
     private $closed;
+
     /** @var boolean */
     private $antifraudEnabled;
 
@@ -84,6 +88,22 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         $this->shipping = $shipping;
     }
 
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * @param string $paymentMethodName
+     */
+    public function setPaymentMethod($paymentMethodName)
+    {
+        $replace = str_replace('_', '', $paymentMethodName);
+        $paymentMethodObject = $replace . 'PaymentMethod';
+
+        $this->paymentMethod = $this->$paymentMethodObject();
+    }
+
     /**
      * @return AbstractPayment[]
      */
@@ -96,7 +116,6 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     {
         $this->validatePaymentInvariants($payment);
         $this->blockOverPaymentAttempt($payment);
-        $this->setCaptureFlag($payment);
 
         $payment->setOrder($this);
 
@@ -157,13 +176,20 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
      */
     private function validatePaymentInvariants(AbstractPayment $payment)
     {
-        $paymentClass = get_class($payment);
-        $paymentClass = explode ('\\', $paymentClass);
-        $paymentClass = end($paymentClass);
+        $paymentClass = $this->discoverPaymentMethod($payment);
         $paymentValidator = "validate$paymentClass";
+
         if (method_exists($this, $paymentValidator)) {
             $this->$paymentValidator($payment);
         }
+    }
+
+    private function discoverPaymentMethod(AbstractPayment $payment)
+    {
+        $paymentClass = get_class($payment);
+        $paymentClass = explode ('\\', $paymentClass);
+        $paymentClass = end($paymentClass);
+        return $paymentClass;
     }
 
     private function validateSavedCreditCardPayment(SavedCreditCardPayment $payment)
@@ -292,12 +318,28 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
         return $orderRequest;
     }
 
-    private function setCaptureFlag(AbstractPayment &$payment)
+    private function creditcardPaymentMethod()
     {
-        $capture = MPSetup::getModuleConfiguration()->isCapture();
+        return PaymentMethod::credit_card();
+    }
 
-        if (method_exists($payment, 'setCapture')) {
-            $payment->setCapture($capture);
-        }
+    private function boletoPaymentMethod()
+    {
+        return PaymentMethod::boleto();
+    }
+
+    private function pixPaymentMethod()
+    {
+        return PaymentMethod::pix();
+    }
+
+    private function voucherPaymentMethod()
+    {
+        return PaymentMethod::voucher();
+    }
+
+    private function debitPaymentMethod()
+    {
+        return PaymentMethod::debit_card();
     }
 }

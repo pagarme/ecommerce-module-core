@@ -12,6 +12,8 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
     /** @var CustomerId */
     private $owner;
 
+    private $cvv;
+
     /**
      * @return CustomerId
      */
@@ -49,6 +51,16 @@ final class SavedCreditCardPayment extends AbstractCreditCardPayment
     public function setCardId(CardId $cardId)
     {
         $this->setIdentifier($cardId);
+    }
+
+    public function setCvv($cvv)
+    {
+        $this->cvv = $cvv;
+    }
+
+    public function getCvv()
+    {
+        return $this->cvv;
     }
 
     /**

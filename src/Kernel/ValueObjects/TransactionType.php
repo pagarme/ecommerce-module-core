@@ -8,6 +8,9 @@ final class TransactionType extends AbstractValueObject
 {
     const CREDIT_CARD = "credit_card";
     const BOLETO = "boleto";
+    const VOUCHER = "voucher";
+    const DEBIT_CARD = "debit_card";
+    const PIX = 'pix';
     /**
      *
      * @var string 
@@ -32,6 +35,21 @@ final class TransactionType extends AbstractValueObject
     public static function boleto()
     {
         return new self(self::BOLETO);
+    }
+
+    public static function voucher()
+    {
+        return new self(self::VOUCHER);
+    }
+
+    public static function debitCard()
+    {
+        return new self(self::DEBIT_CARD);
+    }
+
+    public static function pix()
+    {
+        return new self(self::PIX);
     }
 
     /**

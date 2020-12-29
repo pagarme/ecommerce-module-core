@@ -4,136 +4,153 @@ namespace Mundipagg\Core\Kernel\ValueObjects\Configuration;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
 
-final class RecurrenceConfig extends AbstractValueObject
+class RecurrenceConfig extends AbstractValueObject
 {
     /** @var bool */
-    private $planSubscription;
+    private $enabled;
 
     /** @var bool */
-    private $singleSubscription;
+    private $showRecurrenceCurrencyWidget;
 
     /** @var bool */
-    private $paymentUpdateCustomer;
-
-    /** @var bool */
-    private $creditCardUpdateCustomer;
-
-    /** @var bool */
-    private $subscriptionInstallment;
+    private $purchaseRecurrenceProductWithNormalProduct;
 
     /** @var string */
-    private $checkoutConflitMessage;
+    private $conflictMessageRecurrenceProductWithNormalProduct;
 
-    public function __construct(
-        $planSubscription,
-        $singleSubscription,
-        $paymentUpdateCustomer,
-        $creditCardUpdateCustomer,
-        $subscriptionInstallment,
-        $checkoutConflitMessage
+    /** @var bool */
+    private $purchaseRecurrenceProductWithRecurrenceProduct;
+
+    /** @var string */
+    private $conflictMessageRecurrenceProductWithRecurrenceProduct;
+
+    /** @var bool */
+    private $decreaseStock;
+
+    /**
+     * @return bool
+     */
+    public function isDecreaseStock()
+    {
+        return $this->decreaseStock;
+    }
+
+    /**
+     * @param bool $decreaseStock
+     * @return RecurrenceConfig
+     */
+    public function setDecreaseStock($decreaseStock)
+    {
+        $this->decreaseStock = $decreaseStock;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowRecurrenceCurrencyWidget()
+    {
+        return $this->showRecurrenceCurrencyWidget;
+    }
+
+    /**
+     * @param bool $showRecurrenceCurrencyWidget
+     * @return $this
+     */
+    public function setShowRecurrenceCurrencyWidget($showRecurrenceCurrencyWidget)
+    {
+        $this->showRecurrenceCurrencyWidget = $showRecurrenceCurrencyWidget;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return RecurrenceConfig
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPurchaseRecurrenceProductWithNormalProduct()
+    {
+        return $this->purchaseRecurrenceProductWithNormalProduct;
+    }
+
+    /**
+     * @param bool $purchaseRecurrenceProductWithNormalProduct
+     */
+    public function setPurchaseRecurrenceProductWithNormalProduct(
+        $purchaseRecurrenceProductWithNormalProduct
     ) {
-        $this->setPlanSubscription($planSubscription);
-        $this->setSingleSubscription($singleSubscription);
-        $this->setPaymentUpdateCustomer($paymentUpdateCustomer);
-        $this->setCreditCardUpdateCustomer($creditCardUpdateCustomer);
-        $this->setSubscriptionInstallment($subscriptionInstallment);
-        $this->setCheckoutConflitMessage($checkoutConflitMessage);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPlanSubscriptionEnabled()
-    {
-        return $this->planSubscription;
-    }
-
-    /**
-     * @param mixed $planSubscription
-     */
-    private function setPlanSubscription($planSubscription)
-    {
-        $this->planSubscription = $planSubscription;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSingleSubscriptionEnabled()
-    {
-        return $this->singleSubscription;
-    }
-
-    /**
-     * @param bool $singleSubscription
-     */
-    private function setSingleSubscription($singleSubscription)
-    {
-        $this->singleSubscription = $singleSubscription;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPaymentUpdateCustomerEnabled()
-    {
-        return $this->paymentUpdateCustomer;
-    }
-
-    /**
-     * @param bool $paymentUpdateCustomer
-     */
-    private function setPaymentUpdateCustomer($paymentUpdateCustomer)
-    {
-        $this->paymentUpdateCustomer = $paymentUpdateCustomer;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCreditCardUpdateCustomerEnabled()
-    {
-        return $this->creditCardUpdateCustomer;
-    }
-
-    /**
-     * @param bool $creditCardUpdateCustomer
-     */
-    private function setCreditCardUpdateCustomer($creditCardUpdateCustomer)
-    {
-        $this->creditCardUpdateCustomer = $creditCardUpdateCustomer;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSubscriptionInstallmentEnabled()
-    {
-        return $this->subscriptionInstallment;
-    }
-
-    /**
-     * @param bool $subscriptionInstallment
-     */
-    private function setSubscriptionInstallment($subscriptionInstallment)
-    {
-        $this->subscriptionInstallment = $subscriptionInstallment;
+        $this->purchaseRecurrenceProductWithNormalProduct =
+            $purchaseRecurrenceProductWithNormalProduct;
     }
 
     /**
      * @return string
      */
-    public function getCheckoutConflitMessage()
+    public function getConflictMessageRecurrenceProductWithNormalProduct()
     {
-        return $this->checkoutConflitMessage;
+        return $this->conflictMessageRecurrenceProductWithNormalProduct;
     }
 
     /**
-     * @param string $checkoutConflitMessage
+     * @param string $conflictMessageRecurrenceProductWithNormalProduct
      */
-    private function setCheckoutConflitMessage($checkoutConflitMessage)
+    public function setConflictMessageRecurrenceProductWithNormalProduct(
+        $conflictMessageRecurrenceProductWithNormalProduct
+    ) {
+        $this->conflictMessageRecurrenceProductWithNormalProduct =
+            $conflictMessageRecurrenceProductWithNormalProduct;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPurchaseRecurrenceProductWithRecurrenceProduct()
     {
-        $this->checkoutConflitMessage = $checkoutConflitMessage;
+        return $this->purchaseRecurrenceProductWithRecurrenceProduct;
+    }
+
+    /**
+     * @param bool $purchaseRecurrenceProductWithRecurrenceProduct
+     */
+    public function setPurchaseRecurrenceProductWithRecurrenceProduct(
+        $purchaseRecurrenceProductWithRecurrenceProduct
+    ) {
+        $this->purchaseRecurrenceProductWithRecurrenceProduct =
+            $purchaseRecurrenceProductWithRecurrenceProduct;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConflictMessageRecurrenceProductWithRecurrenceProduct()
+    {
+        return $this->conflictMessageRecurrenceProductWithRecurrenceProduct;
+    }
+
+    /**
+     * @param string $conflictMessageRecurrenceProductWithRecurrenceProduct
+     */
+    public function setConflictMessageRecurrenceProductWithRecurrenceProduct(
+        $conflictMessageRecurrenceProductWithRecurrenceProduct
+    ) {
+        $this->conflictMessageRecurrenceProductWithRecurrenceProduct =
+            $conflictMessageRecurrenceProductWithRecurrenceProduct;
     }
 
     /**
@@ -146,12 +163,12 @@ final class RecurrenceConfig extends AbstractValueObject
     protected function isEqual($object)
     {
         return
-            $this->planSubscription === $object->isPlanSubscriptionEnabled() &&
-            $this->singleSubscription === $object->isSingleSubscriptionEnabled() &&
-            $this->paymentUpdateCustomer === $object->isPaymentUpdateCustomerEnabled() &&
-            $this->creditCardUpdateCustomer === $object->isCreditCardUpdateCustomerEnabled() &&
-            $this->subscriptionInstallment === $object->isSubscriptionInstallmentEnabled() &&
-            $this->checkoutConflitMessage === $object->getCheckoutConflitMessage();
+            $this->enabled === $object->isEnabled() &&
+            $this->showRecurrenceCurrencyWidget === $object->isShowRecurrenceCurrencyWidget() &&
+            $this->purchaseRecurrenceProductWithNormalProduct === $object->isPurchaseRecurrenceProductWithNormalProduct() &&
+            $this->conflictMessageRecurrenceProductWithNormalProduct === $object->getConflictMessageRecurrenceProductWithNormalProduct() &&
+            $this->purchaseRecurrenceProductWithRecurrenceProduct === $object->isPurchaseRecurrenceProductWithRecurrenceProduct() &&
+            $this->conflictMessageRecurrenceProductWithRecurrenceProduct === $object->getConflictMessageRecurrenceProductWithRecurrenceProduct();
     }
 
     /**
@@ -165,12 +182,24 @@ final class RecurrenceConfig extends AbstractValueObject
     {
         $obj = new \stdClass();
 
-        $obj->planSubscription = $this->isPlanSubscriptionEnabled();
-        $obj->singleSubscription = $this->isSingleSubscriptionEnabled();
-        $obj->paymentUpdateCustomer = $this->isPaymentUpdateCustomerEnabled();
-        $obj->creditCardUpdateCustomer = $this->isCreditCardUpdateCustomerEnabled();
-        $obj->subscriptionInstallment = $this->isSubscriptionInstallmentEnabled();
-        $obj->checkoutConflitMessage = $this->getCheckoutConflitMessage();
+        $obj->enabled = $this->isEnabled();
+
+        $obj->showRecurrenceCurrencyWidget =
+            $this->isShowRecurrenceCurrencyWidget();
+
+        $obj->purchaseRecurrenceProductWithNormalProduct =
+            $this->isPurchaseRecurrenceProductWithNormalProduct();
+
+        $obj->conflictMessageRecurrenceProductWithNormalProduct =
+            $this->getConflictMessageRecurrenceProductWithNormalProduct();
+
+        $obj->purchaseRecurrenceProductWithRecurrenceProduct =
+            $this->isPurchaseRecurrenceProductWithRecurrenceProduct();
+
+        $obj->conflictMessageRecurrenceProductWithRecurrenceProduct =
+            $this->getConflictMessageRecurrenceProductWithRecurrenceProduct();
+
+        $obj->decreaseStock = $this->isDecreaseStock();
 
         return $obj;
     }

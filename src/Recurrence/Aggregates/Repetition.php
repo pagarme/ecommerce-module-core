@@ -2,100 +2,218 @@
 
 namespace Mundipagg\Core\Recurrence\Aggregates;
 
-use Exception;
+use Magento\Framework\Exception\LocalizedException;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Recurrence\ValueObjects\DiscountValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
 
-class Repetition extends AbstractEntity
+class Repetition extends AbstractEntity implements RepetitionInterface
 {
-    /** @var DiscountValueObject */
-    protected $discount;
-
-    /** @var IntervalValueObject */
-    protected $interval;
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+    const INTERVAL_WEEK = 'week';
+    const INTERVAL_MONTH = 'month';
+    const INTERVAL_YEAR = 'year';
 
     /** @var int */
+    protected $recurrencePrice;
+    /** @var int */
+    protected $intervalCount;
+    /** @var string */
+    protected $interval;
+    /** @var int */
+    protected $subscriptionId;
+    /** @var int */
     protected $cycles;
+    /** @var string */
+    protected $createdAt;
+    /** @var string */
+    protected $updatedAt;
 
-
-    public function __construct()
+    /**
+     * @return int
+     */
+    public function getRecurrencePrice()
     {
-        $this->cycles = 0;
+        return $this->recurrencePrice;
     }
 
-    public function getDiscountValueLabel()
+    /**
+     * @param int $recurrencePrice
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setRecurrencePrice($recurrencePrice)
     {
-        if ($this->getDiscount() === null) {
-            return;
+        if ($recurrencePrice < 0) {
+            throw new \Exception(
+                "Recurrence price should be greater than 0: $recurrencePrice!"
+            );
         }
-
-        switch ($this->getDiscount()->getDiscountType()) {
-            case DiscountValueObject::DISCOUNT_TYPE_FLAT:
-                return "%s%.2f";
-            case DiscountValueObject::DISCOUNT_TYPE_PERCENT:
-                return"%s%.2f%%";
-            default:
-                return "Error: %s : %.2f";
-        }
+        $this->recurrencePrice = $recurrencePrice;
+        return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getSubscriptionId()
+    {
+        return $this->subscriptionId;
+    }
+
+    /**
+     * @param int $subscriptionId
+     * @return Repetition
+     */
+    public function setSubscriptionId($subscriptionId)
+    {
+        $this->subscriptionId = $subscriptionId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt->format(self::DATE_FORMAT);
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt->format(self::DATE_FORMAT);
+    }
+
+    /**
+     * @return int
+     */
+    public function getIntervalCount()
+    {
+        return $this->intervalCount;
+    }
+
+    /**
+     * @param int $intervalCount
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     */
+    public function setIntervalCount($intervalCount)
+    {
+        $this->intervalCount = $intervalCount;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInterval()
+    {
+        return $this->interval;
+    }
+
+    /**
+     * @param int $interval
+     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @throws InvalidParamException
+     */
+    public function setInterval($interval)
+    {
+        if (!in_array($interval, $this->getAvailablesInterval())) {
+            throw new InvalidParamException(
+                "Interval is not available!",
+                $interval
+            );
+        }
+        $this->interval = $interval;
+        return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'recurrencePrice' => $this->getRecurrencePrice(),
+            'subscriptionId' => $this->getSubscriptionId(),
+            'intervalCount' => $this->getIntervalCount(),
+            'interval' => $this->getInterval(),
+            'cycles' => $this->getCycles(),
+            "createdAt" => $this->getCreatedAt(),
+            "updatedAt" => $this->getUpdatedAt()
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntervalType()
+    {
+        return $this->interval;
+    }
+
+    /**
+     * @return string
+     */
     public function getIntervalTypeLabel()
     {
         //@todo change to a class formater maybe
-        if ($this->getInterval()->getFrequency() > 1) {
-            return $this->getInterval()->getIntervalType() . "s";
+        if ($this->intervalCount > 1) {
+            return $this->interval . "s";
         }
-        return $this->getInterval()->getIntervalType();
+        return $this->interval;
     }
 
-    public function getIntervalTypeApiValue()
+    /**
+     * @return mixed
+     */
+    public function getAvailablesInterval()
     {
-        return $this->getInterval()->getIntervalType();
-    }
-
-    public static function getDiscountTypesArray()
-    {
-        //@todo get currency code from platform
         return [
-            ['code'=>DiscountValueObject::DISCOUNT_TYPE_PERCENT, 'name' => '%'],
-            ['code'=>DiscountValueObject::DISCOUNT_TYPE_FLAT, 'name' => "R$"]
+            self::INTERVAL_WEEK,
+            self::INTERVAL_MONTH,
+            self::INTERVAL_YEAR
         ];
     }
 
-    public static function getIntervalTypesArray()
+    /**
+     * @param Repetition $repetitionObject
+     * @return bool
+     */
+    public function checkRepetitionIsCompatible(Repetition $repetitionObject)
     {
-        return [
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_WEEK,
-                'name'=> "Semanal"
-            ],
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_MONTH,
-                'name'=> "Mensal"
-            ],
-            [
-                'code'=>IntervalValueObject::INTERVAL_TYPE_YEAR,
-                'name'=> "Anual"
-            ]
-        ];
-    }
+        if (($this->getInterval() == $repetitionObject->getInterval()) &&
+            ($this->getIntervalCount() == $repetitionObject->getIntervalCount())) {
+            return true;
+        }
 
-    public static function getValidIntervalTypes()
-    {
-        return [
-            IntervalValueObject::INTERVAL_TYPE_WEEK,
-            IntervalValueObject::INTERVAL_TYPE_MONTH,
-            IntervalValueObject::INTERVAL_TYPE_YEAR
-        ];
-    }
-
-    public static function getValidDiscountTypes()
-    {
-        return [
-            DiscountValueObject::DISCOUNT_TYPE_PERCENT,
-            DiscountValueObject::DISCOUNT_TYPE_FLAT
-        ];
+        return false;
     }
 
     /**
@@ -108,154 +226,17 @@ class Repetition extends AbstractEntity
 
     /**
      * @param int $cycles
-     * @return RepetitionValueObject
-     * @throws Exception
+     * @return Repetition
+     * @throws \Exception
      */
     public function setCycles($cycles)
     {
-        $newCycles = abs(intval($cycles));
-
-        if ($newCycles < 1) {
-            throw new Exception("The field cycles must be greater than or equal to 1 : $cycles");
+        if ($cycles < 0) {
+            throw new \Exception(
+                "Cycles should be greater than or equal to 0: $cycles!"
+            );
         }
-
-        $this->cycles = $newCycles;
-
+        $this->cycles = $cycles;
         return $this;
-    }
-
-    public function toArray()
-    {
-        return [
-            'cycles' => $this->getCycles(),
-            'frequency' => $this->getFrequency(),
-            'intervalType' => $this->getIntervalType(),
-            'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType(),
-            'intervalTypeApiValue' => $this->getIntervalTypeApiValue()
-        ];
-    }
-
-    /**
-     * @param int $basePriceInCents
-     * @return float|int
-     */
-    public function getDiscountPriceInCents($basePriceInCents)
-    {
-        if ($this->getDiscount()->getValue() <= 0) {
-            return 0;
-        }
-        $percent = ($basePriceInCents * ($this->getDiscount()->getValue())) / 100;
-        $fixed = $this->getDiscount()->getValue() * 100;
-
-        if ($this->getDiscount()->getDiscountType() === DiscountValueObject::DISCOUNT_TYPE_PERCENT) {
-            return $percent;
-        }
-        return $fixed;
-    }
-
-    /**
-     * @param int $basePrice
-     * @return float|int
-     */
-    public function getDiscountPrice($basePrice)
-    {
-        if ($this->getDiscount()->getValue() <= 0) {
-            return 0;
-        }
-        $percent = ($basePrice * ($this->getDiscount()->getValue())) / 100;
-        $fixed = $this->getDiscount()->getValue();
-
-        if ($this->getDiscount()->getDiscountType() === DiscountValueObject::DISCOUNT_TYPE_PERCENT) {
-            return $percent;
-        }
-        return $fixed;
-    }
-
-    /**
-     * @return DiscountValueObject
-     */
-    public function getDiscount()
-    {
-        return $this->discount;
-    }
-
-    /**
-     * @param DiscountValueObject $discount
-     * @return Repetition
-     */
-    public function setDiscount(DiscountValueObject $discount)
-    {
-        $this->discount = $discount;
-        return $this;
-    }
-
-    /**
-     * @return IntervalValueObject
-     */
-    public function getInterval()
-    {
-        return $this->interval;
-    }
-
-    /**
-     * @param IntervalValueObject $interval
-     * @return Repetition
-     */
-    public function setInterval(IntervalValueObject $interval)
-    {
-        $this->interval = $interval;
-        return $this;
-    }
-
-    public function getDiscountType()
-    {
-        if ($this->getDiscount() !== null) {
-            return $this->getDiscount()->getDiscountType();
-        }
-        return null;
-    }
-
-    public function getDiscountValue()
-    {
-        if ($this->getDiscount() !== null) {
-            return $this->getDiscount()->getDiscountValue();
-        }
-        return null;
-    }
-
-    public function getFrequency()
-    {
-        if ($this->getInterval() !== null) {
-            return $this->getInterval()->getFrequency();
-        }
-        return null;
-    }
-    public function getIntervalType()
-    {
-        if ($this->getInterval() !== null) {
-            return $this->getInterval()->getIntervalType();
-        }
-        return null;
-    }
-
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'cycles' => $this->getCycles(),
-            'frequency' => $this->getFrequency(),
-            'intervalType' => $this->getIntervalType(),
-            'discountValue' => $this->getDiscountValue(),
-            'discountType' => $this->getDiscountType(),
-            'intervalTypeApiValue' => $this->getIntervalTypeApiValue()
-        ];
     }
 }

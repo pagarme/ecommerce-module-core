@@ -13,13 +13,14 @@ use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Mundipagg\Core\Recurrence\Aggregates\Subscription;
 use Throwable;
 
 class OrderFactory implements FactoryInterface
 {
     /**
      *
-     * @param  array $postData
+     * @param array $postData
      * @return \Mundipagg\Core\Kernel\Abstractions\AbstractEntity|Order
      * @throws NotFoundException
      * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
@@ -33,7 +34,7 @@ class OrderFactory implements FactoryInterface
 
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -50,7 +51,7 @@ class OrderFactory implements FactoryInterface
 
         $chargeFactory = new ChargeFactory();
 
-        foreach($charges as $charge) {
+        foreach ($charges as $charge) {
             $charge['order'] = [
                 'id' => $order->getMundipaggId()->getValue()
             ];
@@ -67,7 +68,7 @@ class OrderFactory implements FactoryInterface
 
     /**
      *
-     * @param  array $dbData
+     * @param array $dbData
      * @return AbstractEntity
      */
     public function createFromDbData($dbData)
@@ -80,7 +81,7 @@ class OrderFactory implements FactoryInterface
         $status = $dbData['status'];
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -116,11 +117,18 @@ class OrderFactory implements FactoryInterface
         return $order;
     }
 
+    /**
+     * @param PlatformOrderInterface $platformOrder
+     * @param $orderId
+     * @return Order
+     * @throws InvalidParamException
+     * @throws NotFoundException
+     */
     public function createFromPlatformData(
         PlatformOrderInterface $platformOrder,
         $orderId
     ) {
-        $order = new Order;
+        $order = new Order();
 
         $order->setMundipaggId(new OrderId($orderId));
 
@@ -130,9 +138,13 @@ class OrderFactory implements FactoryInterface
             $status .= ucfirst(($baseStatus[$i]));
         }
 
+        if ($platformOrder->getCode() === null) {
+            throw new NotFoundException("Order not found: {$orderId}");
+        }
+
         try {
             OrderStatus::$status();
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidParamException(
                 "Invalid order status!",
                 $status
@@ -140,6 +152,35 @@ class OrderFactory implements FactoryInterface
         }
         $order->setStatus(OrderStatus::$status());
         $order->setPlatformOrder($platformOrder);
+
+        return $order;
+    }
+
+    public function createFromSubscriptionData(
+        Subscription $subscription,
+        $platformOrderStatus
+    ) {
+        $order = new Order();
+
+        try {
+            OrderStatus::$platformOrderStatus();
+        } catch (Throwable $e) {
+            throw new InvalidParamException(
+                "Invalid order status!",
+                $platformOrderStatus
+            );
+        }
+
+        $order->setStatus(OrderStatus::$platformOrderStatus());
+        $order->setPlatformOrder($subscription->getPlatformOrder());
+
+        if ($subscription->getCurrentCharge()) {
+            $order->addCharge($subscription->getCurrentCharge());
+        }
+
+        if ($subscription->getCustomer()) {
+            $order->setCustomer($subscription->getCustomer());
+        }
 
         return $order;
     }

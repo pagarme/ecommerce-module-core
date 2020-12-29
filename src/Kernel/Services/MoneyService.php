@@ -28,10 +28,15 @@ final class MoneyService
     public function floatToCents($amount)
     {
         $amount = (float) $amount;
-        if (!is_float($amount)) {
-            throw new InvalidParamException("Amount should be a float!", $amount);
-        }
+        return (int) round($amount * 100, 2);
+    }
 
-        return intval(round($amount * 100));
+    public function removeSeparators($amount)
+    {
+        return str_replace(
+            ['.', ','],
+            "",
+            $amount
+        );
     }
 }

@@ -8,6 +8,7 @@ use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
 use Mundipagg\Core\Kernel\Aggregates\Transaction;
 use Mundipagg\Core\Kernel\Factories\ChargeFactory;
 use Mundipagg\Core\Kernel\Factories\TransactionFactory;
+use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
@@ -27,6 +28,18 @@ final class TransactionRepository extends AbstractRepository
 
         $factory = new TransactionFactory();
 
+        if (!empty($result['card_data'])) {
+            $result['card_data'] = StringFunctionsHelper::removeLineBreaks(
+                $result['card_data']
+            );
+        }
+
+        if (!empty($result['card_data'])) {
+            $result['transaction_data'] = StringFunctionsHelper::removeLineBreaks(
+                $result['transaction_data']
+            );
+        }
+
         return $factory->createFromDbData($result->row);
     }
 
@@ -42,6 +55,11 @@ final class TransactionRepository extends AbstractRepository
         $simpleObject = json_decode(json_encode($object));
 
         $cardData = json_encode($simpleObject->cardData);
+        $cardData = StringFunctionsHelper::removeLineBreaks($cardData);
+
+        $transactionData = (new StringFunctionsHelper)->cleanStrToDb(
+            json_encode($object->getPostData())
+        );
 
         $query = "
           INSERT INTO 
@@ -60,7 +78,8 @@ final class TransactionRepository extends AbstractRepository
                 status,
                 created_at,
                 boleto_url,
-                card_data
+                card_data,
+                transaction_data
             )
           VALUES 
         ";
@@ -79,7 +98,8 @@ final class TransactionRepository extends AbstractRepository
                 '{$simpleObject->status}',
                 '{$simpleObject->createdAt}',
                 '{$simpleObject->boletoUrl}',
-                '{$cardData}'
+                '{$cardData}',
+                '{$transactionData}'
             );
         ";
 

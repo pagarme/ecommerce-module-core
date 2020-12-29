@@ -15,6 +15,18 @@ class TransactionTypeTest extends TestCase
         'BOLETO' => [
             'method' => 'boleto',
             'value' => "boleto"
+        ],
+        'VOUCHER' => [
+            'method' => 'voucher',
+            'value' => "voucher"
+        ],
+        'DEBIT_CARD' => [
+            'method' => 'debitCard',
+            'value' => "debit_card"
+        ],
+        'PIX' => [
+            'method' => 'pix',
+            'value' => "pix"
         ]
     ];
 

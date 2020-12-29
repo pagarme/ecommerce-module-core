@@ -13,15 +13,29 @@ use Mundipagg\Core\Kernel\ValueObjects\OrderState;
 class InvoiceService
 {
     /**
+     * @var LogService
+     */
+    private $logService;
+
+    public function __construct()
+    {
+        $this->logService = new LogService(
+            'Invoice',
+            true
+        );
+    }
+    /**
      *
      * @param  Order $platformOrder
      * @return null|PlatformInvoiceInterface
      */
     public function createInvoiceFor(Order $order)
     {
+        $this->logService->info("Creating invoice.");
         $platformOrder = $order->getPlatformOrder();
 
         if (!$platformOrder->canInvoice()) {
+            $this->logService->info("Can not create invoice.");
             return null;
         }
 
