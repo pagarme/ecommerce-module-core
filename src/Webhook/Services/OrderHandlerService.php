@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Webhook\Services;
 
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Order;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
@@ -38,7 +39,7 @@ final class OrderHandlerService extends AbstractHandlerService
         //check if all the charges are in a state that order can be paid.
         //@todo since this is a business rule related to order payment,
         //      it should be moved to a more fitting place.
-       $this->canBePaid($order);
+        $this->canBePaid($order);
 
         $webhookOrder = $webhook->getEntity();
         $webhookOrder->setId($order->getId());
@@ -61,22 +62,23 @@ final class OrderHandlerService extends AbstractHandlerService
         return $result;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws UnprocessableWebhookException
+     */
     protected function handleCanceled(Webhook $webhook)
     {
-        $result = [
-            "message" => 'Order can\'t be canceled! Reason: ',
-            "code" => 200
-        ];
-
         $order = $this->order;
 
-        if($order->getStatus()->equals(OrderStatus::canceled())) {
-            $result = [
+        if ($order->getStatus()->equals(OrderStatus::canceled())) {
+            return [
                 "message" => "It is not possible to cancel an order that was already canceled.",
                 "code" => 200
             ];
-            return $result;
         }
+
+        $this->canBeCanceled($order);
 
         $invoiceService = new InvoiceService();
         $invoiceService->cancelInvoicesFor($order);
@@ -109,12 +111,12 @@ final class OrderHandlerService extends AbstractHandlerService
         $sender = $order->getPlatformOrder()->sendEmail($messageComplementEmail);
         $order->getPlatformOrder()->addHistoryComment($history, $sender);
 
-        $result = [
+        $order->getPlatformOrder()->save();
+
+        return [
             "message" => 'Order canceled.',
             "code" => 200
         ];
-
-        return $result;
     }
 
     protected function handlePaymentFailed(Webhook $webhook)
@@ -124,9 +126,7 @@ final class OrderHandlerService extends AbstractHandlerService
         $history = $i18n->getDashboard(
             'Order payment failed'
         );
-        $history .= '. ' . $i18n->getDashboard(
-            'The order will be canceled'
-        ) . '.';
+        $history .= ". {$i18n->getDashboard('The order will be canceled')}.";
 
         $this->order->getPlatformOrder()->addHistoryComment($history);
 
@@ -148,8 +148,8 @@ final class OrderHandlerService extends AbstractHandlerService
 
     /**
      *
-     * @param  Webhook $webhook
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @param Webhook $webhook
+     * @throws InvalidParamException|NotFoundException
      */
     protected function loadOrder(Webhook $webhook)
     {
@@ -157,22 +157,20 @@ final class OrderHandlerService extends AbstractHandlerService
         /**
          *
          * @var Order $order
-        */
+         */
         $order = $webhook->getEntity();
         $order = $orderRepository->findByMundipaggId($order->getMundipaggId());
 
         if ($order === null) {
-
             $orderDecoratorClass =
                 MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
 
             /**
-             *
              * @var Order $webhookOrder
-            */
+             */
             $webhookOrder = $webhook->getEntity();
+
             /**
-             *
              * @var PlatformOrderInterface $order
              */
             $order = new $orderDecoratorClass();
@@ -194,6 +192,37 @@ final class OrderHandlerService extends AbstractHandlerService
         $this->order = $order;
     }
 
+    /**
+     * @param $order
+     * @throws UnprocessableWebhookException
+     */
+    private function canBeCanceled($order)
+    {
+        $allowChargeStatuses = [
+            ChargeStatus::CANCELED,
+            ChargeStatus::FAILED
+        ];
+
+        $chargesStatuses = [];
+        foreach ($order->getCharges() as $charge) {
+            $chargeStatus = $charge->getStatus()->getStatus();
+            $chargesStatuses[$charge->getMundipaggId()->getValue()] = $chargeStatus;
+
+            if (!in_array($chargeStatus, $allowChargeStatuses)) {
+                $chargesStatuses = json_encode($chargesStatuses);
+                throw new UnprocessableWebhookException(
+                    "One or more charges of the order are in a state that" .
+                    " is not compatible with an canceled order. Charge Statuses: {$chargesStatuses}",
+                    500
+                );
+            }
+        }
+    }
+
+    /**
+     * @param $order
+     * @throws UnprocessableWebhookException
+     */
     private function canBePaid($order)
     {
         $unpayableChargeStatuses = [
@@ -214,7 +243,8 @@ final class OrderHandlerService extends AbstractHandlerService
         if ($canBePaid === false) {
             $chargesStatuses = json_encode($chargesStatuses);
             throw new UnprocessableWebhookException(
-                "One or more charges of the order are in a state that is not compatible with an paid order. Charge Statuses: $chargesStatuses",
+                "One or more charges of the order are in a state that " .
+                "is not compatible with an paid order. Charge Statuses: {$chargesStatuses}",
                 500
             );
         }
