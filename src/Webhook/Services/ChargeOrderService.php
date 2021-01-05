@@ -239,33 +239,30 @@ final class ChargeOrderService extends AbstractHandlerService
 
     protected function handleAntifraudReproved(Webhook $webhook)
     {
-        $history = $this->addAntifraudHistoryComment('Antifraud reproved');
+        $this->addHistoryComment('Antifraud reproved');
         return $this->handlePaymentFailed($webhook);
     }
 
     protected function handleAntifraudApproved(Webhook $webhook)
     {
-        $history = $this->addAntifraudHistoryComment('Antifraud aproved');
         return [
-            "message" => $history,
+            "message" => $this->addHistoryComment('Antifraud aproved'),
             "code" => 200
         ];
     }
 
     protected function handleAntifraudManual(Webhook $webhook)
     {
-        $history = $this->addAntifraudHistoryComment('Waiting manual analise in antifraud');
         return [
-            "message" => $history,
+            "message" => $this->addHistoryComment('Waiting manual analise in antifraud'),
             "code" => 200
         ];
     }
 
     protected function handleAntifraudPending(Webhook $webhook)
     {
-        $history = $this->addAntifraudHistoryComment('Antifraud pending');
         return [
-            "message" => $history,
+            "message" => $this->addHistoryComment('Antifraud pending'),
             "code" => 200
         ];
     }
@@ -550,7 +547,11 @@ final class ChargeOrderService extends AbstractHandlerService
         return $returnMessage;
     }
 
-    private function addAntifraudHistoryComment($message)
+    /**
+     * @param string $message
+     * @return string
+     */
+    private function addHistoryComment($message)
     {
         $i18n = new LocalizationService();
         $order = $this->order;
