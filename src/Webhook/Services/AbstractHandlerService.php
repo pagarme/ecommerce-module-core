@@ -65,7 +65,13 @@ abstract class AbstractHandlerService
         }
 
         $type = "{$webhook->getType()->getEntityType()}.{$webhook->getType()->getAction()}";
-        $this->getLogService()->info("Webhook {$type} not implemented");
+        $message = "Webhook {$type} not implemented";
+        $this->getLogService()->info($message);
+
+        return [
+            "message" => $message,
+            "code" => 200
+        ];
     }
 
     /**
