@@ -81,7 +81,8 @@ abstract class AbstractHandlerService
     {
         $i18n = new LocalizationService();
         $message = $i18n->getDashboard(
-            'Webhook received: %s.%s',
+            'Webhook received: %s %s.%s',
+            $webhook->getMundipaggId()->getValue(),
             $webhook->getType()->getEntityType(),
             $webhook->getType()->getAction()
         );
