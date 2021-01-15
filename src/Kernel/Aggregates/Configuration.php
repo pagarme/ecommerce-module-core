@@ -9,6 +9,7 @@ use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
 use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Mundipagg\Core\Kernel\ValueObjects\Configuration\PixConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
 use Mundipagg\Core\Kernel\ValueObjects\Configuration\DebitConfig;
@@ -145,6 +146,11 @@ final class Configuration extends AbstractEntity
     /** @var DebitConfig */
     private $debitConfig;
 
+    /**
+     * @var PixConfig
+     */
+    private $pixConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -192,6 +198,22 @@ final class Configuration extends AbstractEntity
     public function setDebitConfig(DebitConfig $debitConfig)
     {
         $this->debitConfig = $debitConfig;
+    }
+
+    /**
+     * @param PixConfig $pixConfig
+     */
+    public function setPixConfig(PixConfig $pixConfig)
+    {
+        $this->pixConfig = $pixConfig;
+    }
+
+    /**
+     * @return PixConfig
+     */
+    public function getPixConfig()
+    {
+        return $this->pixConfig;
     }
 
     /**
@@ -644,7 +666,11 @@ final class Configuration extends AbstractEntity
      */
     public function setBoletoDueDays($boletoDueDays)
     {
-        $this->boletoDueDays = $boletoDueDays;
+        if (!is_numeric($boletoDueDays)) {
+            throw new InvalidParamException("Boleto due days should be an integer!", $boletoDueDays);
+        }
+        
+        $this->boletoDueDays = (int) $boletoDueDays;
     }
 
     /**
@@ -704,7 +730,8 @@ final class Configuration extends AbstractEntity
             "sendMail" => $this->isSendMailEnabled(),
             "createOrder" => $this->isCreateOrderEnabled(),
             "voucherConfig" => $this->getVoucherConfig(),
-            "debitConfig" => $this->getDebitConfig()
+            "debitConfig" => $this->getDebitConfig(),
+            "pixConfig" => $this->getPixConfig()
         ];
     }
 

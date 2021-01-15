@@ -268,8 +268,11 @@ class APIService
     {
         $endpoint = $this->getAPIBaseEndpoint();
 
+        $subscription->addMetaData(
+            json_decode(json_encode($this->getRequestMetaData()), true)
+        );
+
         $subscriptionRequest = $subscription->convertToSDKRequest();
-        $subscriptionRequest->metadata = $this->getRequestMetaData();
         $publicKey = MPSetup::getModuleConfiguration()->getPublicKey()->getValue();
 
         $message =

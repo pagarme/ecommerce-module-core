@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Factories;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Aggregates\Configuration;
 use Mundipagg\Core\Kernel\Factories\Configurations\DebitConfigFactory;
+use Mundipagg\Core\Kernel\Factories\Configurations\PixConfigFactory;
 use Mundipagg\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
 use Mundipagg\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
 use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
@@ -170,7 +171,7 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoBankCode($data->boletoBankCode);
         }
         if (!empty($data->boletoDueDays)) {
-            $config->setBoletoDueDays($data->boletoDueDays);
+            $config->setBoletoDueDays((int) $data->boletoDueDays);
         }
 
         if (!empty($data->saveCards)) {
@@ -205,6 +206,12 @@ class ConfigurationFactory implements FactoryInterface
             $config->setDebitConfig(
                 (new DebitConfigFactory)
                     ->createFromDbData($data->debitConfig)
+            );
+        }
+
+        if (!empty($data->pixConfig)) {
+            $config->setPixConfig(
+                (new PixConfigFactory())->createFromDbData($data->pixConfig)
             );
         }
 
