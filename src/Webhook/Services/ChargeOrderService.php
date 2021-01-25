@@ -190,9 +190,7 @@ final class ChargeOrderService extends AbstractHandlerService
 
         return [
             "code" => 200,
-            "message" =>
-                $returnMessage . ' ' .
-                $this->treatOrderMessage($orderHandler)
+            "message" => $returnMessage . ' ' . $this->treatOrderMessage($orderHandler)
         ];
     }
 
