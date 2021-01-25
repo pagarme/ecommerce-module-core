@@ -5,7 +5,6 @@ namespace Mundipagg\Core\Webhook\Services;
 use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
 use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Exceptions\InvalidOperationException;
 use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
 use Mundipagg\Core\Kernel\Factories\OrderFactory;
@@ -19,56 +18,92 @@ use Mundipagg\Core\Kernel\Services\MoneyService;
 use Mundipagg\Core\Kernel\Services\OrderService;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
 use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 use Mundipagg\Core\Kernel\Services\ChargeService;
 
 final class ChargeOrderService extends AbstractHandlerService
 {
     /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
+
+    /**
+     * @var ChargeRepository
+     */
+    private $chargeRepository;
+
+    /**
+     * @var OrderService
+     */
+    private $orderService;
+
+    /**
+     * @var OrderHandler
+     */
+    private $orderHandlerService;
+
+    /**
+     * @var MoneyService
+     */
+    private $moneyService;
+
+    /**
+     * @var LocalizationService
+     */
+    private $i18n;
+
+    /**
+     * ChargeOrderService constructor.
+     */
+    public function __construct()
+    {
+        $this->orderRepository = new OrderRepository();
+        $this->chargeRepository = new ChargeRepository();
+        $this->orderService = new OrderService();
+        $this->orderHandlerService = new OrderHandler();
+        $this->moneyService = new MoneyService();
+        $this->i18n = new LocalizationService();
+    }
+
+    /**
      * @param Webhook $webhook
      * @return array
-     * @throws InvalidOperationException
      * @throws InvalidParamException
      */
     protected function handlePaid(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
-        $chargeRepository = new ChargeRepository();
-        $orderService = new OrderService();
-
         /**
          * @var Order $order
          */
         $order = $this->order;
 
         if ($order->getStatus()->equals(OrderStatus::canceled())) {
-            $result = [
+            return [
                 "message" => "It is not possible to pay an order that was already canceled.",
                 "code" => 200
             ];
-
-            return $result;
         }
 
         /**
-         *
          * @var Charge|ChargeInterface $charge
          */
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
+
         /**
-         *
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $chargeRepository->findByMundipaggId(
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
 
         $platformOrder = $this->order->getPlatformOrder();
         if ($outdatedCharge !== null) {
             $outdatedCharge->addTransaction($charge->getLastTransaction());
+            $outdatedCharge->setStatus($charge->getStatus());
             $charge = $outdatedCharge;
         }
 
@@ -82,26 +117,31 @@ final class ChargeOrderService extends AbstractHandlerService
         }
 
         $order->updateCharge($charge);
+        $this->orderRepository->save($order);
 
-        $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
-        $this->order->getPlatformOrder()->addHistoryComment($history);
+        $this->order->getPlatformOrder()->addHistoryComment($history, false);
 
-        $orderService->syncPlatformWith($order, false);
-
+        $this->orderService->syncPlatformWith($order, false);
         $this->addWebHookReceivedHistory($webhook);
-        $platformOrder->save();
 
-        $returnMessage = $this->prepareReturnMessage($charge);
+        $platformOrder->save();
 
         $response = $this->tryCancelMultiMethodsWithOrder();
 
-        $result = [
-            "message" => $returnMessage . '  ' . $response,
-            "code" => 200
-        ];
+        $returnMessage = $this->prepareReturnMessage($charge);
 
-        return $result;
+        $order->applyOrderStatusFromCharges();
+
+        $orderHandler = $this->orderHandlerService->handle($order);
+
+        return [
+            "code" => 200,
+            "message" =>
+                $returnMessage . '  ' .
+                $response . '  ' .
+                $this->treatOrderMessage($orderHandler)
+        ];
     }
 
     /**
@@ -111,75 +151,85 @@ final class ChargeOrderService extends AbstractHandlerService
      */
     protected function handlePartialCanceled(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
-        $chargeRepository = new ChargeRepository();
-        $orderService = new OrderService();
-
         $order = $this->order;
 
         /**
-         *
          * @var Charge $charge
          */
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
+
         /**
-         *
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $chargeRepository->findByMundipaggId(
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
+
         if ($outdatedCharge !== null) {
             $outdatedCharge->addTransaction($transaction);
+            $outdatedCharge->setStatus($charge->getStatus());
             $charge = $outdatedCharge;
         }
 
         $charge->cancel($transaction->getAmount());
-
         $order->updateCharge($charge);
+        $this->orderRepository->save($order);
 
-        $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
-        $order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->syncPlatformWith($order, false);
+        $order->getPlatformOrder()->addHistoryComment($history, false);
+
+        $this->orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
-        $result = [
-            "message" => $returnMessage,
-            "code" => 200
-        ];
+        $order->applyOrderStatusFromCharges();
 
-        return $result;
+        $orderHandler = $this->orderHandlerService->handle($order);
+
+        return [
+            "code" => 200,
+            "message" =>
+                $returnMessage . ' ' .
+                $this->treatOrderMessage($orderHandler)
+        ];
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handleOverpaid(Webhook $webhook)
     {
         return $this->handlePaid($webhook);
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handleUnderpaid(Webhook $webhook)
     {
         return $this->handlePaid($webhook);
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handleRefunded(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
-        $chargeRepository = new ChargeRepository();
-        $orderService = new OrderService();
-
         $order = $this->order;
 
         if ($order->getStatus()->equals(OrderStatus::canceled())) {
-            $result = [
+            return [
                 "message" => "It is not possible to refund a charge of an order that was canceled.",
                 "code" => 200
             ];
-
-            return $result;
         }
 
         /**
@@ -189,11 +239,11 @@ final class ChargeOrderService extends AbstractHandlerService
         $charge = $webhook->getEntity();
 
         $transaction = $charge->getLastTransaction();
+
         /**
-         *
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $chargeRepository->findByMundipaggId(
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
 
@@ -204,51 +254,51 @@ final class ChargeOrderService extends AbstractHandlerService
         $cancelAmount = $charge->getAmount();
         if ($transaction !== null) {
             $outdatedCharge->addTransaction($transaction);
+            $outdatedCharge->setStatus($charge->getStatus());
             $cancelAmount = $transaction->getAmount();
         }
 
         $charge->cancel($cancelAmount);
-
         $order->updateCharge($charge);
+        $this->orderRepository->save($order);
 
-        $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
-        $order->getPlatformOrder()->addHistoryComment($history);
-        $orderService->syncPlatformWith($order, false);
+        $order->getPlatformOrder()->addHistoryComment($history, false);
+
+        $this->orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
-        $this->order = $order;
+        $order->applyOrderStatusFromCharges();
 
-        $result = [
-            "message" => $returnMessage,
-            "code" => 200
+        $orderHandler = $this->orderHandlerService->handle($order);
+
+        return [
+            "code" => 200,
+            "message" =>
+                $returnMessage . ' ' .
+                $this->treatOrderMessage($orderHandler)
         ];
-
-        return $result;
     }
 
-    //@todo handleProcessing
-    protected function handleProcessing_TODO(Webhook $webhook)
-    {
-        //@todo
-        //In simulator, Occurs with values between 1.050,01 and 1.051,71, auth
-        // only and auth and capture.
-        //AcquirerMessage = Simulator|Ocorreu um timeout (transação simulada)
-    }
-
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handleAntifraudReproved(Webhook $webhook)
     {
         return $this->handlePaymentFailed($webhook);
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     * @throws InvalidParamException
+     */
     protected function handlePaymentFailed(Webhook $webhook)
     {
         $order = $this->order;
-
-        $orderRepository = new OrderRepository();
-        $chargeRepository = new ChargeRepository();
-        $orderService = new OrderService();
 
         /**
          * @var Charge $charge
@@ -257,7 +307,7 @@ final class ChargeOrderService extends AbstractHandlerService
 
         $transaction = $charge->getLastTransaction();
 
-        $outdatedCharge = $chargeRepository->findByMundipaggId(
+        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
             $charge->getMundipaggId()
         );
 
@@ -271,22 +321,28 @@ final class ChargeOrderService extends AbstractHandlerService
 
         $charge->failed();
         $order->updateCharge($charge);
+        $this->orderRepository->save($order);
 
-        $orderRepository->save($order);
         $history = $this->prepareHistoryComment($charge);
         $order->getPlatformOrder()->addHistoryComment($history, false);
-        $orderService->syncPlatformWith($order, false);
+
+        $this->orderService->syncPlatformWith($order, false);
 
         $returnMessage = $this->prepareReturnMessage($charge);
 
         $response = $this->tryCancelMultiMethodsWithOrder();
 
-        $result = [
-            "message" => $returnMessage . '  ' . $response,
-            "code" => 200
-        ];
+        $order->applyOrderStatusFromCharges();
 
-        return $result;
+        $orderHandler = $this->orderHandlerService->handle($order);
+
+        return [
+            "code" => 200,
+            "message" =>
+                $returnMessage . '  ' .
+                $response . '  ' .
+                $this->treatOrderMessage($orderHandler)
+        ];
     }
 
     /**
@@ -323,62 +379,23 @@ final class ChargeOrderService extends AbstractHandlerService
         return implode('/', $response);
     }
 
-    //@todo handleCreated
-    protected function handleCreated_TODO(Webhook $webhook)
-    {
-        //@todo, but not with priority,
-    }
-
-    //@todo handlePending
-    protected function handlePending_TODO(Webhook $webhook)
-    {
-        //@todo, but not with priority,
-    }
-
-    protected function loadOrderByCode(Webhook $webhook)
-    {
-        $orderRepository = new OrderRepository();
-
-        /* @var Charge $charge */
-        $charge = $webhook->getEntity();
-        $order = $orderRepository->findByCode($charge->getCode());
-
-        if ($order === null) {
-            $orderDecoratorClass =
-                MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
-
-            /**
-             * @var PlatformOrderInterface $order
-             */
-            $order = new $orderDecoratorClass();
-            $order->loadByIncrementId($charge->getCode());
-
-            $orderFactory = new OrderFactory();
-            $order = $orderFactory->createFromPlatformData(
-                $order,
-                $charge->getOrderId()->getValue()
-            );
-        }
-
-        $this->order = $order;
-    }
-
     /**
      * @param Webhook $webhook
      * @throws InvalidParamException
      * @throws NotFoundException
-     * @throws WebhookHandlerNotFoundException
      */
     protected function loadOrder(Webhook $webhook)
     {
-        $orderRepository = new OrderRepository();
+        $this->orderRepository = new OrderRepository();
 
         /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
-        $order = $orderRepository->findByMundipaggId($charge->getOrderId());
+        $order = $this->orderRepository->findByMundipaggId($charge->getOrderId());
         if ($order === null) {
-            $orderDecoratorClass = MPSetup::get(MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS);
+            $orderDecoratorClass = MPSetup::get(
+                MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS
+            );
 
             /**
              * @var PlatformOrderInterface $order
@@ -392,58 +409,57 @@ final class ChargeOrderService extends AbstractHandlerService
                 $charge->getOrderId()->getValue()
             );
         }
+
+        $order->setCustomer($webhook->getEntity()->getCustomer());
 
         $this->order = $order;
     }
 
     public function prepareHistoryComment(ChargeInterface $charge)
     {
-        $i18n = new LocalizationService();
-        $moneyService = new MoneyService();
-
         if (
             $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
-            $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
+            $amountInCurrency = $this->moneyService->centsToFloat($charge->getPaidAmount());
 
-            $history = $i18n->getDashboard(
+            $history = $this->i18n->getDashboard(
                 'Payment received: %.2f',
                 $amountInCurrency
             );
 
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
-                $history .= ". " . $i18n->getDashboard(
-                        "Extra amount paid: %.2f",
-                        $moneyService->centsToFloat($extraValue)
-                    );
+                $history .= ". " . $this->i18n->getDashboard(
+                    "Extra amount paid: %.2f",
+                    $this->moneyService->centsToFloat($extraValue)
+                );
             }
 
             if ($extraValue < 0) {
-                $history .= ". " . $i18n->getDashboard(
-                        "Remaining amount: %.2f",
-                        $moneyService->centsToFloat(abs($extraValue))
-                    );
+                $history .= ". " . $this->i18n->getDashboard(
+                    "Remaining amount: %.2f",
+                    $this->moneyService->centsToFloat(abs($extraValue))
+                );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
             if ($refundedAmount > 0) {
-                $history = $i18n->getDashboard(
+                $history = $this->i18n->getDashboard(
                     'Refunded amount: %.2f',
-                    $moneyService->centsToFloat($refundedAmount)
+                    $this->moneyService->centsToFloat($refundedAmount)
                 );
-                $history .= " (" . $i18n->getDashboard('until now') . ")";
+                $history .= " (" . $this->i18n->getDashboard('until now') . ")";
             }
 
             $canceledAmount = $charge->getCanceledAmount();
             if ($canceledAmount > 0) {
-                $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
+                $amountCanceledInCurrency = $this->moneyService->centsToFloat($canceledAmount);
 
-                $history .= " ({$i18n->getDashboard('Partial Payment')}";
+                $history .= " ({$this->i18n->getDashboard('Partial Payment')}";
                 $history .= ". " .
-                    $i18n->getDashboard(
+                    $this->i18n->getDashboard(
                         'Canceled amount: %.2f',
                         $amountCanceledInCurrency
                     ) . ')';
@@ -453,60 +469,58 @@ final class ChargeOrderService extends AbstractHandlerService
         }
 
         if ($charge->getStatus()->equals(ChargeStatus::failed())) {
-            $history = $i18n->getDashboard('Charge failed.');
-
-            return $history;
+            return $this->i18n->getDashboard('Charge failed.');
         }
 
-        $amountInCurrency = $moneyService->centsToFloat($charge->getRefundedAmount());
-        $history = $i18n->getDashboard(
+        $amountInCurrency = $this->moneyService->centsToFloat($charge->getRefundedAmount());
+        $history = $this->i18n->getDashboard(
             'Charge canceled.'
         );
 
-        $history .= ' ' . $i18n->getDashboard(
-                'Refunded amount: %.2f',
-                $amountInCurrency
-            );
-        $history .= " (" . $i18n->getDashboard('until now') . ")";
+        $history .= ' ' . $this->i18n->getDashboard('Refunded amount: %.2f', $amountInCurrency);
+        $history .= " (" . $this->i18n->getDashboard('until now') . ")";
 
         return $history;
     }
 
+    /**
+     * @param ChargeInterface $charge
+     * @return string
+     * @throws InvalidParamException
+     */
     public function prepareReturnMessage(ChargeInterface $charge)
     {
-        $moneyService = new MoneyService();
-
         if (
             $charge->getStatus()->equals(ChargeStatus::paid())
             || $charge->getStatus()->equals(ChargeStatus::overpaid())
             || $charge->getStatus()->equals(ChargeStatus::underpaid())
         ) {
-            $amountInCurrency = $moneyService->centsToFloat($charge->getPaidAmount());
+            $amountInCurrency = $this->moneyService->centsToFloat($charge->getPaidAmount());
 
-            $returnMessage = "Amount Paid: $amountInCurrency";
+            $returnMessage = "Amount Paid: {$amountInCurrency}";
 
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
                 $returnMessage .= ". Extra value paid: " .
-                    $moneyService->centsToFloat($extraValue);
+                    $this->moneyService->centsToFloat($extraValue);
             }
 
             if ($extraValue < 0) {
                 $returnMessage .= ". Remaining Amount: " .
-                    $moneyService->centsToFloat(abs($extraValue));
+                    $this->moneyService->centsToFloat(abs($extraValue));
             }
 
             $canceledAmount = $charge->getCanceledAmount();
             if ($canceledAmount > 0) {
-                $amountCanceledInCurrency = $moneyService->centsToFloat($canceledAmount);
+                $amountCanceledInCurrency = $this->moneyService->centsToFloat($canceledAmount);
 
-                $returnMessage .= ". Amount Canceled: $amountCanceledInCurrency";
+                $returnMessage .= ". Amount Canceled: {$amountCanceledInCurrency}";
             }
 
             $refundedAmount = $charge->getRefundedAmount();
             if ($refundedAmount > 0) {
                 $returnMessage = "Refunded amount unil now: " .
-                    $moneyService->centsToFloat($refundedAmount);
+                    $this->moneyService->centsToFloat($refundedAmount);
             }
 
             return $returnMessage;
@@ -516,9 +530,21 @@ final class ChargeOrderService extends AbstractHandlerService
             return "Charge failed at Mundipagg";
         }
 
-        $amountInCurrency = $moneyService->centsToFloat($charge->getRefundedAmount());
-        $returnMessage = "Charge canceled. Refunded amount: $amountInCurrency";
+        $amountInCurrency = $this->moneyService->centsToFloat($charge->getRefundedAmount());
 
-        return $returnMessage;
+        return "Charge canceled. Refunded amount: {$amountInCurrency}";
+    }
+
+    /**
+     * @param $orderHandler
+     * @return string
+     */
+    private function treatOrderMessage($orderHandler)
+    {
+        if ($orderHandler) {
+            return "";
+        }
+
+        return $orderHandler;
     }
 }
