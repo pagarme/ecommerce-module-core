@@ -286,14 +286,34 @@ final class ChargeOrderService extends AbstractHandlerService
      */
     protected function handleAntifraudReproved(Webhook $webhook)
     {
+        $this->addHistoryComment('Antifraud reproved');
         return $this->handlePaymentFailed($webhook);
     }
 
-    /**
-     * @param Webhook $webhook
-     * @return array
-     * @throws InvalidParamException
-     */
+    protected function handleAntifraudApproved(Webhook $webhook)
+    {
+        return [
+            "message" => $this->addHistoryComment('Antifraud aproved'),
+            "code" => 200
+        ];
+    }
+
+    protected function handleAntifraudManual(Webhook $webhook)
+    {
+        return [
+            "message" => $this->addHistoryComment('Waiting manual analise in antifraud'),
+            "code" => 200
+        ];
+    }
+
+    protected function handleAntifraudPending(Webhook $webhook)
+    {
+        return [
+            "message" => $this->addHistoryComment('Antifraud pending'),
+            "code" => 200
+        ];
+    }
+
     protected function handlePaymentFailed(Webhook $webhook)
     {
         $order = $this->order;
@@ -430,16 +450,16 @@ final class ChargeOrderService extends AbstractHandlerService
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
                 $history .= ". " . $this->i18n->getDashboard(
-                    "Extra amount paid: %.2f",
-                    $this->moneyService->centsToFloat($extraValue)
-                );
+                        "Extra amount paid: %.2f",
+                        $this->moneyService->centsToFloat($extraValue)
+                    );
             }
 
             if ($extraValue < 0) {
                 $history .= ". " . $this->i18n->getDashboard(
-                    "Remaining amount: %.2f",
-                    $this->moneyService->centsToFloat(abs($extraValue))
-                );
+                        "Remaining amount: %.2f",
+                        $this->moneyService->centsToFloat(abs($extraValue))
+                    );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
@@ -544,5 +564,18 @@ final class ChargeOrderService extends AbstractHandlerService
         }
 
         return $orderHandler;
+    }
+
+    /**
+     * @param string $message
+     * @return string
+     */
+    private function addHistoryComment($message)
+    {
+        $order = $this->order;
+        $history = $this->i18n->getDashboard($message);
+        $order->getPlatformOrder()->addHistoryComment($history, false);
+        $order->getPlatformOrder()->save();
+        return $history;
     }
 }

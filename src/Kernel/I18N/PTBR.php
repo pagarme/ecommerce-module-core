@@ -11,7 +11,7 @@ class PTBR extends AbstractI18NTable
         return [
             'Invoice created: #%s.' => 'Invoice criada: #%s',
             'Invoice canceled: #%s.' => 'Invoice cancelada: #%s',
-            'Webhook received: %s.%s' => 'Webhook recebido: %s.%s',
+            'Webhook received: %s %s.%s' => 'Webhook recebido: %s %s.%s',
             'Order paid.' => 'Pedido pago.',
             'Order created at Mundipagg. Id: %s' => 'Pedido criado na Mundipagg. Id %s',
             'Order waiting for online retries at Mundipagg.' => 'Pedido aguardando por retentativas online na Mundipagg.',
@@ -80,7 +80,11 @@ class PTBR extends AbstractI18NTable
             'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => 'Você só pode adicionar duas ou mais assinaturas que possuam o mesmo tipo de pagamento (cartão e ou boleto) e mesma frequência (mensal, semestral, anual...).',
             "It's not possible to have any other product with a product plan" => 'Não é possível ter nenhum outro tipo de produto no carrinho, junto com um produto plano',
             'You must have only one product plan in the cart' => 'Você só pode ter um produto plano no carrinho',
-            'Mundipagg module should be configured on Websites scope, please change to website scope to apply these changes' => 'O módulo da Mundipagg deve ser configurado no escopo de Websites/Default, favor mudar para o escopo de Websites/Default para aplicar as mudanças.'
+            'Mundipagg module should be configured on Websites scope, please change to website scope to apply these changes' => 'O módulo da Mundipagg deve ser configurado no escopo de Websites/Default, favor mudar para o escopo de Websites/Default para aplicar as mudanças.',
+            'Antifraud aproved' => 'Aprovado no antifraude',
+            'Antifraud reproved' => 'Reprovado no antifraude',
+            'Antifraud pending' => 'Analise pendente no antifraude',
+            'Waiting manual analise in antifraud' => 'Aguardando análise manual em antifraude',
         ];
     }
 }

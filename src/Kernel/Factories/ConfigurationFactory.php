@@ -171,7 +171,7 @@ class ConfigurationFactory implements FactoryInterface
             $config->setBoletoBankCode($data->boletoBankCode);
         }
         if (!empty($data->boletoDueDays)) {
-            $config->setBoletoDueDays($data->boletoDueDays);
+            $config->setBoletoDueDays((int) $data->boletoDueDays);
         }
 
         if (!empty($data->saveCards)) {
