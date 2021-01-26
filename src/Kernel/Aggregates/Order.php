@@ -116,10 +116,7 @@ final class Order extends AbstractEntity
                 $charge->getStatus()->getStatus();
         }
 
-        $chargesStatusEquals = false;
-        if (count($listChargeStatus) == 1) {
-            $chargesStatusEquals = true;
-        }
+        $chargesStatusEquals = count($listChargeStatus) == 1;
 
         if (
             $chargesStatusEquals &&

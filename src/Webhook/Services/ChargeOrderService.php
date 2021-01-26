@@ -450,16 +450,16 @@ final class ChargeOrderService extends AbstractHandlerService
             $extraValue = $charge->getPaidAmount() - $charge->getAmount();
             if ($extraValue > 0) {
                 $history .= ". " . $this->i18n->getDashboard(
-                        "Extra amount paid: %.2f",
-                        $this->moneyService->centsToFloat($extraValue)
-                    );
+                    "Extra amount paid: %.2f",
+                    $this->moneyService->centsToFloat($extraValue)
+                );
             }
 
             if ($extraValue < 0) {
                 $history .= ". " . $this->i18n->getDashboard(
-                        "Remaining amount: %.2f",
-                        $this->moneyService->centsToFloat(abs($extraValue))
-                    );
+                    "Remaining amount: %.2f",
+                    $this->moneyService->centsToFloat(abs($extraValue))
+                );
             }
 
             $refundedAmount = $charge->getRefundedAmount();
