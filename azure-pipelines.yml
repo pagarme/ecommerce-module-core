@@ -63,6 +63,7 @@ stages:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: artifact
+        
     - script: |
         export SONAR_SCANNER_VERSION=4.4.0.2170
         export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
@@ -73,3 +74,26 @@ stages:
         export SONAR_TOKEN="$(sonarcloud_token)"
         sonar-scanner   -Dsonar.organization=$(organization)   -Dsonar.projectKey=$(projectKey)   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.php.coverage.reportPaths="$(Pipeline.Workspace)/clover.xml"
       displayName: Send to SonarCloud          
+
+- stage: Build_PHP_Five
+  jobs:    
+  - job: Build
+    steps:          
+    
+    - script: |     
+        sudo update-alternatives --set php /usr/bin/php$(phpOldVersion)
+        sudo update-alternatives --set phar /usr/bin/phar$(phpOldVersion)
+        sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpOldVersion)
+        sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpOldVersion)
+        sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpOldVersion)      
+        php -version        
+      displayName: Build PHP Version $(phpOldVersion)  
+
+    - script: |             
+        composer install --no-interaction --prefer-dist 
+      displayName: Install dependecy
+
+    - script: |                             
+        cd control-media-backend             
+        vendor/bin/phpunit
+      displayName: UnitTests      
