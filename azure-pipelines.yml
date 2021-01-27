@@ -7,20 +7,51 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-16.04'
 
 variables:
-  phpVersion: 7.2
+- group: Ecommerce_module_core_STG
+- name: phpCurrentVersion
+  value: 7.2
+- name: phpOldVersion
+  value: 5.6
 
-steps:
-- script: |
-    sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-    sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-    sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-    sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-    sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-    php -version
-  displayName: 'Use PHP version $(phpVersion)'
+stages:
+- stage: Build_PHP_Seven
+  jobs:    
+  - job: Build
+    steps:          
+    
+    - script: |     
+        sudo update-alternatives --set php /usr/bin/php$(phpCurrentVersion)
+        sudo update-alternatives --set phar /usr/bin/phar$(phpCurrentVersion)
+        sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpCurrentVersion)
+        sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpCurrentVersion)
+        sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpCurrentVersion)
+        sudo apt-get install php-xdebug
+        php -version        
+      displayName: Build PHP Version $(phpCurrentVersion)  
 
-- script: composer install --no-interaction --prefer-dist
-  displayName: 'composer install'
+    - script: |     
+        sudo apt-get install php-xdebug
+        php -version             
+      displayName: Install PHP extensions
+    
+    - script: |             
+        sudo composer self-update --1
+        composer        
+      displayName: Update Composer     
+
+    - script: |             
+        composer install --no-interaction --prefer-dist 
+      displayName: Install dependecy
+
+    - script: |                                     
+        export XDEBUG_MODE=coverage        
+        vendor/bin/phpunit --coverage-clover $(System.DefaultWorkingDirectory)/artifact/clover.xml
+      displayName: UnitTests             
+    - task: PublishPipelineArtifact@1
+      displayName: Download Artifact
+      inputs:
+        path: '$(System.DefaultWorkingDirectory)/artifact'
+        artifact: artifact
