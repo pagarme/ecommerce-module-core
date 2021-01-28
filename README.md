@@ -1,7 +1,10 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/32e40b5efbc2419eaf78881dd6687dcd)](https://app.codacy.com/app/mundipagg/ecommerce-module-core?utm_source=github.com&utm_medium=referral&utm_content=mundipagg/ecommerce-module-core&utm_campaign=Badge_Grade_Settings)
-[![Latest Stable Version](https://poser.pugx.org/mundipagg/ecommerce-module-core/v/stable)](https://packagist.org/packages/mundipagg/ecommerce-module-core)
-[![mundipagg maturity](http://maturityapp.herokuapp.com/maturity.php?project=https://github.com/mundipagg/ecommerce-module-core&token=&command=badge_image)](http://maturityapp.herokuapp.com/index.html?project=https://github.com/mundipagg/ecommerce-module-core&token=)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/0aa921d1047049359c0bef962a1e2d5c?branch=develop-recurrence)](https://www.codacy.com/manual/mundipagg/ecommerce-module-core?utm_source=github.com&utm_medium=referral&utm_content=mundipagg/ecommerce-module-core&utm_campaign=Badge_Coverage)
+
+ [![Latest Stable Version](https://poser.pugx.org/mundipagg/ecommerce-module-core/v/stable)](https://packagist.org/packages/mundipagg/ecommerce-module-core)
+ [![mundipagg maturity](http://maturityapp.herokuapp.com/maturity.php?project=https://github.com/mundipagg/ecommerce-module-core&token=&command=badge_image)](http://maturityapp.herokuapp.com/index.html?project=https://github.com/mundipagg/ecommerce-module-core&token=)
+  [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=metamug_mason) 
+ [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=metamug_mason)
+ [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=metamug_mason)
+ [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=mundipagg_ecommerce-module-core)
 
 # Mundipagg/E-commerce module core
 
