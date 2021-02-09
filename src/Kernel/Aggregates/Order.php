@@ -5,6 +5,7 @@ namespace Mundipagg\Core\Kernel\Aggregates;
 use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
 
@@ -101,6 +102,51 @@ final class Order extends AbstractEntity
             return [];
         }
         return $this->charges;
+    }
+
+    public function applyOrderStatusFromCharges()
+    {
+        if (empty($this->getCharges())) {
+            return;
+        }
+
+        $listChargeStatus = [];
+        foreach ($this->getCharges() as $charge) {
+            $listChargeStatus[$charge->getStatus()->getStatus()] =
+                $charge->getStatus()->getStatus();
+        }
+
+        $chargesStatusEquals = count($listChargeStatus) == 1;
+
+        if (
+            $chargesStatusEquals &&
+            $this->getCharges()[0]->getStatus()->equals(ChargeStatus::overpaid())
+        ) {
+            $this->setStatus(OrderStatus::paid());
+            return;
+        }
+
+        if (
+            in_array(ChargeStatus::paid()->getStatus(), $listChargeStatus) &&
+            in_array(ChargeStatus::overpaid()->getStatus(), $listChargeStatus)
+        ) {
+            $this->setStatus(OrderStatus::paid());
+        }
+
+        if (
+            in_array(ChargeStatus::failed()->getStatus(), $listChargeStatus) &&
+            in_array(ChargeStatus::canceled()->getStatus(), $listChargeStatus)
+        ) {
+            $this->setStatus(OrderStatus::canceled());
+        }
+
+        if (
+            $chargesStatusEquals &&
+            !$this->getCharges()[0]->getStatus()->equals(ChargeStatus::underpaid())
+        ) {
+            $currentStatus = reset($listChargeStatus);
+            $this->setStatus(OrderStatus::$currentStatus());
+        }
     }
 
     /**
