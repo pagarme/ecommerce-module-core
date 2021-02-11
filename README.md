@@ -1,9 +1,9 @@
 
  [![Latest Stable Version](https://poser.pugx.org/mundipagg/ecommerce-module-core/v/stable)](https://packagist.org/packages/mundipagg/ecommerce-module-core)
  [![mundipagg maturity](http://maturityapp.herokuapp.com/maturity.php?project=https://github.com/mundipagg/ecommerce-module-core&token=&command=badge_image)](http://maturityapp.herokuapp.com/index.html?project=https://github.com/mundipagg/ecommerce-module-core&token=)
-  [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=metamug_mason) 
- [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=metamug_mason)
- [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=metamug_mason)
+  [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=mundipagg_ecommerce-module-core) 
+ [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=mundipagg_ecommerce-module-core)
+ [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=mundipagg_ecommerce-module-core)
  [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=mundipagg_ecommerce-module-core)
 
 # Mundipagg/E-commerce module core
