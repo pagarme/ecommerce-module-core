@@ -64,7 +64,7 @@ class InstallmentTest extends TestCase
      */
     public function installmentTimesShouldBeBetween1And12()
     {
-        for ($times = 1; $times <= 12; $times++) {
+        for ($times = 1; $times <= 24; $times++) {
             $installment = new Installment(
                 $times,
                 1,
@@ -79,7 +79,7 @@ class InstallmentTest extends TestCase
         for($try = 0; $try < $tries; $try++) {
             try {
                 $installment = new Installment(
-                    rand(13, 100000),
+                    rand(25, 100),
                     1,
                     0
                 );
