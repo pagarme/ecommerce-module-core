@@ -4,6 +4,7 @@ namespace Mundipagg\Core\Kernel\Services;
 
 use MundiAPILib\Models\GetChargeResponse;
 use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
 use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
 use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
 use Mundipagg\Core\Kernel\Repositories\OrderRepository;
@@ -11,8 +12,6 @@ use Mundipagg\Core\Kernel\Responses\ServiceResponse;
 use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
 use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
 use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
 use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
 use Mundipagg\Core\Webhook\Services\ChargeOrderService;
 use Unirest\Exception;
@@ -33,7 +32,6 @@ class ChargeService
     public function captureById($chargeId, $amount = 0)
     {
         try {
-
             $chargeRepository = new ChargeRepository();
             $charge = $chargeRepository->findByMundipaggId(
                 new ChargeId($chargeId)
@@ -44,7 +42,6 @@ class ChargeService
             }
 
             return $this->capture($charge, $amount);
-
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -53,7 +50,6 @@ class ChargeService
     public function cancelById($chargeId, $amount = 0)
     {
         try {
-
             $chargeRepository = new ChargeRepository();
             $charge = $chargeRepository->findByMundipaggId(
                 new ChargeId($chargeId)
@@ -64,15 +60,20 @@ class ChargeService
             }
 
             return $this->cancel($charge, $amount);
-
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
 
+    /**
+     * @param Charge $charge
+     * @param int $amount
+     * @return ServiceResponse
+     * @throws InvalidParamException
+     */
     public function capture(Charge $charge, $amount = 0)
     {
-        $order = (new OrderRepository)->findByMundipaggId(
+        $order = (new OrderRepository())->findByMundipaggId(
             new OrderId($charge->getOrderId()->getValue())
         );
 
@@ -85,16 +86,15 @@ class ChargeService
 
         $apiService = new APIService();
         $this->logService->info(
-            "Capturing charge on Mundipagg - " . $charge->getMundipaggId()->getValue()
+            "Capturing charge on Mundipagg - {$charge->getMundipaggId()->getValue()}"
         );
 
         $resultApi = $apiService->captureCharge($charge, $amount);
 
         if ($resultApi instanceof GetChargeResponse) {
-
             if (!$charge->getStatus()->equals(ChargeStatus::paid())) {
                 $this->logService->info(
-                    "Pay charge - " . $charge->getMundipaggId()->getValue()
+                    "Pay charge - {$charge->getMundipaggId()->getValue()}"
                 );
                 $charge->pay($amount);
             }
@@ -115,8 +115,13 @@ class ChargeService
             $orderService->syncPlatformWith($order, false);
 
             $this->logService->info("Change Order status");
-            $order->setStatus(OrderStatus::paid());
+
+            $order->applyOrderStatusFromCharges();
+
             $orderHandlerService = new OrderHandler();
+
+            $order->setCustomer($charge->getCustomer());
+
             $orderHandlerService->handle($order);
 
             $message = $chargeOrderService->prepareReturnMessage($charge);
