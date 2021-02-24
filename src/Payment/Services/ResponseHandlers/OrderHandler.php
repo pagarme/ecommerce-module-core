@@ -106,7 +106,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Order created at Mundipagg. Id: %s',
+                'Order pending at Mundipagg. Id: %s',
                 $order->getMundipaggId()->getValue()
             ),
             $sender

@@ -14,6 +14,7 @@ class ENUS extends AbstractI18NTable
             'Webhook received: %s %s.%s' => null,
             'Order paid.' => null,
             'Order created at Mundipagg. Id: %s' => null,
+            'Order pending at Mundipagg. Id: %s' => null,
             'Order waiting for online retries at Mundipagg.' => null,
             'Order canceled.' => null,
             'Payment received: %.2f' => null,
