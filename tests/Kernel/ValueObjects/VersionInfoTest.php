@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
+use Pagarme\Core\Kernel\ValueObjects\VersionInfo;
 use PHPUnit\Framework\TestCase;
 
 class VersionInfoTest extends TestCase
@@ -14,9 +14,9 @@ class VersionInfoTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\VersionInfo
+     * @covers \Pagarme\Core\Kernel\ValueObjects\VersionInfo
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aVersionInfoShouldBeComparable()
@@ -34,7 +34,7 @@ class VersionInfoTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\VersionInfo
+     * @covers \Pagarme\Core\Kernel\ValueObjects\VersionInfo
      */
     public function aVersionInfoShouldBeJsonSerializable()
     {
@@ -58,9 +58,9 @@ class VersionInfoTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\VersionInfo::getCoreVersion()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\VersionInfo::getCoreVersion()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\VersionInfo
+     * @uses \Pagarme\Core\Kernel\ValueObjects\VersionInfo
      */
     public function aVersionInfoShouldContainACoreVersion()
     {
@@ -79,9 +79,9 @@ class VersionInfoTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\VersionInfo::getModuleVersion()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\VersionInfo::getModuleVersion()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\VersionInfo
+     * @uses \Pagarme\Core\Kernel\ValueObjects\VersionInfo
      */
     public function aVersionInfoShouldContainAModuleVersion()
     {
@@ -99,9 +99,9 @@ class VersionInfoTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\VersionInfo::getPlatformVersion()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\VersionInfo::getPlatformVersion()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\VersionInfo
+     * @uses \Pagarme\Core\Kernel\ValueObjects\VersionInfo
      */
     public function aVersionInfoShouldContainAPlatformVersion()
     {

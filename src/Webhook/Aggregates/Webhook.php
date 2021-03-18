@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Aggregates;
+namespace Pagarme\Core\Webhook\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Webhook\ValueObjects\WebhookType;
 
 class Webhook extends AbstractEntity
 {

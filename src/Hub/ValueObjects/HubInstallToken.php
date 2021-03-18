@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Hub\ValueObjects;
+namespace Pagarme\Core\Hub\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 final class HubInstallToken extends AbstractValidString
 {

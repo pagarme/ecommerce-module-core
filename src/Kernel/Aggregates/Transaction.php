@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Aggregates;
+namespace Pagarme\Core\Kernel\Aggregates;
 
 use DateTime;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\TransactionStatus;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
 
 final class Transaction extends AbstractEntity
 {
@@ -403,7 +403,7 @@ final class Transaction extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
         $obj->chargeId = $this->getChargeId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();

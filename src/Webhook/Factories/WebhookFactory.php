@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Factories;
+namespace Pagarme\Core\Webhook\Factories;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidClassException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\Services\FactoryService;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
-use Mundipagg\Core\Webhook\ValueObjects\WebhookId;
-use Mundipagg\Core\Webhook\ValueObjects\WebhookType;
+use Pagarme\Core\Kernel\Exceptions\InvalidClassException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Services\FactoryService;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
+use Pagarme\Core\Webhook\ValueObjects\WebhookId;
+use Pagarme\Core\Webhook\ValueObjects\WebhookType;
 
 class WebhookFactory implements FactoryInterface
 {
@@ -16,13 +16,13 @@ class WebhookFactory implements FactoryInterface
      *
      * @param  $postData
      * @return Webhook
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidClassException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidClassException
      */
     public function createFromPostData($postData)
     {
         $webhook = new Webhook();
 
-        $webhook->setMundipaggId(new WebhookId($postData->id));
+        $webhook->setPagarmeId(new WebhookId($postData->id));
         $webhook->setType(WebhookType::fromPostType($postData->type));
         $webhook->setComponent($postData->data);
 
@@ -55,7 +55,7 @@ class WebhookFactory implements FactoryInterface
         $webhook = new Webhook();
 
         $webhook->setId($dbData['id']);
-        $webhook->setMundipaggId(new WebhookId($dbData['mundipagg_id']));
+        $webhook->setPagarmeId(new WebhookId($dbData['pagarme_id']));
 
         return $webhook;
     }

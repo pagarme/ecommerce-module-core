@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates\Payments;
+namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreatePixPaymentRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 
 final class PixPayment extends AbstractPayment
 {

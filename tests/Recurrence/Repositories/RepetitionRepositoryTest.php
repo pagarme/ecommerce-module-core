@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Repositories;
+namespace Pagarme\Core\Test\Recurrence\Repositories;
 
 use Mockery;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Factories\RepetitionFactory;
-use Mundipagg\Core\Recurrence\Repositories\RepetitionRepository;
-use Mundipagg\Core\Test\Abstractions\AbstractRepositoryTest;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Factories\RepetitionFactory;
+use Pagarme\Core\Recurrence\Repositories\RepetitionRepository;
+use Pagarme\Core\Test\Abstractions\AbstractRepositoryTest;
 
 class RepetitionRepositoryTest extends AbstractRepositoryTest
 {
@@ -96,10 +96,10 @@ class RepetitionRepositoryTest extends AbstractRepositoryTest
         $this->assertCount(0, $this->repo->findBySubscriptionId(23));
     }
 
-    public function testShouldReturnARepetitionSearchByMundipaggId()
+    public function testShouldReturnARepetitionSearchByPagarmeId()
     {
         $mockAbstractString = Mockery::mock(AbstractValidString::class);
-        $this->assertNull($this->repo->findByMundipaggId($mockAbstractString), "Method not implemented");
+        $this->assertNull($this->repo->findByPagarmeId($mockAbstractString), "Method not implemented");
     }
 
     public function testShouldListAllRepetitions()

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects\Id;
+namespace Pagarme\Core\Test\Kernel\ValueObjects\Id;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionIdTest extends TestCase

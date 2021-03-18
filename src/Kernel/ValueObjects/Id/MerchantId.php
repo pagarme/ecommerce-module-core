@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects\Id;
+namespace Pagarme\Core\Kernel\ValueObjects\Id;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class MerchantId extends AbstractValidString
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractI18NTable;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractI18NTable;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 final class LocalizationService
 {
@@ -51,7 +51,7 @@ final class LocalizationService
     {
         $langClass = str_replace('_', '', $locale);
         $langClass = strtoupper($langClass);
-        $langClass = "Mundipagg\\Core\\Kernel\\I18N\\$langClass";
+        $langClass = "Pagarme\\Core\\Kernel\\I18N\\$langClass";
 
         if (class_exists($langClass)) {
             return new $langClass();

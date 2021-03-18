@@ -1,7 +1,7 @@
 <?php
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Maintenance\Services\IntegrityInfoRetrieverService;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Maintenance\Services\IntegrityInfoRetrieverService;
 
 require_once '../../autoload.php';
 

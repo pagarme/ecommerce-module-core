@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Recurrence\Services\CartRules;
 
 interface RuleInterface
 {

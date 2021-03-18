@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
-use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
-use Mundipagg\Core\Recurrence\Repositories\RepetitionRepository;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Pagarme\Core\Recurrence\Repositories\ProductSubscriptionRepository;
+use Pagarme\Core\Recurrence\Repositories\RepetitionRepository;
 
 class ProductSubscriptionService
 {

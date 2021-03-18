@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories\Configurations;
+namespace Pagarme\Core\Kernel\Factories\Configurations;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryCreateFromDbDataInterface;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\FactoryCreateFromDbDataInterface;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
 
 class VoucherConfigFactory implements FactoryCreateFromDbDataInterface
 {

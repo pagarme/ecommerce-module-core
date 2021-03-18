@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects\Configuration;
+namespace Pagarme\Core\Kernel\ValueObjects\Configuration;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 class RecurrenceConfig extends AbstractValueObject
 {

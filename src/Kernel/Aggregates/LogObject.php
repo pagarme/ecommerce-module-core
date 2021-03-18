@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Aggregates;
+namespace Pagarme\Core\Kernel\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\VersionInfo;
 
 final class LogObject extends AbstractEntity
 {
@@ -15,7 +15,7 @@ final class LogObject extends AbstractEntity
     private $method;
     private $data;
 
-    public function getMundipaggId()
+    public function getPagarmeId()
     {
         $baseObject = new \stdClass();
         $baseObject->versions = $this->getVersions();

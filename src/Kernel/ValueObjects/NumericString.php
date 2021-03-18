@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects;
+namespace Pagarme\Core\Kernel\ValueObjects;
 
 class NumericString extends AbstractValidString
 {

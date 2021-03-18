@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Commands;
+namespace Pagarme\Core\Hub\Commands;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Repositories\ConfigurationRepository;
 
 class InstallCommand extends AbstractCommand
 {

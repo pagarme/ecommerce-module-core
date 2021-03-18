@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Recurrence\Aggregates\Cycle;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Recurrence\Aggregates\Cycle;
+use Pagarme\Core\Kernel\ValueObjects\Id\CycleId;
 
 class CycleFactory implements FactoryInterface
 {
@@ -19,7 +19,7 @@ class CycleFactory implements FactoryInterface
     /**
      * @param array $postData
      * @return AbstractEntity|Cycle
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromPostData($postData)
     {

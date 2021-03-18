@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
 abstract class AbstractDatabaseDecorator
 {

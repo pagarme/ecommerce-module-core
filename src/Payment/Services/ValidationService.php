@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services;
+namespace Pagarme\Core\Payment\Services;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
 
 class ValidationService
 {

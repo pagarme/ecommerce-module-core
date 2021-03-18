@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Mock\Concrete;
+namespace Pagarme\Core\Test\Mock\Concrete;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 
 class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
 {
@@ -16,19 +16,19 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
     {
         $this->tableArray = [
             AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION =>
-                'mundipagg_module_core_configuration',
+                'pagarme_module_core_configuration',
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION =>
-                'mundipagg_module_core_recurrence_products_subscription',
+                'pagarme_module_core_recurrence_products_subscription',
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS =>
-                'mundipagg_module_core_recurrence_subscription_repetitions',
+                'pagarme_module_core_recurrence_subscription_repetitions',
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS =>
-                'mundipagg_module_core_recurrence_sub_products',
+                'pagarme_module_core_recurrence_sub_products',
 
             AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE =>
-                'mundipagg_module_core_recurrence_charge',
+                'pagarme_module_core_recurrence_charge',
         ];
     }
 

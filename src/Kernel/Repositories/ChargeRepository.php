@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Repositories;
+namespace Pagarme\Core\Kernel\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
-use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
 
 final class ChargeRepository extends AbstractRepository
 {
@@ -27,7 +27,7 @@ final class ChargeRepository extends AbstractRepository
             SELECT 
                 c.*, 
                 GROUP_CONCAT(t.id) as tran_id, 
-                GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
+                GROUP_CONCAT(t.pagarme_id) as tran_pagarme_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
@@ -45,7 +45,7 @@ final class ChargeRepository extends AbstractRepository
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
-                  ON c.mundipagg_id = t.charge_id 
+                  ON c.pagarme_id = t.charge_id 
             WHERE c.order_id = '$id'
             GROUP BY c.id;
         ";
@@ -89,7 +89,7 @@ final class ChargeRepository extends AbstractRepository
           INSERT INTO 
             $chargeTable 
             (
-                mundipagg_id, 
+                pagarme_id, 
                 order_id, 
                 code, 
                 amount, 
@@ -107,7 +107,7 @@ final class ChargeRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$simpleObject->mundipaggId}',
+                '{$simpleObject->pagarmeId}',
                 '{$simpleObject->orderId}',
                 '{$simpleObject->code}',
                 {$simpleObject->amount},
@@ -173,12 +173,12 @@ final class ChargeRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $this->db->query("SET group_concat_max_len = 8096;");
 
@@ -186,7 +186,7 @@ final class ChargeRepository extends AbstractRepository
             SELECT 
                 c.*, 
                 GROUP_CONCAT(t.id) as tran_id, 
-                GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
+                GROUP_CONCAT(t.pagarme_id) as tran_pagarme_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
@@ -204,8 +204,8 @@ final class ChargeRepository extends AbstractRepository
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
-                  ON c.mundipagg_id = t.charge_id 
-            WHERE c.mundipagg_id = '$id'
+                  ON c.pagarme_id = t.charge_id 
+            WHERE c.pagarme_id = '$id'
             GROUP BY c.id;
         ";
 
@@ -237,7 +237,7 @@ final class ChargeRepository extends AbstractRepository
 
         $query = "SELECT charge.* 
                     FROM `{$chargeTable}` as charge  
-               LEFT JOIN `{$orderTable}` as o on charge.order_id = o.mundipagg_id 
+               LEFT JOIN `{$orderTable}` as o on charge.order_id = o.pagarme_id 
                    WHERE o.id is null 
                      AND charge.code = '{$code}'";
 

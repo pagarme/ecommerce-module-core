@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
+namespace Pagarme\Core\Payment\Services\ResponseHandlers;
 
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
 
 final class ErrorExceptionHandler extends AbstractResponseHandler
 {
@@ -20,7 +20,7 @@ final class ErrorExceptionHandler extends AbstractResponseHandler
             $orderCode = $paymentOrder->getCode();
             $this->logService->orderInfo(
                 $orderCode,
-                "Failed to create order at Mundipagg!"
+                "Failed to create order at Pagarme!"
             );
             $exceptionLogMethod = 'orderException';
         }

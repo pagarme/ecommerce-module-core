@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects;
+namespace Pagarme\Core\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 
 abstract class AbstractValidString extends AbstractValueObject
 {

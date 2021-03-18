@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Pagarme\Core\Kernel\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Transaction;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Transaction;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\TransactionId;
+use Pagarme\Core\Kernel\ValueObjects\TransactionStatus;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Payment\Factories\SavedCardFactory;
 
 class TransactionFactory implements FactoryInterface
 {
@@ -18,7 +18,7 @@ class TransactionFactory implements FactoryInterface
     {
         $transaction = new Transaction;
 
-        $transaction->setMundipaggId(new TransactionId($postData['id']));
+        $transaction->setPagarmeId(new TransactionId($postData['id']));
 
         $baseStatus = explode('_', $postData['status']);
         $status = $baseStatus[0];
@@ -131,7 +131,7 @@ class TransactionFactory implements FactoryInterface
 
         $transaction->setId($dbData['id']);
         $transaction->setChargeId(new ChargeId($dbData['charge_id']));
-        $transaction->setMundipaggId(new TransactionId($dbData['mundipagg_id']));
+        $transaction->setPagarmeId(new TransactionId($dbData['pagarme_id']));
 
         $transaction->setAmount($dbData['amount']);
         $transaction->setPaidAmount($dbData['paid_amount']);

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Payment\ValueObjects;
+namespace Pagarme\Core\Payment\ValueObjects;
 
 use MundiAPILib\Models\CreatePhonesRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
-use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
 final class CustomerPhones extends AbstractValueObject implements ConvertibleToSDKRequestsInterface
 {

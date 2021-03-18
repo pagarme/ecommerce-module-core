@@ -1,23 +1,23 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
-use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Kernel\Abstractions\AbstractDataService;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Interfaces\ResponseHandlerInterface;
+use Pagarme\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\Factories\ChargeFactory;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
 use Exception;
 
 final class OrderService
@@ -100,10 +100,10 @@ final class OrderService
         $dataService->updateAcquirerData($order);
     }
 
-    public function cancelAtMundipagg(Order $order)
+    public function cancelAtPagarme(Order $order)
     {
         $orderRepository = new OrderRepository();
-        $savedOrder = $orderRepository->findByMundipaggId($order->getMundipaggId());
+        $savedOrder = $orderRepository->findByPagarmeId($order->getPagarmeId());
         if ($savedOrder !== null) {
             $order = $savedOrder;
         }
@@ -119,7 +119,7 @@ final class OrderService
         foreach ($charges as $charge) {
             $result = $APIService->cancelCharge($charge);
             if ($result !== null) {
-                $results[$charge->getMundipaggId()->getValue()] = $result;
+                $results[$charge->getPagarmeId()->getValue()] = $result;
             }
             $order->updateCharge($charge);
         }
@@ -146,8 +146,8 @@ final class OrderService
 
             $order->getPlatformOrder()->addHistoryComment(
                 $i18n->getDashboard(
-                    "Order '%s' canceled at Mundipagg",
-                    $order->getMundipaggId()->getValue()
+                    "Order '%s' canceled at Pagarme",
+                    $order->getPagarmeId()->getValue()
                 ),
                 $sender
             );
@@ -155,7 +155,7 @@ final class OrderService
             return;
         }
 
-        $history = $i18n->getDashboard("Some charges couldn't be canceled at Mundipagg. Reasons:");
+        $history = $i18n->getDashboard("Some charges couldn't be canceled at Pagarme. Reasons:");
         $history .= "<br /><ul>";
         foreach ($results as $chargeId => $reason)
         {
@@ -166,9 +166,9 @@ final class OrderService
         $order->getPlatformOrder()->save();
     }
 
-    public function cancelAtMundipaggByPlatformOrder(PlatformOrderInterface $platformOrder)
+    public function cancelAtPagarmeByPlatformOrder(PlatformOrderInterface $platformOrder)
     {
-        $orderId = $platformOrder->getMundipaggId();
+        $orderId = $platformOrder->getPagarmeId();
         if (empty($orderId)) {
             return;
         }
@@ -177,7 +177,7 @@ final class OrderService
 
         $order = $APIService->getOrder($orderId);
         if (is_a($order, Order::class)) {
-            $this->cancelAtMundipagg($order);
+            $this->cancelAtPagarme($order);
         }
     }
 
@@ -186,7 +186,7 @@ final class OrderService
      * @return array
      * @throws \Exception
      */
-    public function createOrderAtMundipagg(PlatformOrderInterface $platformOrder)
+    public function createOrderAtPagarme(PlatformOrderInterface $platformOrder)
     {
         try {
             $orderInfo = $this->getOrderInfo($platformOrder);
@@ -205,7 +205,7 @@ final class OrderService
 
             $i18n = new LocalizationService();
 
-            //Send through the APIService to mundipagg
+            //Send through the APIService to Pagarme
             $apiService = new APIService();
             $response = $apiService->createOrder($order);
 
@@ -269,7 +269,7 @@ final class OrderService
         $responseClass = explode('\\', $responseClass);
 
         $responseClass =
-            'Mundipagg\\Core\\Payment\\Services\\ResponseHandlers\\' .
+            'Pagarme\\Core\\Payment\\Services\\ResponseHandlers\\' .
             end($responseClass) . 'Handler';
 
         return new $responseClass;
@@ -388,9 +388,9 @@ final class OrderService
      * @return Order|null
      * @throws InvalidParamException
      */
-    public function getOrderByMundiPaggId(OrderId $orderId)
+    public function getOrderByPagarmeId(OrderId $orderId)
     {
-        return $this->orderRepository->findByMundipaggId($orderId);
+        return $this->orderRepository->findByPagarmeId($orderId);
     }
 
     /**

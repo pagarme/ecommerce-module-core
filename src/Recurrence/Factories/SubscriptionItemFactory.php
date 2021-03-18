@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionItemId;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Recurrence\Aggregates\SubscriptionItem;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionItemId;
 
 class SubscriptionItemFactory implements FactoryInterface
 {
@@ -21,7 +21,7 @@ class SubscriptionItemFactory implements FactoryInterface
         $subscriptionItem = new SubscriptionItem();
 
         $subscriptionItem->setSubscriptionId(new SubscriptionId($postData['subscription_id']));
-        $subscriptionItem->setMundipaggId(new SubscriptionItemId($postData['id']));
+        $subscriptionItem->setPagarmeId(new SubscriptionItemId($postData['id']));
         $subscriptionItem->setCode($postData['code']);
         $subscriptionItem->setQuantity($postData['quantity']);
 
@@ -38,7 +38,7 @@ class SubscriptionItemFactory implements FactoryInterface
 
         $subscriptionItem->setId($dbData["id"]);
         $subscriptionItem->setSubscriptionId(new SubscriptionId($dbData['subscription_id']));
-        $subscriptionItem->setMundipaggId(new SubscriptionItemId($dbData['mundipagg_id']));
+        $subscriptionItem->setPagarmeId(new SubscriptionItemId($dbData['pagarme_id']));
         $subscriptionItem->setCode($dbData['code']);
         $subscriptionItem->setQuantity($dbData['quantity']);
 

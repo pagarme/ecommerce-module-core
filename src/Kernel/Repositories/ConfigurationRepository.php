@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Repositories;
+namespace Pagarme\Core\Kernel\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Factories\ConfigurationFactory;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class ConfigurationRepository extends AbstractRepository
 {
@@ -123,8 +123,8 @@ class ConfigurationRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        // TODO: Implement findByMundipaggId() method.
+        // TODO: Implement findByPagarmeId() method.
     }
 }

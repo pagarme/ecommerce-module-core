@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates;
+namespace Pagarme\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateOrderRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
-use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
-use Mundipagg\Core\Payment\Traits\WithAmountTrait;
-use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Payment\Aggregates\Payments\AbstractPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Pagarme\Core\Payment\Traits\WithAmountTrait;
+use Pagarme\Core\Payment\Traits\WithCustomerTrait;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
 
 final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
@@ -210,7 +210,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
             );
         }
 
-        $customerId = $this->customer->getMundipaggId();
+        $customerId = $this->customer->getPagarmeId();
         if ($customerId === null) {
             throw new \Exception(
                 'You can\'t use a saved credit card of a fresh new customer',

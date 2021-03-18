@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Interfaces;
+namespace Pagarme\Core\Maintenance\Interfaces;
 
 interface InstallDataSourceInterface
 {

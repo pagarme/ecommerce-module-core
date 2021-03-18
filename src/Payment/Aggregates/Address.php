@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates;
+namespace Pagarme\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateAddressRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 
 final class Address extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {

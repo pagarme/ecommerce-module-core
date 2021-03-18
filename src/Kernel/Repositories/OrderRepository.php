@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Repositories;
+namespace Pagarme\Core\Kernel\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 final class OrderRepository extends AbstractRepository
 {
@@ -23,8 +23,8 @@ final class OrderRepository extends AbstractRepository
         $order = json_decode(json_encode($object));
 
         $query = "
-          INSERT INTO $orderTable (`mundipagg_id`, `code`, `status`) 
-          VALUES ('{$order->mundipaggId}', '{$order->code}', '{$order->status}');
+          INSERT INTO $orderTable (`pagarme_id`, `code`, `status`) 
+          VALUES ('{$order->pagarmeId}', '{$order->code}', '{$order->status}');
          ";
 
         $this->db->query($query);
@@ -91,17 +91,17 @@ final class OrderRepository extends AbstractRepository
     }
 
     /**
-     * @param AbstractValidString $mundipaggId
+     * @param AbstractValidString $pagarmeId
      * @return Order|null
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
         $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
 
         $query = "SELECT * FROM `$orderTable` ";
-        $query .= "WHERE mundipagg_id = '{$id}';";
+        $query .= "WHERE pagarme_id = '{$id}';";
 
         $result = $this->db->fetch($query);
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Abstractions;
+namespace Pagarme\Core\Test\Abstractions;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
 
 abstract class AbstractRepositoryTest extends AbstractSetupTest
 {

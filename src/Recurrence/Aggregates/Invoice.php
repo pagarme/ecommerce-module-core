@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
 
 class Invoice extends AbstractEntity
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\Services;
+namespace Pagarme\Core\Test\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Services\MoneyService;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Services\MoneyService;
 use PHPUnit\Framework\TestCase;
 
 class MoneyServiceTests extends TestCase

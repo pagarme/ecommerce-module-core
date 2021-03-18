@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
 use PHPUnit\Framework\TestCase;
 
 class OrderStatusTest extends TestCase
@@ -24,9 +24,9 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aOrderStatusShouldBeComparable()
@@ -44,7 +44,7 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus
      */
     public function aOrderStatusShouldBeJsonSerializable()
     {
@@ -59,7 +59,7 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus
      */
     public function allOrderStatusConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -77,7 +77,7 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus
      */
     public function aInvalidOrderStatusShouldNotBeInstantiable()
     {
@@ -93,7 +93,7 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus
      */
     public function aOrderStatusShouldAcceptAllPossibleOrderStatuses()
     {
@@ -107,10 +107,10 @@ class OrderStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderStatus::pendingPayment
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderStatus::pendingPayment
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\OrderStatus
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\ValueObjects\OrderStatus
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      */
     public function PendingPaymentShouldBeEqualsToPending()
     {

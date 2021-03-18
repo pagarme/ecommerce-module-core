@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Commands;
+namespace Pagarme\Core\Hub\Commands;
 
 
-use Mundipagg\Core\Kernel\Interfaces\CommandInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\AccountId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
-use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\Interfaces\CommandInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\AccountId;
+use Pagarme\Core\Kernel\ValueObjects\Id\MerchantId;
+use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 
 abstract class AbstractCommand implements CommandInterface
 {

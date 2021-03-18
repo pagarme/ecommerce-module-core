@@ -1,18 +1,18 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Exceptions;
+namespace Pagarme\Core\Webhook\Exceptions;
 
-use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Kernel\Exceptions\AbstractPagarmeCoreException;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
 
-class WebhookAlreadyHandledException extends AbstractMundipaggCoreException
+class WebhookAlreadyHandledException extends AbstractPagarmeCoreException
 {
     /**
      * WebhookHandlerNotFound constructor.
      */
     public function __construct(Webhook $webhook)
     {
-        $message = "Webhoook {$webhook->getMundipaggId()->getValue()} already handled!";
+        $message = "Webhoook {$webhook->getPagarmeId()->getValue()} already handled!";
         parent::__construct($message, 200);
     }
 }

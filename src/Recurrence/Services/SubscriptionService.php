@@ -1,41 +1,41 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
-use Mundipagg\Core\Payment\ValueObjects\CardId;
-use Mundipagg\Core\Payment\ValueObjects\CardToken;
-use Mundipagg\Core\Payment\ValueObjects\Discounts;
-use Mundipagg\Core\Recurrence\Aggregates\Increment;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\OrderLogService;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
-use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
-use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
+use Pagarme\Core\Payment\ValueObjects\CardId;
+use Pagarme\Core\Payment\ValueObjects\CardToken;
+use Pagarme\Core\Payment\ValueObjects\Discounts;
+use Pagarme\Core\Recurrence\Aggregates\Increment;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\OrderLogService;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Factories\InvoiceFactory;
+use Pagarme\Core\Recurrence\Factories\SubProductFactory;
+use Pagarme\Core\Recurrence\Repositories\SubscriptionRepository;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
+use Pagarme\Core\Recurrence\Factories\SubscriptionFactory;
 
 final class SubscriptionService
 {
@@ -54,7 +54,7 @@ final class SubscriptionService
         $this->i18n = new LocalizationService();
     }
 
-    public function createSubscriptionAtMundipagg(PlatformOrderInterface $platformOrder)
+    public function createSubscriptionAtPagarme(PlatformOrderInterface $platformOrder)
     {
         try {
             $orderService = new OrderService();
@@ -73,7 +73,7 @@ final class SubscriptionService
 
             $this->setDiscountCycleSubscription($subscription, $platformOrder);
 
-            //Send through the APIService to mundipagg
+            //Send through the APIService to Pagarme
             $subscriptionResponse = $this->apiService->createSubscription($subscription);
 
             $i18n = new LocalizationService();
@@ -99,7 +99,7 @@ final class SubscriptionService
                                 $subscriptionResponse
                             );
 
-                    $this->cancelSubscriptionAtMundipagg($failedSubscription);
+                    $this->cancelSubscriptionAtPagarme($failedSubscription);
                 }
 
                 if (!$forceCreateOrder) {
@@ -195,7 +195,7 @@ final class SubscriptionService
 
     private function extractPlanFromOrder(PaymentOrder $order)
     {
-        $planId = $order->getItems()[0]->getMundipaggId();
+        $planId = $order->getItems()[0]->getPagarmeId();
         if (!$planId) {
             return null;
         }
@@ -334,7 +334,7 @@ final class SubscriptionService
     private function fillPlanId($subscription, $plan)
     {
         if ($plan !== null) {
-            $subscription->setPlanId($plan->getMundipaggId());
+            $subscription->setPlanId($plan->getPagarmeId());
         }
         return null;
     }
@@ -456,7 +456,7 @@ final class SubscriptionService
         $responseClass = explode('\\', $responseClass);
 
         $responseClass =
-            'Mundipagg\\Core\\Recurrence\\Services\\ResponseHandlers\\' .
+            'Pagarme\\Core\\Recurrence\\Services\\ResponseHandlers\\' .
             end($responseClass) . 'Handler';
 
         return new $responseClass;
@@ -514,7 +514,7 @@ final class SubscriptionService
     /**
      * @param $subscriptionResponse
      * @return Invoice
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     private function getInvoiceFromSubscriptionResponse($subscriptionResponse)
     {
@@ -533,7 +533,7 @@ final class SubscriptionService
     private function getChargeFromInvoiceResponse($invoiceResponse)
     {
         $chargeResponse = $this->apiService->getCharge(
-            $invoiceResponse->getCharge()->getMundipaggId()
+            $invoiceResponse->getCharge()->getPagarmeId()
         );
 
         $chargeFactory = new ChargeFactory();
@@ -545,7 +545,7 @@ final class SubscriptionService
         $charge = $chargeFactory->createFromPostData($chargeResponse);
 
         $charge->setInvoice($invoiceResponse);
-        $charge->setInvoiceId($invoiceResponse->getMundipaggId()->getValue());
+        $charge->setInvoiceId($invoiceResponse->getPagarmeId()->getValue());
         $charge->setSubscriptionId($invoiceResponse->getSubscriptionId()->getValue());
 
         return $charge;
@@ -553,7 +553,7 @@ final class SubscriptionService
 
     /**
      * @return array|Subscription[]
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function listAll()
     {
@@ -598,7 +598,7 @@ final class SubscriptionService
                 ];
             }
 
-            $this->cancelSubscriptionAtMundipagg($subscription);
+            $this->cancelSubscriptionAtPagarme($subscription);
 
             $subscription->setStatus(SubscriptionStatus::canceled());
             $this->getSubscriptionRepository()->save($subscription);
@@ -629,7 +629,7 @@ final class SubscriptionService
         }
     }
 
-    public function cancelSubscriptionAtMundipagg(Subscription $subscription)
+    public function cancelSubscriptionAtPagarme(Subscription $subscription)
     {
         $apiService = new APIService();
         $apiService->cancelSubscription($subscription);
@@ -646,6 +646,6 @@ final class SubscriptionService
     public function getSavedSubscription(SubscriptionId $subscriptionId)
     {
         $subscriptionRepository = new SubscriptionRepository();
-        return $subscriptionRepository->findByMundipaggId($subscriptionId);
+        return $subscriptionRepository->findByPagarmeId($subscriptionId);
     }
 }

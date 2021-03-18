@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\Aggregates;
+namespace Pagarme\Core\Test\Kernel\Aggregates;
 
-use Mundipagg\Core\Kernel\Aggregates\LogObject;
+use Pagarme\Core\Kernel\Aggregates\LogObject;
 use PHPUnit\Framework\TestCase;
 
 class LogObjectTests extends TestCase

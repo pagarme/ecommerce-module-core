@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\Services\MoneyService;
-use Mundipagg\Core\Kernel\Services\OrderLogService;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\Services\MoneyService;
+use Pagarme\Core\Kernel\Services\OrderLogService;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
 use Exception;
 
 abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
@@ -169,14 +169,14 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 
     public function getTotalPaidFromCharges()
     {
-        $mpOrderId = $this->getMundipaggId();
+        $mpOrderId = $this->getPagarmeId();
         $grandTotal = $this->getGrandTotal();
         if ($mpOrderId === null) {
             return $grandTotal;
         }
 
         $orderRepository = new OrderRepository();
-        $mpOrder = $orderRepository->findByMundipaggId($mpOrderId);
+        $mpOrder = $orderRepository->findByPagarmeId($mpOrderId);
         if ($mpOrder === null) {
             return $grandTotal;
         }

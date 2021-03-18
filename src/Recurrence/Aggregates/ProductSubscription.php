@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
-use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
+use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
 
 class ProductSubscription extends AbstractEntity implements ProductSubscriptionInterface
 {
@@ -156,7 +156,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     }
 
     /**
-     * @return \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[]|null
+     * @return \Pagarme\Core\Recurrence\Interfaces\RepetitionInterface[]|null
      */
     public function getRepetitions()
     {
@@ -164,7 +164,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     }
 
     /**
-     * @param \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[] $repetitions
+     * @param \Pagarme\Core\Recurrence\Interfaces\RepetitionInterface[] $repetitions
      * @return ProductSubscriptionInterface
      */
     public function setRepetitions(array $repetitions)

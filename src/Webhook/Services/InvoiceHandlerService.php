@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Services;
+namespace Pagarme\Core\Webhook\Services;
 
 use Exception;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
-use Mundipagg\Core\Kernel\Responses\ServiceResponse;
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\ChargeService;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\Responses\ServiceResponse;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\ChargeService;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
 
 class InvoiceHandlerService
 {

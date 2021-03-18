@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Factories;
+namespace Pagarme\Core\Payment\Factories;
 
-use Mundipagg\Core\Payment\Aggregates\Address;
+use Pagarme\Core\Payment\Aggregates\Address;
 
 final class AddressFactory
 {

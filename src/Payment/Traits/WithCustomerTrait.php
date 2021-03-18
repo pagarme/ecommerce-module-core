@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Traits;
+namespace Pagarme\Core\Payment\Traits;
 
-use Mundipagg\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Aggregates\Customer;
 
 trait WithCustomerTrait
 {

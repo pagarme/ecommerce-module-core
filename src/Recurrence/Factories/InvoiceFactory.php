@@ -1,20 +1,20 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
 use MundiAPILib\Models\ListInvoicesResponse;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
-use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionItemId;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod as PaymentMethod;
+use Pagarme\Core\Recurrence\Aggregates\SubscriptionItem;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionItemId;
 
 class InvoiceFactory implements FactoryInterface
 {
@@ -28,7 +28,7 @@ class InvoiceFactory implements FactoryInterface
     public function createFromPostData($postData)
     {
         $postData = json_decode(json_encode($postData));
-        $this->invoice->setMundipaggId(new InvoiceId($postData->id));
+        $this->invoice->setPagarmeId(new InvoiceId($postData->id));
         $this->setSubscriptionId($postData);
         $this->setItems($postData);
         $this->setCycle($postData);
@@ -64,7 +64,7 @@ class InvoiceFactory implements FactoryInterface
         }
 
         $subscriptionItem = new SubscriptionItem();
-        $subscriptionItem->setMundipaggId(
+        $subscriptionItem->setPagarmeId(
             new SubscriptionItemId($item->subscription_item_id)
         );
         $subscriptionItem->setQuantity($item->quantity);
@@ -91,7 +91,7 @@ class InvoiceFactory implements FactoryInterface
 
     public function createFromCharge(Charge $charge)
     {
-        $this->invoice->setMundipaggId(new InvoiceId($charge->getInvoiceId()));
+        $this->invoice->setPagarmeId(new InvoiceId($charge->getInvoiceId()));
         $this->invoice->setSubscriptionId(new SubscriptionId($charge->getSubscriptionId()));
         $this->invoice->setPaymentMethod($charge->getPaymentMethod()->getPaymentMethod());
         $this->invoice->setAmount($charge->getAmount());
@@ -108,7 +108,7 @@ class InvoiceFactory implements FactoryInterface
     /**
      * @param $response
      * @return Invoice
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromApiResponseData($response)
     {
@@ -118,7 +118,7 @@ class InvoiceFactory implements FactoryInterface
         }
         $data = $postData->data[0];
 
-        $this->invoice->setMundipaggId(new InvoiceId($data->id));
+        $this->invoice->setPagarmeId(new InvoiceId($data->id));
         $this->invoice->setId($data->id); /** Just filling missing field  **/
         $this->invoice->setSubscriptionId(new SubscriptionId($data->subscription->id));
         $this->invoice->setAmount($data->amount);
@@ -142,7 +142,7 @@ class InvoiceFactory implements FactoryInterface
     {
         $customer = new Customer();
         $customerId = new CustomerId($data->customer->id);
-        $customer->setMundipaggId($customerId);
+        $customer->setPagarmeId($customerId);
         $this->invoice->setCustomer($customer);
     }
 
@@ -150,7 +150,7 @@ class InvoiceFactory implements FactoryInterface
     {
         $charge = new Charge();
         $chargeId = new ChargeId($data->charge->id);
-        $charge->setMundipaggId($chargeId);
+        $charge->setPagarmeId($chargeId);
         $charge->setAmount($data->charge->amount);
         $this->invoice->setCharge($charge);
     }

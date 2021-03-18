@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Recurrence\Interfaces\SubProductEntityInterface;
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Recurrence\Interfaces\SubProductEntityInterface;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
 
 class SubProduct extends AbstractEntity implements SubProductEntityInterface
 {
@@ -36,7 +36,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
 
     protected $increment;
 
-    /** @var \Mundipagg\Core\Recurrence\Aggregates\Repetition */
+    /** @var \Pagarme\Core\Recurrence\Aggregates\Repetition */
     protected $selectedRepetition;
 
     /**
@@ -249,12 +249,12 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
             "createdAt" => $this->getCreatedAt(),
             "updatedAt" => $this->getUpdatedAt(),
             "increment" => $this->getIncrement(),
-            "mundipaggId" => $this->getMundipaggIdValue(),
+            "pagarmeId" => $this->getPagarmeIdValue(),
         ];
     }
 
     /**
-     * @return \Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject
+     * @return \Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject
      */
     public function getPricingScheme()
     {
@@ -290,7 +290,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     }
 
     /**
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function getSelectedRepetition()
     {
@@ -319,7 +319,7 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
         $items->cycles = $this->getCycles();
         $items->quantity = $this->getQuantity();
         $items->plan_item_id = $this->getId();
-        $items->id = $this->getMundipaggIdValue();
+        $items->id = $this->getPagarmeIdValue();
         $items->status = "active";
         /**
          * @todo Fix increments
@@ -335,11 +335,11 @@ class SubProduct extends AbstractEntity implements SubProductEntityInterface
     /**
      * @return string|null
      */
-    public function getMundipaggIdValue()
+    public function getPagarmeIdValue()
     {
-        if (empty($this->getMundipaggId())) {
+        if (empty($this->getPagarmeId())) {
             return null;
         }
-        return $this->getMundipaggId()->getValue();
+        return $this->getPagarmeId()->getValue();
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
 use PHPUnit\Framework\TestCase;
 
 class ChargeStatusTest extends TestCase
@@ -26,9 +26,9 @@ class ChargeStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\ChargeStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\ChargeStatus
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aChargeStatusShouldBeComparable()
@@ -46,7 +46,7 @@ class ChargeStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\ChargeStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\ChargeStatus
      */
     public function aChargeStatusShouldBeJsonSerializable()
     {
@@ -61,7 +61,7 @@ class ChargeStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\ChargeStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\ChargeStatus
      */
     public function allChargeStatusConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -79,7 +79,7 @@ class ChargeStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\ChargeStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\ChargeStatus
      */
     public function aInvalidChargeStatusShouldNotBeInstantiable()
     {
@@ -95,7 +95,7 @@ class ChargeStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\ChargeStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\ChargeStatus
      */
     public function aChargeStatusShouldAcceptAllPossibleChargeStatuses()
     {

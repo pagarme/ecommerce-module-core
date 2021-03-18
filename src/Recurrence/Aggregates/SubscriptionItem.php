@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
 
 class SubscriptionItem extends AbstractEntity
 {
@@ -103,7 +103,7 @@ class SubscriptionItem extends AbstractEntity
     {
         return [
             "id" => $this->getId(),
-            "mundipaggId" => $this->getMundipaggId(),
+            "pagarmeId" => $this->getPagarmeId(),
             "subscriptionId" => $this->getSubscriptionId(),
             "code" => $this->getCode(),
             "quantity" => $this->getQuantity()

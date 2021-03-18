@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Factories\ProductSubscriptionFactory;
 
 class ProductSubscriptionRepository extends AbstractRepository
 {
@@ -124,9 +124,9 @@ class ProductSubscriptionRepository extends AbstractRepository
         return $productSubscription;
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        return; // TODO: Implement findByMundipaggId() method.
+        return; // TODO: Implement findByPagarmeId() method.
     }
 
     public function listEntities($limit, $listDisabled)

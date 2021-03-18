@@ -1,37 +1,37 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Aggregates\SubscriptionItem;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Aggregates\SubscriptionItem;
+use Pagarme\Core\Recurrence\Factories\SubProductFactory;
+use Pagarme\Core\Recurrence\Factories\SubscriptionFactory;
 
 class SubscriptionRepository extends AbstractRepository
 {
     /**
-     * @param AbstractValidString $mundipaggId
+     * @param AbstractValidString $pagarmeId
      * @return AbstractEntity|Subscription|null
      * @throws InvalidParamException
      */
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $subscriptionTable = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
         );
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $query = "
             SELECT *
               FROM {$subscriptionTable} as recurrence_subscription                  
-             WHERE recurrence_subscription.mundipagg_id = '{$id}'             
+             WHERE recurrence_subscription.pagarme_id = '{$id}'             
         ";
 
         $result = $this->db->fetch($query);
@@ -87,7 +87,7 @@ class SubscriptionRepository extends AbstractRepository
             $subscriptionTable 
             (
                 customer_id,
-                mundipagg_id, 
+                pagarme_id, 
                 code,                 
                 status,
                 installments,
@@ -102,8 +102,8 @@ class SubscriptionRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getCustomer()->getMundipaggId()->getValue()}',
-                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getCustomer()->getPagarmeId()->getValue()}',
+                '{$object->getPagarmeId()->getValue()}',
                 '{$object->getCode()}',
                 '{$object->getStatus()->getStatus()}',
                 '{$object->getInstallments()}',
@@ -140,7 +140,7 @@ class SubscriptionRepository extends AbstractRepository
 
         $query = "
             UPDATE {$subscriptionTable} SET
-              mundipagg_id = '{$object->getMundipaggId()->getValue()}',
+              pagarme_id = '{$object->getPagarmeId()->getValue()}',
               code = '{$object->getCode()}',
               status = '{$object->getStatus()->getStatus()}',
               installments = '{$object->getInstallments()}',
@@ -240,7 +240,7 @@ class SubscriptionRepository extends AbstractRepository
         $query = "
             SELECT recurrence_subscription.*
               FROM {$recurrenceTable} as recurrence_subscription
-              JOIN {$customerTable} as customer ON (recurrence_subscription.customer_id = customer.mundipagg_id)
+              JOIN {$customerTable} as customer ON (recurrence_subscription.customer_id = customer.pagarme_id)
              WHERE customer.code = '{$customerId}'
         ";
 
@@ -269,13 +269,13 @@ class SubscriptionRepository extends AbstractRepository
         }
 
         $chargeFactory = new ChargeRepository();
-        $charges = $chargeFactory->findBySubscriptionId($subscription->getMundipaggId());
+        $charges = $chargeFactory->findBySubscriptionId($subscription->getPagarmeId());
         foreach ($charges as $charge) {
             $subscription->addCharge($charge);
         }
 
         $subscriptionItemFactory = new SubscriptionItemRepository();
-        $subscriptionItems = $subscriptionItemFactory->findBySubscriptionId($subscription->getMundipaggId());
+        $subscriptionItems = $subscriptionItemFactory->findBySubscriptionId($subscription->getPagarmeId());
 
         if ($subscriptionItems === null) {
             return $subscription;

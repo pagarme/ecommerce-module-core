@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreatePlanRequest;
 use MundiAPILib\Models\UpdatePlanRequest;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
 use PHPUnit\Framework\TestCase;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class PlanTest extends TestCase
 {
@@ -61,8 +61,8 @@ class PlanTest extends TestCase
         $this->plan->setInterval($interval);
         $this->assertEquals($this->plan->getInterval(), $interval);
 
-        $this->plan->setMundipaggId($planId);
-        $this->assertEquals($this->plan->getMundipaggId(), $planId);
+        $this->plan->setPagarmeId($planId);
+        $this->assertEquals($this->plan->getPagarmeId(), $planId);
 
         $this->plan->setProductId($productId);
         $this->assertEquals($this->plan->getProductId(), $productId);

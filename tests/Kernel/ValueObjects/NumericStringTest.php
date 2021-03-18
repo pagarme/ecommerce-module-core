@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
 use PHPUnit\Framework\TestCase;
 
@@ -17,10 +17,10 @@ class NumericStringTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\NumericString
+     * @covers \Pagarme\Core\Kernel\ValueObjects\NumericString
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function aNumericStringShouldAcceptOnlyNumbers()
     {

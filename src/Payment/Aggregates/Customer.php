@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates;
+namespace Pagarme\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateCustomerRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
-use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Pagarme\Core\Payment\ValueObjects\CustomerPhones;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
 
 final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {
@@ -198,7 +198,7 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
         $obj->document = $this->document;
         $obj->type = $this->type;
         $obj->address = $this->address;
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
 
         return $obj;
     }

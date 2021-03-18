@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Traits;
+namespace Pagarme\Core\Payment\Traits;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 
 //@todo There are many object that should have this same business rule
 //      for the amount. Modify all these object to use this trait

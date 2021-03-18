@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformProductInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformProductInterface;
 use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
 
 class SubscriptionItemService

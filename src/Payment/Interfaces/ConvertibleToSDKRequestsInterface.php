@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Interfaces;
+namespace Pagarme\Core\Payment\Interfaces;
 
 interface ConvertibleToSDKRequestsInterface
 {

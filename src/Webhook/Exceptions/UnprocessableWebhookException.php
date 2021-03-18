@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Exceptions;
+namespace Pagarme\Core\Webhook\Exceptions;
 
-use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Kernel\Exceptions\AbstractPagarmeCoreException;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
 
-class UnprocessableWebhookException extends AbstractMundipaggCoreException
+class UnprocessableWebhookException extends AbstractPagarmeCoreException
 {
     /**
      * UnprocessableWebhookException constructor.

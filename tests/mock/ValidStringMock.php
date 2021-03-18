@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Mock;
+namespace Pagarme\Core\Test\Mock;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class ValidStringMock extends AbstractValidString
 {

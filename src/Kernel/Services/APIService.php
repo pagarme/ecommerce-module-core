@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
 use Exception;
 use MundiAPILib\APIException;
@@ -13,21 +13,21 @@ use MundiAPILib\Models\CreateCancelChargeRequest;
 use MundiAPILib\Models\CreateCaptureChargeRequest;
 use MundiAPILib\Models\CreateOrderRequest;
 use MundiAPILib\MundiAPIClient;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Maintenance\Services\ConfigInfoRetrieverService;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Order;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Maintenance\Services\ConfigInfoRetrieverService;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Aggregates\Order;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Factories\SubscriptionFactory;
 
 class APIService
 {
@@ -86,7 +86,7 @@ class APIService
     public function cancelCharge(Charge &$charge, $amount = 0)
     {
         try {
-            $chargeId = $charge->getMundipaggId()->getValue();
+            $chargeId = $charge->getPagarmeId()->getValue();
             $request = new CreateCancelChargeRequest();
             $request->amount = $amount;
 
@@ -107,7 +107,7 @@ class APIService
     public function captureCharge(Charge &$charge, $amount = 0)
     {
         try {
-            $chargeId = $charge->getMundipaggId()->getValue();
+            $chargeId = $charge->getPagarmeId()->getValue();
             $request = new CreateCaptureChargeRequest();
             $request->amount = $amount;
 
@@ -177,7 +177,7 @@ class APIService
 
     /**
      * @param OrderId $orderId
-     * @return AbstractEntity|\Mundipagg\Core\Kernel\Aggregates\Order|string
+     * @return AbstractEntity|\Pagarme\Core\Kernel\Aggregates\Order|string
      * @throws InvalidParamException
      * @throws NotFoundException
      */
@@ -244,7 +244,7 @@ class APIService
     public function updateCustomer(Customer $customer)
     {
         return $this->getCustomerController()->updateCustomer(
-            $customer->getMundipaggId()->getValue(),
+            $customer->getPagarmeId()->getValue(),
             $customer->convertToSDKRequest()
         );
     }
@@ -384,7 +384,7 @@ class APIService
 
         try {
             $response = $subscriptionController->cancelSubscription(
-                $subscription->getMundipaggId()
+                $subscription->getPagarmeId()
             );
             $this->logService->orderInfo(
                 $subscription->getCode(),
@@ -408,7 +408,7 @@ class APIService
     public function cancelInvoice(Invoice &$invoice, $amount = 0)
     {
         try {
-            $invoiceId = $invoice->getMundipaggId()->getValue();
+            $invoiceId = $invoice->getPagarmeId()->getValue();
             $invoiceController = $this->apiClient->getInvoices();
 
             return $invoiceController->cancelInvoice($invoiceId);

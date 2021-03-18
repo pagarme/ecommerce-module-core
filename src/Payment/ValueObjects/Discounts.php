@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\ValueObjects;
+namespace Pagarme\Core\Payment\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 class Discounts extends AbstractValueObject
 {

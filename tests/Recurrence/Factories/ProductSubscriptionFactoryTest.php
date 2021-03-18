@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence;
+namespace Pagarme\Core\Test\Recurrence;
 
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Factories\ProductSubscriptionFactory;
 use PHPUnit\Framework\TestCase;
 
 class ProductSubscriptionFactoryTest extends TestCase

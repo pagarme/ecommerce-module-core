@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
-use Mundipagg\Core\Maintenance\Interfaces\InstallDataSourceInterface;
-use Mundipagg\Core\Maintenance\Interfaces\ModuleInstallTypeInterface;
-use Mundipagg\Core\Maintenance\Services\InstallDataSource\CoreInstallDataSource;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Maintenance\Interfaces\InstallDataSourceInterface;
+use Pagarme\Core\Maintenance\Interfaces\ModuleInstallTypeInterface;
+use Pagarme\Core\Maintenance\Services\InstallDataSource\CoreInstallDataSource;
 
 class IntegrityInfoRetrieverService implements InfoRetrieverServiceInterface
 {

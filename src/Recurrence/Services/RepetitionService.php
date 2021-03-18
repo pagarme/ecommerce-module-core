@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\MoneyService;
-use Mundipagg\Core\Recurrence\Repositories\RepetitionRepository;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\MoneyService;
+use Pagarme\Core\Recurrence\Repositories\RepetitionRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
 
 class RepetitionService
 {
@@ -39,7 +39,7 @@ class RepetitionService
     /**
      * @param Repetition $repetition
      * @return string
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function getCycleTitle(Repetition $repetition)
     {

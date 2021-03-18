@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services;
+namespace Pagarme\Core\Test\Recurrence\Services;
 
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Services\RulesCheckoutService;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Services\RulesCheckoutService;
 use PHPUnit\Framework\TestCase;
 
 class RulesCheckoutServiceTest extends TestCase

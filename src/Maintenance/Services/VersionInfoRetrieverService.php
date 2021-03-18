@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Services\VersionService;
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Services\VersionService;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class VersionInfoRetrieverService implements InfoRetrieverServiceInterface
 {

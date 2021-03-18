@@ -1,17 +1,17 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Repositories;
+namespace Pagarme\Core\Kernel\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Aggregates\Transaction;
-use Mundipagg\Core\Kernel\Factories\ChargeFactory;
-use Mundipagg\Core\Kernel\Factories\TransactionFactory;
-use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Aggregates\Transaction;
+use Pagarme\Core\Kernel\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\Factories\TransactionFactory;
+use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
 
 final class TransactionRepository extends AbstractRepository
 {
@@ -65,7 +65,7 @@ final class TransactionRepository extends AbstractRepository
           INSERT INTO 
             $transactionTable 
             (
-                mundipagg_id, 
+                pagarme_id, 
                 charge_id,                
                 amount, 
                 paid_amount, 
@@ -85,7 +85,7 @@ final class TransactionRepository extends AbstractRepository
         ";
         $query .= "
             (
-                '{$simpleObject->mundipaggId}',
+                '{$simpleObject->pagarmeId}',
                 '{$simpleObject->chargeId}',                
                 {$simpleObject->amount},
                 {$simpleObject->paidAmount},
@@ -140,14 +140,14 @@ final class TransactionRepository extends AbstractRepository
         // TODO: Implement listEntities() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CHARGE);
 
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $query = "SELECT * FROM `$chargeTable` ";
-        $query .= "WHERE mundipagg_id = '{$id}';";
+        $query .= "WHERE pagarme_id = '{$id}';";
 
         $result = $this->db->fetch($query);
 

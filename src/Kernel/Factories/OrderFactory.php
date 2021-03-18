@@ -1,19 +1,19 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Pagarme\Core\Kernel\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\ChargeRepository;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
 use Throwable;
 
 class OrderFactory implements FactoryInterface
@@ -21,16 +21,16 @@ class OrderFactory implements FactoryInterface
     /**
      *
      * @param array $postData
-     * @return \Mundipagg\Core\Kernel\Abstractions\AbstractEntity|Order
+     * @return \Pagarme\Core\Kernel\Abstractions\AbstractEntity|Order
      * @throws NotFoundException
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromPostData($postData)
     {
         $order = new Order();
         $status = $postData['status'];
 
-        $order->setMundipaggId(new OrderId($postData['id']));
+        $order->setPagarmeId(new OrderId($postData['id']));
 
         try {
             OrderStatus::$status();
@@ -53,7 +53,7 @@ class OrderFactory implements FactoryInterface
 
         foreach ($charges as $charge) {
             $charge['order'] = [
-                'id' => $order->getMundipaggId()->getValue()
+                'id' => $order->getPagarmeId()->getValue()
             ];
             $newCharge = $chargeFactory->createFromPostData($charge);
             $order->addCharge($newCharge);
@@ -76,7 +76,7 @@ class OrderFactory implements FactoryInterface
         $order = new Order;
 
         $order->setId($dbData['id']);
-        $order->setMundipaggId(new OrderId($dbData['mundipagg_id']));
+        $order->setPagarmeId(new OrderId($dbData['pagarme_id']));
 
         $status = $dbData['status'];
         try {
@@ -90,7 +90,7 @@ class OrderFactory implements FactoryInterface
         $order->setStatus(OrderStatus::$status());
 
         $chargeRepository = new ChargeRepository();
-        $charges = $chargeRepository->findByOrderId($order->getMundipaggId());
+        $charges = $chargeRepository->findByOrderId($order->getPagarmeId());
 
         foreach ($charges as $charge) {
             $order->addCharge($charge);
@@ -130,7 +130,7 @@ class OrderFactory implements FactoryInterface
     ) {
         $order = new Order();
 
-        $order->setMundipaggId(new OrderId($orderId));
+        $order->setPagarmeId(new OrderId($orderId));
 
         $baseStatus = explode('_', $platformOrder->getStatus());
         $status = $baseStatus[0];

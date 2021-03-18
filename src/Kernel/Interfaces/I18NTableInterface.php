@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Interfaces;
+namespace Pagarme\Core\Kernel\Interfaces;
 
 interface I18NTableInterface
 {

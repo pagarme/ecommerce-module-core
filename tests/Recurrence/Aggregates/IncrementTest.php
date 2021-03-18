@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreateIncrementRequest;
-use Mundipagg\Core\Recurrence\Aggregates\Increment;
+use Pagarme\Core\Recurrence\Aggregates\Increment;
 use PHPUnit\Framework\TestCase;
 
 class IncrementTest extends TestCase

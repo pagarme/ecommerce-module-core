@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractPlatformOrderDecorator;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class InfoBuilderService
 {
@@ -45,7 +45,7 @@ class InfoBuilderService
     private function getInfoRetrieverServiceFor($parameter)
     {
         $infoRetrieverServiceClass =
-            'Mundipagg\\Core\\Maintenance\\Services\\' .
+            'Pagarme\\Core\\Maintenance\\Services\\' .
             ucfirst($parameter) .
             'InfoRetrieverService';
 

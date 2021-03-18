@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Cycle;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Cycle;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
 use PHPUnit\Framework\TestCase;
 
 class InvoiceTest extends TestCase
@@ -28,7 +28,7 @@ class InvoiceTest extends TestCase
         $cycle->setCycleStart(new \DateTime());
         $cycle->setCycleEnd((new \DateTime)->add(new \DateInterval('P10D')));
 
-        $this->invoice->setMundipaggId(new InvoiceId('in_45asDadb8Xd95451'));
+        $this->invoice->setPagarmeId(new InvoiceId('in_45asDadb8Xd95451'));
         $this->invoice->setId(1);
         $this->invoice->setCustomer(new Customer());
         $this->invoice->setPaymentMethod('credit_card');
@@ -41,7 +41,7 @@ class InvoiceTest extends TestCase
         $this->invoice->setTotalDiscount(100);
         $this->invoice->setTotalIncrement(100);
 
-        $this->assertEquals('in_45asDadb8Xd95451', $this->invoice->getMundipaggId()->getValue());
+        $this->assertEquals('in_45asDadb8Xd95451', $this->invoice->getPagarmeId()->getValue());
         $this->assertEquals(1, $this->invoice->getId());
         $this->assertEquals('credit_card', $this->invoice->getPaymentMethod());
         $this->assertEquals('paid', $this->invoice->getStatus());

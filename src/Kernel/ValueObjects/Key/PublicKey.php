@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects\Key;
+namespace Pagarme\Core\Kernel\ValueObjects\Key;
 
-use Mundipagg\Core\Kernel\Interfaces\SensibleDataInterface;
+use Pagarme\Core\Kernel\Interfaces\SensibleDataInterface;
 
 final class PublicKey extends AbstractPublicKey implements SensibleDataInterface
 {

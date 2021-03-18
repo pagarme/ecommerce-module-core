@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Mundipagg\Core\Test\Payment;
+namespace Pagarme\Core\Test\Payment;
 
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
 use PHPUnit\Framework\TestCase;
 
 class CustomerTests extends TestCase
@@ -23,7 +23,7 @@ class CustomerTests extends TestCase
     public function testBuildCustomerObject()
     {
         $this->customer->setCode(2);
-        $this->customer->setMundipaggId(new CustomerId('cus_K7dJ521DiETZnjM4'));
+        $this->customer->setPagarmeId(new CustomerId('cus_K7dJ521DiETZnjM4'));
         $this->customer->setName("teste teste sobrenome");
         $this->customer->setEmail("teste@teste.com");
         $this->customer->setDocument("76852559017");
