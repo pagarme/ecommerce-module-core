@@ -23,7 +23,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
 
     public function addHistoryComment($message, $notifyCustomer = false)
     {
-        $message = 'MP - ' . $message;
+        $message = 'PGM - ' . $message;
         $this->addMPHistoryComment($message, $notifyCustomer);
     }
 
