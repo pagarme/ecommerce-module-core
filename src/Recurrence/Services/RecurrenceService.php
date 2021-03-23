@@ -9,7 +9,7 @@ use Pagarme\Core\Recurrence\Aggregates\SubProduct;
 use Pagarme\Core\Recurrence\Repositories\SubscriptionItemRepository;
 use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Pagarme\Core\Recurrence\ValueObjects\SubscriptionItemId;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class RecurrenceService
 {
@@ -102,8 +102,8 @@ class RecurrenceService
     public function getProductDecorated($id)
     {
         $productDecorator =
-            Magento2CoreSetup::get(
-                Magento2CoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
+            AbstractModuleCoreSetup::get(
+                AbstractModuleCoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
             );
 
         /**

@@ -12,15 +12,15 @@ use Pagarme\Core\Recurrence\Repositories\PlanRepository;
 use MundiAPILib\Models\CreatePlanRequest;
 use Pagarme\Core\Recurrence\ValueObjects\PlanId;
 use Pagarme\Core\Recurrence\ValueObjects\PlanItemId;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class PlanService
 {
     public function __construct()
     {
-        Magento2CoreSetup::bootstrap();
+        AbstractModuleCoreSetup::bootstrap();
 
-        $config = Magento2CoreSetup::getModuleConfiguration();
+        $config = AbstractModuleCoreSetup::getModuleConfiguration();
 
         $secretKey = null;
         if ($config->getSecretKey() != null) {

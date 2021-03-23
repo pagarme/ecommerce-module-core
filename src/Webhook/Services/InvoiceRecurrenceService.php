@@ -22,7 +22,7 @@ use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
 use Pagarme\Core\Recurrence\Repositories\SubscriptionRepository;
 use Pagarme\Core\Recurrence\Services\SubscriptionItemService;
 use Pagarme\Core\Webhook\Aggregates\Webhook;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class InvoiceRecurrenceService extends AbstractHandlerService
 {
@@ -67,7 +67,7 @@ class InvoiceRecurrenceService extends AbstractHandlerService
      */
     public function handlePaid(Webhook $webhook)
     {
-        $config = Magento2CoreSetup::getModuleConfiguration();
+        $config = AbstractModuleCoreSetup::getModuleConfiguration();
         $isDecreaseStock = $config->getRecurrenceConfig()->isDecreaseStock();
 
         /**

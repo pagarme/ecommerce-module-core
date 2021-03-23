@@ -3,7 +3,7 @@
 namespace Pagarme\Core\Recurrence\Services;
 
 use Pagarme\Core\Kernel\Interfaces\PlatformProductInterface;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class SubscriptionItemService
 {
@@ -22,8 +22,8 @@ class SubscriptionItemService
     public function getProductDecorated($code)
     {
         $productDecorator =
-            Magento2CoreSetup::get(
-                Magento2CoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
+            AbstractModuleCoreSetup::get(
+                AbstractModuleCoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
             );
 
         /**
