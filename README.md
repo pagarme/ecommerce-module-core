@@ -1,10 +1,9 @@
 
-[![Latest Stable Version](https://poser.pugx.org/mundipagg/ecommerce-module-core/v/stable)](https://packagist.org/packages/mundipagg/ecommerce-module-core)
-[![mundipagg maturity](http://maturityapp.herokuapp.com/maturity.php?project=https://github.com/mundipagg/ecommerce-module-core&token=&command=badge_image)](http://maturityapp.herokuapp.com/index.html?project=https://github.com/mundipagg/ecommerce-module-core&token=)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=mundipagg_ecommerce-module-core)
-[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=mundipagg_ecommerce-module-core)
-[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=mundipagg_ecommerce-module-core)
-[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mundipagg_ecommerce-module-core&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=mundipagg_ecommerce-module-core)
+[![Latest Stable Version](https://poser.pugx.org/pagarme/ecommerce-module-core/v/stable)](https://packagist.org/packages/pagarme/ecommerce-module-core)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=pagarme_ecommerce-module-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagarme_ecommerce-module-core)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=pagarme_ecommerce-module-core&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=pagarme_ecommerce-module-core)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=pagarme_ecommerce-module-core&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=pagarme_ecommerce-module-core)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=pagarme_ecommerce-module-core&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=pagarme_ecommerce-module-core)
 
 # Pagar.me/E-commerce module core
 
@@ -34,10 +33,10 @@ composer update pagarme/ecommerce-module-core
 [http://docs.mundipagg.com](http://docs.mundipagg.com)
 
 ## Contributting
-Please, refer to [CONTRIBUTING](CONTRIBUTING.md)
+Please, refer to [CONTRIBUTING](.github/CONTRIBUTING.md)
 
 ## Issues and new features
-Open a new Issue following our issue template [ISSUE-TEMPLATE](ISSUE-TEMPLATE.md)
+Open a new Issue following our issue template [ISSUE-TEMPLATE](.github/ISSUE-TEMPLATE.md)
 
 ## Changelog
 See in [releases](https://github.com/pagarme/ecommerce-module-core/releases) 
