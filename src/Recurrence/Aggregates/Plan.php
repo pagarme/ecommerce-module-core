@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreatePlanRequest;
 use MundiAPILib\Models\UpdatePlanRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
-use Mundipagg\Core\Kernel\ValueObjects\NumericString;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\Interfaces\ProductPlanInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Kernel\ValueObjects\NumericString;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\Interfaces\ProductPlanInterface;
 
 final class Plan extends AbstractEntity implements RecurrenceEntityInterface, ProductPlanInterface
 {
@@ -395,7 +395,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface, Pr
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
         $obj->intervalType = $this->getIntervalType();
         $obj->intervalCount = $this->getIntervalCount();
         $obj->productId = $this->getProductId();

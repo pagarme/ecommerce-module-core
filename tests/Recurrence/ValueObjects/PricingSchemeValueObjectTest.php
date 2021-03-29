@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence;
+namespace Pagarme\Core\Test\Recurrence;
 
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 use PHPUnit\Framework\TestCase;
 
 class PricingSchemeValueObjectTest extends TestCase
 {
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Call to undefined method Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject::time()
+     * @expectedExceptionMessage Call to undefined method Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject::time()
      */
     public function testShouldReturnAExceptionBecauseTheTypeNotExist()
     {

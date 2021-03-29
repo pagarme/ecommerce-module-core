@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects\Key;
+namespace Pagarme\Core\Test\Kernel\ValueObjects\Key;
 
-use Mundipagg\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
+use Pagarme\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
 use PHPUnit\Framework\TestCase;
 
 class PublicKeyTest extends TestCase
@@ -17,10 +17,10 @@ class PublicKeyTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Key\PublicKey
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function anPublicKeyShouldAcceptOnlyValidPublicKeys()
     {

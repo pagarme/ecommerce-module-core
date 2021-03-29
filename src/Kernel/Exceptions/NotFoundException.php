@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Exceptions;
+namespace Pagarme\Core\Kernel\Exceptions;
 
-class NotFoundException extends AbstractMundipaggCoreException
+class NotFoundException extends AbstractPagarmeCoreException
 {
     public function __construct($message)
     {

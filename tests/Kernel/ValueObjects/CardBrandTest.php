@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
 use PHPUnit\Framework\TestCase;
 
 class CardBrandTest extends TestCase
@@ -10,9 +10,9 @@ class CardBrandTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\CardBrand
+     * @covers \Pagarme\Core\Kernel\ValueObjects\CardBrand
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aCardBrandShouldBeComparable()
@@ -30,7 +30,7 @@ class CardBrandTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\CardBrand
+     * @covers \Pagarme\Core\Kernel\ValueObjects\CardBrand
      */
     public function aCardBrandShouldBeJsonSerializable()
     {
@@ -45,7 +45,7 @@ class CardBrandTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\CardBrand
+     * @covers \Pagarme\Core\Kernel\ValueObjects\CardBrand
      */
     public function allCardBrandConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -63,7 +63,7 @@ class CardBrandTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\CardBrand
+     * @covers \Pagarme\Core\Kernel\ValueObjects\CardBrand
      */
     public function aInvalidCardBrandShouldNotBeInstantiable()
     {

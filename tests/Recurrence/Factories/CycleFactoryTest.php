@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Factories;
+namespace Pagarme\Core\Test\Recurrence\Factories;
 
-use Mundipagg\Core\Recurrence\Aggregates\Cycle;
-use Mundipagg\Core\Recurrence\Factories\CycleFactory;
+use Pagarme\Core\Recurrence\Aggregates\Cycle;
+use Pagarme\Core\Recurrence\Factories\CycleFactory;
 use PHPUnit\Framework\TestCase;
 
 class CycleFactoryTest extends TestCase

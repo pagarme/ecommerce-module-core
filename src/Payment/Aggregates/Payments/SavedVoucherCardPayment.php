@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates\Payments;
+namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
-use Mundipagg\Core\Payment\ValueObjects\CardId;
-use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
+use Pagarme\Core\Payment\ValueObjects\CardId;
+use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 use MundiAPILib\Models\CreateCardRequest;
 
 final class SavedVoucherCardPayment extends AbstractCreditCardPayment

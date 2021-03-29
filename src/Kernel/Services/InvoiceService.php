@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Interfaces\PlatformCreditmemoInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformInvoiceInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Interfaces\PlatformCreditmemoInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformInvoiceInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\ValueObjects\InvoiceState;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
 
 class InvoiceService
 {

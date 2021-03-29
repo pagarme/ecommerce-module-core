@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Interfaces;
+namespace Pagarme\Core\Recurrence\Interfaces;
 
 interface ProductSubscriptionInterface
 {
@@ -60,12 +60,12 @@ interface ProductSubscriptionInterface
     public function setAllowInstallments($installments);
 
     /**
-     * @return \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[]|null
+     * @return \Pagarme\Core\Recurrence\Interfaces\RepetitionInterface[]|null
      */
     public function getRepetitions();
 
     /**
-     * @param \Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface[] $repetitions
+     * @param \Pagarme\Core\Recurrence\Interfaces\RepetitionInterface[] $repetitions
      * @return ProductSubscriptionInterface
      */
     public function setRepetitions(array $repetitions);

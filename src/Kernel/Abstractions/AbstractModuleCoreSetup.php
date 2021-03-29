@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Aggregates\Configuration;
-use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
+use Pagarme\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Repositories\ConfigurationRepository;
 use ReflectionClass;
 
 abstract class AbstractModuleCoreSetup

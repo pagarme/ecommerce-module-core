@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 
 trait ValidStringTestTrait
 {

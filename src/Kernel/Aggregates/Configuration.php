@@ -1,22 +1,22 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Aggregates;
+namespace Pagarme\Core\Kernel\Aggregates;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Helper\StringFunctionsHelper;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\PixConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\DebitConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\PixConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\DebitConfig;
+use Pagarme\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
 
 final class Configuration extends AbstractEntity
 {

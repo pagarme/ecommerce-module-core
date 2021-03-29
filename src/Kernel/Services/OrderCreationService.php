@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
 use Exception;
 use MundiAPILib\Models\CreateOrderRequest;

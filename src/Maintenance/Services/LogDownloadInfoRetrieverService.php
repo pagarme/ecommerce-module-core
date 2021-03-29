@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 use ZipArchive;
 
 class LogDownloadInfoRetrieverService implements InfoRetrieverServiceInterface

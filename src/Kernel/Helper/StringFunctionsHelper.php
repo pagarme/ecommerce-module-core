@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Helper;
+namespace Pagarme\Core\Kernel\Helper;
 
 class StringFunctionsHelper
 {

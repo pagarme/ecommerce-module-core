@@ -1,35 +1,35 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionItemFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Factories\SubscriptionItemFactory;
 
 class SubscriptionItemRepository extends AbstractRepository
 {
     /**
-     * @param AbstractValidString $mundipaggId
+     * @param AbstractValidString $pagarmeId
      * @return AbstractEntity|Subscription|null
      * @throws InvalidParamException
      */
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $subscriptionItemTable = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_ITEM
         );
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $query = "
             SELECT *
               FROM {$subscriptionItemTable}                  
-             WHERE mundipagg_id = '{$id}'             
+             WHERE pagarme_id = '{$id}'             
         ";
 
         $result = $this->db->fetch($query);
@@ -43,12 +43,12 @@ class SubscriptionItemRepository extends AbstractRepository
         return $subscriptionItem;
     }
 
-    public function findBySubscriptionId(AbstractValidString $mundipaggId)
+    public function findBySubscriptionId(AbstractValidString $pagarmeId)
     {
         $subscriptionItemTable = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_ITEM
         );
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $query = "
             SELECT *
@@ -110,7 +110,7 @@ class SubscriptionItemRepository extends AbstractRepository
           INSERT INTO 
             $subscriptionItemTable 
             (
-                mundipagg_id, 
+                pagarme_id, 
                 subscription_id,
                 code,                
                 quantity
@@ -120,7 +120,7 @@ class SubscriptionItemRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getPagarmeId()->getValue()}',
                 '{$object->getSubscriptionId()->getValue()}',
                 '{$object->getCode()}',
                 '{$object->getQuantity()}'
@@ -142,7 +142,7 @@ class SubscriptionItemRepository extends AbstractRepository
 
         $query = "
             UPDATE {$subscriptionItemTable} SET
-              mundipagg_id = '{$object->getMundipaggId()->getValue()}',
+              pagarme_id = '{$object->getPagarmeId()->getValue()}',
               code = '{$object->getCode()}',
               subscription_id = '{$object->getSubscriptionId()->getValue()}',
               quantity = '{$object->getQuantity()}'

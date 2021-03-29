@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Services;
+namespace Pagarme\Core\Webhook\Services;
 
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Webhook\Exceptions\WebhookHandlerNotFoundException;
 
 abstract class AbstractHandlerService
 {
@@ -90,7 +90,7 @@ abstract class AbstractHandlerService
         $i18n = new LocalizationService();
         $message = $i18n->getDashboard(
             'Webhook received: %s %s.%s',
-            $webhook->getMundipaggId()->getValue(),
+            $webhook->getPagarmeId()->getValue(),
             $webhook->getType()->getEntityType(),
             $webhook->getType()->getAction()
         );

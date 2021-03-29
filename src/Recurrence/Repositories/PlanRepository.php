@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Factories\PlanFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Factories\PlanFactory;
 
 final class PlanRepository extends AbstractRepository
 {
@@ -40,7 +40,7 @@ final class PlanRepository extends AbstractRepository
                 '{$object->getIntervalCount()}',
                 '{$object->getName()}',
                 '{$object->getDescription()}',
-                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getPagarmeId()->getValue()}',
                 '{$object->getProductId()}',
                 '{$object->getCreditCard()}',
                 '{$object->getAllowInstallments()}',
@@ -69,7 +69,7 @@ final class PlanRepository extends AbstractRepository
                 `interval_count` = '{$object->getIntervalCount()}',
                 `name` = '{$object->getName()}',
                 `description` = '{$object->getDescription()}',
-                `plan_id` = '{$object->getMundipaggId()->getValue()}',
+                `plan_id` = '{$object->getPagarmeId()->getValue()}',
                 `product_id` = '{$object->getProductId()}',
                 `credit_card` = '{$object->getCreditCard()}',
                 `installments` = '{$object->getAllowInstallments()}',
@@ -143,12 +143,12 @@ final class PlanRepository extends AbstractRepository
 
         return $result;
     }
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_PLAN
         );
-        $objectId = $mundipaggId->getValue();
+        $objectId = $pagarmeId->getValue();
 
         $query = "SELECT * FROM $table WHERE plan_id = '{$objectId}' LIMIT 1";
 

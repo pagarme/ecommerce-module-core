@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Exceptions;
+namespace Pagarme\Core\Kernel\Exceptions;
 
 /**
  * The InvalidParamException. It should be thrown when an business rule validation
  * fails inside an Aggregate or Value Object setter.
  */
-class InvalidParamException extends AbstractMundipaggCoreException
+class InvalidParamException extends AbstractPagarmeCoreException
 {
     /**
      * InvalidParamException constructor.

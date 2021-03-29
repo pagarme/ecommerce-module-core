@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services;
+namespace Pagarme\Core\Payment\Services;
 
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
 
 class OrderService
 {
     public function getPixQrCodeInfoFromOrder(OrderId $orderId)
     {
         $orderRepository = new OrderRepository();
-        $order = $orderRepository->findByMundipaggId(new OrderId($orderId));
+        $order = $orderRepository->findByPagarmeId(new OrderId($orderId));
         $qrCodeInfo = [];
 
         if ($order !== null) {

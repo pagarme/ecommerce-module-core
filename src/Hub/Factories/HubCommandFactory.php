@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Factories;
+namespace Pagarme\Core\Hub\Factories;
 
-use Mundipagg\Core\Hub\Commands\AbstractCommand;
-use Mundipagg\Core\Hub\Commands\CommandType;
-use Mundipagg\Core\Kernel\ValueObjects\Id\AccountId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
-use Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId;
-use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Hub\Commands\AbstractCommand;
+use Pagarme\Core\Hub\Commands\CommandType;
+use Pagarme\Core\Kernel\ValueObjects\Id\AccountId;
+use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\Id\MerchantId;
+use Pagarme\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use ReflectionClass;
 
 class HubCommandFactory

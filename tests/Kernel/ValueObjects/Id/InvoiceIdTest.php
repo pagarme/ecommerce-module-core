@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects\Id;
+namespace Pagarme\Core\Test\Kernel\ValueObjects\Id;
 
-use Mundipagg\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
+use Pagarme\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
 use PHPUnit\Framework\TestCase;
 
 class InvoiceIdTest extends TestCase

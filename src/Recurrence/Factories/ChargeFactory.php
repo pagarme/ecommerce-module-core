@@ -1,21 +1,21 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Payment\Repositories\CustomerRepository;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Factories\TransactionFactory;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Payment\Repositories\CustomerRepository;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Factories\TransactionFactory;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
 
 class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterface
 {
@@ -37,12 +37,12 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         $this->charge->setId($id);
     }
 
-    private function setMundiPaggId($id)
+    private function setPagarmeId($id)
     {
         if (empty($id)) {
             return;
         }
-        $this->charge->setMundipaggId(new ChargeId($id));
+        $this->charge->setPagarmeId(new ChargeId($id));
     }
 
     private function setInvoiceId($postData)
@@ -125,7 +125,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
             $invoiceFactory = new InvoiceFactory();
             $invoice = $invoiceFactory->createFromPostData($data['invoice']);
             $this->charge->setInvoice($invoice);
-            $this->charge->setInvoiceId($invoice->getMundipaggId()->getValue());
+            $this->charge->setInvoiceId($invoice->getPagarmeId()->getValue());
         }
     }
 
@@ -191,7 +191,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
         if ($lastTransactionData !== null) {
             $transactionFactory = new TransactionFactory();
             $lastTransaction = $transactionFactory->createFromPostData($lastTransactionData);
-            $lastTransaction->setChargeId($this->charge->getMundipaggId());
+            $lastTransaction->setChargeId($this->charge->getPagarmeId());
 
             $this->charge->addTransaction($lastTransaction);
         }
@@ -199,7 +199,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
 
     public function createFromPostData($postData)
     {
-        $this->setMundiPaggId($postData['id']);
+        $this->setPagarmeId($postData['id']);
         $this->setCode($postData['code']);
         $this->setAmount($postData['amount']);
         $this->setPaidAmount($postData);
@@ -226,7 +226,7 @@ class ChargeFactory extends TreatFactoryChargeDataBase implements FactoryInterfa
     public function createFromDbData($dbData)
     {
         $this->setId($dbData['id']);
-        $this->setMundiPaggId($dbData['mundipagg_id']);
+        $this->setPagarmeId($dbData['pagarme_id']);
         $this->setInvoice($dbData);
         $this->setSubscriptionId($dbData);
         $this->setInvoiceId($dbData);

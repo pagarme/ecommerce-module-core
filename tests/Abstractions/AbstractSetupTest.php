@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Abstractions;
+namespace Pagarme\Core\Test\Abstractions;
 
-use Mundipagg\Core\Test\Mock\Concrete\Migrate;
-use Mundipagg\Core\Test\Mock\Concrete\PlatformCoreSetup;
+use Pagarme\Core\Test\Mock\Concrete\Migrate;
+use Pagarme\Core\Test\Mock\Concrete\PlatformCoreSetup;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractSetupTest extends TestCase

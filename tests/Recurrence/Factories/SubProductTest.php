@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence;
+namespace Pagarme\Core\Test\Recurrence;
 
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Factories\SubProductFactory;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 use PHPUnit\Framework\TestCase;
 
 class SubProductTest extends TestCase

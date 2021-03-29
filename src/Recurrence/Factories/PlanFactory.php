@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
 use Magento\Catalog\Block\Product\Price;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\ValueObjects\DueValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\ValueObjects\DueValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject as PricingScheme;
 
 class PlanFactory implements FactoryInterface
 {
@@ -23,10 +23,10 @@ class PlanFactory implements FactoryInterface
         $this->plan  = new Plan();
     }
 
-    private function setMundipaggId($postData)
+    private function setPagarmeId($postData)
     {
         if (!empty($postData['plan_id'])) {
-            $this->plan->setMundipaggId(new PlanId($postData['plan_id']));
+            $this->plan->setPagarmeId(new PlanId($postData['plan_id']));
             return;
         }
     }
@@ -180,7 +180,7 @@ class PlanFactory implements FactoryInterface
             return;
         }
 
-        $this->setMundipaggId($postData);
+        $this->setPagarmeId($postData);
         $this->setIntervalType($postData);
         $this->setIntervalCount($postData);
         $this->setId($postData);
@@ -207,7 +207,7 @@ class PlanFactory implements FactoryInterface
             return;
         }
 
-        $this->setMundipaggId($dbData);
+        $this->setPagarmeId($dbData);
         $this->setIntervalType($dbData);
         $this->setIntervalCount($dbData);
         $this->setId($dbData);

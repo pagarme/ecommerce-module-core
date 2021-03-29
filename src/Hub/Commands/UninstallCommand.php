@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Commands;
+namespace Pagarme\Core\Hub\Commands;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Configuration;
-use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
-use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Factories\ConfigurationFactory;
+use Pagarme\Core\Kernel\Repositories\ConfigurationRepository;
 
 class UninstallCommand extends AbstractCommand
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services;
+namespace Pagarme\Core\Payment\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
-use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Payment\Factories\SavedCardFactory;
+use Pagarme\Core\Payment\Repositories\SavedCardRepository;
 
 class CardService
 {
@@ -66,23 +66,23 @@ class CardService
             if (
                 !empty($lastTransaction->getCardData()) &&
                 $saveOnSuccess &&
-                $order->getCustomer()->getMundipaggId()->equals(
-                    $charge->getCustomer()->getMundipaggId()
+                $order->getCustomer()->getPagarmeId()->equals(
+                    $charge->getCustomer()->getPagarmeId()
                 )
             ) {
                 $postData =
                     json_decode(json_encode($lastTransaction->getCardData()));
                 $postData->owner =
-                    $charge->getCustomer()->getMundipaggId();
+                    $charge->getCustomer()->getPagarmeId();
 
                 $savedCard = $savedCardFactory->createFromTransactionJson($postData);
                 if (
-                    $savedCardRepository->findByMundipaggId($savedCard->getMundipaggId()) === null
+                    $savedCardRepository->findByPagarmeId($savedCard->getPagarmeId()) === null
                 ) {
                     $savedCardRepository->save($savedCard);
                     $this->logService->info(
                         $order->getCode(),
-                        "Card '{$savedCard->getMundipaggId()->getValue()}' saved."
+                        "Card '{$savedCard->getPagarmeId()->getValue()}' saved."
                     );
 
                 }

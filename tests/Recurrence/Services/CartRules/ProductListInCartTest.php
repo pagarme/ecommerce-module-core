@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Test\Recurrence\Services\CartRules;
 
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
-use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
-use Mundipagg\Core\Recurrence\Services\CartRules\ProductListInCart;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
+use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
+use Pagarme\Core\Recurrence\Services\CartRules\ProductListInCart;
 use PHPUnit\Framework\TestCase;
 
 class ProductListInCartTest extends TestCase

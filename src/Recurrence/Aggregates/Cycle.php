@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
 use DateTime;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\Id\CycleId;
 
 class Cycle extends AbstractEntity
 {

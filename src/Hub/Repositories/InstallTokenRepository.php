@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Repositories;
+namespace Pagarme\Core\Hub\Repositories;
 
-use Mundipagg\Aggregates\IAggregateRoot;
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Hub\Aggregates\InstallToken;
-use Mundipagg\Core\Hub\Factories\InstallTokenFactory;
+use Pagarme\Aggregates\IAggregateRoot;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Hub\Aggregates\InstallToken;
+use Pagarme\Core\Hub\Factories\InstallTokenFactory;
 
 final class InstallTokenRepository extends AbstractRepository
 {
@@ -68,12 +68,12 @@ final class InstallTokenRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $table =
             $this->db->getTable(AbstractDatabaseDecorator::TABLE_HUB_INSTALL_TOKEN);
 
-        $token = $mundipaggId->getValue();
+        $token = $pagarmeId->getValue();
         
         $query = "SELECT * FROM `$table` as t ";
         $query .= "WHERE t.token = '$token';";

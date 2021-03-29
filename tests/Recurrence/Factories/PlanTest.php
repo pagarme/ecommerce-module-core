@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence;
+namespace Pagarme\Core\Test\Recurrence;
 
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
 use PHPUnit\Framework\TestCase;
-use Mundipagg\Core\Recurrence\Factories\PlanFactory;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\Factories\PlanFactory;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 use Zend\Db\Sql\Ddl\Column\Datetime;
 
 class PlanFactoryTest extends TestCase
@@ -57,7 +57,7 @@ class PlanFactoryTest extends TestCase
         $this->assertEmpty($productSubscription->getName());
         $this->assertEmpty($productSubscription->getDescription());
         $this->assertEmpty($productSubscription->getInterval());
-        $this->assertEmpty($productSubscription->getMundipaggId());
+        $this->assertEmpty($productSubscription->getPagarmeId());
         $this->assertEmpty($productSubscription->getProductId());
         $this->assertEmpty($productSubscription->getCreditCard());
         $this->assertEmpty($productSubscription->getBoleto());

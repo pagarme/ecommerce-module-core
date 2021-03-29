@@ -1,24 +1,24 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreateCardRequest;
 use MundiAPILib\Models\CreateSubscriptionRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Payment\Aggregates\Shipping;
-use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
-use Mundipagg\Core\Payment\ValueObjects\Discounts;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Interfaces\ChargeInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Payment\Aggregates\Shipping;
+use Pagarme\Core\Payment\Traits\WithCustomerTrait;
+use Pagarme\Core\Payment\ValueObjects\Discounts;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
 
 class Subscription extends AbstractEntity
 {
@@ -433,8 +433,8 @@ class Subscription extends AbstractEntity
         $charges = $this->getCharges();
         //cant add a charge that was already added.
         foreach ($charges as $charge) {
-            if ($charge->getMundipaggId()->equals(
-                $newCharge->getMundipaggId()
+            if ($charge->getPagarmeId()->equals(
+                $newCharge->getPagarmeId()
             )
             ) {
                 return $this;
@@ -601,7 +601,7 @@ class Subscription extends AbstractEntity
     {
         return [
             "id" => $this->getId(),
-            "subscriptionId" => $this->getMundipaggId(),
+            "subscriptionId" => $this->getPagarmeId(),
             "code" => $this->getCode(),
             "status" => $this->getStatusValue(),
             "paymentMethod" => $this->getPaymentMethod(),

@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates\Payments;
+namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
-use Mundipagg\Core\Payment\ValueObjects\CardId;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
+use Pagarme\Core\Payment\ValueObjects\CardId;
 
 final class SavedCreditCardPayment extends AbstractCreditCardPayment
 {

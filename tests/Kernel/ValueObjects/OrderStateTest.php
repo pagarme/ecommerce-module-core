@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
 use PHPUnit\Framework\TestCase;
 
 class OrderStateTest extends TestCase
@@ -10,9 +10,9 @@ class OrderStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderState
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aOrderStateShouldBeComparable()
@@ -30,7 +30,7 @@ class OrderStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderState
      */
     public function aOrderStateShouldBeJsonSerializable()
     {
@@ -45,7 +45,7 @@ class OrderStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderState
      */
     public function allOrderStateConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -71,7 +71,7 @@ class OrderStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\OrderState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\OrderState
      */
     public function aInvalidOrderStateShouldNotBeInstantiable()
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Recurrence\Services\CartRules;
 
-use Mundipagg\Core\Recurrence\Interfaces\ProductPlanInterface;
-use Mundipagg\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
-use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
+use Pagarme\Core\Recurrence\Interfaces\ProductPlanInterface;
+use Pagarme\Core\Recurrence\Interfaces\ProductSubscriptionInterface;
+use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
 
 class CurrentProduct
 {

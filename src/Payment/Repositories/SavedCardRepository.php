@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Repositories;
+namespace Pagarme\Core\Payment\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\Aggregates\SavedCard;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\Aggregates\SavedCard;
+use Pagarme\Core\Payment\Factories\SavedCardFactory;
 
 final class SavedCardRepository extends AbstractRepository
 {
@@ -50,7 +50,7 @@ final class SavedCardRepository extends AbstractRepository
         $query = "
           INSERT INTO $table 
             (
-                mundipagg_id, 
+                pagarme_id, 
                 owner_id,
                 owner_name,
                 first_six_digits, 
@@ -60,7 +60,7 @@ final class SavedCardRepository extends AbstractRepository
             )
           VALUES 
             (
-                '{$obj->mundipaggId}',
+                '{$obj->pagarmeId}',
                 '{$obj->ownerId}',
                 '{$obj->ownerName}',
                 '{$obj->firstSixDigits}',
@@ -102,11 +102,11 @@ final class SavedCardRepository extends AbstractRepository
         return null;
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "SELECT * FROM $table WHERE mundipagg_id = '$id'";
+        $query = "SELECT * FROM $table WHERE pagarme_id = '$id'";
 
         $result = $this->db->fetch($query);
 

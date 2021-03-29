@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services\InstallDataSource;
+namespace Pagarme\Core\Maintenance\Services\InstallDataSource;
 
-use Mundipagg\Core\Maintenance\Interfaces\InstallDataSourceInterface;
+use Pagarme\Core\Maintenance\Interfaces\InstallDataSourceInterface;
 
 abstract class AbstractInstallDataSource implements InstallDataSourceInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformInvoiceInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformInvoiceInterface;
 
 abstract class AbstractInvoiceDecorator implements PlatformInvoiceInterface
 {
@@ -23,7 +23,7 @@ abstract class AbstractInvoiceDecorator implements PlatformInvoiceInterface
      */
     public function addComment($comment)
     {
-        $comment = 'MP - ' . $comment;
+        $comment = 'PGM - ' . $comment;
         $this->addMPComment($comment);
     }
 

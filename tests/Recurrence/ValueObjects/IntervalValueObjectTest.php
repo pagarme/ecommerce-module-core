@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence;
+namespace Pagarme\Core\Test\Recurrence;
 
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 use PHPUnit\Framework\TestCase;
 
 class IntervalValueObjectTest extends TestCase
 {
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage  Call to undefined method Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject::hour()
+     * @expectedExceptionMessage  Call to undefined method Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject::hour()
      */
     public function testShouldReturnAExceptionBecauseTheTypeNotExist()
     {

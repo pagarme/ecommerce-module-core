@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
+use Pagarme\Core\Kernel\ValueObjects\InvoiceState;
 use PHPUnit\Framework\TestCase;
 
 class InvoiceStateTest extends TestCase
@@ -15,9 +15,9 @@ class InvoiceStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\InvoiceState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\InvoiceState
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aInvoiceStateShouldBeComparable()
@@ -35,7 +35,7 @@ class InvoiceStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\InvoiceState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\InvoiceState
      */
     public function aInvoiceStateShouldBeJsonSerializable()
     {
@@ -50,7 +50,7 @@ class InvoiceStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\InvoiceState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\InvoiceState
      */
     public function allInvoiceStateConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -68,7 +68,7 @@ class InvoiceStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\InvoiceState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\InvoiceState
      */
     public function aInvalidInvoiceStateShouldNotBeInstantiable()
     {
@@ -84,7 +84,7 @@ class InvoiceStateTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\InvoiceState
+     * @covers \Pagarme\Core\Kernel\ValueObjects\InvoiceState
      */
     public function aInvoiceStateShouldAcceptAllPossibleInvoiceStates()
     {

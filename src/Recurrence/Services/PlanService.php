@@ -1,26 +1,26 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
 use MundiAPILib\Models\GetPlanItemResponse;
 use MundiAPILib\MundiAPIClient;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Factories\PlanFactory;
-use Mundipagg\Core\Recurrence\Repositories\PlanRepository;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Factories\PlanFactory;
+use Pagarme\Core\Recurrence\Repositories\PlanRepository;
 use MundiAPILib\Models\CreatePlanRequest;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanItemId;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\PlanItemId;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class PlanService
 {
     public function __construct()
     {
-        Magento2CoreSetup::bootstrap();
+        AbstractModuleCoreSetup::bootstrap();
 
-        $config = Magento2CoreSetup::getModuleConfiguration();
+        $config = AbstractModuleCoreSetup::getModuleConfiguration();
 
         $secretKey = null;
         if ($config->getSecretKey() != null) {
@@ -36,25 +36,25 @@ class PlanService
 
     /**
      * @param Plan $plan
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function save(Plan $plan)
     {
-        $methodName = "createPlanAtMundipagg";
-        if ($plan->getMundipaggId() !== null) {
-            $methodName = "updatePlanAtMundipagg";
+        $methodName = "createPlanAtPagarme";
+        if ($plan->getPagarmeId() !== null) {
+            $methodName = "updatePlanAtPagarme";
         }
 
         $result = $this->{$methodName}($plan);
 
         $planId = new PlanId($result->id);
-        $plan->setMundipaggId($planId);
+        $plan->setPagarmeId($planId);
 
         $planRepository = new PlanRepository();
         $planRepository->save($plan);
     }
 
-    public function createPlanAtMundipagg(Plan $plan)
+    public function createPlanAtPagarme(Plan $plan)
     {
         $createPlanRequest = $plan->convertToSdkRequest();
         $planController = $this->mundipaggApi->getPlans();
@@ -83,13 +83,13 @@ class PlanService
 
     }
 
-    public function updatePlanAtMundipagg(Plan $plan)
+    public function updatePlanAtPagarme(Plan $plan)
     {
         $updatePlanRequest = $plan->convertToSdkRequest(true);
         $planController = $this->mundipaggApi->getPlans();
 
-        $this->updateItemsAtMundipagg($plan, $planController);
-        $result = $planController->updatePlan($plan->getMundipaggId(), $updatePlanRequest);
+        $this->updateItemsAtPagarme($plan, $planController);
+        $result = $planController->updatePlan($plan->getPagarmeId(), $updatePlanRequest);
 
         return $result;
     }
@@ -107,7 +107,7 @@ class PlanService
         $planItems = $plan->getItems();
         foreach ($planItems as $planItem) {
             if ($this->isItemEqual($planItem, $resultItem)) {
-                $planItem->setMundipaggId(
+                $planItem->setPagarmeId(
                   new PlanItemId($resultItem->id)
                 );
             }
@@ -119,12 +119,12 @@ class PlanService
         return $planItem->getName() == $resultItem->name;
     }
 
-    protected function updateItemsAtMundipagg(Plan $plan, $planController)
+    protected function updateItemsAtPagarme(Plan $plan, $planController)
     {
         foreach ($plan->getItems() as $item) {
             $planController->updatePlanItem(
-                $plan->getMundipaggId(),
-                $item->getMundipaggId(),
+                $plan->getPagarmeId(),
+                $item->getPagarmeId(),
                 $item->convertToSdkRequest()
             );
         }
@@ -137,11 +137,11 @@ class PlanService
         return $planRepository->find($id);
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $planRepository = $this->getPlanRepository();
 
-        return $planRepository->findByMundipaggId($mundipaggId);
+        return $planRepository->findByPagarmeId($pagarmeId);
     }
 
     public function findAll()
@@ -169,7 +169,7 @@ class PlanService
 
         try {
             $planController = $this->mundipaggApi->getPlans();
-            $planController->deletePlan($plan->getMundipaggId());
+            $planController->deletePlan($plan->getPagarmeId());
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }

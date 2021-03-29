@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Factories\RepetitionFactory;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
-use Mundipagg\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Factories\RepetitionFactory;
+use Pagarme\Core\Recurrence\Factories\SubProductFactory;
+use Pagarme\Core\Recurrence\Interfaces\RecurrenceEntityInterface;
 
 class SubProductRepository extends AbstractRepository
 {
@@ -24,14 +24,14 @@ class SubProductRepository extends AbstractRepository
                 `recurrence_type`,
                 `cycles`,
                 `quantity`,
-                `mundipagg_id`
+                `pagarme_id`
             ) VALUES (
                 '{$object->getProductId()}',
                 '{$object->getProductRecurrenceId()}',
                 '{$object->getRecurrenceType()}',
                 '{$object->getCycles()}',
                 '{$object->getQuantity()}',
-                '{$object->getMundipaggIdValue()}'
+                '{$object->getPagarmeIdValue()}'
             )
         ";
 
@@ -69,9 +69,9 @@ class SubProductRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        // TODO: Implement findByMundipaggId() method.
+        // TODO: Implement findByPagarmeId() method.
     }
 
     public function listEntities($limit, $listDisabled)

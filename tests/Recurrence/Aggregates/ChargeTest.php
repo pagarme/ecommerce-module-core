@@ -1,21 +1,21 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
 use Carbon\Carbon;
 use Mockery;
-use Mundipagg\Core\Kernel\Aggregates\Transaction;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Kernel\Aggregates\Transaction;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\ValueObjects\Id\TransactionId;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
 use PHPUnit\Framework\TestCase;
 
 class ChargeTest extends TestCase
@@ -34,7 +34,7 @@ class ChargeTest extends TestCase
     public function testChargeObject()
     {
         $this->charge->setId(1);
-        $this->charge->setMundipaggId(Mockery::mock(ChargeId::class));
+        $this->charge->setPagarmeId(Mockery::mock(ChargeId::class));
         $this->charge->setOrderId(Mockery::mock(OrderId::class));
         $this->charge->setAmount(100);
         $this->charge->setPaidAmount(100);
@@ -47,10 +47,10 @@ class ChargeTest extends TestCase
         $this->charge->setSubscriptionId(new SubscriptionId('sub_1234567890123457'));
 
         $customer = new Customer();
-        $customer->setMundipaggId(Mockery::mock(CustomerId::class));
+        $customer->setPagarmeId(Mockery::mock(CustomerId::class));
 
         $invoice = new Invoice();
-        $invoice->setMundipaggId(Mockery::mock(InvoiceId::class));
+        $invoice->setPagarmeId(Mockery::mock(InvoiceId::class));
 
         $this->charge->setCustomer($customer);
         $this->charge->setInvoice($invoice);
@@ -65,7 +65,7 @@ class ChargeTest extends TestCase
         $this->charge->setCycleStart(new \DateTime());
 
         $this->assertEquals(1, $this->charge->getId());
-        $this->assertInstanceOf(ChargeId::class, $this->charge->getMundipaggId());
+        $this->assertInstanceOf(ChargeId::class, $this->charge->getPagarmeId());
         $this->assertInstanceOf(OrderId::class, $this->charge->getOrderId());
         $this->assertEquals(100, $this->charge->getAmount());
         $this->assertEquals(100, $this->charge->getPaidAmount());
@@ -110,7 +110,7 @@ class ChargeTest extends TestCase
     }
 
     /**
-     * @expectedException Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @expectedException Pagarme\Core\Kernel\Exceptions\InvalidParamException
      * @expectedExceptionMessage Amount should be greater or equal to 0! Passed value: -10
      */
     public function testShouldThrowAnExceptionIfAmountIsInvalid()
@@ -120,7 +120,7 @@ class ChargeTest extends TestCase
     }
 
     /**
-     * @expectedException Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @expectedException Pagarme\Core\Kernel\Exceptions\InvalidParamException
      * @expectedExceptionMessage  Amount should be an integer! Passed value: string
      */
     public function testShouldThrowAnExceptionIfAmountIsNotNumeric()
@@ -143,7 +143,7 @@ class ChargeTest extends TestCase
     }
 
     /**
-     * @expectedException Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @expectedException Pagarme\Core\Kernel\Exceptions\InvalidParamException
      * @expectedExceptionMessage  Amount should be an integer! Passed value: string
      */
     public function testShouldThrowAnExceptionIfPaidAmountIsNotNumeric()
@@ -174,7 +174,7 @@ class ChargeTest extends TestCase
     }
 
     /**
-     * @expectedException Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @expectedException Pagarme\Core\Kernel\Exceptions\InvalidParamException
      * @expectedExceptionMessage  Amount should be an integer! Passed value: string
      */
     public function testShouldThrowAnExceptionIfCanceledAmountIsNotNumeric()
@@ -214,7 +214,7 @@ class ChargeTest extends TestCase
     }
 
     /**
-     * @expectedException Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @expectedException Pagarme\Core\Kernel\Exceptions\InvalidParamException
      * @expectedExceptionMessage  Amount should be an integer! Passed value: string
      */
     public function testShouldThrowAnExceptionIfRefoundedAmountIsNotNumeric()
@@ -482,7 +482,7 @@ class ChargeTest extends TestCase
         $transactionId = "tran_1234567890" . $endId;
 
         $transaction = new Transaction();
-        $transaction->setMundipaggId(
+        $transaction->setPagarmeId(
             new TransactionId($transactionId)
         );
         $transaction->setCreatedAt(Carbon::now());

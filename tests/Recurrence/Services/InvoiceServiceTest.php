@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services;
+namespace Pagarme\Core\Test\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
-use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
-use Mundipagg\Core\Recurrence\Services\InvoiceService;
-use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Recurrence\Factories\ChargeFactory;
+use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
+use Pagarme\Core\Recurrence\Services\InvoiceService;
+use Pagarme\Core\Test\Abstractions\AbstractSetupTest;
 use PHPUnit\Framework\TestCase;
-use Mundipagg\Core\Test\Mock\Concrete\PlatformCoreSetup;
+use Pagarme\Core\Test\Mock\Concrete\PlatformCoreSetup;
 
 class InvoiceServiceTest extends AbstractSetupTest
 {
@@ -85,7 +85,7 @@ class InvoiceServiceTest extends AbstractSetupTest
     {
         $charge = [
             "id" => null,
-            "mundipagg_id" => "ch_1234567890123456",
+            "pagarme_id" => "ch_1234567890123456",
             "subscription_id" => "sub_1234567890123456",
             "invoice_id" => "in_1234567890123456",
             "code" => "123",
@@ -106,7 +106,7 @@ class InvoiceServiceTest extends AbstractSetupTest
     {
         $charge = [
             "id" => null,
-            "mundipagg_id" => "ch_1234567890123457",
+            "pagarme_id" => "ch_1234567890123457",
             "subscription_id" => "sub_1234567890123457",
             "invoice_id" => "in_1234567890123457",
             "code" => "123",

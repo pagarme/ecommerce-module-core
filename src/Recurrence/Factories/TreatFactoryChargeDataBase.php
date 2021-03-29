@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
 abstract class TreatFactoryChargeDataBase
 {
@@ -9,7 +9,7 @@ abstract class TreatFactoryChargeDataBase
         $transactions = [];
         if ($dbData['tran_id'] !== null) {
             $tranId = explode(',', $dbData['tran_id']);
-            $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
+            $tranPagarmeId = explode(',', $dbData['tran_pagarme_id']);
             $tranChargeId = explode(',', $dbData['tran_charge_id']);
             $tranAmount = explode(',', $dbData['tran_amount']);
             $tranPaidAmount = explode(',', $dbData['tran_paid_amount']);
@@ -31,7 +31,7 @@ abstract class TreatFactoryChargeDataBase
             foreach ($tranId as $index => $id) {
                 $transaction = [
                     'id' => $id,
-                    'mundipagg_id' => $tranMundipaggId[$index],
+                    'pagarme_id' => $tranPagarmeId[$index],
                     'charge_id' => $tranChargeId[$index],
                     'amount' => $tranAmount[$index],
                     'paid_amount' => $tranPaidAmount[$index],

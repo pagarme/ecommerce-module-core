@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\ValueObjects;
+namespace Pagarme\Core\Recurrence\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class PlanId extends AbstractValidString
 {

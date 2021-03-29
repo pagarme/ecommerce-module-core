@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Test\Mock\ValidStringMock;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Test\Mock\ValidStringMock;
 use PHPUnit\Framework\TestCase;
 
 class AbstractValidStringTest extends TestCase
@@ -13,9 +13,9 @@ class AbstractValidStringTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
+     * @covers \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
      *
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function aValidStringShouldBeValidateable()
     {
@@ -29,9 +29,9 @@ class AbstractValidStringTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
+     * @covers \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aValidStringShouldBeComparable()
@@ -48,7 +48,7 @@ class AbstractValidStringTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
+     * @covers \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
      */
     public function aValidStringShouldBeJsonSerializable()
     {

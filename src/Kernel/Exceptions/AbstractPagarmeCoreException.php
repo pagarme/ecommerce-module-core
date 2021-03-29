@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Exceptions;
+namespace Pagarme\Core\Kernel\Exceptions;
 
 use JsonSerializable;
 
-abstract class AbstractMundipaggCoreException
+abstract class AbstractPagarmeCoreException
     extends \Exception
     implements JsonSerializable
 {

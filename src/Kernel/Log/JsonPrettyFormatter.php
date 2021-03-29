@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Log;
+namespace Pagarme\Core\Kernel\Log;
 
 use Monolog\Formatter\JsonFormatter;
-use Mundipagg\Core\Kernel\Factories\LogObjectFactory;
+use Pagarme\Core\Kernel\Factories\LogObjectFactory;
 
 class JsonPrettyFormatter extends JsonFormatter
 {

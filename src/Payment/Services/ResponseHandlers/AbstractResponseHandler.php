@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
+namespace Pagarme\Core\Payment\Services\ResponseHandlers;
 
-use Mundipagg\Core\Kernel\Services\OrderLogService;
-use Mundipagg\Core\Payment\Interfaces\ResponseHandlerInterface;
+use Pagarme\Core\Kernel\Services\OrderLogService;
+use Pagarme\Core\Payment\Interfaces\ResponseHandlerInterface;
 
 abstract class AbstractResponseHandler implements ResponseHandlerInterface
 {

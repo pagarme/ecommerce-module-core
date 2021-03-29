@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Commands;
+namespace Pagarme\Core\Hub\Commands;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as  MPSetup;
 use Exception;
 
 class UpdateCommand extends AbstractCommand

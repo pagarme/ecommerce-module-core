@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Exceptions;
+namespace Pagarme\Core\Kernel\Exceptions;
 
-class InvalidOperationException extends AbstractMundipaggCoreException
+class InvalidOperationException extends AbstractPagarmeCoreException
 {
     public function construct($message)
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Aggregates;
+namespace Pagarme\Core\Hub\Aggregates;
 
-use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Hub\ValueObjects\HubInstallToken;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 
 final class InstallToken extends AbstractEntity
 {

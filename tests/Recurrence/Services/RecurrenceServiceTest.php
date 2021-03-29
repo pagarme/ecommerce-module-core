@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services;
+namespace Pagarme\Core\Test\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
-use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
-use Mundipagg\Core\Recurrence\Services\RecurrenceService;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
-use Mundipagg\Core\Test\Abstractions\AbstractSetupTest;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Pagarme\Core\Recurrence\Repositories\ProductSubscriptionRepository;
+use Pagarme\Core\Recurrence\Services\RecurrenceService;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Test\Abstractions\AbstractSetupTest;
 
 class RecurrenceServiceTest extends AbstractSetupTest
 {

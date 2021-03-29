@@ -1,32 +1,32 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
+namespace Pagarme\Core\Recurrence\Services\ResponseHandlers;
 
-use \Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Services\CardService;
-use Mundipagg\Core\Payment\Services\CustomerService;
-use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
-use Mundipagg\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
-use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\Services\InvoiceService;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
-use Mundipagg\Core\Payment\Repositories\CustomerRepository;
-use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Factories\SubscriptionFactory;
-use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Services\CardService;
+use Pagarme\Core\Payment\Services\CustomerService;
+use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
+use Pagarme\Core\Recurrence\Services\ResponseHandlers\AbstractResponseHandler;
+use Pagarme\Core\Kernel\Abstractions\AbstractDataService;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\Services\InvoiceService;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Kernel\ValueObjects\InvoiceState;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Payment\Factories\SavedCardFactory;
+use Pagarme\Core\Payment\Repositories\CustomerRepository;
+use Pagarme\Core\Payment\Repositories\SavedCardRepository;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Factories\SubscriptionFactory;
+use Pagarme\Core\Recurrence\Repositories\SubscriptionRepository;
 
 final class SubscriptionHandler extends AbstractResponseHandler
 {
@@ -97,8 +97,8 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Subscription created at Mundipagg. Id: %s',
-                $subscription->getMundipaggId()->getValue()
+                'Subscription created at Pagarme. Id: %s',
+                $subscription->getPagarmeId()->getValue()
             )
         );
 
@@ -123,8 +123,8 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Subscription payment failed at Mundipagg. Id: %s',
-                $subscription->getMundipaggId()->getValue()
+                'Subscription payment failed at Pagarme. Id: %s',
+                $subscription->getPagarmeId()->getValue()
             )
         );
 
@@ -147,8 +147,8 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Order waiting for online retries at Mundipagg.' .
-                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
+                'Order waiting for online retries at Pagarme.' .
+                ' PagarmeId: ' . $order->getPagarmeId()->getValue()
             )
         );
 
@@ -177,9 +177,9 @@ final class SubscriptionHandler extends AbstractResponseHandler
         $i18n = new LocalizationService();
         $platformOrder->addHistoryComment(
             $i18n->getDashboard('Subscription invoice paid.') . '<br>' .
-            ' MundipaggId: ' . $subscription->getMundipaggId()->getValue() . '<br>' .
+            ' PagarmeId: ' . $subscription->getPagarmeId()->getValue() . '<br>' .
             $i18n->getDashboard('Invoice') . ': ' .
-            $subscription->getInvoice()->getMundipaggId()->getValue()
+            $subscription->getInvoice()->getPagarmeId()->getValue()
         );
 
         $subscriptionRepository = new SubscriptionRepository();

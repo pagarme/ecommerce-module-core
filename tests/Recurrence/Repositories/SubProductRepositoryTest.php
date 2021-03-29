@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Repositories;
+namespace Pagarme\Core\Test\Recurrence\Repositories;
 
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Factories\SubProductFactory;
-use Mundipagg\Core\Recurrence\Repositories\SubProductRepository;
-use Mundipagg\Core\Test\Abstractions\AbstractRepositoryTest;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Factories\SubProductFactory;
+use Pagarme\Core\Recurrence\Repositories\SubProductRepository;
+use Pagarme\Core\Test\Abstractions\AbstractRepositoryTest;
 
 class SubProductRepositoryTest extends AbstractRepositoryTest
 {

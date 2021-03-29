@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Webhook\ValueObjects;
+namespace Pagarme\Core\Test\Webhook\ValueObjects;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Webhook\ValueObjects\WebhookId;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Webhook\ValueObjects\WebhookId;
 use PHPUnit\Framework\TestCase;
 
 class WebhookIdTests extends TestCase

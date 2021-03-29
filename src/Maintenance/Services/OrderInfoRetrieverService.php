@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
 {
@@ -60,9 +60,9 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
             return null;
         }
 
-        $mundipaggOrderId = $platformOrder->getMundipaggId();
+        $pagarmeOrderId = $platformOrder->getPagarmeId();
 
-        if ($mundipaggOrderId === null) {
+        if ($pagarmeOrderId === null) {
             return null;
         }
         
@@ -70,13 +70,13 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
 
         $data = null;
         try {
-            $data = $orderRepository->findByMundipaggId($mundipaggOrderId);
+            $data = $orderRepository->findByPagarmeId($pagarmeOrderId);
         }catch (\Throwable $e)
         {
         }
 
         $coreOrder = new \stdClass();
-        $coreOrder->mpOrderId = $mundipaggOrderId;
+        $coreOrder->mpOrderId = $pagarmeOrderId;
         $coreOrder->data = $data;
 
         return $coreOrder;

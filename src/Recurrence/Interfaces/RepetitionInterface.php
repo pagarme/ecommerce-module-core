@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Interfaces;
+namespace Pagarme\Core\Recurrence\Interfaces;
 
 interface RepetitionInterface
 {
@@ -11,7 +11,7 @@ interface RepetitionInterface
 
     /**
      * @param int $id
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setId($id);
 
@@ -22,7 +22,7 @@ interface RepetitionInterface
 
     /**
      * @param int $recurrencePrice
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setRecurrencePrice($recurrencePrice);
 
@@ -33,7 +33,7 @@ interface RepetitionInterface
 
     /**
      * @param int $intervalCount
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setIntervalCount($intervalCount);
 
@@ -44,7 +44,7 @@ interface RepetitionInterface
 
     /**
      * @param string $interval
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setInterval($interval);
 
@@ -55,7 +55,7 @@ interface RepetitionInterface
 
     /**
      * @param int $subscriptionId
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setSubscriptionId($subscriptionId);
 
@@ -66,7 +66,7 @@ interface RepetitionInterface
 
     /**
      * @param \DateTime $createdAt
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setCreatedAt(\DateTime $createdAt);
 
@@ -77,7 +77,7 @@ interface RepetitionInterface
 
     /**
      * @param \DateTime $updatedAt
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setUpdatedAt(\DateTime $updatedAt);
 
@@ -88,7 +88,7 @@ interface RepetitionInterface
 
     /**
      * @param int $cycles
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setCycles($cycles);
 }

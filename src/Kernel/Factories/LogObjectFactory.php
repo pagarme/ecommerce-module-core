@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Pagarme\Core\Kernel\Factories;
 
-use Mundipagg\Core\Kernel\Aggregates\LogObject;
-use Mundipagg\Core\Kernel\ValueObjects\VersionInfo;
+use Pagarme\Core\Kernel\Aggregates\LogObject;
+use Pagarme\Core\Kernel\ValueObjects\VersionInfo;
 
 class LogObjectFactory
 {

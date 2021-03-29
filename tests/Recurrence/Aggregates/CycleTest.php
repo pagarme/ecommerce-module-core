@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\ValueObjects\Id\CycleId;
-use Mundipagg\Core\Recurrence\Aggregates\Cycle;
+use Pagarme\Core\Kernel\ValueObjects\Id\CycleId;
+use Pagarme\Core\Recurrence\Aggregates\Cycle;
 use PHPUnit\Framework\TestCase;
 
 class CycleTest extends TestCase
@@ -22,12 +22,12 @@ class CycleTest extends TestCase
     {
         $cycleId = new CycleId('cycle_45asDadb8Xd95451');
         $this->cycle->setId(1);
-        $this->cycle->setMundipaggId($cycleId);
+        $this->cycle->setPagarmeId($cycleId);
         $this->cycle->setCycleId($cycleId);
         $this->cycle->setCycleStart(new \DateTime('2019-10-10'));
         $this->cycle->setCycleEnd(new \DateTime('2019-11-11'));
 
-        $this->assertEquals('cycle_45asDadb8Xd95451', $this->cycle->getMundipaggId()->getValue());
+        $this->assertEquals('cycle_45asDadb8Xd95451', $this->cycle->getPagarmeId()->getValue());
         $this->assertEquals(1, $this->cycle->getId());
         $this->assertEquals($cycleId, $this->cycle->getCycleId());
         $this->assertInstanceOf(\DateTime::class, $this->cycle->getCycleStart());
@@ -38,7 +38,7 @@ class CycleTest extends TestCase
     {
         $cycleId = new CycleId('cycle_45asDadb8Xd95451');
         $this->cycle->setId(1);
-        $this->cycle->setMundipaggId($cycleId);
+        $this->cycle->setPagarmeId($cycleId);
         $this->cycle->setCycleId($cycleId);
         $this->cycle->setCycleStart(new \DateTime('2019-10-10'));
         $this->cycle->setCycleEnd(new \DateTime('2019-11-11'));

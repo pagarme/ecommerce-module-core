@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
 use Magento\Framework\Exception\LocalizedException;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Recurrence\Interfaces\RepetitionInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
 
 class Repetition extends AbstractEntity implements RepetitionInterface
 {
@@ -39,7 +39,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @param int $recurrencePrice
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setRecurrencePrice($recurrencePrice)
     {
@@ -80,7 +80,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @param \DateTime $createdAt
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -90,7 +90,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @return string
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function getUpdatedAt()
     {
@@ -116,7 +116,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @param int $intervalCount
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      */
     public function setIntervalCount($intervalCount)
     {
@@ -134,7 +134,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
 
     /**
      * @param int $interval
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Repetition
+     * @return \Pagarme\Core\Recurrence\Aggregates\Repetition
      * @throws InvalidParamException
      */
     public function setInterval($interval)

@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Repositories;
+namespace Pagarme\Core\Test\Recurrence\Repositories;
 
 use Mockery;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Factories\ProductSubscriptionFactory;
-use Mundipagg\Core\Recurrence\Repositories\ProductSubscriptionRepository;
-use Mundipagg\Core\Test\Abstractions\AbstractRepositoryTest;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Factories\ProductSubscriptionFactory;
+use Pagarme\Core\Recurrence\Repositories\ProductSubscriptionRepository;
+use Pagarme\Core\Test\Abstractions\AbstractRepositoryTest;
 
 class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
 {
@@ -111,10 +111,10 @@ class ProductSubscriptionRepositoryTest extends AbstractRepositoryTest
         $this->assertNull($this->repo->find(30));
     }
 
-    public function testShouldReturnAProductSubscriptionSearchByMundipaggId()
+    public function testShouldReturnAProductSubscriptionSearchByPagarmeId()
     {
         $mockAbstractString = Mockery::mock(AbstractValidString::class);
-        $this->assertNull($this->repo->findByMundipaggId($mockAbstractString), "Method not implemented");
+        $this->assertNull($this->repo->findByPagarmeId($mockAbstractString), "Method not implemented");
     }
 
     private function insertProductSubscription()

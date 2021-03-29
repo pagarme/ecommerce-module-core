@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformCreditmemoInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformCreditmemoInterface;
 
 abstract class AbstractCreditmemoDecorator implements PlatformCreditmemoInterface
 {

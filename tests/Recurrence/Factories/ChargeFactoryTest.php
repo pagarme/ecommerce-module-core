@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Factories;
+namespace Pagarme\Core\Test\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\ValueObjects\Id\InvoiceId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\ValueObjects\Id\InvoiceId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Factories\ChargeFactory;
 use PHPUnit\Framework\TestCase;
 
 class ChargeFactoryTest extends TestCase
@@ -79,7 +79,7 @@ class ChargeFactoryTest extends TestCase
 
         $dbData = [
             'id' => 'id',
-            'mundipagg_id' => 'ch_bVrP01wUjDfy951k',
+            'pagarme_id' => 'ch_bVrP01wUjDfy951k',
             'code' => '000000050-15',
             'amount' => 30000,
             'paid_amount' => '30000',

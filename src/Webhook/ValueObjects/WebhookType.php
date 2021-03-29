@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\ValueObjects;
+namespace Pagarme\Core\Webhook\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class WebhookType extends AbstractValueObject
 {

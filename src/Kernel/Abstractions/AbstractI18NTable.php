@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Interfaces\I18NTableInterface;
+use Pagarme\Core\Kernel\Interfaces\I18NTableInterface;
 
 abstract class AbstractI18NTable implements I18NTableInterface
 {

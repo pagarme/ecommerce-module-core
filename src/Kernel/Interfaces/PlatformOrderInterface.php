@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Interfaces;
+namespace Pagarme\Core\Kernel\Interfaces;
 
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Item;
-use Mundipagg\Core\Payment\Aggregates\Payments\AbstractPayment;
-use Mundipagg\Core\Payment\Aggregates\Shipping;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Aggregates\Item;
+use Pagarme\Core\Payment\Aggregates\Payments\AbstractPayment;
+use Pagarme\Core\Payment\Aggregates\Shipping;
+use Pagarme\Core\Kernel\Aggregates\Charge;
 
 interface PlatformOrderInterface
 {
@@ -79,7 +79,7 @@ interface PlatformOrderInterface
      *
      * @return OrderId 
      */
-    public function getMundipaggId();
+    public function getPagarmeId();
 
     /**
      *

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
 use JsonSerializable;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 /**
  * The Entity Abstraction. All the aggregate roots that are entities should extend
@@ -20,12 +20,12 @@ abstract class AbstractEntity implements JsonSerializable
     protected $id;
 
     /**
-     * Almost every Entity has an equivalent at mundipagg. This property holds the
-     * Mundipagg ID for the entity.
+     * Almost every Entity has an equivalent at pagarme. This property holds the
+     * Pagarme ID for the entity.
      *
      * @var AbstractValidString
      */
-    protected $mundipaggId;
+    protected $pagarmeId;
 
     /**
      *
@@ -49,21 +49,21 @@ abstract class AbstractEntity implements JsonSerializable
 
     /**
      *
-     * @return \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
+     * @return \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
      */
-    public function getMundipaggId()
+    public function getPagarmeId()
     {
-        return $this->mundipaggId;
+        return $this->pagarmeId;
     }
 
     /**
      *
-     * @param  AbstractValidString $mundipaggId
+     * @param  AbstractValidString $pagarmeId
      * @return AbstractEntity
      */
-    public function setMundipaggId(AbstractValidString $mundipaggId)
+    public function setPagarmeId(AbstractValidString $pagarmeId)
     {
-        $this->mundipaggId = $mundipaggId;
+        $this->pagarmeId = $pagarmeId;
         return $this;
     }
 

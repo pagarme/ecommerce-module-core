@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformProductInterface;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Repositories\SubscriptionItemRepository;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionItemId;
-use MundiPagg\MundiPagg\Concrete\Magento2CoreSetup;
+use Pagarme\Core\Kernel\Interfaces\PlatformProductInterface;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Repositories\SubscriptionItemRepository;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionItemId;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 
 class RecurrenceService
 {
@@ -60,7 +60,7 @@ class RecurrenceService
         $recurrenceType = $subscription->getRecurrenceType();
 
         if ($recurrenceType === Plan::RECURRENCE_TYPE) {
-            $plan = (new PlanService)->findByMundipaggId(
+            $plan = (new PlanService)->findByPagarmeId(
                 $subscription->getPlanId()
             );
 
@@ -74,7 +74,7 @@ class RecurrenceService
     public function getSubscriptionItemByProductId($subscriptionItemId)
     {
         $subscriptionItemRepository = new SubscriptionItemRepository();
-        return $subscriptionItemRepository->findByMundipaggId(
+        return $subscriptionItemRepository->findByPagarmeId(
             new SubscriptionItemId($subscriptionItemId)
         );
 
@@ -102,8 +102,8 @@ class RecurrenceService
     public function getProductDecorated($id)
     {
         $productDecorator =
-            Magento2CoreSetup::get(
-                Magento2CoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
+            AbstractModuleCoreSetup::get(
+                AbstractModuleCoreSetup::CONCRETE_PRODUCT_DECORATOR_CLASS
             );
 
         /**

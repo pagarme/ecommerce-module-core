@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Interfaces;
+namespace Pagarme\Core\Recurrence\Interfaces;
 
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
 
 interface SubProductEntityInterface
 {
