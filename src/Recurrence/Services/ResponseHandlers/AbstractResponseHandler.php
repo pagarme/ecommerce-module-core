@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Mundipagg\Core\Recurrence\Services\ResponseHandlers;
+namespace Pagarme\Core\Recurrence\Services\ResponseHandlers;
 
-use Mundipagg\Core\Kernel\Services\OrderLogService;
+use Pagarme\Core\Kernel\Services\OrderLogService;
 
 abstract class AbstractResponseHandler
 {

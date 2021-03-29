@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\I18N;
+namespace Pagarme\Core\Kernel\I18N;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractI18NTable;
+use Pagarme\Core\Kernel\Abstractions\AbstractI18NTable;
 
 class ENUS extends AbstractI18NTable
 {
@@ -13,9 +13,9 @@ class ENUS extends AbstractI18NTable
             'Invoice canceled: #%s.' => null,
             'Webhook received: %s %s.%s' => null,
             'Order paid.' => null,
-            'Order created at Mundipagg. Id: %s' => null,
-            'Order pending at Mundipagg. Id: %s' => null,
-            'Order waiting for online retries at Mundipagg.' => null,
+            'Order created at Pagarme. Id: %s' => null,
+            'Order pending at Pagarme. Id: %s' => null,
+            'Order waiting for online retries at Pagarme.' => null,
             'Order canceled.' => null,
             'Payment received: %.2f' => null,
             'Canceled amount: %.2f' => null,
@@ -26,16 +26,16 @@ class ENUS extends AbstractI18NTable
             'Creditmemo created: #%s.' => null,
             'until now' => null,
             'Extra amount paid: %.2f' => null,
-            "Order '%s' canceled at Mundipagg" => null,
+            "Order '%s' canceled at Pagarme" => null,
             'Remaining amount: %.2f' => null,
-            "Some charges couldn't be canceled at Mundipagg. Reasons:" => null,
+            "Some charges couldn't be canceled at Pagarme. Reasons:" => null,
             "without interest" => null,
             "with %.2f%% of interest" => null,
             "%dx of %s %s (Total: %s)" => null,
             "Order payment failed" => null,
             "The order will be canceled" => null,
             "An error occurred when trying to create the order. Please try again. Error Reference: %s." => null,
-            "Can't cancel current order. Please cancel it by Mundipagg panel" => null,
+            "Can't cancel current order. Please cancel it by Pagarme panel" => null,
             "Charge canceled with success" => null,
             'Invalid address. Please fill the street lines and try again.' => null,
             "The informed card couldn't be deleted." => null,
@@ -72,7 +72,7 @@ class ENUS extends AbstractI18NTable
             'yearly' => null,
             'biennial' => null,
             'semiannual' => null,
-            'Subscription created at Mundipagg. Id: %s' => null,
+            'Subscription created at Pagarme. Id: %s' => null,
             'weekly' => null,
             'New order status: %s' => null,
             'Subscription invoice created: %.2f' => null,
@@ -80,7 +80,7 @@ class ENUS extends AbstractI18NTable
             'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => null,
             "It's not possible to have any other product with a product plan" => null,
             'You must have only one product plan in the cart' => null,
-            'Mundipagg module should be configured on Websites scope, please change to website scope to apply these changes' => null,
+            'Pagarme module should be configured on Websites scope, please change to website scope to apply these changes' => null,
             'Antifraud aproved' => null,
             'Antifraud reproved' => null,
             'Antifraud pending' => null,

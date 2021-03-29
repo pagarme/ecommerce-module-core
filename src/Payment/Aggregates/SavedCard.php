@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates;
+namespace Pagarme\Core\Payment\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\NumericString;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\NumericString;
 
 final class SavedCard extends AbstractEntity
 {
@@ -137,7 +137,7 @@ final class SavedCard extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
         $obj->ownerId = $this->getOwnerId();
         $obj->ownerName = $this->getOwnerName();
         $obj->firstSixDigits = $this->getFirstSixDigits();

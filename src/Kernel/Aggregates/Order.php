@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Aggregates;
+namespace Pagarme\Core\Kernel\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Interfaces\ChargeInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Payment\Traits\WithCustomerTrait;
 
 final class Order extends AbstractEntity
 {
@@ -159,8 +159,8 @@ final class Order extends AbstractEntity
         $charges = $this->getCharges();
         //cant add a charge that was already added.
         foreach ($charges as $charge) {
-            if ($charge->getMundipaggId()->equals(
-                $newCharge->getMundipaggId()
+            if ($charge->getPagarmeId()->equals(
+                $newCharge->getPagarmeId()
             )
             ) {
                 return $this;
@@ -178,7 +178,7 @@ final class Order extends AbstractEntity
         $charges = $this->getCharges();
 
         foreach ($charges as &$charge) {
-            if ($charge->getMundipaggId()->equals($updatedCharge->getMundipaggId())) {
+            if ($charge->getPagarmeId()->equals($updatedCharge->getPagarmeId())) {
                 $chargeId = $charge->getId();
                 $charge = $updatedCharge;
                 if ($overwriteId) {
@@ -205,7 +205,7 @@ final class Order extends AbstractEntity
         $obj = new \stdClass();
 
         $obj->id = $this->getId();
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
         $obj->code = $this->getCode();
         $obj->amount = $this->getAmount();
         $obj->status = $this->getStatus();

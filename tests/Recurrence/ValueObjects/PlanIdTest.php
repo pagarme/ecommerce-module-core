@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\ValueObjects;
+namespace Pagarme\Core\Test\Recurrence\ValueObjects;
 
-use Mundipagg\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
+use Pagarme\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
 use PHPUnit\Framework\TestCase;
 
 class PlanIdTest extends TestCase
@@ -17,10 +17,10 @@ class PlanIdTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Recurrence\ValueObjects\PlanId
+     * @covers \Pagarme\Core\Recurrence\ValueObjects\PlanId
      *
-     * @uses   \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
-     * @uses   \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses   \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
+     * @uses   \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function aPlanIdShouldAcceptOnlyValidChargeIds()
     {

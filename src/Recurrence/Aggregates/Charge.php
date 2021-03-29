@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Payment\Traits\WithCustomerTrait;
-use Mundipagg\Core\Kernel\Aggregates\Transaction;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\ChargeInterface;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Payment\Traits\WithCustomerTrait;
+use Pagarme\Core\Kernel\Aggregates\Transaction;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
 use stdClass;
 
 final class Charge extends AbstractEntity implements ChargeInterface
@@ -416,7 +416,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $transactions = $this->getTransactions();
         //cant add a transaction that was already added.
         foreach ($transactions as $transaction) {
-            if ($transaction->getMundipaggId()->equals($newTransaction->getMundipaggId())) {
+            if ($transaction->getPagarmeId()->equals($newTransaction->getPagarmeId())) {
                 return $this;
             }
         }
@@ -443,7 +443,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
     {
         $transactions = $this->getTransactions();
         foreach ($transactions as &$transaction) {
-            if ($transaction->getMundipaggId()->equals($updatedTransaction->getMundipaggId())) {
+            if ($transaction->getPagarmeId()->equals($updatedTransaction->getPagarmeId())) {
                 $originalId = $transaction->getId();
                 $transaction = $updatedTransaction;
                 if (!$overwriteId) {
@@ -494,7 +494,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
         if (empty($this->getCustomer())) {
             return null;
         }
-        return $this->getCustomer()->getMundipaggId();
+        return $this->getCustomer()->getPagarmeId();
     }
 
     /**
@@ -554,7 +554,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $obj = new stdClass();
 
         $obj->id = $this->getId();
-        $obj->mundipaggId = $this->getMundipaggId();
+        $obj->pagarmeId = $this->getPagarmeId();
         $obj->orderId = $this->getOrderId();
         $obj->amount = $this->getAmount();
         $obj->paidAmount = $this->getPaidAmount();

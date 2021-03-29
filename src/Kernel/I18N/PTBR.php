@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\I18N;
+namespace Pagarme\Core\Kernel\I18N;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractI18NTable;
+use Pagarme\Core\Kernel\Abstractions\AbstractI18NTable;
 
 class PTBR extends AbstractI18NTable
 {
@@ -13,9 +13,9 @@ class PTBR extends AbstractI18NTable
             'Invoice canceled: #%s.' => 'Invoice cancelada: #%s',
             'Webhook received: %s %s.%s' => 'Webhook recebido: %s %s.%s',
             'Order paid.' => 'Pedido pago.',
-            'Order created at Mundipagg. Id: %s' => 'Pedido criado na Mundipagg. Id %s',
-            'Order pending at Mundipagg. Id: %s' => 'Pedido pendente na Mundipagg. Id %s',
-            'Order waiting for online retries at Mundipagg.' => 'Pedido aguardando por retentativas online na Mundipagg.',
+            'Order created at Pagarme. Id: %s' => 'Pedido criado na Pagarme. Id %s',
+            'Order pending at Pagarme. Id: %s' => 'Pedido pendente na Pagarme. Id %s',
+            'Order waiting for online retries at Pagarme.' => 'Pedido aguardando por retentativas online na Pagarme.',
             'Order canceled.' => 'Pedido cancelado.',
             'Payment received: %.2f' => 'Pagamento recebido: %.2f',
             'Canceled amount: %.2f' => 'Quantia cancelada: %.2f',
@@ -26,16 +26,16 @@ class PTBR extends AbstractI18NTable
             'Creditmemo created: #%s.' => 'Creditmemo criado: #%s.',
             'until now' => 'até agora',
             'Extra amount paid: %.2f' => "Quantia extra paga: %.2f",
-            "Order '%s' canceled at Mundipagg" => "Pedido '%s' cancelado na Mundipagg",
+            "Order '%s' canceled at Pagarme" => "Pedido '%s' cancelado na Pagarme",
             'Remaining amount: %.2f' => "Quantidade faltante: %.2f",
-            "Some charges couldn't be canceled at Mundipagg. Reasons:" => "Algumas cobranças não puderam ser canceladas na Mundipagg. Razões:",
+            "Some charges couldn't be canceled at Pagarme. Reasons:" => "Algumas cobranças não puderam ser canceladas na Pagarme. Razões:",
             "without interest" => "sem juros",
             "with %.2f%% of interest" => "com %.2f%% de juros",
             "%dx of %s %s (Total: %s)" => "%dx de %s %s (Total: %s)",
             "Order payment failed" => "Pagamento do pedido falhou",
             "The order will be canceled" => "O pedido será cancelado",
             "An error occurred when trying to create the order. Please try again. Error Reference: %s" => 'Ocorreu um erro ao tentar criar o pedido. Por favor, tente novamente. Referência do erro: %s',
-            "Can't cancel current order. Please cancel it by Mundipagg panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Mundipagg.",
+            "Can't cancel current order. Please cancel it by Pagarme panel" => "Não foi possível cancelar o pedido. Por favor, realize o cancelamento no portal Pagarme.",
             "Charge canceled with success" => "Charge cancelada com sucesso",
             'Invalid address. Please fill the street lines and try again.' => 'Endereço inválido. Preencha rua, número e bairro e tente novamente.',
             "The informed card couldn't be deleted." => "O cartão informado não pode ser deletado.",
@@ -71,7 +71,7 @@ class PTBR extends AbstractI18NTable
             'quarterly' => 'Trimestral',
             'yearly' => 'Anual',
             'biennial' => 'Bienal',
-            'Subscription created at Mundipagg. Id: %s' => 'Assinatura criada na Mundipagg. Id %s',
+            'Subscription created at Pagarme. Id: %s' => 'Assinatura criada na Pagarme. Id %s',
             'weekly' => 'Semanal',
             'semiannual' => 'Semestral',
             'Invalid address configuration. Please fill the address configuration on admin panel.' => 'Configurações de endereço inválido. Preencha as configurações de endereço no painel de administração',
@@ -81,7 +81,7 @@ class PTBR extends AbstractI18NTable
             'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)' => 'Você só pode adicionar duas ou mais assinaturas que possuam o mesmo tipo de pagamento (cartão e ou boleto) e mesma frequência (mensal, semestral, anual...).',
             "It's not possible to have any other product with a product plan" => 'Não é possível ter nenhum outro tipo de produto no carrinho, junto com um produto plano',
             'You must have only one product plan in the cart' => 'Você só pode ter um produto plano no carrinho',
-            'Mundipagg module should be configured on Websites scope, please change to website scope to apply these changes' => 'O módulo da Mundipagg deve ser configurado no escopo de Websites/Default, favor mudar para o escopo de Websites/Default para aplicar as mudanças.',
+            'Pagarme module should be configured on Websites scope, please change to website scope to apply these changes' => 'O módulo da Pagarme deve ser configurado no escopo de Websites/Default, favor mudar para o escopo de Websites/Default para aplicar as mudanças.',
             'Antifraud aproved' => 'Aprovado no antifraude',
             'Antifraud reproved' => 'Reprovado no antifraude',
             'Antifraud pending' => 'Analise pendente no antifraude',

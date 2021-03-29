@@ -1,26 +1,26 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Services;
+namespace Pagarme\Core\Webhook\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\Interfaces\ChargeInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\ChargeRepository;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Kernel\Services\MoneyService;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Payment\Services\ResponseHandlers\OrderHandler;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Kernel\Services\ChargeService;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\Interfaces\ChargeInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\ChargeRepository;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Kernel\Services\MoneyService;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Payment\Services\ResponseHandlers\OrderHandler;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Kernel\Services\ChargeService;
 
 final class ChargeOrderService extends AbstractHandlerService
 {
@@ -96,8 +96,8 @@ final class ChargeOrderService extends AbstractHandlerService
         /**
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
-            $charge->getMundipaggId()
+        $outdatedCharge = $this->chargeRepository->findByPagarmeId(
+            $charge->getPagarmeId()
         );
 
         $platformOrder = $this->order->getPlatformOrder();
@@ -163,8 +163,8 @@ final class ChargeOrderService extends AbstractHandlerService
         /**
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
-            $charge->getMundipaggId()
+        $outdatedCharge = $this->chargeRepository->findByPagarmeId(
+            $charge->getPagarmeId()
         );
 
         if ($outdatedCharge !== null) {
@@ -241,8 +241,8 @@ final class ChargeOrderService extends AbstractHandlerService
         /**
          * @var Charge $outdatedCharge
          */
-        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
-            $charge->getMundipaggId()
+        $outdatedCharge = $this->chargeRepository->findByPagarmeId(
+            $charge->getPagarmeId()
         );
 
         if ($outdatedCharge !== null) {
@@ -325,8 +325,8 @@ final class ChargeOrderService extends AbstractHandlerService
 
         $transaction = $charge->getLastTransaction();
 
-        $outdatedCharge = $this->chargeRepository->findByMundipaggId(
-            $charge->getMundipaggId()
+        $outdatedCharge = $this->chargeRepository->findByPagarmeId(
+            $charge->getPagarmeId()
         );
 
         if ($outdatedCharge !== null) {
@@ -386,7 +386,7 @@ final class ChargeOrderService extends AbstractHandlerService
                 $message =
                     ($chargeService->cancel($chargePaid))->getMessage()
                     . ' - ' .
-                    $chargePaid->getMundipaggId()->getValue();
+                    $chargePaid->getPagarmeId()->getValue();
 
                 $logService->info($message);
 
@@ -409,7 +409,7 @@ final class ChargeOrderService extends AbstractHandlerService
         /** @var Charge $charge */
         $charge = $webhook->getEntity();
 
-        $order = $this->orderRepository->findByMundipaggId($charge->getOrderId());
+        $order = $this->orderRepository->findByPagarmeId($charge->getOrderId());
         if ($order === null) {
             $orderDecoratorClass = MPSetup::get(
                 MPSetup::CONCRETE_PLATFORM_ORDER_DECORATOR_CLASS
@@ -545,7 +545,7 @@ final class ChargeOrderService extends AbstractHandlerService
         }
 
         if ($charge->getStatus()->equals(ChargeStatus::failed())) {
-            return "Charge failed at Mundipagg";
+            return "Charge failed at Pagarme";
         }
 
         $amountInCurrency = $this->moneyService->centsToFloat($charge->getRefundedAmount());

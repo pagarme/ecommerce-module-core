@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\ValueObjects;
+namespace Pagarme\Core\Payment\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 abstract class AbstractCardIdentifier extends AbstractValidString
 {

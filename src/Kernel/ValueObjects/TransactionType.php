@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects;
+namespace Pagarme\Core\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class TransactionType extends AbstractValueObject
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Payment\ValueObjects;
+namespace Pagarme\Core\Payment\ValueObjects;
 
 final class CardToken extends AbstractCardIdentifier
 {

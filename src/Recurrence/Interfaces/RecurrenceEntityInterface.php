@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Interfaces;
+namespace Pagarme\Core\Recurrence\Interfaces;
 
 interface RecurrenceEntityInterface
 {

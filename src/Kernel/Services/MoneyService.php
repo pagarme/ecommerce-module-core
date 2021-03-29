@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 
 final class MoneyService
 {

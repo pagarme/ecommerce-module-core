@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\Aggregates;
+namespace Pagarme\Core\Test\Kernel\Aggregates;
 
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Aggregates\Transaction;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\TransactionId;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Aggregates\Transaction;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\ValueObjects\Id\TransactionId;
 use PHPUnit\Framework\TestCase;
 use Mockery;
 use Carbon\Carbon;
@@ -398,7 +398,7 @@ class ChargeTests extends TestCase
         $transactionId = "tran_1234567890" . $endId;
 
         $transaction = new Transaction();
-        $transaction->setMundipaggId(
+        $transaction->setPagarmeId(
             new TransactionId($transactionId)
         );
         $transaction->setCreatedAt(Carbon::now());

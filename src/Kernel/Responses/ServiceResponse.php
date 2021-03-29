@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Responses;
+namespace Pagarme\Core\Kernel\Responses;
 
 final class ServiceResponse
 {

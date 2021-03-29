@@ -1,12 +1,12 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates;
+namespace Pagarme\Core\Payment\Aggregates;
 
 use MundiAPILib\Models\CreateOrderItemRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
-use Mundipagg\Core\Payment\Traits\WithAmountTrait;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
+use Pagarme\Core\Payment\Traits\WithAmountTrait;
 
 final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInterface
 {

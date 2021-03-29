@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Factories;
+namespace Pagarme\Core\Payment\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\NumericString;
-use Mundipagg\Core\Payment\Aggregates\SavedCard;
-use Mundipagg\Core\Payment\ValueObjects\CardId;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\NumericString;
+use Pagarme\Core\Payment\Aggregates\SavedCard;
+use Pagarme\Core\Payment\ValueObjects\CardId;
 
 class SavedCardFactory implements FactoryInterface
 {
@@ -21,7 +21,7 @@ class SavedCardFactory implements FactoryInterface
     {
         $savedCard = new SavedCard();
 
-        $savedCard->setMundipaggId(
+        $savedCard->setPagarmeId(
             new CardId($postData->id)
         );
 
@@ -59,8 +59,8 @@ class SavedCardFactory implements FactoryInterface
 
         $savedCard->setId($dbData['id']);
 
-        $savedCard->setMundipaggId(
-            new CardId($dbData['mundipagg_id'])
+        $savedCard->setPagarmeId(
+            new CardId($dbData['pagarme_id'])
         );
 
         $savedCard->setOwnerId(
@@ -97,7 +97,7 @@ class SavedCardFactory implements FactoryInterface
     {
         $savedCard = new SavedCard();
 
-        $savedCard->setMundipaggId(
+        $savedCard->setPagarmeId(
             new CardId($data['id'])
         );
 
@@ -128,8 +128,8 @@ class SavedCardFactory implements FactoryInterface
     {
         $savedCard = new SavedCard();
 
-        $savedCard->setMundipaggId(
-            new CardId($cardObj->mundipaggId)
+        $savedCard->setPagarmeId(
+            new CardId($cardObj->pagarmeId)
         );
 
         if (!empty($cardObj->owner)) {

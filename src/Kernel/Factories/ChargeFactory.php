@@ -1,23 +1,23 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Pagarme\Core\Kernel\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-//use Mundipagg\Core\Kernel\Factories\TransactionFactory;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
-use Mundipagg\Core\Payment\Repositories\CustomerRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+//use Pagarme\Core\Kernel\Factories\TransactionFactory;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Payment\Repositories\CustomerRepository;
 use Throwable;
 
 /**
  * Class ChargeFactory
- * @package Mundipagg\Core\Kernel\Factories
+ * @package Pagarme\Core\Kernel\Factories
  */
 class ChargeFactory implements FactoryInterface
 {
@@ -31,7 +31,7 @@ class ChargeFactory implements FactoryInterface
         $charge = new Charge;
         $status = $postData['status'];
 
-        $charge->setMundipaggId(new ChargeId($postData['id']));
+        $charge->setPagarmeId(new ChargeId($postData['id']));
         $charge->setCode($postData['code']);
         $charge->setAmount($postData['amount']);
         $paidAmount = isset($postData['paid_amount']) ? $postData['paid_amount'] : 0;
@@ -78,7 +78,7 @@ class ChargeFactory implements FactoryInterface
         $charge = new Charge();
 
         $charge->setId($dbData['id']);
-        $charge->setMundipaggId(new ChargeId($dbData['mundipagg_id']));
+        $charge->setPagarmeId(new ChargeId($dbData['pagarme_id']));
         $charge->setOrderId(new OrderId($dbData['order_id']));
 
         $charge->setCode($dbData['code']);
@@ -105,7 +105,7 @@ class ChargeFactory implements FactoryInterface
 
         if (!empty($dbData['customer_id'])) {
             $customerRepository = new CustomerRepository();
-            $customer = $customerRepository->findByMundipaggId(
+            $customer = $customerRepository->findByPagarmeId(
                 new CustomerId($dbData['customer_id'])
             );
 
@@ -126,7 +126,7 @@ class ChargeFactory implements FactoryInterface
         $transactions = [];
         if (isset($dbData['tran_id']) && $dbData['tran_id'] !== null) {
             $tranId = explode(',', $dbData['tran_id']);
-            $tranMundipaggId = explode(',', $dbData['tran_mundipagg_id']);
+            $tranPagarmeId = explode(',', $dbData['tran_pagarme_id']);
             $tranChargeId = explode(',', $dbData['tran_charge_id']);
             $tranAmount = explode(',', $dbData['tran_amount']);
             $tranPaidAmount = explode(',', $dbData['tran_paid_amount']);
@@ -149,7 +149,7 @@ class ChargeFactory implements FactoryInterface
             foreach ($tranId as $index => $id) {
                 $transaction = [
                     'id' => $id,
-                    'mundipagg_id' => $tranMundipaggId[$index],
+                    'pagarme_id' => $tranPagarmeId[$index],
                     'charge_id' => $tranChargeId[$index],
                     'amount' => $tranAmount[$index],
                     'paid_amount' => $tranPaidAmount[$index],
@@ -219,7 +219,7 @@ class ChargeFactory implements FactoryInterface
             $lastTransaction = $transactionFactory->createFromPostData(
                 $lastTransactionData
             );
-            $lastTransaction->setChargeId($charge->getMundipaggId());
+            $lastTransaction->setChargeId($charge->getPagarmeId());
             $charge->addTransaction($lastTransaction);
         }
     }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\ValueObjects\Installment;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Installment;
 use PHPUnit\Framework\TestCase;
 
 class InstallmentTest extends TestCase
@@ -11,9 +11,9 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aInstallmentShouldBeComparable()
@@ -31,7 +31,7 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment
      */
     public function aInstallmentShouldBeJsonSerializable()
     {
@@ -57,10 +57,10 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::setTimes()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::setTimes()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\Installment
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\Installment
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function installmentTimesShouldBeBetween1And24()
     {
@@ -104,10 +104,10 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::setBaseTotal()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::setBaseTotal()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\Installment
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\Installment
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function installmentBaseTotalShouldBeAtLeast0()
     {
@@ -124,10 +124,10 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::setInterest()
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::setInterest()
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\Installment
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\Installment
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function installmentInterestShouldBeAtLeast0()
     {
@@ -144,11 +144,11 @@ class InstallmentTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::getTimes
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::getBaseTotal
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Installment::getInterest
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::getTimes
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::getBaseTotal
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Installment::getInterest
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\Installment
+     * @uses \Pagarme\Core\Kernel\ValueObjects\Installment
      */
     public function basePropertyGettersShouldReturnCorrectValues()
     {

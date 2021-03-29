@@ -1,14 +1,14 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Factories;
+namespace Pagarme\Core\Payment\Factories;
 
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformCustomerInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\ValueObjects\CustomerPhones;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
-use Mundipagg\Core\Payment\ValueObjects\Phone;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformCustomerInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\ValueObjects\CustomerPhones;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Payment\ValueObjects\Phone;
 
 class CustomerFactory implements FactoryInterface
 {
@@ -23,7 +23,7 @@ class CustomerFactory implements FactoryInterface
 
         $customer = new Customer();
 
-        $customer->setMundipaggId(
+        $customer->setPagarmeId(
             new CustomerId($postData->id)
         );
 
@@ -68,7 +68,7 @@ class CustomerFactory implements FactoryInterface
         $customer = new Customer;
 
         $customer->setCode($dbData['code']);
-        $customer->setMundipaggId(new CustomerId($dbData['mundipagg_id']));
+        $customer->setPagarmeId(new CustomerId($dbData['pagarme_id']));
 
         return $customer;
     }
@@ -77,9 +77,9 @@ class CustomerFactory implements FactoryInterface
     {
         $customer = new Customer;
 
-        if ($platformData->getMundipaggId()) {
-            $customer->setMundipaggId(
-                new CustomerId($platformData->getMundipaggId())
+        if ($platformData->getPagarmeId()) {
+            $customer->setPagarmeId(
+                new CustomerId($platformData->getPagarmeId())
             );
         }
 

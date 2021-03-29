@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Services;
+namespace Pagarme\Core\Hub\Services;
 
-use Mundipagg\Core\Hub\Aggregates\InstallToken;
-use Mundipagg\Core\Hub\Factories\HubCommandFactory;
-use Mundipagg\Core\Hub\Factories\InstallTokenFactory;
-use Mundipagg\Core\Hub\Repositories\InstallTokenRepository;
-use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Hub\Aggregates\InstallToken;
+use Pagarme\Core\Hub\Factories\HubCommandFactory;
+use Pagarme\Core\Hub\Factories\InstallTokenFactory;
+use Pagarme\Core\Hub\Repositories\InstallTokenRepository;
+use Pagarme\Core\Hub\ValueObjects\HubInstallToken;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Unirest\Request;
 
 final class HubIntegrationService
@@ -15,7 +15,7 @@ final class HubIntegrationService
     /**
      *
      * @param  $installSeed
-     * @return \Mundipagg\Core\Hub\ValueObjects\HubInstallToken
+     * @return \Pagarme\Core\Hub\ValueObjects\HubInstallToken
      */
     public function startHubIntegration($installSeed)
     {
@@ -47,7 +47,7 @@ final class HubIntegrationService
     ) {
         $tokenRepo = new InstallTokenRepository();
 
-        $installToken = $tokenRepo->findByMundipaggId(new HubInstallToken($installToken));
+        $installToken = $tokenRepo->findByPagarmeId(new HubInstallToken($installToken));
 
         if (is_a($installToken, InstallToken::class) 
             && !$installToken->isExpired() 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects\Id;
+namespace Pagarme\Core\Test\Kernel\ValueObjects\Id;
 
-use Mundipagg\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
+use Pagarme\Core\Test\Kernel\ValueObjects\ValidStringTestTrait;
 use PHPUnit\Framework\TestCase;
 
 class MerchantIdTest extends TestCase
@@ -17,10 +17,10 @@ class MerchantIdTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\Id\MerchantId
+     * @covers \Pagarme\Core\Kernel\ValueObjects\Id\MerchantId
      *
-     * @uses \Mundipagg\Core\Kernel\ValueObjects\AbstractValidString
-     * @uses \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @uses \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
+     * @uses \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function anMerchantIdShouldAcceptOnlyValidMerchantIds()
     {

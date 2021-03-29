@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Hub\Factories;
+namespace Pagarme\Core\Hub\Factories;
 
-use Mundipagg\Core\Hub\Aggregates\InstallToken;
-use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
+use Pagarme\Core\Hub\Aggregates\InstallToken;
+use Pagarme\Core\Hub\ValueObjects\HubInstallToken;
 
 final class InstallTokenFactory
 {

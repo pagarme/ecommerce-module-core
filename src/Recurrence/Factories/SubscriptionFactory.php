@@ -1,22 +1,22 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Plan;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Services\RecurrenceService;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Plan;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Services\RecurrenceService;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 class SubscriptionFactory implements FactoryInterface
 {
@@ -30,7 +30,7 @@ class SubscriptionFactory implements FactoryInterface
         $subscription = new Subscription();
 
         $subscription->setSubscriptionId(new SubscriptionId($postData['id']));
-        $subscription->setMundipaggId(new SubscriptionId($postData['id']));
+        $subscription->setPagarmeId(new SubscriptionId($postData['id']));
         $subscription->setStatus(SubscriptionStatus::{$postData['status']}());
         $subscription->setPaymentMethod(PaymentMethod::{$postData['payment_method']}());
 
@@ -134,7 +134,7 @@ class SubscriptionFactory implements FactoryInterface
         $subscription = new Subscription();
 
         $subscription->setId($dbData['id']);
-        $subscription->setSubscriptionId(new SubscriptionId($dbData['mundipagg_id']));
+        $subscription->setSubscriptionId(new SubscriptionId($dbData['pagarme_id']));
         $subscription->setCode($dbData['code']);
         $subscription->setStatus(SubscriptionStatus::{$dbData['status']}());
         $subscription->setInstallments($dbData['installments']);
@@ -146,7 +146,7 @@ class SubscriptionFactory implements FactoryInterface
 
         $subscription->setPlatformOrder($this->getPlatformOrder($dbData['code']));
 
-        $subscription->setMundipaggId(new SubscriptionId($dbData['mundipagg_id']));
+        $subscription->setPagarmeId(new SubscriptionId($dbData['pagarme_id']));
 
         if (isset($dbData['current_cycle'])) {
             $cycleFactory = new CycleFactory();
@@ -179,7 +179,7 @@ class SubscriptionFactory implements FactoryInterface
         $subscription->setCode($subscriptionResponse['code']);
 
         $subscriptionId = new SubscriptionId($subscriptionResponse['id']);
-        $subscription->setMundipaggId($subscriptionId);
+        $subscription->setPagarmeId($subscriptionId);
 
         return $subscription;
     }

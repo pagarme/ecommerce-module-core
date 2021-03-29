@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
-use Mundipagg\Core\Kernel\Exceptions\InvalidClassException;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Exceptions\InvalidClassException;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
 
 final class FactoryService
 {
@@ -17,7 +17,7 @@ final class FactoryService
     public function getFactoryFor($component, $entity)
     {
         $entityFactory = ucfirst($entity) . "Factory";
-        $fullFactoryClassName = 'Mundipagg\\Core\\' . $component . '\\Factories\\' . $entityFactory;
+        $fullFactoryClassName = 'Pagarme\\Core\\' . $component . '\\Factories\\' . $entityFactory;
 
         try {
             if (class_exists($fullFactoryClassName)) {

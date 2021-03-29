@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Kernel\ValueObjects\ChargeStatus;
-use Mundipagg\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
-use Mundipagg\Core\Recurrence\Factories\InvoiceFactory;
-use Mundipagg\Core\Recurrence\Repositories\ChargeRepository;
-use Mundipagg\Core\Recurrence\ValueObjects\InvoiceStatus;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Kernel\ValueObjects\ChargeStatus;
+use Pagarme\Core\Payment\Services\ResponseHandlers\ErrorExceptionHandler;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Recurrence\Factories\ChargeFactory;
+use Pagarme\Core\Recurrence\Factories\InvoiceFactory;
+use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
+use Pagarme\Core\Recurrence\ValueObjects\InvoiceStatus;
 
 class InvoiceService
 {
@@ -61,7 +61,7 @@ class InvoiceService
             $invoiceFactory = new InvoiceFactory();
             $invoice = $invoiceFactory->createFromCharge($charge);
 
-            $result = $this->cancelInvoiceAtMundipagg($invoice);
+            $result = $this->cancelInvoiceAtPagarme($invoice);
 
             $return = [
                 "message" => 'Invoice canceled successfully',
@@ -105,7 +105,7 @@ class InvoiceService
         }
     }
 
-    public function cancelInvoiceAtMundipagg(Invoice $invoice)
+    public function cancelInvoiceAtPagarme(Invoice $invoice)
     {
         $logService = $this->getLogService();
         $apiService = $this->getApiService();
@@ -113,7 +113,7 @@ class InvoiceService
         $logService->info(
             null,
             'Invoice cancel request | invoice id: ' .
-            $invoice->getMundipaggId()->getValue()
+            $invoice->getPagarmeId()->getValue()
         );
 
         return $apiService->cancelInvoice($invoice);

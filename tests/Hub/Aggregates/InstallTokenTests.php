@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Test\Hub\Aggregates;
+namespace Pagarme\Core\Test\Hub\Aggregates;
 
-use Mundipagg\Core\Hub\Aggregates\InstallToken;
-use Mundipagg\Core\Hub\ValueObjects\HubInstallToken;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Hub\Aggregates\InstallToken;
+use Pagarme\Core\Hub\ValueObjects\HubInstallToken;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use PHPUnit\Framework\TestCase;
 
 class InstallTokenTests extends TestCase

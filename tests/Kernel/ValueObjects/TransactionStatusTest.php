@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\TransactionStatus;
+use Pagarme\Core\Kernel\ValueObjects\TransactionStatus;
 use PHPUnit\Framework\TestCase;
 
 class TransactionStatusTest extends TestCase
@@ -81,9 +81,9 @@ class TransactionStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionStatus
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aTransactionStatusShouldBeComparable()
@@ -101,7 +101,7 @@ class TransactionStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionStatus
      */
     public function aTransactionStatusShouldBeJsonSerializable()
     {
@@ -116,7 +116,7 @@ class TransactionStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionStatus
      */
     public function allTransactionStatusConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -137,7 +137,7 @@ class TransactionStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionStatus
      */
     public function aInvalidTransactionStatusShouldNotBeInstantiable()
     {
@@ -153,7 +153,7 @@ class TransactionStatusTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionStatus
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionStatus
      */
     public function aTransactionStatusShouldAcceptAllPossibleTransactionStatuses()
     {

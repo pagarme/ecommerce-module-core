@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services\InstallDataSource;
+namespace Pagarme\Core\Maintenance\Services\InstallDataSource;
 
 final class CoreInstallDataSource extends AbstractInstallDataSource
 {

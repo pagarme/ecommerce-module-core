@@ -1,15 +1,15 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects\Id;
+namespace Pagarme\Core\Kernel\ValueObjects\Id;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class OrderId extends AbstractValidString
 {
     /**
      * OrderId string constructor.
      * @param $orderId
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function __construct($orderId)
     {

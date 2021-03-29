@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
 
 class ProductSubscriptionFactory implements FactoryInterface
 {
@@ -46,7 +46,7 @@ class ProductSubscriptionFactory implements FactoryInterface
      *
      * @param array $dbData
      * @return AbstractEntity
-     * @throws \Mundipagg\Core\Kernel\Exceptions\InvalidParamException
+     * @throws \Pagarme\Core\Kernel\Exceptions\InvalidParamException
      */
     public function createFromDbData($dbData)
     {

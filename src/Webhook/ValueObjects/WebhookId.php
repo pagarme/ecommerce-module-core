@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\ValueObjects;
+namespace Pagarme\Core\Webhook\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 class WebhookId extends AbstractValidString
 {

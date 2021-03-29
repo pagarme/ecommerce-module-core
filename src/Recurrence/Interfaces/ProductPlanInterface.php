@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Interfaces;
+namespace Pagarme\Core\Recurrence\Interfaces;
 
-use Mundipagg\Core\Recurrence\ValueObjects\IntervalValueObject;
+use Pagarme\Core\Recurrence\ValueObjects\IntervalValueObject;
 
 interface ProductPlanInterface
 {
@@ -96,13 +96,13 @@ interface ProductPlanInterface
     public function setTrialPeriodDays($trialPeriodDays);
 
     /**
-     * @param \Mundipagg\Core\Recurrence\Aggregates\SubProduct[] $items
-     * @return \Mundipagg\Core\Recurrence\Aggregates\Plan
+     * @param \Pagarme\Core\Recurrence\Aggregates\SubProduct[] $items
+     * @return \Pagarme\Core\Recurrence\Aggregates\Plan
      */
     public function setItems(array $items);
 
     /**
-     * @return \Mundipagg\Core\Recurrence\Aggregates\SubProduct[]
+     * @return \Pagarme\Core\Recurrence\Aggregates\SubProduct[]
      */
     public function getItems();
 }

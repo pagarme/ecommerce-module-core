@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Recurrence\Services\CartRules;
 
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Recurrence\Services\RulesCheckoutService;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Recurrence\Services\RulesCheckoutService;
 
 class CompatibleRecurrenceProducts implements RuleInterface
 {

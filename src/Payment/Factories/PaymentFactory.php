@@ -1,27 +1,27 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Factories;
+namespace Pagarme\Core\Payment\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Configuration;
-use Mundipagg\Core\Kernel\Services\InstallmentService;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Id\CustomerId;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\BoletoPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\NewVoucherPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\PixPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
-use Mundipagg\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
-use Mundipagg\Core\Payment\ValueObjects\BoletoBank;
-use Mundipagg\Core\Payment\ValueObjects\CardId;
-use Mundipagg\Core\Payment\ValueObjects\CardToken;
-use Mundipagg\Core\Payment\ValueObjects\CustomerType;
-use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Payment\Aggregates\Payments\SavedDebitCardPayment;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Services\InstallmentService;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\Id\CustomerId;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Aggregates\Payments\AbstractCreditCardPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\BoletoPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\NewVoucherPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\PixPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
+use Pagarme\Core\Payment\ValueObjects\BoletoBank;
+use Pagarme\Core\Payment\ValueObjects\CardId;
+use Pagarme\Core\Payment\ValueObjects\CardToken;
+use Pagarme\Core\Payment\ValueObjects\CustomerType;
+use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
+use Pagarme\Core\Payment\Aggregates\Payments\SavedDebitCardPayment;
 
 final class PaymentFactory
 {

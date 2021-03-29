@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\ValueObjects;
+namespace Pagarme\Core\Recurrence\ValueObjects;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 class PricingSchemeValueObject extends AbstractValueObject
 {

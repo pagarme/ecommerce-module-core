@@ -1,16 +1,16 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates\Payments;
+namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCardRequest;
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Kernel\Services\InstallmentService;
-use Mundipagg\Core\Kernel\Services\MoneyService;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
-use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Services\InstallmentService;
+use Pagarme\Core\Kernel\Services\MoneyService;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
+use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 
 abstract class AbstractCreditCardPayment extends AbstractPayment
 {

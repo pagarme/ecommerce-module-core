@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\ValueObjects;
+namespace Pagarme\Core\Recurrence\ValueObjects;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractValueObject;
+use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 final class SubscriptionStatus extends AbstractValueObject
 {

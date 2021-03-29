@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\ValueObjects;
+namespace Pagarme\Core\Test\Recurrence\ValueObjects;
 
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionStatusTest extends TestCase

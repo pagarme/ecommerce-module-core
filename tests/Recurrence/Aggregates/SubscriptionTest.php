@@ -1,25 +1,25 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
 use Mockery;
 use MundiAPILib\Models\CreateSubscriptionRequest;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Id\ChargeId;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Kernel\ValueObjects\PaymentMethod;
-use Mundipagg\Core\Payment\Aggregates\Address;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Aggregates\Shipping;
-use Mundipagg\Core\Payment\ValueObjects\Phone;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Recurrence\Aggregates\Cycle;
-use Mundipagg\Core\Recurrence\Aggregates\Increment;
-use Mundipagg\Core\Recurrence\Aggregates\Invoice;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\ValueObjects\PlanId;
-use Mundipagg\Core\Recurrence\ValueObjects\SubscriptionStatus;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\ChargeId;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Kernel\ValueObjects\PaymentMethod;
+use Pagarme\Core\Payment\Aggregates\Address;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Aggregates\Shipping;
+use Pagarme\Core\Payment\ValueObjects\Phone;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Recurrence\Aggregates\Cycle;
+use Pagarme\Core\Recurrence\Aggregates\Increment;
+use Pagarme\Core\Recurrence\Aggregates\Invoice;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\ValueObjects\PlanId;
+use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionTest extends TestCase
@@ -49,7 +49,7 @@ class SubscriptionTest extends TestCase
         $this->subscription->setDescription("Description");
         $this->subscription->setStatus(SubscriptionStatus::active());
         $this->subscription->setPaymentMethod(PaymentMethod::credit_card());
-        $this->subscription->setMundipaggId(Mockery::mock(SubscriptionId::class));
+        $this->subscription->setPagarmeId(Mockery::mock(SubscriptionId::class));
         $this->subscription->setSubscriptionId(Mockery::mock(SubscriptionId::class));
         $this->subscription->setPlatformOrder(Mockery::mock(PlatformOrderInterface::class));
         $this->subscription->setInvoice(Mockery::mock(Invoice::class));
@@ -77,7 +77,7 @@ class SubscriptionTest extends TestCase
         $this->assertEquals(Subscription::RECURRENCE_TYPE, $this->subscription->getRecurrenceType());
         $this->assertEquals(SubscriptionStatus::active(), $this->subscription->getStatus());
         $this->assertEquals(PaymentMethod::CREDIT_CARD, $this->subscription->getPaymentMethod());
-        $this->assertInstanceOf(SubscriptionId::class, $this->subscription->getMundipaggId());
+        $this->assertInstanceOf(SubscriptionId::class, $this->subscription->getPagarmeId());
         $this->assertInstanceOf(SubscriptionId::class, $this->subscription->getSubscriptionId());
         $this->assertInstanceOf(PlatformOrderInterface::class, $this->subscription->getPlatformOrder());
         $this->assertInstanceOf(Invoice::class, $this->subscription->getInvoice());
@@ -142,10 +142,10 @@ class SubscriptionTest extends TestCase
     public function testShouldAddChargesOnSubscription()
     {
         $charge = new Charge();
-        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+        $charge->setPagarmeId(new ChargeId("ch_1234567890123456"));
 
         $charge2 = new Charge();
-        $charge2->setMundipaggId(new ChargeId("ch_abcdefghijklmnop"));
+        $charge2->setPagarmeId(new ChargeId("ch_abcdefghijklmnop"));
 
         $this->subscription->addCharge($charge);
         $this->subscription->addCharge($charge2);
@@ -162,7 +162,7 @@ class SubscriptionTest extends TestCase
     public function testShouldNotAddAnChargeTwice()
     {
         $charge = new Charge();
-        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+        $charge->setPagarmeId(new ChargeId("ch_1234567890123456"));
 
         $this->subscription->addCharge($charge);
         $this->subscription->addCharge($charge);
@@ -174,10 +174,10 @@ class SubscriptionTest extends TestCase
     public function testShouldSetAnArrayOfChargesOnSubscription()
     {
         $charge = new Charge();
-        $charge->setMundipaggId(new ChargeId("ch_1234567890123456"));
+        $charge->setPagarmeId(new ChargeId("ch_1234567890123456"));
 
         $charge2 = new Charge();
-        $charge2->setMundipaggId(new ChargeId("ch_abcdefghijklmnop"));
+        $charge2->setPagarmeId(new ChargeId("ch_abcdefghijklmnop"));
 
         $this->subscription->setCharges([
             $charge,

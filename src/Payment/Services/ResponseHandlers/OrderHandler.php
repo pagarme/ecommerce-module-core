@@ -1,26 +1,26 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services\ResponseHandlers;
+namespace Pagarme\Core\Payment\Services\ResponseHandlers;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDataService;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\Services\InvoiceService;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderState;
-use Mundipagg\Core\Kernel\ValueObjects\OrderStatus;
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
-use Mundipagg\Core\Payment\Factories\SavedCardFactory;
-use Mundipagg\Core\Payment\Repositories\CustomerRepository;
-use Mundipagg\Core\Payment\Repositories\SavedCardRepository;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Payment\Services\CardService;
-use Mundipagg\Core\Payment\Services\CustomerService;
+use Pagarme\Core\Kernel\Abstractions\AbstractDataService;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\Services\InvoiceService;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Kernel\ValueObjects\InvoiceState;
+use Pagarme\Core\Kernel\ValueObjects\OrderState;
+use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Payment\Factories\SavedCardFactory;
+use Pagarme\Core\Payment\Repositories\CustomerRepository;
+use Pagarme\Core\Payment\Repositories\SavedCardRepository;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Payment\Services\CardService;
+use Pagarme\Core\Payment\Services\CustomerService;
 
 /** For possible order states, see https://docs.mundipagg.com/v1/reference#pedidos */
 final class OrderHandler extends AbstractResponseHandler
@@ -63,8 +63,8 @@ final class OrderHandler extends AbstractResponseHandler
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Order waiting for online retries at Mundipagg.' .
-                ' MundipaggId: ' . $order->getMundipaggId()->getValue()
+                'Order waiting for online retries at Pagarme.' .
+                ' PagarmeId: ' . $order->getPagarmeId()->getValue()
             ),
             $sender
         );
@@ -106,8 +106,8 @@ final class OrderHandler extends AbstractResponseHandler
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard(
-                'Order pending at Mundipagg. Id: %s',
-                $order->getMundipaggId()->getValue()
+                'Order pending at Pagarme. Id: %s',
+                $order->getPagarmeId()->getValue()
             ),
             $sender
         );
@@ -176,7 +176,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $platformOrder->addHistoryComment(
             $i18n->getDashboard('Order paid.') .
-            ' MundipaggId: ' . $order->getMundipaggId()->getValue(),
+            ' PagarmeId: ' . $order->getPagarmeId()->getValue(),
             $sender
         );
     }
@@ -241,8 +241,8 @@ final class OrderHandler extends AbstractResponseHandler
         foreach ($charges as $charge) {
             $lastTransaction = $charge->getLastTransaction();
             $acquirerMessages .=
-                "{$charge->getMundipaggId()->getValue()} => '{$lastTransaction->getAcquirerMessage()}', ";
-            $historyData[$charge->getMundipaggId()->getValue()] = $lastTransaction->getAcquirerMessage();
+                "{$charge->getPagarmeId()->getValue()} => '{$lastTransaction->getAcquirerMessage()}', ";
+            $historyData[$charge->getPagarmeId()->getValue()] = $lastTransaction->getAcquirerMessage();
 
         }
         $acquirerMessages = rtrim($acquirerMessages, ', ');
@@ -254,7 +254,7 @@ final class OrderHandler extends AbstractResponseHandler
 
         $i18n = new LocalizationService();
         $historyComment = $i18n->getDashboard('Order payment failed');
-        $historyComment .= ' (' . $order->getMundipaggId()->getValue() . ') : ';
+        $historyComment .= ' (' . $order->getPagarmeId()->getValue() . ') : ';
 
         foreach ($historyData as $chargeId => $acquirerMessage) {
             $historyComment .= "$chargeId => $acquirerMessage; ";

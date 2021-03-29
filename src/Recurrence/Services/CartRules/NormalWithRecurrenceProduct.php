@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Recurrence\Services\CartRules;
 
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 
 class NormalWithRecurrenceProduct implements RuleInterface
 {

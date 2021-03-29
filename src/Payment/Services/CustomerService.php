@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Services;
+namespace Pagarme\Core\Payment\Services;
 
-use Mundipagg\Core\Kernel\Interfaces\PlatformCustomerInterface;
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\LogService;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
-use Mundipagg\Core\Payment\Repositories\CustomerRepository;
+use Pagarme\Core\Kernel\Interfaces\PlatformCustomerInterface;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Payment\Repositories\CustomerRepository;
 
 class CustomerService
 {
@@ -22,13 +22,13 @@ class CustomerService
         );
     }
 
-    public function updateCustomerAtMundipagg(PlatformCustomerInterface $platformCustomer)
+    public function updateCustomerAtPagarme(PlatformCustomerInterface $platformCustomer)
     {
         $customerFactory = new CustomerFactory();
         $customer = $customerFactory->createFromPlatformData($platformCustomer);
 
-        if ($customer->getMundipaggId() !== null) {
-            $this->logService->info("Update customer at Mundipagg: [{$customer->getMundipaggId()}]");
+        if ($customer->getPagarmeId() !== null) {
+            $this->logService->info("Update customer at Pagarme: [{$customer->getPagarmeId()}]");
             $this->logService->info("Customer request", $customer);
             $apiService = new ApiService();
             $apiService->updateCustomer($customer);
@@ -61,7 +61,7 @@ class CustomerService
         }
 
         if (
-            $customerRepository->findByMundipaggId($customer->getMundipaggId()) === null
+            $customerRepository->findByPagarmeId($customer->getPagarmeId()) === null
         ) {
             $customerRepository->save($customer);
         }

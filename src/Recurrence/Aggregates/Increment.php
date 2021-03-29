@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Aggregates;
+namespace Pagarme\Core\Recurrence\Aggregates;
 
 use MundiAPILib\Models\CreateIncrementRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 
 class Increment extends AbstractEntity
 {

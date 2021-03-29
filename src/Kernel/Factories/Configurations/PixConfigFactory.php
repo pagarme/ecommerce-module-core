@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories\Configurations;
+namespace Pagarme\Core\Kernel\Factories\Configurations;
 
-use Mundipagg\Core\Kernel\Interfaces\FactoryCreateFromDbDataInterface;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\PixConfig;
+use Pagarme\Core\Kernel\Interfaces\FactoryCreateFromDbDataInterface;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\PixConfig;
 
 class PixConfigFactory implements FactoryCreateFromDbDataInterface
 {

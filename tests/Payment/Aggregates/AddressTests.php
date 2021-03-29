@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Payment\Aggregates;
+namespace Pagarme\Core\Test\Payment\Aggregates;
 
-use Mundipagg\Core\Payment\Aggregates\Address;
+use Pagarme\Core\Payment\Aggregates\Address;
 use PHPUnit\Framework\TestCase;
 
 class AddressTests extends TestCase

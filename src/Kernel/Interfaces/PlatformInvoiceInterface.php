@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Interfaces;
+namespace Pagarme\Core\Kernel\Interfaces;
 
-use Mundipagg\Core\Kernel\ValueObjects\InvoiceState;
+use Pagarme\Core\Kernel\ValueObjects\InvoiceState;
 
 interface PlatformInvoiceInterface
 {

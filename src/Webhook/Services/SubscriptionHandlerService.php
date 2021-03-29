@@ -1,21 +1,21 @@
 <?php
 
-namespace Mundipagg\Core\Webhook\Services;
+namespace Pagarme\Core\Webhook\Services;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Aggregates\Order;
-use Mundipagg\Core\Kernel\Exceptions\NotFoundException;
-use Mundipagg\Core\Kernel\Factories\OrderFactory;
-use Mundipagg\Core\Kernel\Interfaces\PlatformOrderInterface;
-use Mundipagg\Core\Kernel\Repositories\OrderRepository;
-use Mundipagg\Core\Kernel\Services\APIService;
-use Mundipagg\Core\Kernel\Services\LocalizationService;
-use Mundipagg\Core\Kernel\Services\OrderService;
-use Mundipagg\Core\Kernel\ValueObjects\Id\SubscriptionId;
-use Mundipagg\Core\Recurrence\Aggregates\Charge;
-use Mundipagg\Core\Webhook\Aggregates\Webhook;
-use Mundipagg\Core\Recurrence\Aggregates\Subscription;
-use Mundipagg\Core\Recurrence\Repositories\SubscriptionRepository;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Exceptions\NotFoundException;
+use Pagarme\Core\Kernel\Factories\OrderFactory;
+use Pagarme\Core\Kernel\Interfaces\PlatformOrderInterface;
+use Pagarme\Core\Kernel\Repositories\OrderRepository;
+use Pagarme\Core\Kernel\Services\APIService;
+use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\Services\OrderService;
+use Pagarme\Core\Kernel\ValueObjects\Id\SubscriptionId;
+use Pagarme\Core\Recurrence\Aggregates\Charge;
+use Pagarme\Core\Webhook\Aggregates\Webhook;
+use Pagarme\Core\Recurrence\Aggregates\Subscription;
+use Pagarme\Core\Recurrence\Repositories\SubscriptionRepository;
 
 class SubscriptionHandlerService extends AbstractHandlerService
 {

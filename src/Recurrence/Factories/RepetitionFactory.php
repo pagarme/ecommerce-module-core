@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Factories;
+namespace Pagarme\Core\Recurrence\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
 
 class RepetitionFactory implements FactoryInterface
 {

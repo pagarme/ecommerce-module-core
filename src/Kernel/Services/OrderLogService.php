@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
 final class OrderLogService extends LogService
 {

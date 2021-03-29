@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Maintenance\Services\InstallDataSource;
+namespace Pagarme\Core\Test\Maintenance\Services\InstallDataSource;
 
-use Mundipagg\Core\Maintenance\Services\InstallDataSource\CoreInstallDataSource;
+use Pagarme\Core\Maintenance\Services\InstallDataSource\CoreInstallDataSource;
 use PHPUnit\Framework\TestCase;
 
 class CoreInstallDataSourceTests extends TestCase

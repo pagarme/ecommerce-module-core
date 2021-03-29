@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\ValueObjects\Key;
+namespace Pagarme\Core\Kernel\ValueObjects\Key;
 
 final class TestSecretKey extends AbstractSecretKey
 {

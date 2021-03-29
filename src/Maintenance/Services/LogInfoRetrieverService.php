@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services;
+namespace Pagarme\Core\Maintenance\Services;
 
 use DateTime;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Maintenance\Interfaces\InfoRetrieverServiceInterface;
 
 class LogInfoRetrieverService implements InfoRetrieverServiceInterface
 {

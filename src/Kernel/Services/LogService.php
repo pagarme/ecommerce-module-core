@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Services;
+namespace Pagarme\Core\Kernel\Services;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Kernel\Exceptions\AbstractMundipaggCoreException;
-use Mundipagg\Core\Kernel\Factories\LogObjectFactory;
-use Mundipagg\Core\Kernel\Log\JsonPrettyFormatter;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Exceptions\AbstractPagarmeCoreException;
+use Pagarme\Core\Kernel\Factories\LogObjectFactory;
+use Pagarme\Core\Kernel\Log\JsonPrettyFormatter;
 
 class LogService
 {
@@ -73,7 +73,7 @@ class LogService
 
     protected function setFileName()
     {
-        $base = 'Mundipagg_PaymentModule_' . date('Y-m-d');
+        $base = 'Pagarme_PaymentModule_' . date('Y-m-d');
         $fileName = $this->path . DIRECTORY_SEPARATOR . $base;
 
         if ($this->addHost) {

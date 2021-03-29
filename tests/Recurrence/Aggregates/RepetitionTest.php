@@ -1,10 +1,10 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
 use Magento\Framework\Stdlib\DateTime;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
 use PHPUnit\Framework\TestCase;
 
 class RepetitionTest extends TestCase

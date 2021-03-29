@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Test\Mock\Concrete;
+namespace Pagarme\Core\Test\Mock\Concrete;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Factories\ConfigurationFactory;
 use PDO;
 use PDOException;
 

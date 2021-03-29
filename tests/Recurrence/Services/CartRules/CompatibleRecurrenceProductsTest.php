@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Services\CartRules;
+namespace Pagarme\Core\Test\Recurrence\Services\CartRules;
 
-use Mundipagg\Core\Recurrence\Aggregates\ProductSubscription;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Services\CartRules\CurrentProduct;
-use Mundipagg\Core\Recurrence\Services\CartRules\ProductListInCart;
+use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Services\CartRules\CurrentProduct;
+use Pagarme\Core\Recurrence\Services\CartRules\ProductListInCart;
 use PHPUnit\Framework\TestCase;
 
 class CompatibleRecurrenceProductsTest extends  TestCase
@@ -38,7 +38,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $errorExpected = "'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)";
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Pagarme\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -81,7 +81,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $errorExpected = "'You can only add two or more subscriptions to your cart that have the same payment method (credit card or boleto) and same frequency (monthly, annual, etc)";
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Pagarme\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -124,7 +124,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct->setRepetitionSelected($repetitionSelected);
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Pagarme\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')
@@ -144,7 +144,7 @@ class CompatibleRecurrenceProductsTest extends  TestCase
         $currentProduct = new CurrentProduct();
 
         $rule = \Mockery::mock(
-            'Mundipagg\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
+            'Pagarme\Core\Recurrence\Services\CartRules\CompatibleRecurrenceProducts[getMessageConflict]'
         );
 
         $rule->shouldReceive('getMessageConflict')

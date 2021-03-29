@@ -1,18 +1,18 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Repositories;
+namespace Pagarme\Core\Recurrence\Repositories;
 
 use Exception;
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\Aggregates\Charge;
-use Mundipagg\Core\Kernel\Factories\ConfigurationFactory;
-use Mundipagg\Core\Recurrence\Factories\ChargeFactory;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Kernel\ValueObjects\Id\OrderId;
-use Mundipagg\Core\Kernel\Repositories\TransactionRepository;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Aggregates\Charge;
+use Pagarme\Core\Kernel\Factories\ConfigurationFactory;
+use Pagarme\Core\Recurrence\Factories\ChargeFactory;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\ValueObjects\Id\OrderId;
+use Pagarme\Core\Kernel\Repositories\TransactionRepository;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 
 final class ChargeRepository extends AbstractRepository
 {
@@ -28,7 +28,7 @@ final class ChargeRepository extends AbstractRepository
                 c.*, 
                 GROUP_CONCAT(c.id) as id, 
                 GROUP_CONCAT(t.id) as tran_id, 
-                GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
+                GROUP_CONCAT(t.pagarme_id) as tran_pagarme_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
@@ -45,7 +45,7 @@ final class ChargeRepository extends AbstractRepository
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
-                  ON c.mundipagg_id = t.charge_id 
+                  ON c.pagarme_id = t.charge_id 
             WHERE c.order_id = '$id'
             GROUP BY c.id;
         ";
@@ -79,7 +79,7 @@ final class ChargeRepository extends AbstractRepository
           INSERT INTO 
             $chargeTable 
             (
-                mundipagg_id, 
+                pagarme_id, 
                 invoice_id,
                 subscription_id, 
                 code, 
@@ -101,7 +101,7 @@ final class ChargeRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getMundipaggId()->getValue()}',
+                '{$object->getPagarmeId()->getValue()}',
                 '{$object->getInvoiceId()}',
                 '{$object->getSubscriptionId()}',
                 '{$object->getCode()}',
@@ -170,7 +170,7 @@ final class ChargeRepository extends AbstractRepository
         $query = "
             SELECT 
                 id,
-                mundipagg_id,
+                pagarme_id,
                 subscription_id,
                invoice_id,
                `code`,
@@ -207,18 +207,18 @@ final class ChargeRepository extends AbstractRepository
     }
 
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
         $chargeTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_CHARGE);
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
 
         $query = "
             SELECT 
                 c.*, 
                 GROUP_CONCAT(t.id) as tran_id, 
-                GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
+                GROUP_CONCAT(t.pagarme_id) as tran_pagarme_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
@@ -235,8 +235,8 @@ final class ChargeRepository extends AbstractRepository
             FROM
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
-                  ON c.mundipagg_id = t.charge_id 
-            WHERE c.mundipagg_id = '$id'
+                  ON c.pagarme_id = t.charge_id 
+            WHERE c.pagarme_id = '$id'
             GROUP BY c.id;
         ";
 
@@ -270,7 +270,7 @@ final class ChargeRepository extends AbstractRepository
                 recurrence_charge.*, 
                 GROUP_CONCAT(recurrence_charge.id) as id, 
                 GROUP_CONCAT(t.id) as tran_id, 
-                GROUP_CONCAT(t.mundipagg_id) as tran_mundipagg_id,
+                GROUP_CONCAT(t.pagarme_id) as tran_pagarme_id,
                 GROUP_CONCAT(t.charge_id) as tran_charge_id,
                 GROUP_CONCAT(t.amount) as tran_amount,
                 GROUP_CONCAT(t.paid_amount) as tran_paid_amount,
@@ -287,7 +287,7 @@ final class ChargeRepository extends AbstractRepository
             FROM
                 {$chargeTable} as recurrence_charge 
                 LEFT JOIN {$transactionTable} as t 
-                       ON recurrence_charge.mundipagg_id = t.charge_id 
+                       ON recurrence_charge.pagarme_id = t.charge_id 
             WHERE recurrence_charge.code = '{$codeOrder}'
             GROUP BY recurrence_charge.id;
         ";

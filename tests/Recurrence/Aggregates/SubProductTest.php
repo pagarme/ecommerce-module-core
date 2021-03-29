@@ -1,11 +1,11 @@
 <?php
 
-namespace Mundipagg\Core\Test\Recurrence\Aggregates;
+namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
-use Mundipagg\Core\Recurrence\Aggregates\Increment;
-use Mundipagg\Core\Recurrence\Aggregates\Repetition;
-use Mundipagg\Core\Recurrence\Aggregates\SubProduct;
-use Mundipagg\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
+use Pagarme\Core\Recurrence\Aggregates\Increment;
+use Pagarme\Core\Recurrence\Aggregates\Repetition;
+use Pagarme\Core\Recurrence\Aggregates\SubProduct;
+use Pagarme\Core\Recurrence\ValueObjects\PricingSchemeValueObject;
 use PHPUnit\Framework\TestCase;
 
 class SubProductTest extends TestCase

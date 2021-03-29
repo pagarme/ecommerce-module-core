@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Interfaces;
+namespace Pagarme\Core\Kernel\Interfaces;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 
 interface FactoryInterface extends
     FactoryCreateFromDbDataInterface,

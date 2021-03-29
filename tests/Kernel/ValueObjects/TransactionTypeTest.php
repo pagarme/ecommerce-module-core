@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\ValueObjects;
+namespace Pagarme\Core\Test\Kernel\ValueObjects;
 
-use Mundipagg\Core\Kernel\ValueObjects\TransactionType;
+use Pagarme\Core\Kernel\ValueObjects\TransactionType;
 use PHPUnit\Framework\TestCase;
 
 class TransactionTypeTest extends TestCase
@@ -33,9 +33,9 @@ class TransactionTypeTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionType
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionType
      *
-     * @uses \Mundipagg\Core\Kernel\Abstractions\AbstractValueObject
+     * @uses \Pagarme\Core\Kernel\Abstractions\AbstractValueObject
      *
      */
     public function aTransactionTypeShouldBeComparable()
@@ -53,7 +53,7 @@ class TransactionTypeTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionType
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionType
      */
     public function aTransactionTypeShouldBeJsonSerializable()
     {
@@ -68,7 +68,7 @@ class TransactionTypeTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionType
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionType
      */
     public function allTransactionTypeConstantsDefinedInTheClassShouldBeInstantiable()
     {
@@ -89,7 +89,7 @@ class TransactionTypeTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionType
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionType
      */
     public function aInvalidTransactionTypeShouldNotBeInstantiable()
     {
@@ -105,7 +105,7 @@ class TransactionTypeTest extends TestCase
     /**
      * @test
      *
-     * @covers \Mundipagg\Core\Kernel\ValueObjects\TransactionType
+     * @covers \Pagarme\Core\Kernel\ValueObjects\TransactionType
      */
     public function aTransactionTypeShouldAcceptAllPossibleTransactionTypees()
     {

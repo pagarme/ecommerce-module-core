@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Payments\I18N;
+namespace Pagarme\Core\Test\Payments\I18N;
 
-use Mundipagg\Core\Kernel\I18N\PTBR;
+use Pagarme\Core\Kernel\I18N\PTBR;
 use PHPUnit\Framework\TestCase;
 
 class PTBRTests extends TestCase

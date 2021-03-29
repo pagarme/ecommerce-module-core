@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Repositories;
+namespace Pagarme\Core\Payment\Repositories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Abstractions\AbstractRepository;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
-use Mundipagg\Core\Payment\Aggregates\Customer;
-use Mundipagg\Core\Payment\Factories\CustomerFactory;
+use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\Factories\CustomerFactory;
 
 
 final class CustomerRepository extends AbstractRepository
@@ -39,12 +39,12 @@ final class CustomerRepository extends AbstractRepository
           INSERT INTO $table 
             (
                 code, 
-                mundipagg_id
+                pagarme_id
             )
           VALUES 
             (
                 '{$obj->code}',
-                '{$obj->mundipaggId}'
+                '{$obj->pagarmeId}'
             )          
         ";
 
@@ -74,11 +74,11 @@ final class CustomerRepository extends AbstractRepository
         // TODO: Implement find() method.
     }
 
-    public function findByMundipaggId(AbstractValidString $mundipaggId)
+    public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        $id = $mundipaggId->getValue();
+        $id = $pagarmeId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
-        $query = "SELECT * FROM $table WHERE mundipagg_id = '$id'";
+        $query = "SELECT * FROM $table WHERE pagarme_id = '$id'";
 
         $result = $this->db->fetch($query);
 

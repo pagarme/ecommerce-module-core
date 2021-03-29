@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Interfaces;
+namespace Pagarme\Core\Payment\Interfaces;
 
-use Mundipagg\Core\Payment\Aggregates\Order as PaymentOrder;
+use Pagarme\Core\Payment\Aggregates\Order as PaymentOrder;
 
 interface ResponseHandlerInterface
 {

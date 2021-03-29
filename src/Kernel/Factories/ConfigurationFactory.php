@@ -1,24 +1,24 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Factories;
+namespace Pagarme\Core\Kernel\Factories;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractEntity;
-use Mundipagg\Core\Kernel\Aggregates\Configuration;
-use Mundipagg\Core\Kernel\Factories\Configurations\DebitConfigFactory;
-use Mundipagg\Core\Kernel\Factories\Configurations\PixConfigFactory;
-use Mundipagg\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
-use Mundipagg\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
-use Mundipagg\Core\Kernel\Interfaces\FactoryInterface;
-use Mundipagg\Core\Kernel\Repositories\ConfigurationRepository;
-use Mundipagg\Core\Kernel\ValueObjects\CardBrand;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
-use Mundipagg\Core\Kernel\ValueObjects\Configuration\CardConfig;
-use Mundipagg\Core\Kernel\ValueObjects\Id\GUID;
-use Mundipagg\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\PublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\SecretKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestPublicKey;
-use Mundipagg\Core\Kernel\ValueObjects\Key\TestSecretKey;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Factories\Configurations\DebitConfigFactory;
+use Pagarme\Core\Kernel\Factories\Configurations\PixConfigFactory;
+use Pagarme\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
+use Pagarme\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
+use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\Repositories\ConfigurationRepository;
+use Pagarme\Core\Kernel\ValueObjects\CardBrand;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\SecretKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestSecretKey;
 use Exception;
 
 class ConfigurationFactory implements FactoryInterface
@@ -45,12 +45,12 @@ class ConfigurationFactory implements FactoryInterface
             );
         }
 
-        $config->setBoletoEnabled($postData['payment_mundipagg_boleto_status']);
-        $config->setCreditCardEnabled($postData['payment_mundipagg_credit_card_status']);
-        $config->setBoletoCreditCardEnabled($postData['payment_mundipagg_boletoCreditCard_status']);
-        $config->setTwoCreditCardsEnabled($postData['payment_mundipagg_credit_card_two_credit_cards_enabled']);
+        $config->setBoletoEnabled($postData['payment_pagarme_boleto_status']);
+        $config->setCreditCardEnabled($postData['payment_pagarme_credit_card_status']);
+        $config->setBoletoCreditCardEnabled($postData['payment_pagarme_boletoCreditCard_status']);
+        $config->setTwoCreditCardsEnabled($postData['payment_pagarme_credit_card_two_credit_cards_enabled']);
 
-        $config->setStoreId($postData['payment_mundipagg_store_id']);
+        $config->setStoreId($postData['payment_pagarme_store_id']);
 
         return $config;
     }

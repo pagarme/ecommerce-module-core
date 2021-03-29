@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Maintenance\Services\InstallDataSource;
+namespace Pagarme\Core\Maintenance\Services\InstallDataSource;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Mundipagg\Core\Maintenance\Interfaces\ModuleInstallTypeInterface;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Maintenance\Interfaces\ModuleInstallTypeInterface;
 
 final class ModmanInstallDataSource
     extends AbstractInstallDataSource

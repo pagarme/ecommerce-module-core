@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Test\Kernel\Aggregates;
+namespace Pagarme\Core\Test\Kernel\Aggregates;
 
-use Mundipagg\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Aggregates\Configuration;
 use PHPUnit\Framework\TestCase;
 
 class ConfigurationTests extends TestCase

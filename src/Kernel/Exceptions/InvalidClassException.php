@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Exceptions;
+namespace Pagarme\Core\Kernel\Exceptions;
 
-class InvalidClassException extends AbstractMundipaggCoreException
+class InvalidClassException extends AbstractPagarmeCoreException
 {
     public function __construct($actualClass, $expectedClass)
     {

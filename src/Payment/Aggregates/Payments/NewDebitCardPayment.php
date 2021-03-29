@@ -1,13 +1,13 @@
 <?php
 
-namespace Mundipagg\Core\Payment\Aggregates\Payments;
+namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use MundiAPILib\Models\CreateCreditCardPaymentRequest;
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\Exceptions\InvalidParamException;
-use Mundipagg\Core\Payment\ValueObjects\AbstractCardIdentifier;
-use Mundipagg\Core\Payment\ValueObjects\CardToken;
-use Mundipagg\Core\Payment\ValueObjects\PaymentMethod;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
+use Pagarme\Core\Payment\ValueObjects\CardToken;
+use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 
 class NewDebitCardPayment extends NewCreditCardPayment
 {

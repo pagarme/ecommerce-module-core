@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Aggregates\Order;
+use Pagarme\Core\Kernel\Aggregates\Order;
 
 abstract class AbstractDataService
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Core\Recurrence\Services;
+namespace Pagarme\Core\Recurrence\Services;
 
-use Mundipagg\Core\Recurrence\Repositories\SubProductRepository;
+use Pagarme\Core\Recurrence\Repositories\SubProductRepository;
 
 class SubProductService
 {

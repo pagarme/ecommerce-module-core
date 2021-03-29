@@ -1,9 +1,9 @@
 <?php
 
-namespace Mundipagg\Core\Kernel\Abstractions;
+namespace Pagarme\Core\Kernel\Abstractions;
 
-use Mundipagg\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
-use Mundipagg\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 
 abstract class AbstractRepository
 {
@@ -44,6 +44,6 @@ abstract class AbstractRepository
     abstract protected function update(AbstractEntity &$object);
     abstract public function delete(AbstractEntity $object);
     abstract public function find($objectId);
-    abstract public function findByMundipaggId(AbstractValidString $mundipaggId);
+    abstract public function findByPagarmeId(AbstractValidString $pagarmeId);
     abstract public function listEntities($limit, $listDisabled);
 }
