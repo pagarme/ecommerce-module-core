@@ -83,6 +83,10 @@ class TransactionStatusTest extends TestCase
         'ANALYZING' => [
             'method' => 'analyzing',
             'value' => 'analyzing'
+        ],
+        'WAITING_CAPTURE' => [
+            'method' => 'waitingCapture',
+            'value' => 'waiting_capture'
         ]
     ];
 
