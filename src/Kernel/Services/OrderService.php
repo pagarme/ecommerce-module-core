@@ -260,7 +260,7 @@ final class OrderService
 
             $i18n = new LocalizationService();
 
-            //Send through the APIService to mundipagg
+            //Send through the APIService to pagarme
             $apiService = new APIService();
             $response = $apiService->createOrder($paymentOrder);
 
@@ -396,7 +396,7 @@ final class OrderService
         return $orderInfo;
     }
 
-    private function responseHasChargesAndFailed($response)
+    private function responseHasNoChargesOrFailed($response)
     {
         return !isset($response['status']) ||
             !isset($response['charges']) ||
@@ -410,7 +410,7 @@ final class OrderService
     private function wasOrderChargedSuccessfully($response)
     {
 
-        if ($this->responseHasChargesAndFailed($response)) {
+        if ($this->responseHasNoChargesOrFailed($response)) {
             return false;
         }
 
@@ -467,7 +467,7 @@ final class OrderService
      * @return Order|null
      * @throws InvalidParamException
      */
-    public function getOrderByMundiPaggId(OrderId $orderId)
+    public function getOrderByPagarmeId(OrderId $orderId)
     {
         return $this->orderRepository->findByPagarmeId($orderId);
     }
