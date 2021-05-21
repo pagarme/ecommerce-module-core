@@ -49,8 +49,9 @@ final class HubIntegrationService
 
         $installToken = $tokenRepo->findByPagarmeId(new HubInstallToken($installToken));
 
-        if (is_a($installToken, InstallToken::class) 
-            && !$installToken->isExpired() 
+        if (
+            is_a($installToken, InstallToken::class)
+            && !$installToken->isExpired()
             && !$installToken->isUsed()
         ) {
             $body = [
@@ -65,7 +66,7 @@ final class HubIntegrationService
                 $body['webhook_url'] = $webhookUrl;
             }
 
-            $url = 'https://hubapi.mundipagg.com/auth/apps/access-tokens';
+            $url = 'https://stg-hubapi.mundipagg.com/auth/apps/access-tokens';
             $headers = [
                 'PublicAppKey' => MPSetup::getHubAppPublicAppKey(),
                 'Content-Type' => 'application/json'
