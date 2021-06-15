@@ -81,7 +81,7 @@ abstract class AbstractModuleCoreSetup
     protected static function setApiBaseUrl()
     {
         if (static::$moduleConfig->isHubEnabled()) {
-            MundiAPIConfiguration::$BASEURI = 'https://stg-hubapi.mundipagg.com/core/v1';
+            MundiAPIConfiguration::$BASEURI = 'https://hubapi.mundipagg.com/core/v1';
         }
     }
 
