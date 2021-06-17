@@ -122,6 +122,9 @@ class ConfigurationFactory implements FactoryInterface
             $config->setHubInstallId(
                 new GUID($data->hubInstallId)
             );
+        }
+
+        if (!empty($data->hubEnvironment)) {
             $config->setHubEnvironment($data->hubEnvironment);
         }
 
