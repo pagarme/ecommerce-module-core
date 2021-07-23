@@ -52,11 +52,34 @@ abstract class AbstractPayment
             $newPayment->customer = $this->getCustomer()->convertToSDKRequest();
         }
 
+        $newPayment->split = static::getSplitData();
         $newPayment->metadata = static::getMetadata();
         return $newPayment;
     }
 
     abstract protected function convertToPrimitivePaymentRequest();
+
+    protected function getSplitData()
+    {
+        $split1 = new \stdClass;
+        $split1->amount = 10;
+        $split1->recipient_id = "rp_lrb0q33Ta2cw9nBo";
+        $split1->type = "percentage";
+        $split1->options = new \stdClass;
+        $split1->options->charge_processing_fee = true;
+        $split1->options->charge_remainder_fee = true;
+        $split1->options->liable = true;
+
+        $split2 = new \stdClass;
+        $split2->amount = 90;
+        $split2->recipient_id = "rp_BR3QpoLFOiDZGVJK";
+        $split2->type = "percentage";
+        $split2->options = new \stdClass;
+        $split2->options->charge_processing_fee = false;
+        $split2->options->charge_remainder_fee = false;
+        $split2->options->liable = false;
+        return [$split1, $split2];
+    }
 
     protected function getMetadata()
     {
