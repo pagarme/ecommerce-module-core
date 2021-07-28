@@ -183,6 +183,14 @@ final class OrderHandler extends AbstractResponseHandler
                 ' PagarmeId: ' . $order->getPagarmeId()->getValue(),
             $sender
         );
+
+        $split = $order->getSplitInfo();
+        foreach ($split as $chargeId => $splitInfo) {
+            $platformOrder->addHistoryComment(
+                $i18n->getDashboard('ChargeId: %s - Split rules:', $chargeId) .
+                '<br/>' . join('<br/>', $splitInfo)
+            );
+        }
     }
 
     private function createCaptureTransaction(Order $order)
