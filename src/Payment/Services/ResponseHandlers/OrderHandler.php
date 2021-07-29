@@ -39,16 +39,6 @@ final class OrderHandler extends AbstractResponseHandler
             "Handling order status: $orderStatus"
         );
 
-        $i18n = new LocalizationService();
-        $platformOrder = $createdOrder->getPlatformOrder();
-        $split = $createdOrder->getSplitInfo();
-        foreach ($split as $chargeId => $splitInfo) {
-            $platformOrder->addHistoryComment(
-                $i18n->getDashboard('ChargeId: %s - Split rules:', $chargeId) .
-                '<br/>' . join('<br/>', $splitInfo)
-            );
-        }
-
         $orderRepository = new OrderRepository();
         $orderRepository->save($createdOrder);
 
