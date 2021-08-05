@@ -58,14 +58,14 @@ class CustomerTests extends TestCase
 
     public function testDocumentSanitize()
     {
-        $document = "12345678910";
+        $expectedDocument = "12345678910";
         $customerDocument = "123.456.789-10";
 
         $this->customer->setCode(5);
         $this->customer->setDocument($customerDocument);
 
         $this->assertEquals(
-            $document, $this->customer->getDocument()
+            $expectedDocument, $this->customer->getDocument()
         );
     }
 }
