@@ -4,6 +4,7 @@ namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use PagarmeCoreApiLib\Models\CreatePaymentRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Pagarme\Core\Payment\Interfaces\HaveOrderInterface;
 use Pagarme\Core\Payment\Traits\WithAmountTrait;
@@ -17,6 +18,8 @@ abstract class AbstractPayment
     use WithAmountTrait;
     use WithCustomerTrait;
     use WithOrderTrait;
+
+    protected $moduleConfig;
 
     public function jsonSerialize()
     {
@@ -41,6 +44,7 @@ abstract class AbstractPayment
      */
     public function convertToSDKRequest()
     {
+        $this->moduleConfig = MPSetup::getModuleConfiguration();
         $newPayment = new CreatePaymentRequest();
         $newPayment->amount = $this->getAmount();
 
@@ -52,7 +56,10 @@ abstract class AbstractPayment
             $newPayment->customer = $this->getCustomer()->convertToSDKRequest();
         }
 
-        $newPayment->split = static::getSplitData();
+        if ($this->moduleConfig->getMarketplaceConfig()->isEnabled()) {
+            $newPayment->split = static::getSplitData();
+        }
+
         $newPayment->metadata = static::getMetadata();
         return $newPayment;
     }
@@ -61,24 +68,82 @@ abstract class AbstractPayment
 
     protected function getSplitData()
     {
-        $split1 = new \stdClass;
-        $split1->amount = 10;
-        $split1->recipient_id = "rp_lrb0q33Ta2cw9nBo";
-        $split1->type = "percentage";
-        $split1->options = new \stdClass;
-        $split1->options->charge_processing_fee = true;
-        $split1->options->charge_remainder_fee = true;
-        $split1->options->liable = true;
+        $splitMainRecipient = new \stdClass;
+        $splitMainRecipient->amount = 10;
+        $splitMainRecipient->recipient_id = "rp_9XYzdWJueuNge7m1";
+        $splitMainRecipient->type = "percentage";
+        $splitMainRecipient->options = new \stdClass;
+        $splitMainRecipient->options->charge_processing_fee =
+            $this->getSplitMainOptionConfig(
+                'responsibilityForProcessingFees'
+            );
+        $splitMainRecipient->options->charge_remainder_fee = true;
+        $splitMainRecipient->options->liable =
+            $this->getSplitMainOptionConfig(
+                'responsibilityForChargebacks'
+            );
 
-        $split2 = new \stdClass;
-        $split2->amount = 90;
-        $split2->recipient_id = "rp_BR3QpoLFOiDZGVJK";
-        $split2->type = "percentage";
-        $split2->options = new \stdClass;
-        $split2->options->charge_processing_fee = false;
-        $split2->options->charge_remainder_fee = false;
-        $split2->options->liable = false;
-        return [$split1, $split2];
+        $splitRecipient1 = new \stdClass;
+        $splitRecipient1->amount = 70;
+        $splitRecipient1->recipient_id = "rp_eoKMZveFQFKNRp4D";
+        $splitRecipient1->type = "percentage";
+        $splitRecipient1->options = new \stdClass;
+        $splitRecipient1->options->charge_processing_fee =
+            $this->getSplitSecondaryOptionConfig(
+                'responsibilityForProcessingFees'
+            );
+        $splitRecipient1->options->charge_remainder_fee = false;
+        $splitRecipient1->options->liable =
+            $this->getSplitSecondaryOptionConfig(
+                'responsibilityForChargebacks'
+            );
+
+        $splitRecipient2 = new \stdClass;
+        $splitRecipient2->amount = 20;
+        $splitRecipient2->recipient_id = "rp_rNqy0J3i1i7GLVOM";
+        $splitRecipient2->type = "percentage";
+        $splitRecipient2->options = new \stdClass;
+        $splitRecipient2->options->charge_processing_fee =
+            $this->getSplitSecondaryOptionConfig(
+                'responsibilityForProcessingFees'
+            );
+        $splitRecipient2->options->charge_remainder_fee = false;
+        $splitRecipient2->options->liable =
+            $this->getSplitSecondaryOptionConfig(
+                'responsibilityForChargebacks'
+            );
+
+        return [$splitMainRecipient, $splitRecipient1, $splitRecipient2];
+    }
+
+    private function getSplitMainOptionConfig($option)
+    {
+        $responsible = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->$option();
+
+        if ($responsible == 'marketplace_sellers'
+            || $responsible == 'marketplace'
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function getSplitSecondaryOptionConfig($option)
+    {
+        $responsible = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->$option();
+
+        if ($responsible == 'marketplace_sellers'
+            || $responsible == 'sellers'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function getMetadata()
