@@ -9,6 +9,7 @@ use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
 use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\MarketplaceConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\PixConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
@@ -157,6 +158,11 @@ final class Configuration extends AbstractEntity
      */
     private $pixConfig;
 
+    /**
+     * @var MarketplaceConfig
+     */
+    private $marketplaceConfig;
+
     public function __construct()
     {
         $this->saveCards = false;
@@ -220,6 +226,22 @@ final class Configuration extends AbstractEntity
     public function getPixConfig()
     {
         return $this->pixConfig;
+    }
+
+    /**
+     * @param MarketplaceConfig $marketplaceConfig
+     */
+    public function setMarketplaceConfig(MarketplaceConfig $marketplaceConfig)
+    {
+        $this->marketplaceConfig = $marketplaceConfig;
+    }
+
+    /**
+     * @return MarketplaceConfig
+     */
+    public function getMarketplaceConfig()
+    {
+        return $this->marketplaceConfig;
     }
 
     /**
@@ -685,7 +707,7 @@ final class Configuration extends AbstractEntity
         if (!is_numeric($boletoDueDays)) {
             throw new InvalidParamException("Boleto due days should be an integer!", $boletoDueDays);
         }
-        
+
         $this->boletoDueDays = (int) $boletoDueDays;
     }
 
@@ -748,7 +770,8 @@ final class Configuration extends AbstractEntity
             "createOrder" => $this->isCreateOrderEnabled(),
             "voucherConfig" => $this->getVoucherConfig(),
             "debitConfig" => $this->getDebitConfig(),
-            "pixConfig" => $this->getPixConfig()
+            "pixConfig" => $this->getPixConfig(),
+            "marketplaceConfig" => $this->getMarketplaceConfig()
         ];
     }
 
