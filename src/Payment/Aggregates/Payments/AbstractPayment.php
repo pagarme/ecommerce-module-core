@@ -68,20 +68,29 @@ abstract class AbstractPayment
 
     protected function getSplitData()
     {
+        $splitMainChargeProcessingFeeOptionConfig = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitMainOptionConfig('responsibilityForProcessingFees');
+        $splitMainLiableOptionConfig = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitMainOptionConfig('responsibilityForChargebacks');
+
         $splitMainRecipient = new \stdClass;
         $splitMainRecipient->amount = 10;
         $splitMainRecipient->recipient_id = "rp_9XYzdWJueuNge7m1";
         $splitMainRecipient->type = "percentage";
         $splitMainRecipient->options = new \stdClass;
         $splitMainRecipient->options->charge_processing_fee =
-            $this->getSplitMainOptionConfig(
-                'responsibilityForProcessingFees'
-            );
+            $splitMainChargeProcessingFeeOptionConfig;
         $splitMainRecipient->options->charge_remainder_fee = true;
-        $splitMainRecipient->options->liable =
-            $this->getSplitMainOptionConfig(
-                'responsibilityForChargebacks'
-            );
+        $splitMainRecipient->options->liable = $splitMainLiableOptionConfig;
+
+        $splitSecondaryChargeProcessingFeeOptionConfig1 = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
+        $splitSecondaryLiableOptionConfig1 = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
 
         $splitRecipient1 = new \stdClass;
         $splitRecipient1->amount = 70;
@@ -89,14 +98,17 @@ abstract class AbstractPayment
         $splitRecipient1->type = "percentage";
         $splitRecipient1->options = new \stdClass;
         $splitRecipient1->options->charge_processing_fee =
-            $this->getSplitSecondaryOptionConfig(
-                'responsibilityForProcessingFees'
-            );
+            $splitSecondaryChargeProcessingFeeOptionConfig1;
         $splitRecipient1->options->charge_remainder_fee = false;
         $splitRecipient1->options->liable =
-            $this->getSplitSecondaryOptionConfig(
-                'responsibilityForChargebacks'
-            );
+            $splitSecondaryLiableOptionConfig1;
+
+        $splitSecondaryChargeProcessingFeeOptionConfig2 = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
+        $splitSecondaryLiableOptionConfig2 = $this->moduleConfig
+            ->getMarketplaceConfig()
+            ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
 
         $splitRecipient2 = new \stdClass;
         $splitRecipient2->amount = 20;
@@ -104,46 +116,12 @@ abstract class AbstractPayment
         $splitRecipient2->type = "percentage";
         $splitRecipient2->options = new \stdClass;
         $splitRecipient2->options->charge_processing_fee =
-            $this->getSplitSecondaryOptionConfig(
-                'responsibilityForProcessingFees'
-            );
+            $splitSecondaryChargeProcessingFeeOptionConfig2;
         $splitRecipient2->options->charge_remainder_fee = false;
         $splitRecipient2->options->liable =
-            $this->getSplitSecondaryOptionConfig(
-                'responsibilityForChargebacks'
-            );
+            $splitSecondaryLiableOptionConfig2;
 
         return [$splitMainRecipient, $splitRecipient1, $splitRecipient2];
-    }
-
-    private function getSplitMainOptionConfig($option)
-    {
-        $responsible = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->$option();
-
-        if ($responsible == 'marketplace_sellers'
-            || $responsible == 'marketplace'
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function getSplitSecondaryOptionConfig($option)
-    {
-        $responsible = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->$option();
-
-        if ($responsible == 'marketplace_sellers'
-            || $responsible == 'sellers'
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     protected function getMetadata()

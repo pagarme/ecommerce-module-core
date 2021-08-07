@@ -6,6 +6,10 @@ use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 class MarketplaceConfig extends AbstractValueObject
 {
+    const MARKETPLACE_SELLERS = 'marketplace_sellers';
+    const MARKETPLACE = 'marketplace';
+    const SELLERS = 'sellers';
+
     /** @var bool */
     private $enabled;
 
@@ -72,10 +76,43 @@ class MarketplaceConfig extends AbstractValueObject
      */
     public function setResponsibilityForChargebacks(
         $responsibilityForChargebacks
-    )
-    {
+    ) {
         $this->responsibilityForChargebacks = $responsibilityForChargebacks;
         return $this;
+    }
+
+    /**
+     * @param $option
+     * @return bool
+     */
+    public function getSplitMainOptionConfig($option)
+    {
+        $responsible = $this->$option();
+
+        if ($responsible == self::MARKETPLACE_SELLERS
+            || $responsible == self::MARKETPLACE
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $option
+     * @return bool
+     */
+    public function getSplitSecondaryOptionConfig($option)
+    {
+        $responsible = $this->$option();
+
+        if ($responsible == self::MARKETPLACE_SELLERS
+            || $responsible == self::SELLERS
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
