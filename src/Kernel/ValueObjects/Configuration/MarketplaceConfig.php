@@ -87,7 +87,13 @@ class MarketplaceConfig extends AbstractValueObject
      */
     public function getSplitMainOptionConfig($option)
     {
-        $responsible = $this->$option();
+        $optionMethod = 'get' . ucfirst($option);
+
+        if (!method_exists($this, $optionMethod)) {
+            return;
+        }
+
+        $responsible = $this->$optionMethod();
 
         if ($responsible == self::MARKETPLACE_SELLERS
             || $responsible == self::MARKETPLACE
@@ -104,7 +110,13 @@ class MarketplaceConfig extends AbstractValueObject
      */
     public function getSplitSecondaryOptionConfig($option)
     {
-        $responsible = $this->$option();
+        $optionMethod = 'get' . ucfirst($option);
+
+        if (!method_exists($this, $optionMethod)) {
+            return;
+        }
+
+        $responsible = $this->$optionMethod();
 
         if ($responsible == self::MARKETPLACE_SELLERS
             || $responsible == self::SELLERS
