@@ -226,7 +226,8 @@ class ConfigurationFactory implements FactoryInterface
 
         if (!empty($data->marketplaceConfig)) {
             $config->setMarketplaceConfig(
-                (new MarketplaceConfigFactory())->createFromDbData($data->marketplaceConfig)
+                (new MarketplaceConfigFactory())
+                    ->createFromDbData($data->marketplaceConfig)
             );
         }
 
