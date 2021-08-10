@@ -143,8 +143,10 @@ class MarketplaceConfig extends AbstractValueObject
     {
         return [
             "enabled" => $this->enabled,
-            "responsibilityForProcessingFees" => $this->responsibilityForProcessingFees,
-            "responsibilityForChargebacks" => $this->responsibilityForChargebacks
+            "responsibilityForProcessingFees" =>
+                $this->responsibilityForProcessingFees,
+            "responsibilityForChargebacks" =>
+                $this->responsibilityForChargebacks
         ];
     }
 }

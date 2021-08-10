@@ -18,7 +18,7 @@ class MarketplaceConfigFactory implements FactoryCreateFromDbDataInterface
 
         if (isset($data->enabled)) {
             $marketplaceConfig->setEnabled(
-                (bool)$data->enabled
+                (bool) $data->enabled
             );
         }
 
