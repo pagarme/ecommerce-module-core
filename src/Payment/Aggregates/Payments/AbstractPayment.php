@@ -85,10 +85,10 @@ abstract class AbstractPayment
         $splitMainRecipient->options->charge_remainder_fee = true;
         $splitMainRecipient->options->liable = $splitMainLiableOptionConfig;
 
-        $splitSecondaryChargeProcessingFeeOptionConfig1 = $this->moduleConfig
+        $splitSecondaryChargeProcessingFeeOptionConfig = $this->moduleConfig
             ->getMarketplaceConfig()
             ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
-        $splitSecondaryLiableOptionConfig1 = $this->moduleConfig
+        $splitSecondaryLiableOptionConfig = $this->moduleConfig
             ->getMarketplaceConfig()
             ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
 
@@ -98,17 +98,10 @@ abstract class AbstractPayment
         $splitRecipient1->type = "percentage";
         $splitRecipient1->options = new \stdClass;
         $splitRecipient1->options->charge_processing_fee =
-            $splitSecondaryChargeProcessingFeeOptionConfig1;
+            $splitSecondaryChargeProcessingFeeOptionConfig;
         $splitRecipient1->options->charge_remainder_fee = false;
         $splitRecipient1->options->liable =
-            $splitSecondaryLiableOptionConfig1;
-
-        $splitSecondaryChargeProcessingFeeOptionConfig2 = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
-        $splitSecondaryLiableOptionConfig2 = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
+            $splitSecondaryLiableOptionConfig;
 
         $splitRecipient2 = new \stdClass;
         $splitRecipient2->amount = 20;
@@ -116,10 +109,10 @@ abstract class AbstractPayment
         $splitRecipient2->type = "percentage";
         $splitRecipient2->options = new \stdClass;
         $splitRecipient2->options->charge_processing_fee =
-            $splitSecondaryChargeProcessingFeeOptionConfig2;
+            $splitSecondaryChargeProcessingFeeOptionConfig;
         $splitRecipient2->options->charge_remainder_fee = false;
         $splitRecipient2->options->liable =
-            $splitSecondaryLiableOptionConfig2;
+            $splitSecondaryLiableOptionConfig;
 
         return [$splitMainRecipient, $splitRecipient1, $splitRecipient2];
     }
