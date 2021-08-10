@@ -46,7 +46,7 @@ class MarketplaceConfig extends AbstractValueObject
     /**
      * @return string
      */
-    public function responsibilityForProcessingFees()
+    public function getResponsibilityForProcessingFees()
     {
         return $this->responsibilityForProcessingFees;
     }
@@ -65,7 +65,7 @@ class MarketplaceConfig extends AbstractValueObject
     /**
      * @return string
      */
-    public function responsibilityForChargebacks()
+    public function getResponsibilityForChargebacks()
     {
         return $this->responsibilityForChargebacks;
     }
@@ -127,9 +127,9 @@ class MarketplaceConfig extends AbstractValueObject
         return
             $this->enabled === $object->isEnabled() &&
             $this->responsibilityForProcessingFees ===
-            $object->responsibilityForProcessingFees() &&
+            $object->getResponsibilityForProcessingFees() &&
             $this->responsibilityForChargebacks ===
-            $object->responsibilityForChargebacks();
+            $object->getResponsibilityForChargebacks();
     }
 
     /**
