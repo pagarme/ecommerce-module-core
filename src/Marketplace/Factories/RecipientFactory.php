@@ -29,8 +29,10 @@ class RecipientFactory implements FactoryInterface
         $this->setEmail($postData);
         $this->setDocumentType($postData);
         $this->setDocument($postData);
+        $this->setType($postData);
         $this->setHolderName($postData);
         $this->setHolderDocument($postData);
+        $this->setHolderType($postData);
         $this->setBank($postData);
         $this->setBranchNumber($postData);
         $this->setBranchCheckDigit($postData);
@@ -89,6 +91,14 @@ class RecipientFactory implements FactoryInterface
         }
     }
 
+    private function setType($postData)
+    {
+        if (!empty($postData['type'])) {
+            $this->recipient->setType($postData['type']);
+            return;
+        }
+    }
+
     private function setHolderName($postData)
     {
         if (!empty($postData['holder_name'])) {
@@ -101,6 +111,14 @@ class RecipientFactory implements FactoryInterface
     {
         if (!empty($postData['holder_document'])) {
             $this->recipient->setHolderDocument($postData['holder_document']);
+            return;
+        }
+    }
+
+    private function setHolderType($postData)
+    {
+        if (!empty($postData['type'])) {
+            $this->recipient->setHolderType($postData['type']);
             return;
         }
     }

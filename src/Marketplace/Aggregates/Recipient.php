@@ -25,13 +25,13 @@ class Recipient extends AbstractEntity implements RecipientInterface
     /** @var string */
     private $document = '';
     /** @var string */
-    private $type = 'individual';
+    private $type = '';
     /** @var string */
     private $holderName = '';
     /** @var string */
     private $holderDocument = '';
     /** @var string */
-    private $holderType = 'individual';
+    private $holderType = '';
     /** @var string */
     private $bank = '';
     /** @var string */
