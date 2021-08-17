@@ -68,7 +68,7 @@ class RecipientService
 
             return $result;
         } catch (\Exception $exception) {
-            return $exception->getMessage();
+            throw new \Exception($exception->getMessage());
         }
     }
 
