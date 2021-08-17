@@ -68,7 +68,7 @@ class RecipientService
 
             return $result;
         } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage());
+            throw new \Exception(__("Can't create recipient. Please review the information and try again."));
         }
     }
 
