@@ -117,8 +117,8 @@ class RecipientFactory implements FactoryInterface
 
     private function setHolderType($postData)
     {
-        if (!empty($postData['type'])) {
-            $this->recipient->setHolderType($postData['type']);
+        if (!empty($postData['holder_type'])) {
+            $this->recipient->setHolderType($postData['holder_type']);
             return;
         }
     }
