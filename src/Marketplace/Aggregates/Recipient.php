@@ -7,6 +7,7 @@ use MundiAPILib\Models\CreateRecipientRequest;
 use MundiAPILib\Models\CreateTransferRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\Services\LocalizationService;
 use Pagarme\Core\Marketplace\Interfaces\RecipientInterface;
 use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
 
@@ -55,6 +56,14 @@ class Recipient extends AbstractEntity implements RecipientInterface
     /** @var string */
     private $updatedAt;
 
+    /** @var LocalizationService */
+    protected $i18n;
+
+    public function __construct()
+    {
+        $this->i18n = new LocalizationService();
+    }
+
     /**
      * @return string
      */
@@ -89,12 +98,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setName($name)
     {
         if (empty($name)) {
-            throw new InvalidParamException(
-                "Name should not be empty!",
-                $name
+            $inputName = $this->i18n->getDashboard('name');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->name = $name;
+
         return $this;
     }
 
@@ -132,12 +146,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setDocumentType($documentType)
     {
         if (empty($documentType)) {
-            throw new InvalidParamException(
-                "Document type should not be empty!",
-                $documentType
+            $inputName = $this->i18n->getDashboard('documentType');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->documentType = $documentType;
+
         return $this;
     }
 
@@ -157,12 +176,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setDocument($document)
     {
         if (empty($document)) {
-            throw new InvalidParamException(
-                "Document should not be empty!",
-                $document
+            $inputName = $this->i18n->getDashboard('document');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->document = $document;
+
         return $this;
     }
 
@@ -182,12 +206,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setType($type)
     {
         if (empty($type)) {
-            throw new InvalidParamException(
-                "Recipient type should not be empty!",
-                $type
+            $inputName = $this->i18n->getDashboard('type');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->type = $type;
+
         return $this;
     }
 
@@ -207,12 +236,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setHolderName($holderName)
     {
         if (empty($holderName)) {
-            throw new InvalidParamException(
-                "Holder name should not be empty!",
-                $holderName
+            $inputName = $this->i18n->getDashboard('holderName');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->holderName = $holderName;
+
         return $this;
     }
 
@@ -232,12 +266,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setHolderType($holderType)
     {
         if (empty($holderType)) {
-            throw new InvalidParamException(
-                "Holder type should not be empty!",
-                $holderType
+            $inputName = $this->i18n->getDashboard('holderType');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->holderType = $holderType;
+
         return $this;
     }
 
@@ -257,12 +296,17 @@ class Recipient extends AbstractEntity implements RecipientInterface
     public function setHolderDocument($holderDocument)
     {
         if (empty($holderDocument)) {
-            throw new InvalidParamException(
-                "Holder document should not be empty!",
-                $holderDocument
+            $inputName = $this->i18n->getDashboard('holderDocument');
+            $message = $this->i18n->getDashboard(
+                "The %s should not be empty!",
+                $inputName
             );
+
+            throw new \Exception($message, 400);
         }
+
         $this->holderDocument = $holderDocument;
+
         return $this;
     }
 
