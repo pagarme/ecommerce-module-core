@@ -29,7 +29,7 @@ class RecipientRepository extends AbstractRepository
                 '{$object->getEmail()}',
                 '{$object->getDocumentType()}',
                 '{$object->getDocument()}',
-                'rp_P63xsjenA'
+                '{$object->getPagarmeId()->getValue()}'
             )
         ";
 
