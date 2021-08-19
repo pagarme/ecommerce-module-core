@@ -5,6 +5,7 @@ namespace Pagarme\Core\Marketplace\Aggregates;
 use MundiAPILib\Models\CreateBankAccountRequest;
 use MundiAPILib\Models\CreateRecipientRequest;
 use MundiAPILib\Models\CreateTransferRequest;
+use MundiAPILib\Models\CreateTransferSettingsRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Services\LocalizationService;
@@ -508,7 +509,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
         return $this;
     }
 
-    public function convertToSdkRequest($update = false)
+    public function convertToSdkRequest()
     {
         $recipientRequest = new CreateRecipientRequest();
 
@@ -537,13 +538,13 @@ class Recipient extends AbstractEntity implements RecipientInterface
         $recipientRequest->defaultBankAccount
             ->type = $this->getAccountType();
 
-        $recipientRequest->transferSettings = new \stdClass();
+        $recipientRequest->transferSettings = new CreateTransferSettingsRequest();
         $recipientRequest->transferSettings
-            ->transfer_enabled = $this->getTransferEnabled();
+            ->transferEnabled = $this->getTransferEnabled();
         $recipientRequest->transferSettings
-            ->transfer_interval = $this->getTransferInterval();
+            ->transferInterval = $this->getTransferInterval();
         $recipientRequest->transferSettings
-            ->transfer_day = $this->getTransferDay();
+            ->transferDay = $this->getTransferDay();
 
         return $recipientRequest;
     }
