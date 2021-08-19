@@ -5,6 +5,7 @@ namespace Pagarme\Core\Marketplace\Services;
 use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Pagarme\Core\Kernel\Services\LogService;
+use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Aggregates\Recipient;
 use Pagarme\Core\Marketplace\Factories\RecipientFactory;
 use Pagarme\Core\Marketplace\Repositories\RecipientRepository;
@@ -40,6 +41,7 @@ class RecipientService
         $recipient = $recipientFactory->createFromPostData($formData);
 
         $result = $this->createRecipientAtPagarme($recipient);
+        $recipient->setPagarmeId(new RecipientId($result->id));
 
         return $this->saveRecipient($recipient);
     }
@@ -57,8 +59,7 @@ class RecipientService
             );
 
             $result = $recipientController->createRecipient(
-                $createRecipientRequest,
-                $this->config->getSecretKey()->getValue()
+                $createRecipientRequest
             );
 
             $logService->info(
