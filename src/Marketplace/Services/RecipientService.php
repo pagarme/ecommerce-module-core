@@ -14,30 +14,35 @@ class RecipientService
 {
     /** @var LogService  */
     protected $logService;
+    /** @var RecipientFactory */
+    protected $recipientFactory;
+    /** @var RecipientRepository */
+    protected $recipientRepository;
 
     protected $config;
 
     public function __construct()
     {
         AbstractModuleCoreSetup::bootstrap();
-
+        $secretKey = null;
         $this->config = AbstractModuleCoreSetup::getModuleConfiguration();
 
-        $secretKey = null;
         if ($this->config->getSecretKey() != null) {
             $secretKey = $this->config->getSecretKey()->getValue();
         }
 
         $password = '';
-
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
+        $this->logService = new LogService('ProductSubscriptionService', true);
+        $this->recipientRepository = new RecipientRepository();
+        $this->recipientFactory = new RecipientFactory();
     }
 
     public function saveFormRecipient($formData)
     {
-        $recipientFactory = $this->getRecipientFactory();
+        $recipientFactory = $this->recipientFactory;
         $recipient = $recipientFactory->createFromPostData($formData);
 
         $result = $this->createRecipientAtPagarme($recipient);
@@ -52,7 +57,7 @@ class RecipientService
         $recipientController = $this->mundipaggApi->getRecipients();
 
         try {
-            $logService = $this->getLogService();
+            $logService = $this->logService;
             $logService->info(
                 'Create recipient request: ' .
                 json_encode($createRecipientRequest, JSON_PRETTY_PRINT)
@@ -75,32 +80,10 @@ class RecipientService
 
     public function saveRecipient(Recipient $recipient)
     {
-        $this->getLogService()->info("Creating new recipient at platform");
-
-        $recipientRepository = $this->getRecipientRepository();
-
-        $recipientRepository->save($recipient);
-        $this->getLogService()->info("Recipient created: " . $recipient->getId());
+        $this->logService->info("Creating new recipient at platform");
+        $this->recipientRepository->save($recipient);
+        $this->logService->info("Recipient created: " . $recipient->getId());
 
         return $recipient;
     }
-
-    public function getRecipientFactory()
-    {
-        return new RecipientFactory();
-    }
-
-    public function getRecipientRepository()
-    {
-        return new RecipientRepository();
-    }
-
-    public function getLogService()
-    {
-        return new LogService(
-            'ProductSubscriptionService',
-            true
-        );
-    }
-
 }
