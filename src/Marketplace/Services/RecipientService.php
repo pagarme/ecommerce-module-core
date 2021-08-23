@@ -60,7 +60,7 @@ class RecipientService
             $logService = $this->logService;
             $logService->info(
                 'Create recipient request: ' .
-                json_encode($createRecipientRequest, JSON_PRETTY_PRINT)
+                    json_encode($createRecipientRequest, JSON_PRETTY_PRINT)
             );
 
             $result = $recipientController->createRecipient(
@@ -69,11 +69,12 @@ class RecipientService
 
             $logService->info(
                 'Create recipient response: ' .
-                json_encode($result, JSON_PRETTY_PRINT)
+                    json_encode($result, JSON_PRETTY_PRINT)
             );
 
             return $result;
         } catch (\Exception $exception) {
+            $logService->exception($exception);
             throw new \Exception(__("Can't create recipient. Please review the information and try again."));
         }
     }
