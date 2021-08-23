@@ -96,6 +96,12 @@ class PTBR extends AbstractI18NTable
             "The card brand '%s' or the amount %.2f doesn't allow %d installment(s)! Please review the information and try again." => "A bandeira do cartão '%s' ou o valor %.2f não permite %d parcela(s)! Por favor revise os dados e tente novamente.",
             "Passed value:" => "Valor informado:",
             "ChargeId: %s - Split rules:" => "ChargeId: %s - Regras de Split:",
+            "name" => "Nome",
+            "documentType" => "Tipo do Documento",
+            "type" => "Tipo",
+            "holderName" => "Nome do Titular",
+            "holderType" => "Tipo do Titular",
+            "holderDocument" => "Documento do Titular",
         ];
     }
 }
