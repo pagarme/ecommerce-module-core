@@ -17,14 +17,14 @@ class RecipientRepository extends AbstractRepository
 
         $query = "
             INSERT INTO $table (
-                `internal_id`,
+                `external_id`,
                 `name`,
                 `email`,
                 `document_type`,
                 `document`,
                 `pagarme_id`
             ) VALUES (
-                '{$object->getInternalId()}',
+                '{$object->getExternalId()}',
                 '{$object->getName()}',
                 '{$object->getEmail()}',
                 '{$object->getDocumentType()}',
