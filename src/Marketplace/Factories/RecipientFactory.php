@@ -24,7 +24,7 @@ class RecipientFactory implements FactoryInterface
             return;
         }
 
-        $this->setInternalId($postData);
+        $this->setExternalId($postData);
         $this->setName($postData);
         $this->setEmail($postData);
         $this->setDocumentType($postData);
@@ -51,10 +51,10 @@ class RecipientFactory implements FactoryInterface
         // TODO: Implement createFromDbData() method.
     }
 
-    private function setInternalId($postData)
+    private function setExternalId($postData)
     {
-        if (array_key_exists('internal_id', $postData)) {
-            $this->recipient->setInternalId($postData['internal_id']);
+        if (array_key_exists('external_id', $postData)) {
+            $this->recipient->setExternalId($postData['external_id']);
             return;
         }
     }

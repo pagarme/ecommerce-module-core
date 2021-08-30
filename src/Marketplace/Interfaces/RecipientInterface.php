@@ -18,13 +18,13 @@ interface RecipientInterface
     /**
      * @return string
      */
-    public function getInternalId();
+    public function getExternalId();
 
     /**
-     * @param string $internalId
+     * @param string $externalId
      * @return RecipientInterface
      */
-    public function setInternalId($internalId);
+    public function setExternalId($externalId);
 
     /**
      * @return string
