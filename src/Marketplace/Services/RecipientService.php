@@ -87,4 +87,9 @@ class RecipientService
 
         return $recipient;
     }
+
+    public function findRecipient($sellerId)
+    {
+        return $this->recipientRepository->findBySellerId($sellerId);
+    }
 }

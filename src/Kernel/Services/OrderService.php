@@ -406,6 +406,11 @@ final class OrderService
             $order->setShipping($shipping);
         }
 
+        $splitData = $platformOrder->handleSplitOrder();
+        if ($splitData !== null) {
+            $order->setSplitData($splitData);
+        }
+
         return $order;
     }
 

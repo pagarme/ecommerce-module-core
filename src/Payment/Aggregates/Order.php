@@ -5,6 +5,7 @@ namespace Pagarme\Core\Payment\Aggregates;
 use PagarmeCoreApiLib\Models\CreateOrderRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Marketplace\Aggregates\Split;
 use Pagarme\Core\Payment\Aggregates\Payments\AbstractPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
@@ -30,6 +31,8 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     private $payments;
     /** @var boolean */
     private $closed;
+
+    private $splitData;
 
     /** @var boolean */
     private $antifraudEnabled;
@@ -273,6 +276,22 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     public function setAntifraudEnabled($antifraudEnabled)
     {
         $this->antifraudEnabled = $antifraudEnabled;
+    }
+
+    /**
+     * @return Split|null
+     */
+    public function getSplitData()
+    {
+        return $this->splitData;
+    }
+
+    /**
+     * @param Split|null $splitData
+     */
+    public function setSplitData($splitData)
+    {
+        $this->splitData = $splitData;
     }
 
     /**
