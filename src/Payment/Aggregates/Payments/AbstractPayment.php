@@ -11,7 +11,6 @@ use Pagarme\Core\Payment\Interfaces\HaveOrderInterface;
 use Pagarme\Core\Payment\Traits\WithAmountTrait;
 use Pagarme\Core\Payment\Traits\WithCustomerTrait;
 use Pagarme\Core\Payment\Traits\WithOrderTrait;
-use Pagarme\Pagarme\Concrete\Magento2CoreSetup;
 
 abstract class AbstractPayment
     extends AbstractEntity
