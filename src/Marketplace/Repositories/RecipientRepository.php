@@ -60,4 +60,22 @@ class RecipientRepository extends AbstractRepository
     {
         // TODO: Implement listEntities() method.
     }
+
+    public function findBySellerId($sellerId)
+    {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "SELECT * FROM `$table` as t ";
+        $query .= "WHERE t.external_id = '$sellerId';";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        return $result->row;
+    }
 }
