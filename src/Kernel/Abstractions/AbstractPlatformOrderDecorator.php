@@ -201,5 +201,4 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
     abstract protected function addMPHistoryComment($message, $notifyCustomer);
     abstract protected function setStatusAfterLog(OrderStatus $status);
     abstract protected function setStateAfterLog(OrderState $state);
-    //abstract protected function handleSplitOrder();
 }
