@@ -8,7 +8,7 @@ use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Pagarme\Core\Marketplace\Interfaces\ConvertibleToSDKRequestsInterface;
 
-class Split extends AbstractEntity implements ConvertibleToSDKRequestsInterface
+class Split extends AbstractEntity
 {
     private $sellersData = [];
     private $marketplaceData = [];

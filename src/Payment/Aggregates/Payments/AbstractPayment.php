@@ -113,10 +113,16 @@ abstract class AbstractPayment
         return implode('_', $ret);
     }
 
-    private function extractRequestsFromArray(
-        array $splitArray
-    )
+    /**
+     * @param array|null $splitArray
+     * @return array|null
+     */
+    private function extractRequestsFromArray($splitArray)
     {
+        if (is_null($splitArray)) {
+            return null;
+        }
+
         $splitRecipientRequests = $splitArray[1];
 
         foreach ($splitRecipientRequests as $request) {
