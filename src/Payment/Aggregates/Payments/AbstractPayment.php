@@ -118,7 +118,7 @@ abstract class AbstractPayment
      */
     private function extractRequestsFromArray($splitArray)
     {
-        if (is_null($splitArray)) {
+        if (empty($splitArray)) {
             return null;
         }
 

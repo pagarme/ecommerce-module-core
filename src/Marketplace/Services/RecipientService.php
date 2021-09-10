@@ -105,5 +105,7 @@ class RecipientService
                 __("Payment could not be made. Please contact the store administrator.")
             );
         }
+
+        return $recipient;
     }
 }
