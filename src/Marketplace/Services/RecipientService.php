@@ -2,6 +2,7 @@
 
 namespace Pagarme\Core\Marketplace\Services;
 
+use Magento\Framework\Exception\CouldNotSaveException;
 use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Pagarme\Core\Kernel\Services\LogService;
@@ -35,7 +36,7 @@ class RecipientService
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
-        $this->logService = new LogService('ProductSubscriptionService', true);
+        $this->logService = new LogService('RecipientService', true);
         $this->recipientRepository = new RecipientRepository();
         $this->recipientFactory = new RecipientFactory();
     }
@@ -88,8 +89,21 @@ class RecipientService
         return $recipient;
     }
 
+    /**
+     * @param $sellerId
+     * @throws CouldNotSaveException
+     */
     public function findRecipient($sellerId)
     {
-        return $this->recipientRepository->findBySellerId($sellerId);
+        $recipient = $this->recipientRepository->findBySellerId($sellerId);
+
+        if(empty($recipient)) {
+            $this->logService->info(
+                __("The seller does not have a registered recipient.")
+            );
+            throw new CouldNotSaveException(
+                __("Payment could not be made. Please contact the store administrator.")
+            );
+        }
     }
 }
