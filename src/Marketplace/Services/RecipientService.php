@@ -2,9 +2,9 @@
 
 namespace Pagarme\Core\Marketplace\Services;
 
-use Magento\Framework\Exception\CouldNotSaveException;
 use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Services\LocalizationService;
 use Pagarme\Core\Kernel\Services\LogService;
 use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Aggregates\Recipient;
@@ -21,6 +21,7 @@ class RecipientService
     protected $recipientRepository;
 
     protected $config;
+    protected $i18n;
 
     public function __construct()
     {
@@ -39,6 +40,7 @@ class RecipientService
         $this->logService = new LogService('RecipientService', true);
         $this->recipientRepository = new RecipientRepository();
         $this->recipientFactory = new RecipientFactory();
+        $this->i18n = new LocalizationService();
     }
 
     public function saveFormRecipient($formData)
@@ -101,9 +103,13 @@ class RecipientService
             $this->logService->info(
                 __("The seller does not have a registered recipient.")
             );
-            throw new CouldNotSaveException(
-                __("Payment could not be made. Please contact the store administrator.")
+
+            $message = $this->i18n->getDashboard(
+                "Payment could not be made. " .
+                "Please contact the store administrator."
             );
+
+            throw new \Exception($message);
         }
 
         return $recipient;
