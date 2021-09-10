@@ -15,38 +15,51 @@ class Split extends AbstractEntity
     private $commission = 0;
     private $recipientId = '';
 
-    protected $moduleConfig;
+    protected $marketplaceConfig;
 
     public function __construct()
     {
-        $this->moduleConfig = MPSetup::getModuleConfiguration();
+        $moduleConfig = MPSetup::getModuleConfiguration();
+        $this->marketplaceConfig = $moduleConfig->getMarketplaceConfig();
     }
 
     public function getMainChargeProcessingFeeOptionConfig()
     {
-        return $this->moduleConfig
-            ->getMarketplaceConfig()
+        if (!$this->marketplaceConfig) {
+            return null;
+        }
+
+        return $this->marketplaceConfig
             ->getSplitMainOptionConfig('responsibilityForProcessingFees');
     }
 
     public function getMainLiableOptionConfig()
     {
-        return $this->moduleConfig
-            ->getMarketplaceConfig()
+        if (!$this->marketplaceConfig) {
+            return null;
+        }
+
+        return $this->marketplaceConfig
             ->getSplitMainOptionConfig('responsibilityForChargebacks');
     }
 
     public function getSecondaryChargeProcessingFeeOptionConfig()
     {
-        return $this->moduleConfig
-            ->getMarketplaceConfig()
+        if (!$this->marketplaceConfig) {
+            return null;
+        }
+
+        return $this->marketplaceConfig
             ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
     }
 
     public function getSecondaryLiableOptionConfig()
     {
-        return $this->moduleConfig
-            ->getMarketplaceConfig()
+        if (!$this->marketplaceConfig) {
+            return null;
+        }
+
+        return $this->marketplaceConfig
             ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
     }
 
