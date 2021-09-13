@@ -6,6 +6,8 @@ use MundiAPILib\Models\CreateSplitOptionsRequest;
 use MundiAPILib\Models\CreateSplitRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Interfaces\ConvertibleToSDKRequestsInterface;
 
 class Split extends AbstractEntity
@@ -20,7 +22,9 @@ class Split extends AbstractEntity
     public function __construct()
     {
         $moduleConfig = MPSetup::getModuleConfiguration();
-        $this->marketplaceConfig = $moduleConfig->getMarketplaceConfig();
+        if ($moduleConfig != null) {
+            $this->marketplaceConfig = $moduleConfig->getMarketplaceConfig();
+        }
     }
 
     public function getMainChargeProcessingFeeOptionConfig()
@@ -103,6 +107,10 @@ class Split extends AbstractEntity
      */
     public function setCommission($commission)
     {
+        if ($commission < 0) {
+            throw new InvalidParamException("Commission should be greater or equal to 0!", $commission);
+        }
+
         $this->commission = $commission;
     }
 
@@ -115,7 +123,7 @@ class Split extends AbstractEntity
     }
 
     /**
-     * @param string $recipientId
+     * @param RecipientId $recipientId
      */
     public function setRecipientId($recipientId)
     {
@@ -123,7 +131,7 @@ class Split extends AbstractEntity
     }
 
     /**
-     * @return string
+     * @return RecipientId
      */
     public function getRecipientId()
     {
