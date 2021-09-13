@@ -82,6 +82,46 @@ class MarketplaceConfig extends AbstractValueObject
     }
 
     /**
+     * @return string
+     */
+    public function getResponsibilityForReceivingSplitRemainder()
+    {
+        return $this->responsibilityForReceivingSplitRemainder;
+    }
+
+    /**
+     * @param $responsibilityForReceivingSplitRemainder
+     * @return MarketplaceConfig
+     */
+    public function setResponsibilityForReceivingSplitRemainder(
+        $responsibilityForReceivingSplitRemainder
+    ) {
+        $this->responsibilityForReceivingSplitRemainder
+            = $responsibilityForReceivingSplitRemainder;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponsibilityForReceivingExtrasAndDiscounts()
+    {
+        return $this->responsibilityForReceivingExtrasAndDiscounts;
+    }
+
+    /**
+     * @param $responsibilityForReceivingExtrasAndDiscounts
+     * @return MarketplaceConfig
+     */
+    public function setResponsibilityForReceivingExtrasAndDiscounts(
+        $responsibilityForReceivingExtrasAndDiscounts
+    ) {
+        $this->responsibilityForReceivingExtrasAndDiscounts
+            = $responsibilityForReceivingExtrasAndDiscounts;
+        return $this;
+    }
+
+    /**
      * @param $option
      * @return bool
      */
@@ -141,7 +181,11 @@ class MarketplaceConfig extends AbstractValueObject
             $this->responsibilityForProcessingFees ===
             $object->getResponsibilityForProcessingFees() &&
             $this->responsibilityForChargebacks ===
-            $object->getResponsibilityForChargebacks();
+            $object->getResponsibilityForChargebacks() &&
+            $this->responsibilityForReceivingSplitRemainder ===
+            $object->responsibilityForReceivingSplitRemainder &&
+            $this->responsibilityForReceivingExtrasAndDiscounts ===
+            $object->responsibilityForReceivingExtrasAndDiscounts;
     }
 
     /**
@@ -158,7 +202,11 @@ class MarketplaceConfig extends AbstractValueObject
             "responsibilityForProcessingFees" =>
                 $this->responsibilityForProcessingFees,
             "responsibilityForChargebacks" =>
-                $this->responsibilityForChargebacks
+                $this->responsibilityForChargebacks,
+            "responsibilityForReceivingSplitRemainder" =>
+                $this->responsibilityForReceivingSplitRemainder,
+            "responsibilityForReceivingExtrasAndDiscounts" =>
+                $this->responsibilityForReceivingExtrasAndDiscounts
         ];
     }
 }

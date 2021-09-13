@@ -34,6 +34,18 @@ class MarketplaceConfigFactory implements FactoryCreateFromDbDataInterface
             );
         }
 
+        if (isset($data->responsibilityForReceivingSplitRemainder)) {
+            $marketplaceConfig->setResponsibilityForReceivingSplitRemainder(
+                $data->responsibilityForReceivingSplitRemainder
+            );
+        }
+
+        if (isset($data->responsibilityForReceivingExtrasAndDiscounts)) {
+            $marketplaceConfig->setResponsibilityForReceivingExtrasAndDiscounts(
+                $data->responsibilityForReceivingExtrasAndDiscounts
+            );
+        }
+
         return $marketplaceConfig;
     }
 }

@@ -68,6 +68,9 @@ class Split extends AbstractEntity
         return $this->sellersData;
     }
 
+    /**
+     * @param array $sellersData
+     */
     public function setSellersData($sellersData)
     {
         $this->sellersData = $sellersData;
@@ -78,32 +81,50 @@ class Split extends AbstractEntity
         return $this->marketplaceData;
     }
 
+    /**
+     * @param array $marketplaceData
+     */
     public function setMarketplaceData($marketplaceData)
     {
        $this->marketplaceData = $marketplaceData;
     }
 
+    /**
+     * @return int
+     */
     public function getMarketplaceComission()
     {
         $marketplaceData = $this->marketplaceData;
-        return $marketplaceData['marketplaceCommission'];
+        return $marketplaceData['totalCommission'];
     }
 
+    /**
+     * @param int $commission
+     */
     public function setCommission($commission)
     {
         $this->commission = $commission;
     }
 
+    /**
+     * @return int
+     */
     public function getCommission()
     {
         return $this->commission;
     }
 
+    /**
+     * @param string $recipientId
+     */
     public function setRecipientId($recipientId)
     {
         $this->recipientId = $recipientId;
     }
 
+    /**
+     * @return string
+     */
     public function getRecipientId()
     {
         return $this->recipientId;
