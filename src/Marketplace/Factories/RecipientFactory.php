@@ -24,7 +24,7 @@ class RecipientFactory implements FactoryInterface
             return;
         }
 
-        $this->setInternalId($postData);
+        $this->setExternalId($postData);
         $this->setName($postData);
         $this->setEmail($postData);
         $this->setDocumentType($postData);
@@ -51,17 +51,17 @@ class RecipientFactory implements FactoryInterface
         // TODO: Implement createFromDbData() method.
     }
 
-    private function setInternalId($postData)
+    private function setExternalId($postData)
     {
-        if (!empty($postData['internal_id'])) {
-            $this->recipient->setInternalId($postData['internal_id']);
+        if (array_key_exists('external_id', $postData)) {
+            $this->recipient->setExternalId($postData['external_id']);
             return;
         }
     }
 
     private function setName($postData)
     {
-        if (!empty($postData['name'])) {
+        if (array_key_exists('name', $postData)) {
             $this->recipient->setName($postData['name']);
             return;
         }
@@ -69,7 +69,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setEmail($postData)
     {
-        if (!empty($postData['email'])) {
+        if (array_key_exists('email', $postData)) {
             $this->recipient->setEmail($postData['email']);
             return;
         }
@@ -77,7 +77,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setDocumentType($postData)
     {
-        if (!empty($postData['document_type'])) {
+        if (array_key_exists('document_type', $postData)) {
             $this->recipient->setDocumentType($postData['document_type']);
             return;
         }
@@ -85,7 +85,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setDocument($postData)
     {
-        if (!empty($postData['document'])) {
+        if (array_key_exists('document', $postData)) {
             $this->recipient->setDocument($postData['document']);
             return;
         }
@@ -93,7 +93,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setType($postData)
     {
-        if (!empty($postData['type'])) {
+        if (array_key_exists('type', $postData)) {
             $this->recipient->setType($postData['type']);
             return;
         }
@@ -101,7 +101,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setHolderName($postData)
     {
-        if (!empty($postData['holder_name'])) {
+        if (array_key_exists('holder_name', $postData)) {
             $this->recipient->setHolderName($postData['holder_name']);
             return;
         }
@@ -109,7 +109,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setHolderDocument($postData)
     {
-        if (!empty($postData['holder_document'])) {
+        if (array_key_exists('holder_document', $postData)) {
             $this->recipient->setHolderDocument($postData['holder_document']);
             return;
         }
@@ -117,7 +117,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setHolderType($postData)
     {
-        if (!empty($postData['holder_type'])) {
+        if (array_key_exists('holder_type', $postData)) {
             $this->recipient->setHolderType($postData['holder_type']);
             return;
         }
@@ -125,7 +125,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setBank($postData)
     {
-        if (!empty($postData['bank'])) {
+        if (array_key_exists('bank', $postData)) {
             $this->recipient->setBank($postData['bank']);
             return;
         }
@@ -133,7 +133,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setBranchNumber($postData)
     {
-        if (!empty($postData['branch_number'])) {
+        if (array_key_exists('branch_number', $postData)) {
             $this->recipient->setBranchNumber($postData['branch_number']);
             return;
         }
@@ -141,7 +141,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setBranchCheckDigit($postData)
     {
-        if (!empty($postData['branch_check_digit'])) {
+        if (array_key_exists('branch_check_digit', $postData)) {
             $this->recipient->setBranchCheckDigit($postData['branch_check_digit']);
             return;
         }
@@ -149,7 +149,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setAccountNumber($postData)
     {
-        if (!empty($postData['account_number'])) {
+        if (array_key_exists('account_number', $postData)) {
             $this->recipient->setAccountNumber($postData['account_number']);
             return;
         }
@@ -157,7 +157,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setAccountCheckDigit($postData)
     {
-        if (!empty($postData['account_check_digit'])) {
+        if (array_key_exists('account_check_digit', $postData)) {
             $this->recipient->setAccountCheckDigit($postData['account_check_digit']);
             return;
         }
@@ -165,7 +165,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setAccountType($postData)
     {
-        if (!empty($postData['account_type'])) {
+        if (array_key_exists('account_type', $postData)) {
             $this->recipient->setAccountType($postData['account_type']);
             return;
         }
@@ -173,7 +173,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setTransferEnabled($postData)
     {
-        if (!empty($postData['transfer_enabled'])) {
+        if (array_key_exists('transfer_enabled', $postData)) {
             $this->recipient->setTransferEnabled($postData['transfer_enabled']);
             return;
         }
@@ -181,7 +181,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setTransferInterval($postData)
     {
-        if (!empty($postData['transfer_interval'])) {
+        if (array_key_exists('transfer_interval', $postData)) {
             $this->recipient->setTransferInterval($postData['transfer_interval']);
             return;
         }
@@ -189,7 +189,7 @@ class RecipientFactory implements FactoryInterface
 
     private function setTransferDay($postData)
     {
-        if (!empty($postData['transfer_day'])) {
+        if (array_key_exists('transfer_day', $postData)) {
             $this->recipient->setTransferDay($postData['transfer_day']);
             return;
         }

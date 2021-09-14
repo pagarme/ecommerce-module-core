@@ -17,7 +17,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
     const DATE_FORMAT = 'Y-m-d H:i:s';
 
     /** @var string */
-    private $internalId = '';
+    private $externalId = '';
     /** @var string */
     private $name = '';
     /** @var string */
@@ -68,18 +68,18 @@ class Recipient extends AbstractEntity implements RecipientInterface
     /**
      * @return string
      */
-    public function getInternalId()
+    public function getExternalId()
     {
-        return $this->internalId;
+        return $this->externalId;
     }
 
     /**
-     * @param string $internalId
+     * @param string $externalId
      * @return Recipient
      */
-    public function setInternalId($internalId)
+    public function setExternalId($externalId)
     {
-        $this->internalId = $internalId;
+        $this->externalId = $externalId;
         return $this;
     }
 
@@ -560,7 +560,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
     {
         $obj = new \stdClass();
 
-        $obj->internalId = $this->getInternalId();
+        $obj->externalId = $this->getExternalId();
         $obj->name = $this->getName();
         $obj->email = $this->getEmail();
         $obj->document = $this->getDocument();
@@ -580,5 +580,4 @@ class Recipient extends AbstractEntity implements RecipientInterface
 
         return $obj;
     }
-
 }

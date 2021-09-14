@@ -4,6 +4,7 @@ namespace Pagarme\Core\Marketplace\Services;
 
 use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Services\LocalizationService;
 use Pagarme\Core\Kernel\Services\LogService;
 use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Aggregates\Recipient;
@@ -20,6 +21,7 @@ class RecipientService
     protected $recipientRepository;
 
     protected $config;
+    protected $i18n;
 
     public function __construct()
     {
@@ -35,9 +37,10 @@ class RecipientService
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
-        $this->logService = new LogService('ProductSubscriptionService', true);
+        $this->logService = new LogService('RecipientService', true);
         $this->recipientRepository = new RecipientRepository();
         $this->recipientFactory = new RecipientFactory();
+        $this->i18n = new LocalizationService();
     }
 
     public function saveFormRecipient($formData)
@@ -60,7 +63,7 @@ class RecipientService
             $logService = $this->logService;
             $logService->info(
                 'Create recipient request: ' .
-                json_encode($createRecipientRequest, JSON_PRETTY_PRINT)
+                    json_encode($createRecipientRequest, JSON_PRETTY_PRINT)
             );
 
             $result = $recipientController->createRecipient(
@@ -69,11 +72,12 @@ class RecipientService
 
             $logService->info(
                 'Create recipient response: ' .
-                json_encode($result, JSON_PRETTY_PRINT)
+                    json_encode($result, JSON_PRETTY_PRINT)
             );
 
             return $result;
         } catch (\Exception $exception) {
+            $logService->exception($exception);
             throw new \Exception(__("Can't create recipient. Please review the information and try again."));
         }
     }
@@ -83,6 +87,30 @@ class RecipientService
         $this->logService->info("Creating new recipient at platform");
         $this->recipientRepository->save($recipient);
         $this->logService->info("Recipient created: " . $recipient->getId());
+
+        return $recipient;
+    }
+
+    /**
+     * @param $sellerId
+     * @throws CouldNotSaveException
+     */
+    public function findRecipient($sellerId)
+    {
+        $recipient = $this->recipientRepository->findBySellerId($sellerId);
+
+        if(empty($recipient)) {
+            $this->logService->info(
+                __("The seller does not have a registered recipient.")
+            );
+
+            $message = $this->i18n->getDashboard(
+                "Payment could not be made. " .
+                "Please contact the store administrator."
+            );
+
+            throw new \Exception($message);
+        }
 
         return $recipient;
     }

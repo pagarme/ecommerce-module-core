@@ -17,14 +17,14 @@ class RecipientRepository extends AbstractRepository
 
         $query = "
             INSERT INTO $table (
-                `internal_id`,
+                `external_id`,
                 `name`,
                 `email`,
                 `document_type`,
                 `document`,
                 `pagarme_id`
             ) VALUES (
-                '{$object->getInternalId()}',
+                '{$object->getExternalId()}',
                 '{$object->getName()}',
                 '{$object->getEmail()}',
                 '{$object->getDocumentType()}',
@@ -59,5 +59,23 @@ class RecipientRepository extends AbstractRepository
     public function listEntities($limit, $listDisabled)
     {
         // TODO: Implement listEntities() method.
+    }
+
+    public function findBySellerId($sellerId)
+    {
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "SELECT * FROM `$table` as t ";
+        $query .= "WHERE t.external_id = '$sellerId';";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        return $result->row;
     }
 }

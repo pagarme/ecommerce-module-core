@@ -5,6 +5,7 @@ namespace Pagarme\Core\Payment\Aggregates\Payments;
 use MundiAPILib\Models\CreatePaymentRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Marketplace\Aggregates\Split;
 use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use Pagarme\Core\Payment\Interfaces\HaveOrderInterface;
 use Pagarme\Core\Payment\Traits\WithAmountTrait;
@@ -58,6 +59,9 @@ abstract class AbstractPayment
 
         if ($this->moduleConfig->getMarketplaceConfig()->isEnabled()) {
             $newPayment->split = static::getSplitData();
+            $newPayment->split = $this->extractRequestsFromArray(
+                $newPayment->split
+            );
         }
 
         $newPayment->metadata = static::getMetadata();
@@ -68,53 +72,29 @@ abstract class AbstractPayment
 
     protected function getSplitData()
     {
-        $splitMainChargeProcessingFeeOptionConfig = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitMainOptionConfig('responsibilityForProcessingFees');
-        $splitMainLiableOptionConfig = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitMainOptionConfig('responsibilityForChargebacks');
+        $splitOrderData = $this->order->getSplitData();
 
-        $splitMainRecipient = new \stdClass;
-        $splitMainRecipient->amount = 10;
-        $splitMainRecipient->recipient_id = "rp_9XYzdWJueuNge7m1";
-        $splitMainRecipient->type = "percentage";
-        $splitMainRecipient->options = new \stdClass;
-        $splitMainRecipient->options->charge_processing_fee =
-            $splitMainChargeProcessingFeeOptionConfig;
-        $splitMainRecipient->options->charge_remainder_fee = true;
-        $splitMainRecipient->options->liable = $splitMainLiableOptionConfig;
+        if(!$splitOrderData) {
+            return null;
+        }
 
-        $splitSecondaryChargeProcessingFeeOptionConfig = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitSecondaryOptionConfig('responsibilityForProcessingFees');
-        $splitSecondaryLiableOptionConfig = $this->moduleConfig
-            ->getMarketplaceConfig()
-            ->getSplitSecondaryOptionConfig('responsibilityForChargebacks');
+        $splitMainRecipient = new Split();
+        $splitMainRecipient->setCommission(
+            $splitOrderData->getMarketplaceComission()
+        );
+        $splitMainRecipient->setRecipientId("rp_9XYzdWJueuNge7m1");
+        $splitMainRecipientRequest = $splitMainRecipient
+            ->convertMainToSDKRequest();
 
-        $splitRecipient1 = new \stdClass;
-        $splitRecipient1->amount = 70;
-        $splitRecipient1->recipient_id = "rp_eoKMZveFQFKNRp4D";
-        $splitRecipient1->type = "percentage";
-        $splitRecipient1->options = new \stdClass;
-        $splitRecipient1->options->charge_processing_fee =
-            $splitSecondaryChargeProcessingFeeOptionConfig;
-        $splitRecipient1->options->charge_remainder_fee = false;
-        $splitRecipient1->options->liable =
-            $splitSecondaryLiableOptionConfig;
+        foreach ($splitOrderData->getSellersData() as $seller) {
+            $splitRecipient = new Split();
+            $splitRecipient->setCommission($seller['sellerCommission']);
+            $splitRecipient->setRecipientId($seller['pagarmeId']);
+            $splitRecipientRequests[] = $splitRecipient
+                ->convertSecondaryToSDKRequest();
+        }
 
-        $splitRecipient2 = new \stdClass;
-        $splitRecipient2->amount = 20;
-        $splitRecipient2->recipient_id = "rp_rNqy0J3i1i7GLVOM";
-        $splitRecipient2->type = "percentage";
-        $splitRecipient2->options = new \stdClass;
-        $splitRecipient2->options->charge_processing_fee =
-            $splitSecondaryChargeProcessingFeeOptionConfig;
-        $splitRecipient2->options->charge_remainder_fee = false;
-        $splitRecipient2->options->liable =
-            $splitSecondaryLiableOptionConfig;
-
-        return [$splitMainRecipient, $splitRecipient1, $splitRecipient2];
+        return [$splitMainRecipientRequest, $splitRecipientRequests];
     }
 
     protected function getMetadata()
@@ -130,5 +110,28 @@ abstract class AbstractPayment
             $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
         }
         return implode('_', $ret);
+    }
+
+    /**
+     * @param array|null $splitArray
+     * @return array|null
+     */
+    private function extractRequestsFromArray($splitArray)
+    {
+        if (empty($splitArray)) {
+            return null;
+        }
+
+        $splitRecipientRequests = $splitArray[1];
+
+        foreach ($splitRecipientRequests as $request) {
+            array_push($splitArray,
+                $request
+            );
+        }
+
+        unset($splitArray[1]);
+        $splitArray = array_values($splitArray);
+        return $splitArray;
     }
 }

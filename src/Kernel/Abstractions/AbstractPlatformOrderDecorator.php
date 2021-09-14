@@ -35,6 +35,7 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
     public function setPlatformOrder($platformOrder)
     {
         $this->platformOrder = $platformOrder;
+        $this->handleSplitOrder();
     }
 
     public function setStatus(OrderStatus $status)
@@ -42,10 +43,8 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentStatus = '';
         try {
             $currentStatus = $this->getStatus();
-        } catch(\Exception $e) {
-
-        } catch(\Throwable $e) {
-
+        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         $statusInfo = (object)[
@@ -53,13 +52,13 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
             "to" => $status,
 
         ];
-       $this->logService->orderInfo(
-           $this->getCode(),
-           'Status Change',
-           $statusInfo
-       );
+        $this->logService->orderInfo(
+            $this->getCode(),
+            'Status Change',
+            $statusInfo
+        );
 
-       $this->setStatusAfterLog($status);
+        $this->setStatusAfterLog($status);
     }
 
     public function setState(OrderState $state)
@@ -67,10 +66,8 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentState = '';
         try {
             $currentState = $this->getState();
-        } catch(\Exception $e) {
-
-        } catch(\Throwable $e) {
-
+        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         $stateInfo = (object)[
