@@ -88,7 +88,7 @@ abstract class AbstractPayment
 
         foreach ($splitOrderData->getSellersData() as $seller) {
             $splitRecipient = new Split();
-            $splitRecipient->setCommission($seller['sellerCommission']);
+            $splitRecipient->setCommission($seller['commission']);
             $splitRecipient->setRecipientId($seller['pagarmeId']);
             $splitRecipientRequests[] = $splitRecipient
                 ->convertSecondaryToSDKRequest();
