@@ -6,6 +6,8 @@ use MundiAPILib\Models\CreateSplitOptionsRequest;
 use MundiAPILib\Models\CreateSplitRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Interfaces\ConvertibleToSDKRequestsInterface;
 
 class Split extends AbstractEntity
@@ -20,7 +22,9 @@ class Split extends AbstractEntity
     public function __construct()
     {
         $moduleConfig = MPSetup::getModuleConfiguration();
-        $this->marketplaceConfig = $moduleConfig->getMarketplaceConfig();
+        if ($moduleConfig != null) {
+            $this->marketplaceConfig = $moduleConfig->getMarketplaceConfig();
+        }
     }
 
     public function getMainChargeProcessingFeeOptionConfig()
@@ -68,6 +72,9 @@ class Split extends AbstractEntity
         return $this->sellersData;
     }
 
+    /**
+     * @param array $sellersData
+     */
     public function setSellersData($sellersData)
     {
         $this->sellersData = $sellersData;
@@ -78,32 +85,54 @@ class Split extends AbstractEntity
         return $this->marketplaceData;
     }
 
+    /**
+     * @param array $marketplaceData
+     */
     public function setMarketplaceData($marketplaceData)
     {
        $this->marketplaceData = $marketplaceData;
     }
 
+    /**
+     * @return int
+     */
     public function getMarketplaceComission()
     {
         $marketplaceData = $this->marketplaceData;
-        return $marketplaceData['marketplaceCommission'];
+        return $marketplaceData['totalCommission'];
     }
 
+    /**
+     * @param int $commission
+     */
     public function setCommission($commission)
     {
+        if ($commission < 0) {
+            throw new InvalidParamException("Commission should be greater or equal to 0!", $commission);
+        }
+
         $this->commission = $commission;
     }
 
+    /**
+     * @return int
+     */
     public function getCommission()
     {
         return $this->commission;
     }
 
+    /**
+     * @param RecipientId $recipientId
+     */
     public function setRecipientId($recipientId)
     {
         $this->recipientId = $recipientId;
     }
 
+    /**
+     * @return RecipientId
+     */
     public function getRecipientId()
     {
         return $this->recipientId;
