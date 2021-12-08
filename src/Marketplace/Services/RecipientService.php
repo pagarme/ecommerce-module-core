@@ -2,8 +2,13 @@
 
 namespace Pagarme\Core\Marketplace\Services;
 
+use MundiAPILib\APIException;
+use MundiAPILib\Models\UpdateRecipientBankAccountRequest;
+use MundiAPILib\Models\UpdateRecipientRequest;
+use MundiAPILib\Models\UpdateTransferSettingsRequest;
 use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Services\LocalizationService;
 use Pagarme\Core\Kernel\Services\LogService;
 use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
@@ -38,7 +43,7 @@ class RecipientService
 
         $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
         $this->logService = new LogService('RecipientService', true);
-        $this->recipientRepository = new RecipientRepository();
+        $this->recipientRepository = new RecipientRepository($this->mundipaggApi->getRecipients());
         $this->recipientFactory = new RecipientFactory();
         $this->i18n = new LocalizationService();
     }
@@ -46,9 +51,11 @@ class RecipientService
     public function saveFormRecipient($formData)
     {
         $recipientFactory = $this->recipientFactory;
+
+//        $recipient = isset($formData['id']) ? $this->findById($formData['id']) : $recipientFactory->createFromPostData($formData);
         $recipient = $recipientFactory->createFromPostData($formData);
 
-        $result = $this->createRecipientAtPagarme($recipient);
+        $result = !!$recipient->getRecipientId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
         $recipient->setPagarmeId(new RecipientId($result->id));
 
         return $this->saveRecipient($recipient);
@@ -56,7 +63,7 @@ class RecipientService
 
     public function createRecipientAtPagarme(Recipient $recipient)
     {
-        $createRecipientRequest = $recipient->convertToSdkRequest();
+        $createRecipientRequest = $recipient->convertToSdkCreateRequest();
         $recipientController = $this->mundipaggApi->getRecipients();
 
         try {
@@ -82,11 +89,85 @@ class RecipientService
         }
     }
 
+    public function updateRecipientAtPagarme(Recipient $recipient)
+    {
+        $recipient = $this->recipientRepository->attachDocumentFromDb($recipient);
+
+        /**
+         * @var UpdateRecipientRequest $updateRecipientRequest
+         * @var UpdateTransferSettingsRequest $updateTransferSettingsRequest
+         * @var UpdateRecipientBankAccountRequest $updateBankAccountRequest
+         */
+        list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkUpdateRequest();
+        $recipientController = $this->mundipaggApi->getRecipients();
+
+        $recipientPrevious = $this->recipientRepository->attachBankAccount($recipient);
+
+        try {
+            $logService = $this->logService;
+            //Update Recipient
+            $logService->info(
+                'Update recipient request: ' .
+                json_encode($updateRecipientRequest, JSON_PRETTY_PRINT)
+            );
+
+            $result = $recipientController->updateRecipient(
+                $recipient->getRecipientId(),
+                $updateRecipientRequest
+            );
+
+            $logService->info(
+                'Update recipient response: ' .
+                json_encode($result, JSON_PRETTY_PRINT)
+            );
+
+            //Update Default Bank Account
+            if (!$recipientPrevious->bankAccountEquals($updateBankAccountRequest)) {
+                $logService->info(
+                    'Update bank account request: ' .
+                    json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
+                );
+
+                $result = $recipientController->updateRecipientDefaultBankAccount(
+                    $recipient->getRecipientId(),
+                    $updateBankAccountRequest
+                );
+
+                $logService->info(
+                    'Update bank account response: ' .
+                    json_encode($result, JSON_PRETTY_PRINT)
+                );
+            }
+
+            //Update Transfer Settings
+            $logService->info(
+                'Update transfer settings request: ' .
+                json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
+            );
+
+            $result = $recipientController->updateRecipientTransferSettings(
+                $recipient->getRecipientId(),
+                $updateTransferSettingsRequest
+            );
+
+            $logService->info(
+                'Update transfer settings response: ' .
+                json_encode($result, JSON_PRETTY_PRINT)
+            );
+
+            return $result;
+        } catch (\Exception $exception) {
+            $logService->exception($exception);
+            throw new \Exception(__("Can't update recipient. Please review the information and try again."));
+        }
+    }
+
     public function saveRecipient(Recipient $recipient)
     {
-        $this->logService->info("Creating new recipient at platform");
+        $action = !!$recipient->getId() ? ['Editing a', 'edited'] : ['Creating new', 'created'];
+        $this->logService->info("{$action[0]} recipient at platform");
         $this->recipientRepository->save($recipient);
-        $this->logService->info("Recipient created: " . $recipient->getId());
+        $this->logService->info("Recipient {$action[1]}: " . $recipient->getId());
 
         return $recipient;
     }
@@ -113,5 +194,32 @@ class RecipientService
         }
 
         return $recipient;
+    }
+
+    public function findById(int $recipientId)
+    {
+        return $this->recipientRepository->find($recipientId);
+    }
+
+    public function attachBankAccount(Recipient $recipient)
+    {
+        return $this->recipientRepository->attachBankAccount($recipient);
+    }
+
+    public function attachTransferSettings(Recipient $recipient)
+    {
+        return $this->recipientRepository->attachTransferSettings($recipient);
+    }
+
+    public function findByPagarmeId($pagarmeId)
+    {
+        $recipientController = $this->mundipaggApi->getRecipients();
+        try {
+            $logService = $this->logService;
+            return $recipientController->getRecipient($pagarmeId);
+        } catch (APIException $e) {
+            $logService->exception($e);
+            throw new \Exception(__("Can't get recipient. Please review the information and try again."));
+        }
     }
 }

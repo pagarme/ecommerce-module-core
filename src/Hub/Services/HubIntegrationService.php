@@ -97,7 +97,7 @@ final class HubIntegrationService
             $body['webhook_url'] = $webhookUrl;
         }
 
-        $url = 'https://hubapi.mundipagg.com/auth/apps/access-tokens';
+        $url = 'https://stg-hubapi.mundipagg.com/auth/apps/access-tokens';
         $headers = [
             'PublicAppKey' => MPSetup::getHubAppPublicAppKey(),
             'Content-Type' => 'application/json'
