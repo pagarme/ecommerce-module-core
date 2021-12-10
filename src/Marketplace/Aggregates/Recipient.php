@@ -20,10 +20,6 @@ class Recipient extends AbstractEntity implements RecipientInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
 
-    /**
-     * @var RecipientId
-     */
-    private $recipientId;
     /** @var string */
     private $externalId = '';
     /** @var string */
@@ -518,11 +514,11 @@ class Recipient extends AbstractEntity implements RecipientInterface
     }
 
     /**
-     * @return RecipientId
+     * @return \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
      */
     public function getRecipientId()
     {
-        return $this->pagarmeId;
+        return $this->getPagarmeId();
     }
 
     /**
@@ -531,7 +527,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
      */
     public function setRecipientId(RecipientId $recipientId)
     {
-        $this->pagarmeId = $recipientId;
+        $this->setPagarmeId($recipientId);
         return $this;
     }
 
