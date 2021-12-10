@@ -41,9 +41,9 @@ class RecipientService
         $password = '';
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
-        $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
+        $this->pagarmeApi = new MundiAPIClient($secretKey, $password);
         $this->logService = new LogService('RecipientService', true);
-        $this->recipientRepository = new RecipientRepository($this->mundipaggApi->getRecipients());
+        $this->recipientRepository = new RecipientRepository($this->pagarmeApi->getRecipients());
         $this->recipientFactory = new RecipientFactory();
         $this->i18n = new LocalizationService();
     }
@@ -64,7 +64,7 @@ class RecipientService
     public function createRecipientAtPagarme(Recipient $recipient)
     {
         $createRecipientRequest = $recipient->convertToSdkCreateRequest();
-        $recipientController = $this->mundipaggApi->getRecipients();
+        $recipientController = $this->pagarmeApi->getRecipients();
 
         try {
             $logService = $this->logService;
@@ -99,7 +99,7 @@ class RecipientService
          * @var UpdateRecipientBankAccountRequest $updateBankAccountRequest
          */
         list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkUpdateRequest();
-        $recipientController = $this->mundipaggApi->getRecipients();
+        $recipientController = $this->pagarmeApi->getRecipients();
 
         $recipientPrevious = $this->recipientRepository->attachBankAccount($recipient);
 
@@ -213,7 +213,7 @@ class RecipientService
 
     public function findByPagarmeId($pagarmeId)
     {
-        $recipientController = $this->mundipaggApi->getRecipients();
+        $recipientController = $this->pagarmeApi->getRecipients();
         try {
             $logService = $this->logService;
             return $recipientController->getRecipient($pagarmeId);
