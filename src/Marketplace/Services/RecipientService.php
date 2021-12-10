@@ -51,8 +51,7 @@ class RecipientService
     public function saveFormRecipient($formData)
     {
         $recipientFactory = $this->recipientFactory;
-
-//        $recipient = isset($formData['id']) ? $this->findById($formData['id']) : $recipientFactory->createFromPostData($formData);
+        
         $recipient = $recipientFactory->createFromPostData($formData);
 
         $result = !!$recipient->getRecipientId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
