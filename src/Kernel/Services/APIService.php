@@ -53,7 +53,7 @@ class APIService
 
     public function __construct()
     {
-        $this->apiClient = $this->getMundiPaggApiClient();
+        $this->apiClient = $this->getpagarmeApiClient();
         $this->logService = new OrderLogService(2);
         $this->configInfoService = new ConfigInfoRetrieverService();
         $this->orderCreationService = new OrderCreationService($this->apiClient);
@@ -221,7 +221,7 @@ class APIService
         return $this->apiClient->getCustomers();
     }
 
-    private function getMundiPaggApiClient()
+    private function getpagarmeApiClient()
     {
         $i18n = new LocalizationService();
         $config = MPSetup::getModuleConfiguration();

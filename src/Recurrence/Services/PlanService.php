@@ -31,7 +31,7 @@ class PlanService
 
         \MundiAPILib\Configuration::$basicAuthPassword = '';
 
-        $this->mundipaggApi = new MundiAPIClient($secretKey, $password);
+        $this->pagarmeApi = new MundiAPIClient($secretKey, $password);
     }
 
     /**
@@ -57,7 +57,7 @@ class PlanService
     public function createPlanAtPagarme(Plan $plan)
     {
         $createPlanRequest = $plan->convertToSdkRequest();
-        $planController = $this->mundipaggApi->getPlans();
+        $planController = $this->pagarmeApi->getPlans();
 
         try {
             $logService = $this->getLogService();
@@ -86,7 +86,7 @@ class PlanService
     public function updatePlanAtPagarme(Plan $plan)
     {
         $updatePlanRequest = $plan->convertToSdkRequest(true);
-        $planController = $this->mundipaggApi->getPlans();
+        $planController = $this->pagarmeApi->getPlans();
 
         $this->updateItemsAtPagarme($plan, $planController);
         $result = $planController->updatePlan($plan->getPagarmeId(), $updatePlanRequest);
@@ -168,7 +168,7 @@ class PlanService
         }
 
         try {
-            $planController = $this->mundipaggApi->getPlans();
+            $planController = $this->pagarmeApi->getPlans();
             $planController->deletePlan($plan->getPagarmeId());
         } catch (\Exception $exception) {
             return $exception->getMessage();
