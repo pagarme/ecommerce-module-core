@@ -251,9 +251,4 @@ class RecipientFactory implements FactoryInterface
             return;
         }
     }
-
-    private function mergeDbData(Recipient &$recipient)
-    {
-
-    }
 }
