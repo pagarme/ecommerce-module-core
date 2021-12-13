@@ -4,6 +4,7 @@ namespace Pagarme\Core\Marketplace\Repositories;
 
 use MundiAPILib\APIException;
 use MundiAPILib\Controllers\RecipientsController;
+use MundiAPILib\Models\GetBankAccountResponse;
 use MundiAPILib\Models\GetTransferSettingsResponse;
 use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
@@ -113,14 +114,13 @@ class RecipientRepository extends AbstractRepository
 
     /**
      * @param Recipient $recipient
+     * @param GetBankAccountResponse $bankAccount
      * @return Recipient
      * @throws InvalidParamException
      */
-    public function attachBankAccount(Recipient $recipient): Recipient
+    public function attachBankAccount(Recipient $recipient, GetBankAccountResponse $bankAccount): Recipient
     {
-
         try {
-            $bankAccount = $this->controller->getRecipient($recipient->getPagarmeId())->defaultBankAccount;
             $recipient->setHolderName($bankAccount->holderName);
             $recipient->setHolderType($bankAccount->holderType);
             $recipient->setHolderDocument($recipient->getDocument());
@@ -130,25 +130,17 @@ class RecipientRepository extends AbstractRepository
             $recipient->setAccountNumber($bankAccount->accountNumber);
             $recipient->setAccountCheckDigit($bankAccount->accountCheckDigit);
             $recipient->setAccountType($bankAccount->type);
-            return $recipient;
-        } catch (APIException $e) {
-            throw new \Exception(__("Can't get bank default. Please review the information and try again."));
-        }
+        } catch (InvalidParamException $e) {}
+
+        return $recipient;
     }
 
-    public function attachTransferSettings(Recipient $recipient): Recipient
+    public function attachTransferSettings(Recipient $recipient, GetTransferSettingsResponse $transferSettings): Recipient
     {
-
-        try {
-            /** @var GetTransferSettingsResponse $transferSettings */
-            $transferSettings = $this->controller->getRecipient($recipient->getPagarmeId())->transferSettings;
             $recipient->setTransferEnabled($transferSettings->transferEnabled);
             $recipient->setTransferDay($transferSettings->transferDay);
             $recipient->setTransferInterval($transferSettings->transferInterval);
             return $recipient;
-        } catch (APIException $e) {
-            throw new \Exception(__("Can't get transfer settings. Please review the information and try again."));
-        }
     }
 
     public function attachDocumentFromDb(Recipient $recipient)

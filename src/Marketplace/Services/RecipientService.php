@@ -43,7 +43,7 @@ class RecipientService
 
         $this->pagarmeApi = new MundiAPIClient($secretKey, $password);
         $this->logService = new LogService('RecipientService', true);
-        $this->recipientRepository = new RecipientRepository($this->pagarmeApi->getRecipients());
+        $this->recipientRepository = new RecipientRepository();
         $this->recipientFactory = new RecipientFactory();
         $this->i18n = new LocalizationService();
     }
@@ -51,7 +51,7 @@ class RecipientService
     public function saveFormRecipient($formData)
     {
         $recipientFactory = $this->recipientFactory;
-        
+
         $recipient = $recipientFactory->createFromPostData($formData);
 
         $result = !!$recipient->getRecipientId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
@@ -202,12 +202,22 @@ class RecipientService
 
     public function attachBankAccount(Recipient $recipient)
     {
-        return $this->recipientRepository->attachBankAccount($recipient);
+        try {
+            $bankAccount = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getRecipientId())->defaultBankAccount;
+        } catch (APIException $e) {
+            throw $e;
+        }
+        return $this->recipientRepository->attachBankAccount($recipient, $bankAccount);
     }
 
     public function attachTransferSettings(Recipient $recipient)
     {
-        return $this->recipientRepository->attachTransferSettings($recipient);
+        try {
+            $transferSettings = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getRecipientId())->transferSettings;
+        } catch (APIException $e) {
+            throw $e;
+        }
+        return $this->recipientRepository->attachTransferSettings($recipient, $transferSettings);
     }
 
     public function findByPagarmeId($pagarmeId)
