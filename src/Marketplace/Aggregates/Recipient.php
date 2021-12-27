@@ -514,14 +514,6 @@ class Recipient extends AbstractEntity implements RecipientInterface
     }
 
     /**
-     * @return \Pagarme\Core\Kernel\ValueObjects\AbstractValidString
-     */
-    public function getRecipientId()
-    {
-        return $this->getPagarmeId();
-    }
-
-    /**
      * @param RecipientId $recipientId
      * @return $this
      */
