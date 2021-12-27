@@ -3,7 +3,6 @@
 namespace Pagarme\Core\Marketplace\Repositories;
 
 use MundiAPILib\APIException;
-use MundiAPILib\Controllers\RecipientsController;
 use MundiAPILib\Models\GetBankAccountResponse;
 use MundiAPILib\Models\GetTransferSettingsResponse;
 use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
@@ -16,13 +15,10 @@ use Pagarme\Core\Marketplace\Factories\RecipientFactory;
 
 class RecipientRepository extends AbstractRepository
 {
-    protected $controller;
 
-    public function __construct(RecipientsController $controller = null)
+    public function __construct()
     {
         parent::__construct();
-
-        $this->controller = $controller;
     }
 
     protected function create(AbstractEntity &$object)
