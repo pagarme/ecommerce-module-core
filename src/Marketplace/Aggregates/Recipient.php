@@ -531,7 +531,16 @@ class Recipient extends AbstractEntity implements RecipientInterface
         return $this;
     }
 
-    public function convertToSdkCreateRequest()
+    public function convertToSdkRequest($update = false)
+    {
+        if ($update) {
+            return $this->convertToSdkUpdateRequest();
+        }
+
+        return $this->convertToSdkCreateRequest();
+    }
+
+    private function convertToSdkCreateRequest(): CreateRecipientRequest
     {
         $recipientRequest = new CreateRecipientRequest();
 
@@ -550,7 +559,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
     /**
      * @return array
      */
-    public function convertToSdkUpdateRequest(): array
+    private function convertToSdkUpdateRequest(): array
     {
         return [
             new UpdateRecipientRequest(
