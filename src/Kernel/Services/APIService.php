@@ -53,7 +53,7 @@ class APIService
 
     public function __construct()
     {
-        $this->apiClient = $this->getpagarmeApiClient();
+        $this->apiClient = $this->getPagarmeApiClient();
         $this->logService = new OrderLogService(2);
         $this->configInfoService = new ConfigInfoRetrieverService();
         $this->orderCreationService = new OrderCreationService($this->apiClient);
@@ -221,7 +221,7 @@ class APIService
         return $this->apiClient->getCustomers();
     }
 
-    private function getpagarmeApiClient()
+    private function getPagarmeApiClient()
     {
         $i18n = new LocalizationService();
         $config = MPSetup::getModuleConfiguration();
