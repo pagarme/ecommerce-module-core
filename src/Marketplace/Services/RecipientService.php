@@ -54,7 +54,7 @@ class RecipientService
 
         $recipient = $recipientFactory->createFromPostData($formData);
 
-        $result = !!$recipient->getRecipientId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
+        $result = !!$recipient->getPagarmeId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
         $recipient->setPagarmeId(new RecipientId($result->id));
 
         return $this->saveRecipient($recipient);
@@ -111,7 +111,7 @@ class RecipientService
             );
 
             $result = $recipientController->updateRecipient(
-                $recipient->getRecipientId(),
+                $recipient->getPagarmeId(),
                 $updateRecipientRequest
             );
 
@@ -128,7 +128,7 @@ class RecipientService
                 );
 
                 $result = $recipientController->updateRecipientDefaultBankAccount(
-                    $recipient->getRecipientId(),
+                    $recipient->getPagarmeId(),
                     $updateBankAccountRequest
                 );
 
@@ -145,7 +145,7 @@ class RecipientService
             );
 
             $result = $recipientController->updateRecipientTransferSettings(
-                $recipient->getRecipientId(),
+                $recipient->getPagarmeId(),
                 $updateTransferSettingsRequest
             );
 
@@ -203,7 +203,7 @@ class RecipientService
     public function attachBankAccount(Recipient $recipient)
     {
         try {
-            $bankAccount = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getRecipientId())->defaultBankAccount;
+            $bankAccount = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getPagarmeId())->defaultBankAccount;
         } catch (APIException $e) {
             throw $e;
         }
@@ -213,7 +213,7 @@ class RecipientService
     public function attachTransferSettings(Recipient $recipient)
     {
         try {
-            $transferSettings = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getRecipientId())->transferSettings;
+            $transferSettings = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getPagarmeId())->transferSettings;
         } catch (APIException $e) {
             throw $e;
         }
