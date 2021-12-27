@@ -513,16 +513,6 @@ class Recipient extends AbstractEntity implements RecipientInterface
         return $this;
     }
 
-    /**
-     * @param RecipientId $recipientId
-     * @return $this
-     */
-    public function setRecipientId(RecipientId $recipientId)
-    {
-        $this->setPagarmeId($recipientId);
-        return $this;
-    }
-
     public function convertToSdkRequest($update = false)
     {
         if ($update) {
