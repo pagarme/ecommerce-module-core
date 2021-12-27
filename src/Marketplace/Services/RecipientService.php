@@ -62,7 +62,7 @@ class RecipientService
 
     public function createRecipientAtPagarme(Recipient $recipient)
     {
-        $createRecipientRequest = $recipient->convertToSdkCreateRequest();
+        $createRecipientRequest = $recipient->convertToSdkRequest();
         $recipientController = $this->pagarmeApi->getRecipients();
 
         try {
@@ -97,7 +97,7 @@ class RecipientService
          * @var UpdateTransferSettingsRequest $updateTransferSettingsRequest
          * @var UpdateRecipientBankAccountRequest $updateBankAccountRequest
          */
-        list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkUpdateRequest();
+        list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkRequest(true);
         $recipientController = $this->pagarmeApi->getRecipients();
 
         $recipientPrevious = $this->recipientRepository->attachBankAccount($recipient);
