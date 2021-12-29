@@ -2,8 +2,10 @@
 
 namespace Pagarme\Core\Marketplace\Factories;
 
+use MundiAPILib\Controllers\BaseController;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
+use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Aggregates\Recipient;
 
 class RecipientFactory implements FactoryInterface
@@ -24,6 +26,8 @@ class RecipientFactory implements FactoryInterface
             return;
         }
 
+        $this->setId($postData);
+        $this->setRecipientId($postData);
         $this->setExternalId($postData);
         $this->setName($postData);
         $this->setEmail($postData);
@@ -48,7 +52,32 @@ class RecipientFactory implements FactoryInterface
 
     public function createFromDbData($dbData)
     {
-        // TODO: Implement createFromDbData() method.
+        if (!is_array($dbData)) {
+            return;
+        }
+
+        $this->recipient->setId($dbData['id'])
+            ->setExternalId($dbData['external_id'])
+            ->setName($dbData['name'])
+            ->setEmail($dbData['email'])
+            ->setDocumentType($dbData['document_type'])
+            ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
+            ->setDocument($dbData['document'])
+            ->setPagarmeId(new RecipientId($dbData['pagarme_id']));
+
+        $this->setCreatedAt($dbData);
+        $this->setUpdatedAt($dbData);
+
+
+        return $this->recipient;
+    }
+
+    private function setId($postData)
+    {
+        if (array_key_exists('id', $postData)) {
+            $this->recipient->setId($postData['id']);
+            return;
+        }
     }
 
     private function setExternalId($postData)
@@ -191,6 +220,34 @@ class RecipientFactory implements FactoryInterface
     {
         if (array_key_exists('transfer_day', $postData)) {
             $this->recipient->setTransferDay($postData['transfer_day']);
+            return;
+        }
+    }
+
+    private function setRecipientId($postData)
+    {
+        if (array_key_exists('recipient_id', $postData)) {
+            $this->recipient->setPagarmeId(new RecipientId($postData['recipient_id']));
+            return;
+        }
+    }
+
+    private function setUpdatedAt($postData)
+    {
+        if (isset($postData['updated_at'])) {
+            $this->recipient->setUpdatedAt(
+                new \Datetime($postData['updated_at'])
+            );
+            return;
+        }
+    }
+
+    private function setCreatedAt($postData)
+    {
+        if (isset($postData['created_at'])) {
+            $this->recipient->setCreatedAt(
+                new \Datetime($postData['created_at'])
+            );
             return;
         }
     }

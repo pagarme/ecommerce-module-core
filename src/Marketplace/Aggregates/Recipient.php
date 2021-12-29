@@ -6,9 +6,13 @@ use MundiAPILib\Models\CreateBankAccountRequest;
 use MundiAPILib\Models\CreateRecipientRequest;
 use MundiAPILib\Models\CreateTransferRequest;
 use MundiAPILib\Models\CreateTransferSettingsRequest;
+use MundiAPILib\Models\UpdateRecipientBankAccountRequest;
+use MundiAPILib\Models\UpdateRecipientRequest;
+use MundiAPILib\Models\UpdateTransferSettingsRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Services\LocalizationService;
+use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;
 use Pagarme\Core\Marketplace\Interfaces\RecipientInterface;
 use Pagarme\Core\Recurrence\Aggregates\ProductSubscription;
 
@@ -509,7 +513,16 @@ class Recipient extends AbstractEntity implements RecipientInterface
         return $this;
     }
 
-    public function convertToSdkRequest()
+    public function convertToSdkRequest($update = false)
+    {
+        if ($update) {
+            return $this->convertToSdkUpdateRequest();
+        }
+
+        return $this->convertToSdkCreateRequest();
+    }
+
+    private function convertToSdkCreateRequest(): CreateRecipientRequest
     {
         $recipientRequest = new CreateRecipientRequest();
 
@@ -518,35 +531,78 @@ class Recipient extends AbstractEntity implements RecipientInterface
         $recipientRequest->document = $this->getDocument();
         $recipientRequest->type = $this->getType();
 
-        $recipientRequest->defaultBankAccount = new CreateBankAccountRequest();
-        $recipientRequest->defaultBankAccount
-            ->holderName = $this->getHolderName();
-        $recipientRequest->defaultBankAccount
-            ->holderType = $this->getHolderType();
-        $recipientRequest->defaultBankAccount
-            ->holderDocument = $this->getHolderDocument();
-        $recipientRequest->defaultBankAccount
-            ->bank = $this->getBank();
-        $recipientRequest->defaultBankAccount
-            ->branchNumber = $this->getBranchNumber();
-        $recipientRequest->defaultBankAccount
-            ->branchCheckDigit = $this->getBranchCheckDigit();
-        $recipientRequest->defaultBankAccount
-            ->accountNumber = $this->getAccountNumber();
-        $recipientRequest->defaultBankAccount
-            ->accountCheckDigit = $this->getAccountCheckDigit();
-        $recipientRequest->defaultBankAccount
-            ->type = $this->getAccountType();
+        $recipientRequest->defaultBankAccount = $this->createBankAccountRequest();
 
-        $recipientRequest->transferSettings = new CreateTransferSettingsRequest();
-        $recipientRequest->transferSettings
-            ->transferEnabled = $this->getTransferEnabled();
-        $recipientRequest->transferSettings
-            ->transferInterval = $this->getTransferInterval();
-        $recipientRequest->transferSettings
-            ->transferDay = $this->getTransferDay();
+        $recipientRequest->transferSettings = $this->createTransferSettings();
 
         return $recipientRequest;
+    }
+
+    /**
+     * @return array
+     */
+    private function convertToSdkUpdateRequest(): array
+    {
+        return [
+            new UpdateRecipientRequest(
+                ...array(
+                    $this->getName(),
+                    $this->getEmail(),
+                    null,
+                    $this->getType(),
+                    'active',
+                    null
+                )
+            ),
+            new UpdateRecipientBankAccountRequest(
+                $this->createBankAccountRequest()
+            ),
+            $this->createTransferSettings(),
+        ];
+    }
+
+    /**
+     * @return CreateBankAccountRequest
+     */
+    protected function createBankAccountRequest(): CreateBankAccountRequest
+    {
+        $defaultBankAccount = new CreateBankAccountRequest();
+        $defaultBankAccount
+            ->holderName = $this->getHolderName();
+        $defaultBankAccount
+            ->holderType = $this->getHolderType();
+        $defaultBankAccount
+            ->holderDocument = $this->getDocument();
+        $defaultBankAccount
+            ->bank = $this->getBank();
+        $defaultBankAccount
+            ->branchNumber = $this->getBranchNumber();
+        $defaultBankAccount
+            ->branchCheckDigit = $this->getBranchCheckDigit();
+        $defaultBankAccount
+            ->accountNumber = $this->getAccountNumber();
+        $defaultBankAccount
+            ->accountCheckDigit = $this->getAccountCheckDigit();
+        $defaultBankAccount
+            ->type = $this->getAccountType();
+
+        return $defaultBankAccount;
+    }
+
+    /**
+     * @return CreateTransferSettingsRequest
+     */
+    protected function createTransferSettings(): CreateTransferSettingsRequest
+    {
+        $transferSettings = new CreateTransferSettingsRequest();
+        $transferSettings
+            ->transferEnabled = $this->getTransferEnabled();
+        $transferSettings
+            ->transferInterval = $this->getTransferInterval();
+        $transferSettings
+            ->transferDay = $this->getTransferDay();
+
+        return $transferSettings;
     }
 
     /**
@@ -560,9 +616,12 @@ class Recipient extends AbstractEntity implements RecipientInterface
     {
         $obj = new \stdClass();
 
+        $obj->id = $this->getId();
+        $obj->recipientId = $this->getPagarmeId();
         $obj->externalId = $this->getExternalId();
         $obj->name = $this->getName();
         $obj->email = $this->getEmail();
+        $obj->documentType = $this->getDocumentType();
         $obj->document = $this->getDocument();
         $obj->holderName = $this->getHolderName();
         $obj->holderDocument = $this->getHolderDocument();
@@ -579,5 +638,15 @@ class Recipient extends AbstractEntity implements RecipientInterface
         $obj->updatedAt = $this->getUpdatedAt();
 
         return $obj;
+    }
+
+    public function bankAccountEquals(UpdateRecipientBankAccountRequest $bankAccountRequest): bool
+    {
+        return $this->getBank() == $bankAccountRequest->bankAccount->bank &&
+            $this->getBranchNumber() == $bankAccountRequest->bankAccount->branchNumber &&
+            $this->getBranchCheckDigit() == $bankAccountRequest->bankAccount->branchCheckDigit &&
+            $this->getAccountNumber() == $bankAccountRequest->bankAccount->accountNumber &&
+            $this->getAccountCheckDigit() == $bankAccountRequest->bankAccount->accountCheckDigit &&
+            $this->getAccountType() == $bankAccountRequest->bankAccount->type;
     }
 }

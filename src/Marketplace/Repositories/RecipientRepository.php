@@ -2,13 +2,25 @@
 
 namespace Pagarme\Core\Marketplace\Repositories;
 
+use MundiAPILib\APIException;
+use MundiAPILib\Models\GetBankAccountResponse;
+use MundiAPILib\Models\GetTransferSettingsResponse;
 use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractRepository;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
+use Pagarme\Core\Marketplace\Aggregates\Recipient;
+use Pagarme\Core\Marketplace\Factories\RecipientFactory;
 
 class RecipientRepository extends AbstractRepository
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     protected function create(AbstractEntity &$object)
     {
         $table = $this->db->getTable(
@@ -38,7 +50,19 @@ class RecipientRepository extends AbstractRepository
 
     protected function update(AbstractEntity &$object)
     {
-        // TODO: Implement update() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "
+            UPDATE $table SET
+                `external_id`='{$object->getExternalId()}',
+                `name`='{$object->getName()}',
+                `email`='{$object->getEmail()}'
+            WHERE `id`='{$object->getId()}'
+        ";
+
+        $this->db->query($query);
     }
 
     public function delete(AbstractEntity $object)
@@ -48,12 +72,79 @@ class RecipientRepository extends AbstractRepository
 
     public function find($objectId)
     {
-        // TODO: Implement find() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "SELECT * FROM $table WHERE id = $objectId";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $recipientFactory = new RecipientFactory();
+
+        return  $recipientFactory->createFromDbData($result->row);
     }
 
     public function findByPagarmeId(AbstractValidString $pagarmeId)
     {
-        // TODO: Implement findByPagarmeId() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "SELECT * FROM {$table} WHERE pagarme_id = {$pagarmeId}";
+
+        $result = $this->db->fetch($query);
+
+        if ($result->num_rows === 0) {
+            return null;
+        }
+
+        $recipientFactory = new RecipientFactory();
+
+        return  $recipientFactory->createFromDbData($result->row);
+    }
+
+    /**
+     * @param Recipient $recipient
+     * @param GetBankAccountResponse $bankAccount
+     * @return Recipient
+     * @throws InvalidParamException
+     */
+    public function attachBankAccount(Recipient $recipient, GetBankAccountResponse $bankAccount): Recipient
+    {
+        try {
+            $recipient->setHolderName($bankAccount->holderName);
+            $recipient->setHolderType($bankAccount->holderType);
+            $recipient->setHolderDocument($recipient->getDocument());
+            $recipient->setBank($bankAccount->bank);
+            $recipient->setBranchNumber($bankAccount->branchNumber);
+            $recipient->setBranchCheckDigit($bankAccount->branchCheckDigit);
+            $recipient->setAccountNumber($bankAccount->accountNumber);
+            $recipient->setAccountCheckDigit($bankAccount->accountCheckDigit);
+            $recipient->setAccountType($bankAccount->type);
+        } catch (InvalidParamException $e) {}
+
+        return $recipient;
+    }
+
+    public function attachTransferSettings(Recipient $recipient, GetTransferSettingsResponse $transferSettings): Recipient
+    {
+            $recipient->setTransferEnabled($transferSettings->transferEnabled);
+            $recipient->setTransferDay($transferSettings->transferDay);
+            $recipient->setTransferInterval($transferSettings->transferInterval);
+            return $recipient;
+    }
+
+    public function attachDocumentFromDb(Recipient $recipient)
+    {
+        $recipientFromDb = $this->find($recipient->getId());
+        $recipient->setDocument($recipientFromDb->getDocument());
+
+        return $recipient;
     }
 
     public function listEntities($limit, $listDisabled)
