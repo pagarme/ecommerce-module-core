@@ -100,7 +100,7 @@ class RecipientService
         list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkRequest(true);
         $recipientController = $this->pagarmeApi->getRecipients();
 
-        $recipientPrevious = $this->recipientRepository->attachBankAccount($recipient);
+        $recipientPrevious = $this->attachBankAccount($recipient);
 
         try {
             $logService = $this->logService;
