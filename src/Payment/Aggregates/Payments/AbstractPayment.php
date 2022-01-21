@@ -13,8 +13,8 @@ use Pagarme\Core\Payment\Traits\WithCustomerTrait;
 use Pagarme\Core\Payment\Traits\WithOrderTrait;
 
 abstract class AbstractPayment
-    extends AbstractEntity
-    implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
+extends AbstractEntity
+implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
 {
     use WithAmountTrait;
     use WithCustomerTrait;
@@ -74,21 +74,36 @@ abstract class AbstractPayment
     {
         $splitOrderData = $this->order->getSplitData();
 
-        if(!$splitOrderData) {
+        if (!$splitOrderData) {
             return null;
         }
-
+        $percentageOfPayment = $this->getAmount() / $this->order->getAmount();
         $splitMainRecipient = new Split();
-        $splitMainRecipient->setCommission(
-            $splitOrderData->getMarketplaceComission()
+
+        $marketplaceCommission = intval(
+            round(
+                $splitOrderData->getMarketplaceComission() * $percentageOfPayment
+            )
         );
-        $splitMainRecipient->setRecipientId("rp_9XYzdWJueuNge7m1");
+
+        $splitMainRecipient->setCommission(
+            $marketplaceCommission
+        );
+
+        $splitMainRecipient->setRecipientId("rp_wQ79AdBhQVHLRjPg");
         $splitMainRecipientRequest = $splitMainRecipient
             ->convertMainToSDKRequest();
 
         foreach ($splitOrderData->getSellersData() as $seller) {
             $splitRecipient = new Split();
-            $splitRecipient->setCommission($seller['commission']);
+
+            $sellerCommission = intval(
+                round(
+                    $seller['commission'] * $percentageOfPayment
+                )
+            );
+
+            $splitRecipient->setCommission($sellerCommission);
             $splitRecipient->setRecipientId($seller['pagarmeId']);
             $splitRecipientRequests[] = $splitRecipient
                 ->convertSecondaryToSDKRequest();
@@ -125,7 +140,8 @@ abstract class AbstractPayment
         $splitRecipientRequests = $splitArray[1];
 
         foreach ($splitRecipientRequests as $request) {
-            array_push($splitArray,
+            array_push(
+                $splitArray,
                 $request
             );
         }
