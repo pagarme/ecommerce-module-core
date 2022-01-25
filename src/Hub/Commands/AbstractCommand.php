@@ -44,7 +44,10 @@ abstract class AbstractCommand implements CommandInterface
      * @var CommandType
      */
     protected $type;
-
+    /**
+     *
+     * @var LogService
+     */
     protected $logService;
 
     public function __construct()
