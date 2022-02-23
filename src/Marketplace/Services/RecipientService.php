@@ -54,8 +54,14 @@ class RecipientService
 
         $recipient = $recipientFactory->createFromPostData($formData);
 
-        $result = !!$recipient->getPagarmeId() ? $this->updateRecipientAtPagarme($recipient) : $this->createRecipientAtPagarme($recipient);
-        $recipient->setPagarmeId(new RecipientId($result->id));
+        $recipientId = $recipient->getPagarmeId();
+
+        if (!$recipientId && empty($formData['existing_recipient'])) {
+            $result = $this->createRecipientAtPagarme($recipient);
+            $recipientId = $result->id;
+        }
+
+        $recipient->setPagarmeId(new RecipientId($recipientId));
 
         return $this->saveRecipient($recipient);
     }
