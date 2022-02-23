@@ -67,7 +67,13 @@ class RecipientRepository extends AbstractRepository
 
     public function delete(AbstractEntity $object)
     {
-        // TODO: Implement delete() method.
+        $table = $this->db->getTable(
+            AbstractDatabaseDecorator::TABLE_RECIPIENTS
+        );
+
+        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+
+        return $this->db->query($query);
     }
 
     public function find($objectId)
@@ -126,17 +132,18 @@ class RecipientRepository extends AbstractRepository
             $recipient->setAccountNumber($bankAccount->accountNumber);
             $recipient->setAccountCheckDigit($bankAccount->accountCheckDigit);
             $recipient->setAccountType($bankAccount->type);
-        } catch (InvalidParamException $e) {}
+        } catch (InvalidParamException $e) {
+        }
 
         return $recipient;
     }
 
     public function attachTransferSettings(Recipient $recipient, GetTransferSettingsResponse $transferSettings): Recipient
     {
-            $recipient->setTransferEnabled($transferSettings->transferEnabled);
-            $recipient->setTransferDay($transferSettings->transferDay);
-            $recipient->setTransferInterval($transferSettings->transferInterval);
-            return $recipient;
+        $recipient->setTransferEnabled($transferSettings->transferEnabled);
+        $recipient->setTransferDay($transferSettings->transferDay);
+        $recipient->setTransferInterval($transferSettings->transferInterval);
+        return $recipient;
     }
 
     public function attachDocumentFromDb(Recipient $recipient)

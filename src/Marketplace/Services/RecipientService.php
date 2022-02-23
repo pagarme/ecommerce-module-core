@@ -107,7 +107,7 @@ class RecipientService
             //Update Recipient
             $logService->info(
                 'Update recipient request: ' .
-                json_encode($updateRecipientRequest, JSON_PRETTY_PRINT)
+                    json_encode($updateRecipientRequest, JSON_PRETTY_PRINT)
             );
 
             $result = $recipientController->updateRecipient(
@@ -117,14 +117,14 @@ class RecipientService
 
             $logService->info(
                 'Update recipient response: ' .
-                json_encode($result, JSON_PRETTY_PRINT)
+                    json_encode($result, JSON_PRETTY_PRINT)
             );
 
             //Update Default Bank Account
             if (!$recipientPrevious->bankAccountEquals($updateBankAccountRequest)) {
                 $logService->info(
                     'Update bank account request: ' .
-                    json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
+                        json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
                 );
 
                 $result = $recipientController->updateRecipientDefaultBankAccount(
@@ -134,14 +134,14 @@ class RecipientService
 
                 $logService->info(
                     'Update bank account response: ' .
-                    json_encode($result, JSON_PRETTY_PRINT)
+                        json_encode($result, JSON_PRETTY_PRINT)
                 );
             }
 
             //Update Transfer Settings
             $logService->info(
                 'Update transfer settings request: ' .
-                json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
+                    json_encode($updateBankAccountRequest, JSON_PRETTY_PRINT)
             );
 
             $result = $recipientController->updateRecipientTransferSettings(
@@ -151,7 +151,7 @@ class RecipientService
 
             $logService->info(
                 'Update transfer settings response: ' .
-                json_encode($result, JSON_PRETTY_PRINT)
+                    json_encode($result, JSON_PRETTY_PRINT)
             );
 
             return $result;
@@ -179,14 +179,14 @@ class RecipientService
     {
         $recipient = $this->recipientRepository->findBySellerId($sellerId);
 
-        if(empty($recipient)) {
+        if (empty($recipient)) {
             $this->logService->info(
                 __("The seller does not have a registered recipient.")
             );
 
             $message = $this->i18n->getDashboard(
                 "Payment could not be made. " .
-                "Please contact the store administrator."
+                    "Please contact the store administrator."
             );
 
             throw new \Exception($message);
@@ -230,5 +230,16 @@ class RecipientService
             $logService->exception($e);
             throw new \Exception(__("Can't get recipient. Please review the information and try again."));
         }
+    }
+
+    public function delete($id)
+    {
+        $recipient = $this->recipientRepository->find($id);
+
+        if (empty($recipient)) {
+            throw new \Exception("Recipient not found - ID : {$id} ");
+        }
+
+        return $this->recipientRepository->delete($recipient);
     }
 }
