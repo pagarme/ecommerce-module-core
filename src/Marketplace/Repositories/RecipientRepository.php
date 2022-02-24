@@ -58,7 +58,8 @@ class RecipientRepository extends AbstractRepository
             UPDATE $table SET
                 `external_id`='{$object->getExternalId()}',
                 `name`='{$object->getName()}',
-                `email`='{$object->getEmail()}'
+                `email`='{$object->getEmail()}',
+                `pagarme_id`='{$object->getPagarmeId()->getValue()}'
             WHERE `id`='{$object->getId()}'
         ";
 
