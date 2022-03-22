@@ -25,6 +25,9 @@ class MarketplaceConfig extends AbstractValueObject
     /** @var string */
     private $responsibilityForReceivingExtrasAndDiscounts;
 
+    /** @var string */
+    private $mainRecipientId;
+
     /**
      * @return bool
      */
@@ -122,6 +125,25 @@ class MarketplaceConfig extends AbstractValueObject
     }
 
     /**
+     * @return string
+     */
+    public function getMainRecipientId()
+    {
+        return $this->mainRecipientId;
+    }
+
+    /**
+     * @param $mainRecipientId
+     * @return MarketplaceConfig
+     */
+    public function setMainRecipientId(
+        $mainRecipientId
+    ) {
+        $this->mainRecipientId = $mainRecipientId;
+        return $this;
+    }
+
+    /**
      * @param $option
      * @return bool
      */
@@ -185,7 +207,9 @@ class MarketplaceConfig extends AbstractValueObject
             $this->responsibilityForReceivingSplitRemainder ===
             $object->responsibilityForReceivingSplitRemainder &&
             $this->responsibilityForReceivingExtrasAndDiscounts ===
-            $object->responsibilityForReceivingExtrasAndDiscounts;
+            $object->responsibilityForReceivingExtrasAndDiscounts &&
+            $this->mainRecipientId ===
+            $object->mainRecipientId;
     }
 
     /**
@@ -206,7 +230,9 @@ class MarketplaceConfig extends AbstractValueObject
             "responsibilityForReceivingSplitRemainder" =>
                 $this->responsibilityForReceivingSplitRemainder,
             "responsibilityForReceivingExtrasAndDiscounts" =>
-                $this->responsibilityForReceivingExtrasAndDiscounts
+                $this->responsibilityForReceivingExtrasAndDiscounts,
+            "mainRecipientId" =>
+                $this->mainRecipientId,
         ];
     }
 }
