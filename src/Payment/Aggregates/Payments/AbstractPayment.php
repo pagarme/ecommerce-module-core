@@ -90,7 +90,7 @@ implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
             $marketplaceCommission
         );
 
-        $splitMainRecipient->setRecipientId("rp_wQ79AdBhQVHLRjPg");
+        $splitMainRecipient->setRecipientId($this->moduleConfig->getMarketplaceConfig()->getMainRecipientId());
         $splitMainRecipientRequest = $splitMainRecipient
             ->convertMainToSDKRequest();
 

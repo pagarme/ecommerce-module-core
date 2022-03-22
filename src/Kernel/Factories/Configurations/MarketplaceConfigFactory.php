@@ -46,6 +46,12 @@ class MarketplaceConfigFactory implements FactoryCreateFromDbDataInterface
             );
         }
 
+        if (isset($data->mainRecipientId)) {
+            $marketplaceConfig->setMainRecipientId(
+                $data->mainRecipientId
+            );
+        }
+
         return $marketplaceConfig;
     }
 }
