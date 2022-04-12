@@ -338,6 +338,10 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
             $orderRequest->payments[] = $payment->convertToSDKRequest();
         }
 
+        if (!empty($this->getSplitData())){
+            $orderRequest = $this->fixRoundedValuesInCharges($orderRequest);
+        }
+
         $orderRequest->items = [];
         foreach ($this->getItems() as $item) {
             $orderRequest->items[] = $item->convertToSDKRequest();
@@ -348,6 +352,103 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
             $orderRequest->shipping = $shipping->convertToSDKRequest();
         }
 
+        return $orderRequest;
+    }
+
+    private function fixRoundedValuesInCharges(&$orderRequest){
+
+        if(count($orderRequest->payments) < 2){
+            return $orderRequest;
+        }
+
+        $firstChargeAmount = $orderRequest->payments[0]->amount;
+        $firstChargePercentageOfTotal = $firstChargeAmount / $this->getAmount();
+
+        if ($firstChargePercentageOfTotal !== 0.5){
+            return $orderRequest;
+        }
+
+        $orderSplitData = $this->getSplitData();
+        
+        $wrongValuesPerRecipient = $this->getRecipientWrongValuesMap($orderRequest, $orderSplitData);
+
+        if (!$wrongValuesPerRecipient){
+            return $orderRequest;
+        }
+
+        $orderRequest = $this->fixRoundedValues($wrongValuesPerRecipient, $orderRequest);
+        
+        return $orderRequest;
+
+    }
+
+    private function getRecipientWrongValuesMap($orderRequest, $splitData){
+        $map = [];
+
+        $marketplaceId = $splitData->getMainRecipientOptionConfig();
+        $map[$marketplaceId] = $splitData->getMarketplaceComission();
+
+        foreach ($splitData->getSellersData() as $key => $sellerData) {
+            $sellerId = $sellerData['pagarmeId'];
+            $sellerCommission = $sellerData['commission'];
+
+            $map[$sellerId] = $sellerCommission; 
+        }
+
+
+        foreach ($orderRequest->payments as $key => $paymentObject) {
+            $paymentSplitDetails = $paymentObject->split;
+
+            foreach ($paymentSplitDetails as $key => $paymentSplitDetailsObject) {
+                $amountPerCharge = $paymentSplitDetailsObject->amount;
+                $chargeRecipientId = $paymentSplitDetailsObject->recipientId;
+
+                $map[$chargeRecipientId] -= $amountPerCharge;
+            }
+        }
+
+        foreach ($map as $recipientId => $wrongValue) {
+            if ($wrongValue !== 0){
+                return $map;
+            }
+        }
+
+        return false;
+    }
+
+    private function fixRoundedValues($wrongValuesMap, &$orderRequest){
+
+        foreach ($wrongValuesMap as $recipientId => $wrongValue) {
+            $payments = $orderRequest->payments;
+
+            foreach ($payments as $key => &$paymentRequest) {
+                $paymentRequestAmount = $paymentRequest->amount;
+                $splitedAmount = 0;
+                $recipientSplitData = null;
+
+                foreach ($paymentRequest->split as $key => &$splitRequest) {
+                    $splitedAmount += $splitRequest->amount;
+
+                    if($splitRequest->recipientId === $recipientId){
+                        $recipientSplitData = $splitRequest;
+                    }
+                }
+
+                if ($splitedAmount === $paymentRequestAmount){
+                    continue;
+                }
+
+                $amountRemovableFromCharge = $splitedAmount - $paymentRequestAmount;
+
+                $recipientSplitData->amount -= $amountRemovableFromCharge;
+
+                $mustRemoveFromOtherCharges = $wrongValue + $amountRemovableFromCharge;
+
+                if (!$mustRemoveFromOtherCharges){
+                    break;
+                }
+            }
+        }
         return $orderRequest;
     }
 

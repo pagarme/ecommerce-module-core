@@ -27,6 +27,15 @@ class Split extends AbstractEntity
         }
     }
 
+    public function getMainRecipientOptionConfig(){
+        if (!$this->marketplaceConfig) {
+            return null;
+        }
+
+        return $this->marketplaceConfig
+            ->getMainRecipientId();
+    }
+
     public function getMainChargeProcessingFeeOptionConfig()
     {
         if (!$this->marketplaceConfig) {
