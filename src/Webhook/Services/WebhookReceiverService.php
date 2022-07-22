@@ -28,7 +28,7 @@ class WebhookReceiverService
             true
         );
         try {
-            $logService->info("Received", $this->prepareToLog($postData));
+            $logService->info("Received", $postData);
 
             $repository = new WebhookRepository();
             $webhook = $repository->findByPagarmeId(new WebhookId($postData->id));
@@ -75,71 +75,5 @@ class WebhookReceiverService
          * @var AbstractHandlerService $handlerService
          */
         return new $handlerServiceClass();
-    }
-
-    private function prepareToLog($postData)
-    {
-        $postData->data['customer']['name'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['name']);
-        $postData->data['customer']['email'] = preg_replace('/(?<=.).(?=.*@)/','*', $postData->data['customer']['email']);
-        $postData->data['customer']['phones'] = null;
-        $postData->data['customer']['address']['street'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['address']['street']);
-        $postData->data['customer']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['address']['line_1']);
-        $postData->data['customer']['address']['line_2'] = null;
-        $postData->data['customer']['address']['number'] = null;
-        $postData->data['customer']['address']['complement'] = null;
-        $postData->data['customer']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $postData->data['customer']['address']['zip_code']);
-        $postData->data['customer']['address']['neighborhood'] = null;
-        // Charges
-        if (array_key_exists('charges', $postData->data) && is_array($postData->data['charges'])) {
-            $charges = [];
-            foreach ($postData->data['charges'] as $charge) {
-                $charge['last_transaction']['card']['id'] = preg_replace('/^(.*?).{8}(.{3})$/', '$1********$2', $charge['last_transaction']['card']['id']);
-                $charge['last_transaction']['card']['holder_name'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card']['holder_name']);
-                $charge['last_transaction']['card']['billing_address']['street'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card']['billing_address']['street']);
-                $charge['last_transaction']['card']['billing_address']['line_1'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card']['billing_address']['line_1']);
-                $charge['last_transaction']['card']['billing_address']['line_2'] = null;
-                $charge['last_transaction']['card']['billing_address']['number'] = null;
-                $charge['last_transaction']['card']['billing_address']['complement'] = null;
-                $charge['last_transaction']['card']['billing_address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $charge['last_transaction']['card'][ 'billing_address']['zip_code']);
-                $charge['last_transaction']['card']['billing_address']['neighborhood'] = null;
-
-                $charge['last_transaction']['card']['customer']['name'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['name']);
-                $charge['last_transaction']['card']['customer']['email'] = preg_replace('/^.{3}\K|.(?=.*@)/img','*', $charge['last_transaction']['card'][ 'customer']['email']);
-                $charge['last_transaction']['card']['customer']['phones'] = null;
-                $charge['last_transaction']['card']['customer']['address']['street'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['street']);
-                $charge['last_transaction']['card']['customer']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['line_1']);
-                $charge['last_transaction']['card']['customer']['address']['line_2'] = null;
-                $charge['last_transaction']['card']['customer']['address']['number'] = null;
-                $charge['last_transaction']['card']['customer']['address']['complement'] = null;
-                $charge['last_transaction']['card']['customer']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['zip_code']);
-                $charge['last_transaction']['card']['customer']['address']['neighborhood'] = null;
-                $charge['last_transaction']['card']['customer']['phones'] = null;
-
-                $charge['customer']['name'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['name']);
-                $charge['customer']['email'] = preg_replace('/^.{3}\K|.(?=.*@)/img','*', $charge['last_transaction']['card'][ 'customer']['email']);
-                $charge['customer']['phones'] = null;
-                $charge['customer']['address']['street'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['street']);
-                $charge['customer']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['line_1']);
-                $charge['customer']['address']['line_2'] = null;
-                $charge['customer']['address']['number'] = null;
-                $charge['customer']['address']['complement'] = null;
-                $charge['customer']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $charge['last_transaction']['card'][ 'customer']['address']['zip_code']);
-                $charge['customer']['address']['neighborhood'] = null;
-                $charge['customer']['phones'] = null;
-                $charges[] = $charge;
-            }
-            $postData->data['charges'] = $charges;
-        }
-        $postData->data['shipping']['recipient_name'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['name']);
-        $postData->data['shipping']['recipient_phone'] = null;
-        $postData->data['shipping']['phones'] = null;
-        $postData->data['shipping']['address']['street'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['address']['street']);
-        $postData->data['shipping']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $postData->data['customer']['address']['line_1']);
-        $postData->data['shipping']['address']['line_2'] = null;
-        $postData->data['shipping']['address']['number'] = null;
-        $postData->data['shipping']['address']['complement'] = null;
-        $postData->data['shipping']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $postData->data['customer']['address']['zip_code']);
-        $postData->data['shipping']['address']['neighborhood'] = null;
-        return $postData;
     }
 }
