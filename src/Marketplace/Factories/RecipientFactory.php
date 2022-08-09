@@ -140,10 +140,8 @@ class RecipientFactory implements FactoryInterface
         if (array_key_exists('type', $postData)) {
             $this->recipient->setType($postData['type']);
         }
-        if ($byDocument) {
-            if (array_key_exists('document', $postData)) {
-                $this->recipient->setType($this->getTypeByDocument($postData['document']));
-            }
+        if ($byDocument && array_key_exists('document', $postData)) {
+            $this->recipient->setType($this->getTypeByDocument($postData['document']));
         }
         return;
     }
