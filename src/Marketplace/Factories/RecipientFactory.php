@@ -10,6 +10,9 @@ use Pagarme\Core\Marketplace\Aggregates\Recipient;
 
 class RecipientFactory implements FactoryInterface
 {
+    /** @var bool */
+    const TYPE_BY_DOCUMENT = true;
+
     /**
      * @var Recipient
      */
@@ -33,7 +36,7 @@ class RecipientFactory implements FactoryInterface
         $this->setEmail($postData);
         $this->setDocumentType($postData);
         $this->setDocument($postData);
-        $this->setType($postData);
+        $this->setType($postData, self::TYPE_BY_DOCUMENT);
         $this->setHolderName($postData);
         $this->setHolderDocument($postData);
         $this->setHolderType($postData);
@@ -61,15 +64,27 @@ class RecipientFactory implements FactoryInterface
             ->setName($dbData['name'])
             ->setEmail($dbData['email'])
             ->setDocumentType($dbData['document_type'])
-            ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
             ->setDocument($dbData['document'])
+            ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
             ->setPagarmeId(new RecipientId($dbData['pagarme_id']));
+
+        if (self::TYPE_BY_DOCUMENT) {
+            $this->recipient->setType($this->getTypeByDocument($this->recipient->getDocument()));
+        }
 
         $this->setCreatedAt($dbData);
         $this->setUpdatedAt($dbData);
 
 
         return $this->recipient;
+    }
+
+    private function getTypeByDocument($document)
+    {
+        if ($document) {
+            $document = preg_replace("/[^0-9]/", "", $postData['document']);
+            return strlen($document) > 11 ? 'company' : 'individual';
+        }
     }
 
     private function setId($postData)
@@ -108,8 +123,8 @@ class RecipientFactory implements FactoryInterface
     {
         if (array_key_exists('document_type', $postData)) {
             $this->recipient->setDocumentType($postData['document_type']);
-            return;
         }
+        return;
     }
 
     private function setDocument($postData)
@@ -120,12 +135,17 @@ class RecipientFactory implements FactoryInterface
         }
     }
 
-    private function setType($postData)
+    private function setType($postData , $byDocument = false)
     {
         if (array_key_exists('type', $postData)) {
             $this->recipient->setType($postData['type']);
-            return;
         }
+        if ($byDocument) {
+            if (array_key_exists('document', $postData)) {
+                $this->recipient->setType($this->getTypeByDocument($postData['document']));
+            }
+        }
+        return;
     }
 
     private function setHolderName($postData)
