@@ -94,7 +94,7 @@ class Cycle extends AbstractEntity
         return $this->cycleEnd;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return get_object_vars($this);
     }

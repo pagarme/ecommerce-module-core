@@ -17,17 +17,17 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @var OrderId 
+     * @var OrderId
      */
     private $orderId;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $amount;
     /**
      *
-     * @var int 
+     * @var int
      */
     private $paidAmount;
     /**
@@ -45,18 +45,18 @@ final class Charge extends AbstractEntity implements ChargeInterface
 
     /**
      *
-     * @var string 
+     * @var string
      */
     private $code;
     /**
      *
-     * @var ChargeStatus 
+     * @var ChargeStatus
      */
     private $status;
 
     /**
      *
-     * @var Transaction[] 
+     * @var Transaction[]
      */
     private $transactions;
 
@@ -456,7 +456,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $obj = new \stdClass();
 

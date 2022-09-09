@@ -9,7 +9,7 @@ abstract class AbstractValidString extends AbstractValueObject
 {
     /**
      *
-     * @var string 
+     * @var string
      */
     protected $value;
 
@@ -47,7 +47,7 @@ abstract class AbstractValidString extends AbstractValueObject
             $this->value = $value;
             return $this;
         }
-        
+
         throw new InvalidParamException("Invalid value for " . static::class . "!", $value);
     }
 
@@ -73,7 +73,7 @@ abstract class AbstractValidString extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getValue();
     }

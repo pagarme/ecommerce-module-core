@@ -8,12 +8,12 @@ final class VersionInfo extends AbstractValueObject
 {
     /**
      *
-     * @var string 
+     * @var string
      */
     private $moduleVersion;
     /**
      *
-     * @var string 
+     * @var string
      */
     private $coreVersion;
 
@@ -109,7 +109,7 @@ final class VersionInfo extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $obj = new \stdClass();
 
