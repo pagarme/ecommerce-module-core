@@ -238,7 +238,7 @@ class Invoice extends AbstractEntity
         return null;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'subscriptionId' => $this->getSubscriptionId()

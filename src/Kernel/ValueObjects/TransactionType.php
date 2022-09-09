@@ -13,7 +13,7 @@ final class TransactionType extends AbstractValueObject
     const PIX = 'pix';
     /**
      *
-     * @var string 
+     * @var string
      */
     private $type;
 
@@ -92,7 +92,7 @@ final class TransactionType extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->type;
     }

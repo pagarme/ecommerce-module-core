@@ -8,12 +8,12 @@ final class WebhookType extends AbstractValueObject
 {
     /**
      *
-     * @var string 
+     * @var string
      */
     private $entityType;
     /**
      *
-     * @var string 
+     * @var string
      */
     private $action;
 
@@ -92,7 +92,7 @@ final class WebhookType extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $obj = new \stdClass();
 

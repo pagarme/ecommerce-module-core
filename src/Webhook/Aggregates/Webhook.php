@@ -9,13 +9,13 @@ class Webhook extends AbstractEntity
 {
     /**
      *
-     * @var WebhookType 
+     * @var WebhookType
      */
     protected $type;
 
     /**
      *
-     * @var AbstractEntity 
+     * @var AbstractEntity
      */
     protected $entity;
 
@@ -87,7 +87,7 @@ class Webhook extends AbstractEntity
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         // TODO: Implement jsonSerialize() method.
     }
