@@ -10,9 +10,9 @@
     ],
     "type": "library",
     "require": {
-        "php": "^7.4",
+        "php": ">=8.0",
         "monolog/monolog": "*",
-        "mundipagg/mundiapi": "^3.2",
+        "mundipagg/mundiapi": "^3.2@dev",
         "ext-json": "*"
     },
     "require-dev": {
