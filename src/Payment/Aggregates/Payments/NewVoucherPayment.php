@@ -2,13 +2,13 @@
 
 namespace Pagarme\Core\Payment\Aggregates\Payments;
 
-use PagarmeCoreApiLib\Models\CreateCreditCardPaymentRequest;
+use MundiAPILib\Models\CreateCreditCardPaymentRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Pagarme\Core\Payment\ValueObjects\CardToken;
 use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
-use PagarmeCoreApiLib\Models\CreateCardRequest;
+use MundiAPILib\Models\CreateCardRequest;
 
 final class NewVoucherPayment extends AbstractCreditCardPayment
 {
@@ -31,7 +31,7 @@ final class NewVoucherPayment extends AbstractCreditCardPayment
             return false;
         }
 
-        if (!MPSetup::getModuleConfiguration()->isSaveVoucherCards()) {
+        if (!MPSetup::getModuleConfiguration()->getVoucherConfig()->isSaveCards()) {
             return false;
         }
 

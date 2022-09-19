@@ -71,9 +71,6 @@ class ConfigurationFactory implements FactoryInterface
         }
 
         $config->setAntifraudEnabled($antifraudEnabled);
-        if (isset($data->saveVoucherCards)) {
-            $config->setSaveVoucherCards($data->saveVoucherCards);
-        }
         $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
         $config->setCreditCardEnabled($data->creditCardEnabled);

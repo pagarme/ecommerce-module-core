@@ -2,7 +2,7 @@
 
 namespace Pagarme\Core\Payment\Aggregates\Payments;
 
-use PagarmeCoreApiLib\Models\CreatePixPaymentRequest;
+use MundiAPILib\Models\CreatePixPaymentRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 

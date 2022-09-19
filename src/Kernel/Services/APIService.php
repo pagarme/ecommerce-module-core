@@ -3,16 +3,16 @@
 namespace Pagarme\Core\Kernel\Services;
 
 use Exception;
-use PagarmeCoreApiLib\APIException;
-use PagarmeCoreApiLib\Configuration;
-use PagarmeCoreApiLib\Controllers\ChargesController;
-use PagarmeCoreApiLib\Controllers\CustomersController;
-use PagarmeCoreApiLib\Controllers\OrdersController;
-use PagarmeCoreApiLib\Exceptions\ErrorException;
-use PagarmeCoreApiLib\Models\CreateCancelChargeRequest;
-use PagarmeCoreApiLib\Models\CreateCaptureChargeRequest;
-use PagarmeCoreApiLib\Models\CreateOrderRequest;
-use PagarmeCoreApiLib\PagarmeCoreApiClient;
+use MundiAPILib\APIException;
+use MundiAPILib\Configuration;
+use MundiAPILib\Controllers\ChargesController;
+use MundiAPILib\Controllers\CustomersController;
+use MundiAPILib\Controllers\OrdersController;
+use MundiAPILib\Exceptions\ErrorException;
+use MundiAPILib\Models\CreateCancelChargeRequest;
+use MundiAPILib\Models\CreateCaptureChargeRequest;
+use MundiAPILib\Models\CreateOrderRequest;
+use MundiAPILib\MundiAPIClient;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Pagarme\Core\Kernel\Aggregates\Charge;
@@ -32,7 +32,7 @@ use Pagarme\Core\Recurrence\Factories\SubscriptionFactory;
 class APIService
 {
     /**
-     * @var PagarmeCoreApiClient
+     * @var MundiAPIClient
      */
     private $apiClient;
 
@@ -53,7 +53,7 @@ class APIService
 
     public function __construct()
     {
-        $this->apiClient = $this->getPagarmeCoreApiClient();
+        $this->apiClient = $this->getMundiPaggApiClient();
         $this->logService = new OrderLogService(2);
         $this->configInfoService = new ConfigInfoRetrieverService();
         $this->orderCreationService = new OrderCreationService($this->apiClient);
@@ -221,7 +221,7 @@ class APIService
         return $this->apiClient->getCustomers();
     }
 
-    private function getPagarmeCoreApiClient()
+    private function getMundiPaggApiClient()
     {
         $i18n = new LocalizationService();
         $config = MPSetup::getModuleConfiguration();
@@ -243,7 +243,7 @@ class APIService
 
         Configuration::$basicAuthPassword = '';
 
-        return new PagarmeCoreApiClient($secretKey, $password);
+        return new MundiAPIClient($secretKey, $password);
     }
 
     private function getAPIBaseEndpoint()
