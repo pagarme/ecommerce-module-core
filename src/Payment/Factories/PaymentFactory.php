@@ -136,14 +136,12 @@ final class PaymentFactory
         $payment->setInstallments($cardData->installments);
 
         //setting amount with interest
-        if (strcmp($cardDataIndex, \Pagarme\Core\Kernel\ValueObjects\PaymentMethod::VOUCHER)) {
-            $payment->setAmount(
-                $this->getAmountWithInterestForCreditCard(
-                    $payment,
-                    $config
-                )
-            );
-        }
+        $payment->setAmount(
+            $this->getAmountWithInterestForCreditCard(
+                $payment,
+                $config
+            )
+        );
 
         $payment->setCapture($config->isCapture());
         $payment->setStatementDescriptor($config->getCardStatementDescriptor());
