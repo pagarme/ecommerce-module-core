@@ -74,9 +74,7 @@ class CardService
                     json_decode(json_encode($lastTransaction->getCardData()));
                 $postData->owner =
                     $charge->getCustomer()->getPagarmeId();
-                if( !property_exists($postData, "type") ) {
-                    $postData->type = $lastTransaction->getTransactionType()->getType();
-                }
+
                 $savedCard = $savedCardFactory->createFromTransactionJson($postData);
                 if (
                     $savedCardRepository->findByPagarmeId($savedCard->getPagarmeId()) === null

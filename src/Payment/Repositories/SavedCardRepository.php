@@ -18,18 +18,12 @@ final class SavedCardRepository extends AbstractRepository
      * @return Savedcard[]
      * @throws \Exception
      */
-    public function findByOwnerId(CustomerId $customerId, $cardType = null, $includeEmptyType = true)
+    public function findByOwnerId(CustomerId $customerId)
     {
         $id = $customerId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
         $query = "SELECT * FROM $table WHERE owner_id = '$id'";
-        if ($cardType && is_array($cardType)) {
-            if ($includeEmptyType) {
-                array_push($cardType, '');
-            }
-            $cardType = implode('\', \'', $cardType);
-            $query .= " AND type IN ('$cardType')";
-        }
+
         $result = $this->db->fetch($query);
 
         $factory = new SavedCardFactory();
@@ -62,7 +56,6 @@ final class SavedCardRepository extends AbstractRepository
                 first_six_digits, 
                 last_four_digits,
                 brand,
-                type,
                 created_at
             )
           VALUES 
@@ -73,7 +66,6 @@ final class SavedCardRepository extends AbstractRepository
                 '{$obj->firstSixDigits}',
                 '{$obj->lastFourDigits}',
                 '{$obj->brand}',
-                '{$obj->type}',
                 '{$obj->createdAt}'
             )          
         ";
