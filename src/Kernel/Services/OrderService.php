@@ -370,6 +370,9 @@ final class OrderService
 
         $orderInfo = $this->getOrderInfo($platformOrder);
 
+        /*
+        This block was commented out because this validation is still problematic in the woocommerce module.
+        TODO: we will need to make the module work with this code block.
         if (!$order->isPaymentSumCorrect()) {
             $message = $i18n->getDashboard(
                 "The sum of payments is different than the order amount! " .
@@ -381,7 +384,7 @@ final class OrderService
                 $orderInfo
             );
             throw new \Exception($message, 400);
-        }
+        }*/
 
         $items = $platformOrder->getItemCollection();
         foreach ($items as $item) {

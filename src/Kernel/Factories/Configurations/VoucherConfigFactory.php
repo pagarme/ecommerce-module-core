@@ -41,19 +41,25 @@ class VoucherConfigFactory implements FactoryCreateFromDbDataInterface
             $voucherConfig->setSaveCards((bool) $data->saveCards);
         }
 
-        foreach ($data->cardConfigs as $cardConfig) {
-            $brand = strtolower($cardConfig->brand);
-            $voucherConfig->addCardConfig(
-                new CardConfig(
-                    $cardConfig->enabled,
-                    CardBrand::$brand(),
-                    $cardConfig->maxInstallment,
-                    $cardConfig->maxInstallmentWithoutInterest,
-                    $cardConfig->initialInterest,
-                    $cardConfig->incrementalInterest,
-                    $cardConfig->minValue
-                )
-            );
+        if (isset($data->saveVoucherCards)) {
+            $voucherConfig->setSaveVoucherCards((bool) $data->saveVoucherCards);
+        }
+
+        if (isset($data->cardConfigs)) {
+            foreach ($data->cardConfigs as $cardConfig) {
+                $brand = strtolower($cardConfig->brand);
+                $voucherConfig->addCardConfig(
+                    new CardConfig(
+                        $cardConfig->enabled,
+                        CardBrand::$brand(),
+                        $cardConfig->maxInstallment,
+                        $cardConfig->maxInstallmentWithoutInterest,
+                        $cardConfig->initialInterest,
+                        $cardConfig->incrementalInterest,
+                        $cardConfig->minValue
+                    )
+                );
+            }
         }
 
         return $voucherConfig;
