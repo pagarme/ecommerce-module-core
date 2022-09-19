@@ -2,7 +2,7 @@
 
 namespace Pagarme\Core\Kernel\Services;
 
-use PagarmeCoreApiLib\Models\GetChargeResponse;
+use MundiAPILib\Models\GetChargeResponse;
 use Pagarme\Core\Kernel\Aggregates\Charge;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Interfaces\ChargeInterface;

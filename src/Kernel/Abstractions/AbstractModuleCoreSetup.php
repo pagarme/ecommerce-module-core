@@ -4,7 +4,7 @@ namespace Pagarme\Core\Kernel\Abstractions;
 
 use Pagarme\Core\Kernel\Aggregates\Configuration;
 use Pagarme\Core\Kernel\Repositories\ConfigurationRepository;
-use PagarmeCoreApiLib\Configuration as PagarmeCoreApiConfiguration;
+use MundiAPILib\Configuration as MundiAPIConfiguration;
 use ReflectionClass;
 
 abstract class AbstractModuleCoreSetup
@@ -81,7 +81,7 @@ abstract class AbstractModuleCoreSetup
     protected static function setApiBaseUrl()
     {
         if (static::$moduleConfig->isHubEnabled()) {
-            PagarmeCoreApiConfiguration::$BASEURI = 'https://hubapi.mundipagg.com/core/v1';
+            MundiAPIConfiguration::$BASEURI = 'https://hubapi.mundipagg.com/core/v1';
         }
     }
 

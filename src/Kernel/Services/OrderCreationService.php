@@ -3,15 +3,15 @@
 namespace Pagarme\Core\Kernel\Services;
 
 use Exception;
-use PagarmeCoreApiLib\Models\CreateOrderRequest;
-use PagarmeCoreApiLib\PagarmeCoreApiClient;
+use MundiAPILib\Models\CreateOrderRequest;
+use MundiAPILib\MundiAPIClient;
 
 class OrderCreationService
 {
     /**
-     * @var PagarmeCoreApiClient
+     * @var MundiAPIClient
      */
-    private $PagarmeCoreApiClient;
+    private $mundiAPIClient;
 
     /**
      * @var OrderLogService
@@ -23,9 +23,9 @@ class OrderCreationService
      */
     private $generalAttempt = 1;
 
-    public function __construct(PagarmeCoreApiClient $PagarmeCoreApiClient)
+    public function __construct(MundiAPIClient $mundiAPIClient)
     {
-        $this->PagarmeCoreApiClient = $PagarmeCoreApiClient;
+        $this->mundiAPIClient = $mundiAPIClient;
         $this->logService = new OrderLogService(2);
     }
 
@@ -45,7 +45,7 @@ class OrderCreationService
         $response = null;
         $messageLog = "";
 
-        $orderController = $this->PagarmeCoreApiClient->getOrders();
+        $orderController = $this->mundiAPIClient->getOrders();
 
         try {
             $response = $orderController->createOrder($orderRequest, $idempotencyKey);

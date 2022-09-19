@@ -2,7 +2,7 @@
 
 namespace Pagarme\Core\Test\Recurrence\Aggregates;
 
-use PagarmeCoreApiLib\Models\CreateIncrementRequest;
+use MundiAPILib\Models\CreateIncrementRequest;
 use Pagarme\Core\Recurrence\Aggregates\Increment;
 use PHPUnit\Framework\TestCase;
 
