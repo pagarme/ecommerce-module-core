@@ -157,16 +157,16 @@ class LogService
         return $data;
     }
     private function blurChargeCustomer($data){
-        $data['data']['charges'][0]['customer']['name'] = preg_replace('/^.{8}/', '$1**', $data['data']['charges'][0]['customer']['name']);
-        $data['data']['charges'][0]['customer']['email'] = preg_replace('/\B[^@.]/', '*', $data['data']['charges'][0]['customer']['email']);
-        $data['data']['charges'][0]['customer']['document'] = preg_replace('/\B[^@.]/', '*', $data['data']['charges'][0]['customer']['document']);
+        $data['data']['charges'][0]['customer']['name'] = preg_replace('/^.{8}/', '$1**', $data['data']['payments'][0]['customer']['name']);
+        $data['data']['charges'][0]['customer']['email'] = preg_replace('/\B[^@.]/', '*', $data['data']['payments'][0]['customer']['email']);
+        $data['data']['charges'][0]['customer']['document'] = preg_replace('/\B[^@.]/', '*', $data['data']['payments'][0]['customer']['document']);
         $data['data']['charges'][0]['customer']['phones'] = null;
-        $data['data']['charges'][0]['customer']['address']['street'] = preg_replace('/^.{8}/', '$1**', $data['data']['charges'][0]['customer']['address']['street']);
-        $data['data']['charges'][0]['customer']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $data['data']['charges'][0]['customer']['address']['line_1']);
+        $data['data']['charges'][0]['customer']['address']['street'] = preg_replace('/^.{8}/', '$1**', $data['data']['payments'][0]['customer']['address']['street']);
+        $data['data']['charges'][0]['customer']['address']['line_1'] = preg_replace('/^.{8}/', '$1**', $data['data']['payments'][0]['customer']['address']['line_1']);
         $data['data']['charges'][0]['customer']['address']['line_2'] = null;
         $data['data']['charges'][0]['customer']['address']['number'] = null;
         $data['data']['charges'][0]['customer']['address']['complement'] = null;
-        $data['data']['charges'][0]['customer']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $data['data']['charges'][0]['customer']['address']['zip_code']);
+        $data['data']['charges'][0]['customer']['address']['zip_code'] = preg_replace('/^.{5}/', '$1**', $data['data']['payments'][0]['customer']['address']['zip_code']);
         $data['data']['charges'][0]['customer']['address']['neighborhood'] = null;
         return $data;
     }
