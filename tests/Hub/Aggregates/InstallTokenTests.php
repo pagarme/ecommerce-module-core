@@ -73,9 +73,9 @@ class InstallTokenTests extends TestCase
         $this->assertInternalType('bool', $this->installToken->isDisabled());
     }
 
-    public function testInstallTokenJsonSerialize()
+    public function testInstallTokenjsonSerialize(): string
     {
-        $this->assertInternalType('object', $this->installToken->jsonSerialize());
-        $this->assertInstanceOf(\stdClass::class, $this->installToken->jsonSerialize());
+        $this->assertInternalType('object', $this->installToken->jsonSerialize(): string);
+        $this->assertInstanceOf(\stdClass::class, $this->installToken->jsonSerialize(): string);
     }
 }

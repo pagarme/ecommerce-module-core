@@ -180,9 +180,9 @@ abstract class AbstractCreditCardPayment extends AbstractPayment
         $this->brand = $brand;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
-        $obj =  parent::jsonSerialize();
+        $obj =  parent::jsonSerialize(): string;
 
         $obj->installments = $this->installments;
         $obj->brand = $this->brand;

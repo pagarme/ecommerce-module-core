@@ -99,7 +99,7 @@ class SubscriptionItem extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return [
             "id" => $this->getId(),

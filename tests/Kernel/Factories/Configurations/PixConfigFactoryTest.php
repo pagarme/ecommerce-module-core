@@ -46,7 +46,7 @@ class PixConfigFactoryTest extends TestCase
             $pixConfig->getAdditionalInformation()
         );
 
-        $serializedPixConfig = $pixConfig->jsonSerialize();
+        $serializedPixConfig = $pixConfig->jsonSerialize(): string;
 
         $this->assertEquals(
             (array) $this->dataWithAdditionalInformation->additionalInformation,
@@ -69,7 +69,7 @@ class PixConfigFactoryTest extends TestCase
             $pixConfig->getAdditionalInformation()
         );
 
-        $serializedPixConfig = $pixConfig->jsonSerialize();
+        $serializedPixConfig = $pixConfig->jsonSerialize(): string;
 
         $this->assertEquals(
             null,

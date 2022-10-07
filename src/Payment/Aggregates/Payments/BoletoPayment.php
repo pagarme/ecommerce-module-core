@@ -49,9 +49,9 @@ final class BoletoPayment extends AbstractPayment
         $this->instructions = $instructions;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
-        $obj = parent::jsonSerialize();
+        $obj = parent::jsonSerialize(): string;
 
         $obj->bank = $this->bank;
         $obj->instructions = $this->instructions;

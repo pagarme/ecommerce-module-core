@@ -49,9 +49,9 @@ class NewCreditCardPayment extends AbstractCreditCardPayment
         $this->saveOnSuccess = boolval($saveOnSuccess);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
-        $obj = parent::jsonSerialize();
+        $obj = parent::jsonSerialize(): string;
 
         $obj->cardToken = $this->identifier;
 

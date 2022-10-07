@@ -18,7 +18,7 @@ abstract class AbstractPayment
     use WithCustomerTrait;
     use WithOrderTrait;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         $obj = new \stdClass();
 

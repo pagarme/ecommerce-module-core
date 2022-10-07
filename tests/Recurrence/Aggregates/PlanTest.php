@@ -21,7 +21,7 @@ class PlanTest extends TestCase
 
     public function testJsonSerializeShouldReturnAnInstanceOfStdClass()
     {
-        $this->assertInstanceOf(\stdClass::class, $this->plan->jsonSerialize());
+        $this->assertInstanceOf(\stdClass::class, $this->plan->jsonSerialize(): string);
     }
 
     public function testJsonSerializeShouldSetAllProperties()

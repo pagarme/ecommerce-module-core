@@ -73,7 +73,7 @@ abstract class AbstractValidString extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getValue();
     }

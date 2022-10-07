@@ -34,9 +34,9 @@ class SubscriptionStatusTest extends TestCase
         $this->assertTrue($subscriptionStatusFuture->equals(SubscriptionStatus::future()));
     }
 
-    public function testSubscriptionJsonSerialize()
+    public function testSubscriptionjsonSerialize(): string
     {
-        $subscriptionStatusFuture = SubscriptionStatus::future()->jsonSerialize();
+        $subscriptionStatusFuture = SubscriptionStatus::future()->jsonSerialize(): string;
         $this->assertEquals('future', $subscriptionStatusFuture);
     }
 }

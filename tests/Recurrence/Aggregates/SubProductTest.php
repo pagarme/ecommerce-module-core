@@ -19,7 +19,7 @@ class SubProductTest extends TestCase
 
     public function testJsonSerializeShouldReturnAnInstanceOfStdClass()
     {
-        $this->assertNotEmpty($this->subProduct->jsonSerialize());
+        $this->assertNotEmpty($this->subProduct->jsonSerialize(): string);
     }
 
     public function testJsonSerializeShouldSetAllProperties()

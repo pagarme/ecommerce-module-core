@@ -119,7 +119,7 @@ final class Item extends AbstractEntity implements ConvertibleToSDKRequestsInter
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         $obj = new \stdClass();
 
