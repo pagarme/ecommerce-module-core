@@ -40,7 +40,8 @@ class ConfigurationFactory implements FactoryInterface
                     $cardConfig['installments_up_to'],
                     $cardConfig['installments_without_interest'],
                     $cardConfig['interest'],
-                    $cardConfig['incremental_interest']
+                    $cardConfig['incremental_interest'],
+                    null
                 )
             );
         }
@@ -71,6 +72,9 @@ class ConfigurationFactory implements FactoryInterface
         }
 
         $config->setAntifraudEnabled($antifraudEnabled);
+        if (isset($data->saveVoucherCards)) {
+            $config->setSaveVoucherCards($data->saveVoucherCards);
+        }
         $config->setAntifraudMinAmount($antifraudMinAmount);
         $config->setBoletoEnabled($data->boletoEnabled);
         $config->setCreditCardEnabled($data->creditCardEnabled);
