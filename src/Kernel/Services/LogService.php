@@ -15,6 +15,7 @@ use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Pagarme\Core\Kernel\Aggregates\LogObject;
 use Pagarme\Core\Kernel\Exceptions\AbstractPagarmeCoreException;
 use Pagarme\Core\Kernel\Factories\LogObjectFactory;
+use Pagarme\Core\Kernel\Log\BlurData;
 use Pagarme\Core\Kernel\Log\JsonPrettyFormatter;
 
 /**
@@ -40,6 +41,9 @@ class LogService
     /** @var int */
     protected $stackTraceDepth;
 
+    /** @var BlurData */
+    protected $blurData;
+
     /**
      * @param $channelName
      * @param bool $addHost
@@ -63,6 +67,7 @@ class LogService
         $handler = new StreamHandler($this->fileName, Logger::DEBUG);
         $handler->setFormatter(new JsonPrettyFormatter());
         $this->monolog->pushHandler($handler);
+        $this->blurData = new BlurData();
     }
 
     /**
@@ -144,40 +149,15 @@ class LogService
     {
         if ($data = $this->getData($logObject->getData(), 'data')) {
             foreach ($data as $method => $value) {
-                $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-                if (method_exists($this, $blurMethod)) {
-                    $data[$method] = $this->{$blurMethod}($value);
+                $blurMethod = $this->blurData->getBlurMethod($method);
+                if (method_exists($this->blurData, $blurMethod)) {
+                    $data[$method] = $this->blurData->{$blurMethod}($value);
                 }
             }
             $logObjectData = $logObject->getData();
             $this->setData($logObjectData, $data, 'data');
             $logObject->setData($logObjectData);
         }
-    }
-
-    /**
-     * @param string $value
-     * @param $delimiter
-     * @return string
-     */
-    private function blurStringSensitiveData(string $value, $delimiter){
-        $displayed = substr($value, 0, $delimiter);
-        $blur = str_repeat("*", strlen($value));
-        $blur = substr($blur, $delimiter);
-        $result = "$displayed $blur";
-        return $result;
-    }
-
-    /**
-     * @param $string
-     * @return string
-     */
-    private function blurEmailSensitiveData($string)
-    {
-        $displayed = substr($string, 0, 3);
-        $final = substr($string, strpos($string, "@"));
-        $result = "$displayed***$final";
-        return $result;
     }
 
     /**
@@ -215,175 +195,5 @@ class LogService
             return;
         }
         $haystack = $value;
-    }
-
-    /**
-     * @param array $customer
-     * @return array
-     */
-    private function blurCustomer(array $customer)
-    {
-        foreach ($customer as $key => $value) {
-            switch ($key) {
-                case 'name' :
-                    $value = $this->blurStringSensitiveData($value, 5);
-                    break;
-                case 'email' :
-                    $value = $this->blurEmailSensitiveData($value);
-                    break;
-                case 'document' :
-                    $value = preg_replace('/\B[^@.]/', '*', $value);
-                    break;
-                case 'address' :
-                    $value = $this->blurAddress($value);
-                    break;
-                default :
-                    $value = '***********';
-            }
-            $customer[$key] = $value;
-        }
-        return $customer;
-    }
-
-    /**
-     * @param array $address
-     * @return array
-     */
-    private function blurAddress(array $address)
-    {
-        foreach ($address as $key => $value) {
-            switch ($key) {
-                case 'street' :
-                case 'line_1' :
-                    $value = $this->blurStringSensitiveData($value, 8);
-                    break;
-                case 'zip_code' :
-                    $value = $this->blurStringSensitiveData($value, 5);
-                    break;
-                default :
-                    $value = '***********';
-            }
-            $address[$key] = $value;
-        }
-        return $address;
-    }
-
-    /**
-     * @param array $shipping
-     * @return array
-     */
-    private function blurShipping(array $shipping)
-    {
-        foreach ($shipping as $key => $value) {
-            switch ($key) {
-                case 'recipient_name' :
-                    $value = $this->blurStringSensitiveData($value, 5);
-                    break;
-                case 'address' :
-                    $value = $this->blurAddress($value);
-                    break;
-                default :
-                    $value = '***********';
-            }
-            $address[$key] = $value;
-        }
-        return $shipping;
-    }
-
-    /**
-     * @param array $payments
-     * @return array
-     */
-    private function blurPayments(array $payments)
-    {
-        foreach ($payments as &$payment) {
-            foreach ($payment as $method => $value) {
-                $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-                if (method_exists($this, $blurMethod)) {
-                    $payment[$method] = $this->{$blurMethod}($value);
-                }
-            }
-        }
-        return $payments;
-    }
-
-    /**
-     * @param array $creditCard
-     * @return array
-     */
-    private function blurCreditCard(array $creditCard)
-    {
-        foreach ($creditCard as $method => $value) {
-            $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-            if (method_exists($this, $blurMethod)) {
-                $creditCard[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $creditCard;
-    }
-
-    /**
-     * @param array $payments
-     * @return array
-     */
-    private function blurLastTransaction(array $lastTransaction)
-    {
-        foreach ($lastTransaction as $method => &$value) {
-            $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-            if (method_exists($this, $blurMethod)) {
-                $lastTransaction[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $lastTransaction;
-    }
-
-    /**
-     * @param array $card
-     * @return array
-     */
-    private function blurCard(array $card)
-    {
-        foreach ($card as $method => $value) {
-            $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-            if (method_exists($this, $blurMethod)) {
-                $card[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $card;
-    }
-
-    /**
-     * @param string $card
-     * @return string
-     */
-    private function blurHolderName(string $holderName)
-    {
-        return preg_replace('/^.{8}/', '$1**', $holderName);
-    }
-
-    /**
-     * @param array $card
-     * @return array
-     */
-    private function blurBillingAddress(array $billingAddress)
-    {
-        return $this->blurAddress($billingAddress);
-    }
-
-    /**
-     * @param array $charges
-     * @return array
-     */
-    private function blurCharges(array $charges)
-    {
-        foreach ($charges as &$charge) {
-            foreach ($charge as $method => &$value) {
-                $blurMethod = 'blur' . str_replace(' ', '', ucwords(str_replace('_', ' ', $method)));
-                if (method_exists($this, $blurMethod)) {
-                    $charge[$method] = $this->{$blurMethod}($value);
-                }
-            }
-        }
-        return $charges;
     }
 }
