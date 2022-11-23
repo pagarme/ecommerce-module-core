@@ -14,6 +14,9 @@ namespace Pagarme\Core\Kernel\Log;
  */
 class BlurData
 {
+    /** @var string */
+    const TOTAL_BLUR = '***********';
+
     /**
      * @param string $method
      * @return string
@@ -142,7 +145,7 @@ class BlurData
                 $customer[$key] = $this->{$blurMethod}($value);
                 continue;
             }
-            $customer[$key] = '***********';
+            $customer[$key] = self::TOTAL_BLUR;
         }
         return $customer;
     }
@@ -159,7 +162,7 @@ class BlurData
                 $address[$key] = $this->{$blurMethod}($value);
                 continue;
             }
-            $address[$key] = '***********';
+            $address[$key] = self::TOTAL_BLUR;
         }
         return $address;
     }
@@ -176,7 +179,7 @@ class BlurData
                 $shipping[$key] = $this->{$blurMethod}($value);
                 continue;
             }
-            $shipping[$key] = '***********';
+            $shipping[$key] = self::TOTAL_BLUR;
         }
         return $shipping;
     }
