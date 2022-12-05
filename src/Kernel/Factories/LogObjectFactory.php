@@ -48,16 +48,30 @@ class LogObjectFactory
         $baseObject = new LogObject();
         $baseObject->setVersions(
             new VersionInfo(
-                $data['versions']['moduleVersion'],
-                $data['versions']['coreVersion'],
-                $data['versions']['platformVersion']
+                $this->findKey($data, 'moduleVersion') ?? '',
+                $this->findKey($data, 'coreVersion') ?? '',
+                $this->findKey($data, 'platformVersion') ?? ''
             )
         );
-
-        $baseObject->setMethod($data['method']);
-
-        $baseObject->setData(json_decode(json_encode($data['data'])));
-
+        $baseObject->setMethod($this->findKey($data, 'method') ?? '');
+        $baseObject->setData(json_decode(json_encode( $this->findKey($data, 'data') ?? '')));
         return $baseObject;
+    }
+
+    /**
+     * @param $array
+     * @param $keySearch
+     * @return false|mixed
+     */
+    public function findKey($array, $keySearch)
+    {
+        foreach ($array as $key => $item) {
+            if ($key == $keySearch) {
+                return $array[$keySearch];
+            } elseif (is_array($item) && $this->findKey($item, $keySearch)) {
+                return $item[$keySearch];
+            }
+        }
+        return false;
     }
 }
