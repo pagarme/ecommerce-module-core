@@ -148,15 +148,12 @@ class LogService
     private function blurSensitiveData(LogObject &$logObject)
     {
         if ($data = $this->getData($logObject->getData(), 'data')) {
-            foreach ($data as $method => $value) {
-                $blurMethod = $this->blurData->getBlurMethod($method);
-                if (method_exists($this->blurData, $blurMethod)) {
-                    $data[$method] = $this->blurData->{$blurMethod}($value);
-                }
-            }
             $logObjectData = $logObject->getData();
-            $this->setData($logObjectData, $data, 'data');
+            $this->setData($logObjectData, $this->blurData->blurData($data), 'data');
             $logObject->setData($logObjectData);
+        }
+        if ($data = $logObject->getData()) {
+            $logObject->setData($this->blurData->blurData($data));
         }
     }
 

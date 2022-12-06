@@ -62,10 +62,10 @@ class BlurData
     }
 
     /**
-     * @param array $billingAddress
-     * @return array
+     * @param $billingAddress
+     * @return array|mixed
      */
-    public function blurBillingAddress(array $billingAddress)
+    public function blurBillingAddress($billingAddress)
     {
         return $this->blurAddress($billingAddress);
     }
@@ -80,8 +80,8 @@ class BlurData
     }
 
     /**
-     * @param array $street
-     * @return array
+     * @param string $street
+     * @return string
      */
     public function blurStreet(string $street)
     {
@@ -98,167 +98,230 @@ class BlurData
     }
 
     /**
-     * @param array $line1
-     * @return array
+     * @param string|null $line1
+     * @return string
      */
-    public function blurLine1(string $line1)
+    public function blurLine1(?string $line1)
     {
         return $this->blurStringSensitiveData($line1, 8);
     }
 
     /**
-     * @param string $holderName
+     * @param string|null $line2
      * @return string
      */
-    public function blurHolderName(string $holderName)
+    public function blurLine2(?string $line2)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $complement
+     * @return string
+     */
+    public function blurComplement(?string $complement)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $city
+     * @return string
+     */
+    public function blurCity(?string $city)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $state
+     * @return string
+     */
+    public function blurState(?string $state)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $country
+     * @return string
+     */
+    public function blurCountry(?string $country)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $number
+     * @return string
+     */
+    public function blurNumber(?string $number)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $neighborhood
+     * @return string
+     */
+    public function blurNeighborhood(?string $neighborhood)
+    {
+        return self::TOTAL_BLUR;
+    }
+
+    /**
+     * @param string|null $holderName
+     * @return string
+     */
+    public function blurHolderName(?string $holderName)
     {
         return preg_replace('/^.{8}/', '$1**', $holderName);
     }
 
     /**
-     * @param array $zipCode
-     * @return array
+     * @param string|null $zipCode
+     * @return string
      */
-    public function blurZipCode(string $zipCode)
+    public function blurZipCode(?string $zipCode)
     {
         return $this->blurStringSensitiveData($zipCode, 5);
     }
 
     /**
-     * @param array $recipientName
-     * @return array
+     * @param string|null $recipientName
+     * @return string
      */
-    public function blurRecipientName(string $recipientName)
+    public function blurRecipientName(?string $recipientName)
     {
         return $this->blurStringSensitiveData($recipientName, 5);
     }
 
     /**
-     * @param array $customer
-     * @return array
+     * @param string|null $recipientPhone
+     * @return string
      */
-    public function blurCustomer(array $customer)
+    public function blurRecipientPhone(?string $recipientPhone)
     {
-        foreach ($customer as $key => $value) {
-            $blurMethod = $this->getBlurMethod($key);
-            if (method_exists($this, $blurMethod)) {
-                $customer[$key] = $this->{$blurMethod}($value);
-                continue;
-            }
-            $customer[$key] = self::TOTAL_BLUR;
-        }
-        return $customer;
+        return $this->blurStringSensitiveData($recipientPhone, 5);
     }
 
     /**
-     * @param array $address
+     * @param array $data
      * @return array
      */
-    public function blurAddress(array $address)
+    public function blurArrayData(array $data)
     {
-        foreach ($address as $key => $value) {
+        foreach ($data as $key => $value) {
             $blurMethod = $this->getBlurMethod($key);
             if (method_exists($this, $blurMethod)) {
-                $address[$key] = $this->{$blurMethod}($value);
-                continue;
+                $data[$key] = $this->{$blurMethod}($value);
             }
-            $address[$key] = self::TOTAL_BLUR;
         }
-        return $address;
+        return $data;
+    }
+
+    public function blurObjectData($data)
+    {
+        foreach (get_object_vars($data) as $var => $value) {
+            $blurMethod = $this->getBlurMethod($var);
+            if (method_exists($this, $blurMethod)) {
+                $data->{$var} = $this->{$blurMethod}($value);
+            }
+        }
+        return $data;
     }
 
     /**
-     * @param array $shipping
-     * @return array
+     * @param $data
+     * @return array|mixed
      */
-    public function blurShipping(array $shipping)
+    public function blurData($data)
     {
-        foreach ($shipping as $key => $value) {
-            $blurMethod = $this->getBlurMethod($key);
-            if (method_exists($this, $blurMethod)) {
-                $shipping[$key] = $this->{$blurMethod}($value);
-                continue;
-            }
-            $shipping[$key] = self::TOTAL_BLUR;
+        switch ($data) {
+            case is_array($data):
+                $data = $this->blurArrayData($data);
+                break;
+            case is_object($data):
+                $data = $this->blurObjectData($data);
+                break;
         }
-        return $shipping;
+        return $data;
     }
 
     /**
-     * @param array $payments
-     * @return array
+     * @param $customer
+     * @return mixed
      */
-    public function blurPayments(array $payments)
+    public function blurCustomer($customer)
+    {
+        return $this->blurData($customer);
+    }
+
+    /**
+     * @param $address
+     * @return mixed
+     */
+    public function blurAddress($address)
+    {
+        return $this->blurData($address);
+    }
+
+    /**
+     * @param $shipping
+     * @return mixed
+     */
+    public function blurShipping($shipping)
+    {
+        return $this->blurData($shipping);
+    }
+
+    /**
+     * @param $payments
+     * @return mixed
+     */
+    public function blurPayments($payments)
     {
         foreach ($payments as &$payment) {
-            foreach ($payment as $method => $value) {
-                $blurMethod = $this->getBlurMethod($method);
-                if (method_exists($this, $blurMethod)) {
-                    $payment[$method] = $this->{$blurMethod}($value);
-                }
-            }
+            $payment = $this->blurData($payment);
         }
         return $payments;
     }
 
     /**
-     * @param array $creditCard
-     * @return array
+     * @param $creditCard
+     * @return mixed
      */
-    public function blurCreditCard(array $creditCard)
+    public function blurCreditCard($creditCard)
     {
-        foreach ($creditCard as $method => $value) {
-            $blurMethod = $this->getBlurMethod($method);
-            if (method_exists($this, $blurMethod)) {
-                $creditCard[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $creditCard;
+        return $this->blurData($creditCard);
     }
 
     /**
-     * @param array $payments
-     * @return array
+     * @param $lastTransaction
+     * @return mixed
      */
-    public function blurLastTransaction(array $lastTransaction)
+    public function blurLastTransaction($lastTransaction)
     {
-        foreach ($lastTransaction as $method => &$value) {
-            $blurMethod = $this->getBlurMethod($method);
-            if (method_exists($this, $blurMethod)) {
-                $lastTransaction[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $lastTransaction;
+        return $this->blurData($lastTransaction);
     }
 
     /**
-     * @param array $card
-     * @return array
+     * @param $card
+     * @return mixed
      */
-    public function blurCard(array $card)
+    public function blurCard($card)
     {
-        foreach ($card as $method => $value) {
-            $blurMethod = $this->getBlurMethod($method);
-            if (method_exists($this, $blurMethod)) {
-                $card[$method] = $this->{$blurMethod}($value);
-            }
-        }
-        return $card;
+        return $this->blurData($card);
     }
 
     /**
-     * @param array $charges
-     * @return array
+     * @param $charges
+     * @return mixed
      */
-    public function blurCharges(array $charges)
+    public function blurCharges($charges)
     {
         foreach ($charges as &$charge) {
-            foreach ($charge as $method => &$value) {
-                $blurMethod = $this->getBlurMethod($method);
-                if (method_exists($this, $blurMethod)) {
-                    $charge[$method] = $this->{$blurMethod}($value);
-                }
-            }
+            $charge = $this->blurData($charge);
         }
         return $charges;
     }
