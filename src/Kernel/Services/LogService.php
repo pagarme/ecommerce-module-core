@@ -105,6 +105,9 @@ class LogService
             $sourceObject,
             $versionService->getVersionInfo()
         );
+        if (!$baseObject) {
+            $baseObject = [];
+        }
         $baseObject = json_encode($baseObject);
         return json_decode($baseObject, true);
     }
