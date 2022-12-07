@@ -49,7 +49,7 @@ class OrderCreationService
 
         try {
             $response = $orderController->createOrder($orderRequest, $idempotencyKey);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $messageLog = $exception->getMessage();
             $shouldRetry = $this->shouldRetry($exception);
         }
