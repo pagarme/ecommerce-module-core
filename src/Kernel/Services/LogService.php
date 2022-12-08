@@ -12,8 +12,6 @@ namespace Pagarme\Core\Kernel\Services;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
-use Pagarme\Core\Kernel\Aggregates\LogObject;
-use Pagarme\Core\Kernel\Exceptions\AbstractPagarmeCoreException;
 use Pagarme\Core\Kernel\Factories\LogObjectFactory;
 use Pagarme\Core\Kernel\Log\BlurData;
 use Pagarme\Core\Kernel\Log\JsonPrettyFormatter;
@@ -78,6 +76,7 @@ class LogService
     public function info($message, $sourceObject = null)
     {
         $logObject = $this->prepareObject($sourceObject);
+        $logObject = $this->blurSensitiveData($logObject);
         $this->monolog->info($message, $logObject);
     }
 
@@ -109,7 +108,6 @@ class LogService
         if (!$baseObject) {
             $baseObject = [];
         }
-        $this->blurSensitiveData($baseObject);
         $baseObject = json_encode($baseObject);
         return json_decode($baseObject, true);
     }
@@ -145,19 +143,38 @@ class LogService
     }
 
     /**
-     * @param LogObject $logObject
-     * @return void
+     * @param $logObject
+     * @return mixed
      */
-    private function blurSensitiveData(LogObject &$logObject)
+    private function blurSensitiveData($logObject)
     {
-        if ($data = $this->getData($logObject->getData(), 'data')) {
-            $logObjectData = $logObject->getData();
-            $this->setData($logObjectData, $this->blurData->blurData($data), 'data');
-            $logObject->setData($logObjectData);
-        }
-        if ($data = $logObject->getData()) {
-            $logObject->setData($this->blurData->blurData($data));
-        }
+        try {
+            if (is_object($logObject)) {
+                if ($data = $this->getData($logObject->getData(), 'data')) {
+                    foreach ($data as $method => $value) {
+                        $blurMethod = $this->blurData->getBlurMethod($method);
+                        if (method_exists($this->blurData, $blurMethod)) {
+                            $data[$method] = $this->blurData->{$blurMethod}($value);
+                        }
+                    }
+                    $logObjectData = $logObject->getData();
+                    $this->setData($logObjectData, $data, 'data');
+                    $logObject->setData($logObjectData);
+                }
+            }
+            if (is_array($logObject)) {
+                if ($data = $this->getData($logObject, 'data')) {
+                    foreach ($data as $method => $value) {
+                        $blurMethod = $this->blurData->getBlurMethod($method);
+                        if (method_exists($this->blurData, $blurMethod)) {
+                            $data[$method] = $this->blurData->{$blurMethod}($value);
+                        }
+                    }
+                    $this->setData($logObject, $data, 'data');
+                }
+            }
+            return $logObject;
+        } catch (\Exception $e) {}
     }
 
     /**
