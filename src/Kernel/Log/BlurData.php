@@ -238,6 +238,8 @@ class BlurData
     public function blurData($data)
     {
         switch ($data) {
+            case null:
+                break;
             case is_array($data):
                 $data = $this->blurArrayData($data);
                 break;
