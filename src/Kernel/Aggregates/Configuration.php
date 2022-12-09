@@ -122,6 +122,9 @@ final class Configuration extends AbstractEntity
     private $saveCards;
 
     /** @var bool */
+    private $saveVoucherCards;
+
+    /** @var bool */
     private $multiBuyer;
 
     /** @var RecurrenceConfig */
@@ -160,6 +163,7 @@ final class Configuration extends AbstractEntity
     public function __construct()
     {
         $this->saveCards = false;
+        $this->saveVoucherCards = false;
         $this->multiBuyer = false;
         $this->cardConfigs = [];
         $this->methodsInherited = [];
@@ -656,6 +660,22 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
+    public function isSaveVoucherCards()
+    {
+        return $this->saveVoucherCards;
+    }
+
+    /**
+     * @param bool $saveVoucherCards
+     */
+    public function setSaveVoucherCards($saveVoucherCards)
+    {
+        $this->saveVoucherCards = $saveVoucherCards;
+    }
+
+    /**
+     * @return bool
+     */
     public function isMultiBuyer()
     {
         return $this->multiBuyer;
@@ -722,6 +742,7 @@ final class Configuration extends AbstractEntity
             "boletoEnabled" => $this->boletoEnabled,
             "creditCardEnabled" => $this->creditCardEnabled,
             "saveCards" => $this->isSaveCards(),
+            "saveVoucherCards" => $this->isSaveVoucherCards(),
             "multiBuyer" => $this->isMultiBuyer(),
             "twoCreditCardsEnabled" => $this->twoCreditCardsEnabled,
             "boletoCreditCardEnabled" => $this->boletoCreditCardEnabled,

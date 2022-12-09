@@ -11,7 +11,7 @@ class OrderCreationService
     /**
      * @var PagarmeCoreApiClient
      */
-    private $PagarmeCoreApiClient;
+    private $pagarmeCoreApiClient;
 
     /**
      * @var OrderLogService
@@ -23,9 +23,9 @@ class OrderCreationService
      */
     private $generalAttempt = 1;
 
-    public function __construct(PagarmeCoreApiClient $PagarmeCoreApiClient)
+    public function __construct(PagarmeCoreApiClient $pagarmeCoreApiClient)
     {
-        $this->PagarmeCoreApiClient = $PagarmeCoreApiClient;
+        $this->pagarmeCoreApiClient = $pagarmeCoreApiClient;
         $this->logService = new OrderLogService(2);
     }
 
@@ -45,7 +45,7 @@ class OrderCreationService
         $response = null;
         $messageLog = "";
 
-        $orderController = $this->PagarmeCoreApiClient->getOrders();
+        $orderController = $this->pagarmeCoreApiClient->getOrders();
 
         try {
             $response = $orderController->createOrder($orderRequest, $idempotencyKey);

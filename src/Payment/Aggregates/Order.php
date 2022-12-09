@@ -171,13 +171,15 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
             $currentAmount += $currentPayment->getAmount();
         }
 
+        /*This block was commented out because this validation is still problematic in the woocommerce module.
+        TODO: we will need to make the module work with this code block.
         if ($currentAmount > $this->amount) {
             $message = $i18n->getDashboard(
                 "The sum of payments is greater than the order amount! " .
                 "Review the information and try again."
             );
             throw new \Exception($message, 400);
-        }
+        }*/
     }
 
     /**
