@@ -5,7 +5,6 @@ namespace Pagarme\Core\Test\Kernel\Aggregates\Factories\Configurations;
 
 use Pagarme\Core\Kernel\Factories\Configurations\PixConfigFactory;
 use PHPUnit\Framework\TestCase;
-use Mockery;
 use Carbon\Carbon;
 
 class PixConfigFactoryTest extends TestCase
@@ -19,7 +18,7 @@ class PixConfigFactoryTest extends TestCase
      */
     private $pixConfigFactory;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->dataWithAdditionalInformation = (object) array(
             'enabled' => true,

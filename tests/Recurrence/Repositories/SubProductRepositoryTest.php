@@ -132,7 +132,7 @@ class SubProductRepositoryTest extends AbstractRepositoryTest
         return $subProduct;
     }
 
-    public function getRepository()
+    public function getRepository() : SubProductRepository
     {
         return new SubProductRepository();
     }

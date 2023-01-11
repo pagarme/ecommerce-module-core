@@ -14,6 +14,7 @@ class NormalWithRecurrenceProductTest extends TestCase
 {
     public function testShouldReturnErrorWhenTryingToAddANormalProductInTheCartContainingRecurrenceProduct()
     {
+        $this->expectError(\Exception::class);
         $currentProduct = $this->getCurrentProduct(true);
         $productListInCart = $this->getProductListInCart();
 
@@ -32,6 +33,7 @@ class NormalWithRecurrenceProductTest extends TestCase
 
     public function testShouldReturnErrorWhenTryingToAddARecurrenceProductInTheCartContainingNormalProduct()
     {
+        $this->expectError(\Exception::class);
         $currentProduct = $this->getCurrentProduct();
         $productListInCart = $this->getProductListInCart();
 
@@ -100,24 +102,19 @@ class NormalWithRecurrenceProductTest extends TestCase
 
     protected function getRecurrenceConfig($allow = true, $error = "")
     {
-        $recurrenceConfigMock = \Mockery::mock(RecurrenceConfig::class);
-
-        $recurrenceConfigMock
-            ->shouldReceive('getConflictMessageRecurrenceProductWithNormalProduct')
-            ->andReturn($error);
+        $recurrenceConfigMock = $this->getMockBuilder(RecurrenceConfig::class)->getMock();
+        $recurrenceConfigMock->method('getConflictMessageRecurrenceProductWithNormalProduct')
+            ->willReturn($error);
 
         if ($allow) {
             $recurrenceConfigMock
-                ->shouldReceive('isPurchaseRecurrenceProductWithNormalProduct')
-                ->andReturnTrue();
+                ->method('isPurchaseRecurrenceProductWithNormalProduct')
+                ->willReturn(true);
 
             return $recurrenceConfigMock;
         }
-
         $recurrenceConfigMock
-            ->shouldReceive('isPurchaseRecurrenceProductWithNormalProduct')
-            ->andReturnFalse();
-
-        return $recurrenceConfigMock;
+            ->method('isPurchaseRecurrenceProductWithNormalProduct')
+            ->willReturn(false);
     }
 }
