@@ -467,12 +467,6 @@ class Subscription extends AbstractEntity
         $this->addCharge($updatedCharge);
     }
 
-
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
     public function applyOrderStatusFromCharges()
     {
         if (empty($this->getCharges())) {
