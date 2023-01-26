@@ -114,10 +114,12 @@ final class TransactionStatus extends AbstractValueObject
     {
         return new self(self::FAILED);
     }
+
     public static function chargedback()
     {
         return new self(self::CHARGEDBACK);
     }
+    
     public static function waitingPayment()
     {
         return new self(self::WAITING_PAYMENT);

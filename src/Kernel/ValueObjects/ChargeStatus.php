@@ -46,6 +46,7 @@ final class ChargeStatus extends AbstractValueObject
     {
         return new self(self::CANCELED);
     }
+    
     static public function chargedback()
     {
         return new self(self::CHARGEDBACK);

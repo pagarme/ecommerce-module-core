@@ -265,6 +265,10 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         return $result;
     }
 
+    /**
+     * @param Webhook $webhook
+     * @return array
+     */
     protected function handleChargedback(Webhook $webhook)
     {
         

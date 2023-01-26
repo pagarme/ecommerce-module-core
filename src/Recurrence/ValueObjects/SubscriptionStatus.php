@@ -46,6 +46,7 @@ final class SubscriptionStatus extends AbstractValueObject
     {
         return new self(self::FAILED);
     }
+    
     public static function chargedback()
     {
         return new self(self::CHARGEDBACK);
