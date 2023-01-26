@@ -15,6 +15,7 @@ final class TransactionStatus extends AbstractValueObject
     const WITH_ERROR = 'withError';
     const NOT_AUTHORIZED = 'notAuthorized';
     const FAILED = 'failed';
+    const CHARGEDBACK = 'chargedback';
 
     const GENERATED = 'generated';
     const UNDERPAID = 'underpaid';
@@ -114,6 +115,11 @@ final class TransactionStatus extends AbstractValueObject
         return new self(self::FAILED);
     }
 
+    public static function chargedback()
+    {
+        return new self(self::CHARGEDBACK);
+    }
+    
     public static function waitingPayment()
     {
         return new self(self::WAITING_PAYMENT);
