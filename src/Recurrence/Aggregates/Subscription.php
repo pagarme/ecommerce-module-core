@@ -447,6 +447,7 @@ class Subscription extends AbstractEntity
 
         return $this;
     }
+
     public function updateCharge(ChargeInterface $updatedCharge, $overwriteId = false)
     {
         $charges = $this->getCharges();
@@ -467,7 +468,11 @@ class Subscription extends AbstractEntity
     }
 
 
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function applyOrderStatusFromCharges()
     {
         if (empty($this->getCharges())) {
@@ -503,7 +508,6 @@ class Subscription extends AbstractEntity
         ) {
             $this->setStatus(SubscriptionStatus::canceled());
         }
-        $data = $listChargeStatus;
         if (
             in_array(ChargeStatus::chargedback()->getStatus(), $listChargeStatus)
         ) {
@@ -518,6 +522,7 @@ class Subscription extends AbstractEntity
             $this->setStatus(SubscriptionStatus::$currentStatus());
         }
     }
+    
     /**
      * @param ChargeInterface[] $charges
      */
