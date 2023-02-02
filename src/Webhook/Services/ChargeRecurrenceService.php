@@ -308,8 +308,8 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         
         $history = $i18n->getDashboard('Subscription canceled');
         $order->getPlatformOrder()->addHistoryComment($history);
-        
-        $subscriptionRepository->save($this->order);
+
+        $subscriptionRepository->save($order);
         
         return [
             "message" => 'Subscription cancel registered',
