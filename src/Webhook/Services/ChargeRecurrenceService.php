@@ -19,8 +19,8 @@ use Pagarme\Core\Kernel\ValueObjects\OrderStatus;
 use Pagarme\Core\Kernel\ValueObjects\TransactionStatus;
 use Pagarme\Core\Recurrence\Repositories\ChargeRepository;
 use Pagarme\Core\Recurrence\Repositories\SubscriptionRepository;
+use Pagarme\Core\Recurrence\Services\InvoiceService;
 use Pagarme\Core\Webhook\Aggregates\Webhook;
-use Pagarme\Core\Recurrence\ValueObjects\SubscriptionStatus;
 
 final class ChargeRecurrenceService extends AbstractHandlerService
 {
@@ -273,7 +273,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
     {
         
         $order = $this->order;
-        
+        $invoiceService = new InvoiceService();
         $subscriptionRepository = new SubscriptionRepository();
         $i18n = new LocalizationService();
 
@@ -298,19 +298,18 @@ final class ChargeRecurrenceService extends AbstractHandlerService
             $outdatedCharge->addTransaction($transaction);
         }
 
-        $charge->chargedback();
+        
+        $charge->cancel();
         $order->updateCharge($charge);
         $order->applyOrderStatusFromCharges();
-
-
-        $this->order->setStatus(SubscriptionStatus::canceled());
-
-        $subscriptionRepository->save($this->order);
-
+        
+        $charge->chargedback();
+        $invoiceService->setChargedbackStatus($charge);
+        
         $history = $i18n->getDashboard('Subscription canceled');
-        $this->order->getPlatformOrder()->addHistoryComment($history);
+        $order->getPlatformOrder()->addHistoryComment($history);
 
-        $this->orderService->syncPlatformWith($order, false);
+        $subscriptionRepository->save($order);
         
         return [
             "message" => 'Subscription cancel registered',
