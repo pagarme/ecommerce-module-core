@@ -2,7 +2,7 @@
   "name": "pagarme/ecommerce-module-core",
   "description": "Core component for Pagar.me e-commerce platform modules.",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "2.1.0",
   "authors": [
     {
       "name":"Open Source Team"
@@ -11,7 +11,7 @@
   "type": "library",
   "require": {
     "php": ">=7.1",
-    "monolog/monolog": "<3",
+    "monolog/monolog": "~2",
     "pagarme/pagarmecoreapi": "^5.7",
     "ext-json": "*"
   },
@@ -37,5 +37,10 @@
     ],
     "tests": "vendor/bin/phpunit --colors=always",
     "tests-coverage": "vendor/bin/phpunit --colors=always --coverage-html ./tests/report"
+  },
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true
+    }
   }
 }
