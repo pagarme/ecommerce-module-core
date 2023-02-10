@@ -658,7 +658,8 @@ class Subscription extends AbstractEntity
         return null;
     }
 
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return [
             "id" => $this->getId(),

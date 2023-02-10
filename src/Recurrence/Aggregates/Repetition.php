@@ -156,7 +156,8 @@ class Repetition extends AbstractEntity implements RepetitionInterface
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return [
             'id' => $this->getId(),

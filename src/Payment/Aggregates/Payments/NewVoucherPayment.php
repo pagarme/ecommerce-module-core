@@ -52,7 +52,8 @@ final class NewVoucherPayment extends AbstractCreditCardPayment
         $this->saveOnSuccess = boolval($saveOnSuccess);
     }
 
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
 

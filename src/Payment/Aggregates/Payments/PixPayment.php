@@ -72,7 +72,8 @@ final class PixPayment extends AbstractPayment
         $this->additionalInformation = $additionalInformation;
     }
 
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
         $obj->expiresIn = $this->getExpiresIn();

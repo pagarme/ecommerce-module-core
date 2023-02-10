@@ -42,7 +42,8 @@ final class SavedVoucherCardPayment extends AbstractCreditCardPayment
         return $this->cvv;
     }
 
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
 

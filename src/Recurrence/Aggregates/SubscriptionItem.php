@@ -99,7 +99,8 @@ class SubscriptionItem extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return [
             "id" => $this->getId(),

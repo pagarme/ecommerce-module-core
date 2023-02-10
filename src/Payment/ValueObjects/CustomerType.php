@@ -54,7 +54,8 @@ class CustomerType extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return $this->type;
     }

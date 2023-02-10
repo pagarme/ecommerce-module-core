@@ -90,10 +90,8 @@ class Discounts extends AbstractValueObject
         return get_object_vars($this) === (array)$object;
     }
 
-    /**
-     * @return array|mixed
-     */
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return get_object_vars($this);
     }
