@@ -170,6 +170,12 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $this->status = ChargeStatus::chargedback();
     }
 
+    
+    public function failed()
+    {
+        $this->status = ChargeStatus::failed();
+    }
+
     /**
      *
      * @return int
