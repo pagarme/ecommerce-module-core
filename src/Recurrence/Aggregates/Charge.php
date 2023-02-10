@@ -165,6 +165,11 @@ final class Charge extends AbstractEntity implements ChargeInterface
         $this->status = ChargeStatus::canceled();
     }
 
+    public function chargedback()
+    {
+        $this->status = ChargeStatus::chargedback();
+    }
+
     /**
      *
      * @return int
@@ -549,6 +554,7 @@ final class Charge extends AbstractEntity implements ChargeInterface
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = new stdClass();
