@@ -303,7 +303,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         $order->updateCharge($charge);
         $order->applyOrderStatusFromCharges();
         
-        $charge->chargedback();
+        $charge->failed();
         $invoiceService->setChargedbackStatus($charge);
         
         $history = $i18n->getDashboard('Subscription canceled');
