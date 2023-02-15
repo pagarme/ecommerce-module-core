@@ -43,6 +43,15 @@ class OrderInfoRetrieverService implements InfoRetrieverServiceInterface
         $platformOrderInfo->payments = $platformOrder->getPaymentCollection();
         $platformOrderInfo->invoices = $platformOrder->getInvoiceCollection();
 
+        $regex = '/(?<=\S{2})\S/';
+
+        $platformOrderInfo->order['customer_email'] = preg_replace('/^.{3}\K|.(?=.*@)/','*', $platformOrderInfo->order['customer_email']);
+        $platformOrderInfo->order['customer_firstname'] = preg_replace($regex, '*', $platformOrderInfo->order['customer_firstname']);
+        $platformOrderInfo->order['customer_lastname'] = preg_replace($regex, '*', $platformOrderInfo->order['customer_lastname']);
+        $platformOrderInfo->order['customer_middlename'] = preg_replace($regex, '*', $platformOrderInfo->order['customer_middlename']);
+        $platformOrderInfo->order['customer_taxvat'] = preg_replace($regex, '*', $platformOrderInfo->order['customer_taxvat']);
+        $platformOrderInfo->payments[0]['cc_owner'] = preg_replace($regex, '*', $platformOrderInfo->payments[0]['cc_owner']);
+
         return $platformOrderInfo;
     }
 
