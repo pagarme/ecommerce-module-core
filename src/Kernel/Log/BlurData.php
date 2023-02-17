@@ -170,7 +170,7 @@ class BlurData
     }
 
     /**
-     * @param string $holderName
+     * @param string|null $holderName
      * @return string
      */
     public function blurHolderName(?string $holderName)
