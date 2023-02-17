@@ -170,11 +170,12 @@ class BlurData
     }
 
     /**
-     * @param string|null $holderName
+     * @param string $holderName
      * @return string
      */
     public function blurHolderName(?string $holderName)
     {
+        $holderName = $holderName ?? "";
         return preg_replace('/^.{8}/', '$1**', $holderName);
     }
 
