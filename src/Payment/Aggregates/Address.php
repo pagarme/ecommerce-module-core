@@ -383,7 +383,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
     private function formatZipCode($zipCode)
     {
         $zipCode = str_replace('-', '', $zipCode);
-
+        $this->country = $this->country ?? "BR";
         $brazilianZipCodeLength = 8;
         if (strtoupper($this->country) === 'BR') {
             $zipCode = sprintf("%0${brazilianZipCodeLength}s", $zipCode);
