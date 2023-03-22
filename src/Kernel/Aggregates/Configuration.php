@@ -705,7 +705,7 @@ final class Configuration extends AbstractEntity
         if (!is_numeric($boletoDueDays)) {
             throw new InvalidParamException("Boleto due days should be an integer!", $boletoDueDays);
         }
-        
+
         $this->boletoDueDays = (int) $boletoDueDays;
     }
 
@@ -733,6 +733,7 @@ final class Configuration extends AbstractEntity
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
