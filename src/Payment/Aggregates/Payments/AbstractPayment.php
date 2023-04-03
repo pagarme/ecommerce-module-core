@@ -20,8 +20,10 @@ implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
     use WithCustomerTrait;
     use WithOrderTrait;
 
+
     protected $moduleConfig;
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = new \stdClass();
