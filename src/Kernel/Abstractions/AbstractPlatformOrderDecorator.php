@@ -43,7 +43,6 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentStatus = '';
         try {
             $currentStatus = $this->getStatus();
-        } catch (\Exception $e) {
         } catch (\Throwable $e) {
         }
 
@@ -66,7 +65,6 @@ abstract class AbstractPlatformOrderDecorator implements PlatformOrderInterface
         $currentState = '';
         try {
             $currentState = $this->getState();
-        } catch (\Exception $e) {
         } catch (\Throwable $e) {
         }
 
