@@ -293,6 +293,14 @@ final class OrderService
             $order = $orderFactory->createFromPostData($response);
             $order->setPlatformOrder($platformOrder);
 
+            $split = $order->getSplitInfo();
+            foreach ($split as $chargeId => $splitInfo) {
+                $platformOrder->addHistoryComment(
+                    $i18n->getDashboard('ChargeId: %s - Split rules:',
+                        $chargeId) . '<br/>' . join('<br/>', $splitInfo)
+                );
+            }
+
             $handler = $this->getResponseHandler($order);
             $handler->handle($order, $paymentOrder);
 
@@ -396,6 +404,11 @@ final class OrderService
         $shipping = $platformOrder->getShipping();
         if (!$shipping && $shipping !== null) {
             $order->setShipping($shipping);
+        }
+
+        $splitData = $platformOrder->handleSplitOrder();
+        if ($splitData !== null) {
+            $order->setSplitData($splitData);
         }
 
         return $order;
