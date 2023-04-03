@@ -2,9 +2,9 @@
 
 namespace Pagarme\Core\Marketplace\Repositories;
 
-use MundiAPILib\APIException;
-use MundiAPILib\Models\GetBankAccountResponse;
-use MundiAPILib\Models\GetTransferSettingsResponse;
+use PagarmeCoreApiLib\APIException;
+use PagarmeCoreApiLib\Models\GetBankAccountResponse;
+use PagarmeCoreApiLib\Models\GetTransferSettingsResponse;
 use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractRepository;

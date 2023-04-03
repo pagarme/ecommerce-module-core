@@ -2,13 +2,13 @@
 
 namespace Pagarme\Core\Marketplace\Aggregates;
 
-use MundiAPILib\Models\CreateBankAccountRequest;
-use MundiAPILib\Models\CreateRecipientRequest;
-use MundiAPILib\Models\CreateTransferRequest;
-use MundiAPILib\Models\CreateTransferSettingsRequest;
-use MundiAPILib\Models\UpdateRecipientBankAccountRequest;
-use MundiAPILib\Models\UpdateRecipientRequest;
-use MundiAPILib\Models\UpdateTransferSettingsRequest;
+use PagarmeCoreApiLib\Models\CreateBankAccountRequest;
+use PagarmeCoreApiLib\Models\CreateRecipientRequest;
+use PagarmeCoreApiLib\Models\CreateTransferRequest;
+use PagarmeCoreApiLib\Models\CreateTransferSettingsRequest;
+use PagarmeCoreApiLib\Models\UpdateRecipientBankAccountRequest;
+use PagarmeCoreApiLib\Models\UpdateRecipientRequest;
+use PagarmeCoreApiLib\Models\UpdateTransferSettingsRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Services\LocalizationService;
