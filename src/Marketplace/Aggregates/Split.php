@@ -2,8 +2,8 @@
 
 namespace Pagarme\Core\Marketplace\Aggregates;
 
-use MundiAPILib\Models\CreateSplitOptionsRequest;
-use MundiAPILib\Models\CreateSplitRequest;
+use PagarmeCoreApiLib\Models\CreateSplitOptionsRequest;
+use PagarmeCoreApiLib\Models\CreateSplitRequest;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup as MPSetup;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;

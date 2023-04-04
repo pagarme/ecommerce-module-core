@@ -2,7 +2,7 @@
 
 namespace Pagarme\Core\Marketplace\Factories;
 
-use MundiAPILib\Controllers\BaseController;
+use PagarmeCoreApiLib\Controllers\BaseController;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
 use Pagarme\Core\Kernel\ValueObjects\Id\RecipientId;

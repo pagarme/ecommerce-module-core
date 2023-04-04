@@ -2,11 +2,12 @@
 
 namespace Pagarme\Core\Marketplace\Services;
 
-use MundiAPILib\APIException;
-use MundiAPILib\Models\UpdateRecipientBankAccountRequest;
-use MundiAPILib\Models\UpdateRecipientRequest;
-use MundiAPILib\Models\UpdateTransferSettingsRequest;
-use MundiAPILib\MundiAPIClient;
+use PagarmeCoreApiLib\APIException;
+use PagarmeCoreApiLib\Models\UpdateRecipientBankAccountRequest;
+use PagarmeCoreApiLib\Models\UpdateRecipientRequest;
+use PagarmeCoreApiLib\Models\UpdateTransferSettingsRequest;
+use PagarmeCoreApiLib\PagarmeCoreApiClient;
+use PagarmeCoreApiLib\Configuration;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Services\LocalizationService;
@@ -39,9 +40,9 @@ class RecipientService
         }
 
         $password = '';
-        \MundiAPILib\Configuration::$basicAuthPassword = '';
+        Configuration::$basicAuthPassword = '';
 
-        $this->pagarmeApi = new MundiAPIClient($secretKey, $password);
+        $this->pagarmeCoreApi = new PagarmeCoreApiClient($secretKey, $password);
         $this->logService = new LogService('RecipientService', true);
         $this->recipientRepository = new RecipientRepository();
         $this->recipientFactory = new RecipientFactory();
@@ -69,7 +70,7 @@ class RecipientService
     public function createRecipientAtPagarme(Recipient $recipient)
     {
         $createRecipientRequest = $recipient->convertToSdkRequest();
-        $recipientController = $this->pagarmeApi->getRecipients();
+        $recipientController = $this->pagarmeCoreApi->getRecipients();
 
         try {
             $logService = $this->logService;
@@ -104,7 +105,7 @@ class RecipientService
          * @var UpdateRecipientBankAccountRequest $updateBankAccountRequest
          */
         list($updateRecipientRequest, $updateBankAccountRequest, $updateTransferSettingsRequest) = $recipient->convertToSdkRequest(true);
-        $recipientController = $this->pagarmeApi->getRecipients();
+        $recipientController = $this->pagarmeCoreApi->getRecipients();
 
         $recipientPrevious = $this->attachBankAccount($recipient);
 
@@ -209,7 +210,7 @@ class RecipientService
     public function attachBankAccount(Recipient $recipient)
     {
         try {
-            $bankAccount = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getPagarmeId())->defaultBankAccount;
+            $bankAccount = $this->pagarmeCoreApi->getRecipients()->getRecipient($recipient->getPagarmeId())->defaultBankAccount;
         } catch (APIException $e) {
             throw $e;
         }
@@ -219,7 +220,7 @@ class RecipientService
     public function attachTransferSettings(Recipient $recipient)
     {
         try {
-            $transferSettings = $this->pagarmeApi->getRecipients()->getRecipient($recipient->getPagarmeId())->transferSettings;
+            $transferSettings = $this->pagarmeCoreApi->getRecipients()->getRecipient($recipient->getPagarmeId())->transferSettings;
         } catch (APIException $e) {
             throw $e;
         }
@@ -228,7 +229,7 @@ class RecipientService
 
     public function findByPagarmeId($pagarmeId)
     {
-        $recipientController = $this->pagarmeApi->getRecipients();
+        $recipientController = $this->pagarmeCoreApi->getRecipients();
         try {
             $logService = $this->logService;
             return $recipientController->getRecipient($pagarmeId);
