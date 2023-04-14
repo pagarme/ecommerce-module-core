@@ -180,7 +180,7 @@ class Split extends AbstractEntity
 
         return $splitRequest;
     }
-
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = new \stdClass();
