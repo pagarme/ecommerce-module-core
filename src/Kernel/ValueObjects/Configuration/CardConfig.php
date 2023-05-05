@@ -139,10 +139,7 @@ final class CardConfig extends AbstractValueObject
         new Installment($newMaxInstallmentWithoutInterest, 1, 0);
 
         if ($newMaxInstallmentWithoutInterest > $this->maxInstallment) {
-            throw new InvalidParamException(
-                "'Max installment without interest' must be equal or smaller than 'Max Installments'! ",
-                $maxInstallmentWithoutInterest
-            );
+            $newMaxInstallmentWithoutInterest = $this->maxInstallment;
         }
 
         $this->maxInstallmentWithoutInterest = $newMaxInstallmentWithoutInterest;

@@ -577,7 +577,7 @@ final class Configuration extends AbstractEntity
         $numbers = '/([^0-9])/i';
         $replace = '';
 
-        $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount);
+        $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount ?? '');
 
         if ($minAmount < 0) {
             throw new InvalidParamException(
@@ -893,7 +893,7 @@ final class Configuration extends AbstractEntity
     {
         $methodSplited = explode(
             "_",
-            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $method)
+            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $method ?? '')
         );
 
         $targetObject = $this;
