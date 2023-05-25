@@ -102,7 +102,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
      */
     public function setPaymentMethod($paymentMethodName)
     {
-        $replace = str_replace('_', '', $paymentMethodName);
+        $replace = str_replace('_', '', $paymentMethodName ?? '');
         $paymentMethodObject = $replace . 'PaymentMethod';
 
         $this->paymentMethod = $this->$paymentMethodObject();
@@ -204,7 +204,7 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     private function discoverPaymentMethod(AbstractPayment $payment)
     {
         $paymentClass = get_class($payment);
-        $paymentClass = explode ('\\', $paymentClass);
+        $paymentClass = explode ('\\', $paymentClass ?? '');
         $paymentClass = end($paymentClass);
         return $paymentClass;
     }

@@ -339,7 +339,7 @@ final class OrderService
     private function getResponseHandler($response)
     {
         $responseClass = get_class($response);
-        $responseClass = explode('\\', $responseClass);
+        $responseClass = explode('\\', $responseClass ?? '');
 
         $responseClass =
             'Pagarme\\Core\\Payment\\Services\\ResponseHandlers\\' .
