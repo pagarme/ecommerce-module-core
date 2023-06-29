@@ -331,10 +331,12 @@ final class Configuration extends AbstractEntity
      */
     public function isHubEnabled()
     {
-        if ($this->hubInstallId === null) {
-            return false;
+        if ($this->getHubInstallId() && $this->getHubInstallId() instanceof GUID) {
+            return
+                $this->getHubInstallId()->getValue() !== null &&
+                $this->getHubInstallId()->getValue() !== "00000000-0000-0000-0000-000000000000";
         }
-        return $this->hubInstallId->getValue() !== null;
+        return false;
     }
 
     public function setHubInstallId(GUID $hubInstallId)
@@ -580,10 +582,7 @@ final class Configuration extends AbstractEntity
         $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount ?? '');
 
         if ($minAmount < 0) {
-            throw new InvalidParamException(
-                'AntifraudMinAmount should be at least 0!',
-                $minAmount
-            );
+            $minAmount = 0;
         }
         $this->antifraudMinAmount = $minAmount;
     }
