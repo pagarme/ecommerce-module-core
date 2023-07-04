@@ -59,7 +59,8 @@ implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
             $newPayment->customer = $this->getCustomer()->convertToSDKRequest();
         }
 
-        if ($this->moduleConfig->getMarketplaceConfig()->isEnabled()) {
+        $marketplaceConfig = $this->moduleConfig->getMarketplaceConfig();
+        if ($marketplaceConfig && $marketplaceConfig->isEnabled()) {
             $newPayment->split = static::getSplitData();
             $newPayment->split = $this->extractRequestsFromArray(
                 $newPayment->split
