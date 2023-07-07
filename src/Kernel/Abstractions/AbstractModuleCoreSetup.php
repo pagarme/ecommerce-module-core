@@ -110,7 +110,6 @@ abstract class AbstractModuleCoreSetup
             static::$moduleConfig->setInheritAll(true);
             static::$moduleConfig->setId(null);
         }
-        static::saveModuleConfig();
     }
 
     protected static function saveModuleConfig()
