@@ -11,14 +11,14 @@ use InvalidArgumentException;
  */
 class Card implements CardInterface
 {
-    /** @var string */
     private $token;
-    /** @var string  */
     private $cardId;
+
     public function setToken($token)
     {
         $this->token = $token;
     }
+
     public function getToken()
     {
         return $this->token;
@@ -28,6 +28,7 @@ class Card implements CardInterface
     {
         $this->cardId = $cardId;
     }
+    
     public function getCardId()
     {
         return $this->cardId;
@@ -40,7 +41,7 @@ class Card implements CardInterface
         }
         return true;
     }
-    
+
     public function convertToSdk()
     {
         $cardRequest = new CreateCardRequest();
