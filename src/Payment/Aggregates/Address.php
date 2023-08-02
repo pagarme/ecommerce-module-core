@@ -386,7 +386,7 @@ final class Address extends AbstractEntity implements ConvertibleToSDKRequestsIn
         $this->country = $this->country ?? "BR";
         $brazilianZipCodeLength = 8;
         if (strtoupper($this->country) === 'BR') {
-            $zipCode = sprintf("%0${brazilianZipCodeLength}s", $zipCode);
+            $zipCode = sprintf("%0{$brazilianZipCodeLength}s", $zipCode);
             $zipCode = substr($zipCode, 0, $brazilianZipCodeLength);
             return $zipCode;
         }

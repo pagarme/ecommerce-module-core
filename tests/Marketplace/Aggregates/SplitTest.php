@@ -9,7 +9,7 @@ class SplitTest extends TestCase
 {
     private $split;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->split = new Split();
     }

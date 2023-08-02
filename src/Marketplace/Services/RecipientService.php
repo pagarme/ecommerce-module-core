@@ -2,6 +2,7 @@
 
 namespace Pagarme\Core\Marketplace\Services;
 
+use Pagarme\Core\Kernel\Aggregates\Configuration as ConfigurationAggregate;
 use PagarmeCoreApiLib\APIException;
 use PagarmeCoreApiLib\Models\UpdateRecipientBankAccountRequest;
 use PagarmeCoreApiLib\Models\UpdateRecipientRequest;
@@ -19,15 +20,35 @@ use Pagarme\Core\Marketplace\Repositories\RecipientRepository;
 
 class RecipientService
 {
-    /** @var LogService  */
+    /**
+     * @var LogService
+     */
     protected $logService;
-    /** @var RecipientFactory */
+
+    /**
+     * @var RecipientFactory
+     */
     protected $recipientFactory;
-    /** @var RecipientRepository */
+
+    /**
+     * @var RecipientRepository
+     */
     protected $recipientRepository;
 
+    /**
+     * @var ConfigurationAggregate
+     */
     protected $config;
+
+    /**
+     * @var LocalizationService
+     */
     protected $i18n;
+
+    /**
+     * @var PagarmeCoreApiClient
+     */
+    protected $pagarmeCoreApi;
 
     public function __construct()
     {
