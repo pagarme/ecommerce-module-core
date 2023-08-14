@@ -98,7 +98,7 @@ final class ChargeRecurrenceService extends AbstractHandlerService
         if ($charge->getPaidAmount() == 0) {
             $charge->setPaidAmount($paidAmount);
         }
-        if ($charge->getSubscriptionId() == null) {
+        if ($charge->getSubscriptionId() === null) {
             $charge->setSubscriptionId($this->order->getSubscriptionId()->getValue());
         }
         $chargeRepository->save($charge);
