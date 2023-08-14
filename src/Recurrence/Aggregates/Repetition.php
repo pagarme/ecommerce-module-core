@@ -10,6 +10,7 @@ use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
 class Repetition extends AbstractEntity implements RepetitionInterface
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
+    const INTERVAL_DAY = 'day';
     const INTERVAL_WEEK = 'week';
     const INTERVAL_MONTH = 'month';
     const INTERVAL_YEAR = 'year';
@@ -197,6 +198,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     public function getAvailablesInterval()
     {
         return [
+            self::INTERVAL_DAY,
             self::INTERVAL_WEEK,
             self::INTERVAL_MONTH,
             self::INTERVAL_YEAR
