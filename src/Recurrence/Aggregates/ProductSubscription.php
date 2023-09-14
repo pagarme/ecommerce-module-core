@@ -32,6 +32,8 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     private $createdAt;
     /** @var string */
     private $updatedAt;
+    /** @var bool */
+    private $applyProductsCycleToDiscount;
 
     /**
      * @return int
@@ -220,6 +222,22 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     }
 
     /**
+     * @return bool
+     */
+    public function getApplyProductsCycleToDiscount()
+    {
+        return boolval($this->applyProductsCycleToDiscount);
+    }
+
+    /**
+     * @param bool $applyProductsCycleToDiscount
+     */
+    public function setApplyProductsCycleToDiscount($applyProductsCycleToDiscount)
+    {
+        $this->applyProductsCycleToDiscount = $applyProductsCycleToDiscount;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -241,6 +259,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
         $obj->repetitions = $this->getRepetitions();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
+        $obj->applyProductsCycleToDiscount = $this->getApplyProductsCycleToDiscount();
 
         return $obj;
     }
