@@ -38,7 +38,7 @@ class ProductSubscriptionFactory implements FactoryInterface
         $this->setRepetitions($postData);
         $this->setUpdatedAt($postData);
         $this->setCreatedAt($postData);
-        $this->setApplyProductsCycleToDiscount($postData);
+        $this->setApplyDiscountInAllProductCycles($postData);
 
         return $this->productSubscription;
     }
@@ -62,7 +62,7 @@ class ProductSubscriptionFactory implements FactoryInterface
             ->setAllowInstallments(boolval($dbData['allow_installments']))
             ->setSellAsNormalProduct(boolval($dbData['sell_as_normal_product']))
             ->setBillingType($dbData['billing_type'])
-            ->setApplyProductsCycleToDiscount($dbData['apply_products_cycle_to_discount'] ?? false);
+            ->setApplyDiscountInAllProductCycles($dbData['apply_discount_in_all_product_cycles'] ?? false);
 
         $this->setCreatedAt($dbData);
         $this->setUpdatedAt($dbData);
@@ -167,13 +167,13 @@ class ProductSubscriptionFactory implements FactoryInterface
         }
     }
 
-    private function setApplyProductsCycleToDiscount($postData)
+    private function setApplyDiscountInAllProductCycles($postData)
     {
         if (
-            isset($postData['apply_products_cycle_to_discount'])
-            && is_bool($postData['apply_products_cycle_to_discount'])
+            isset($postData['apply_discount_in_all_product_cycles'])
+            && is_bool($postData['apply_discount_in_all_product_cycles'])
         ) {
-            $this->productSubscription->setApplyProductsCycleToDiscount($postData['apply_products_cycle_to_discount']);
+            $this->productSubscription->setApplyDiscountInAllProductCycles($postData['apply_discount_in_all_product_cycles']);
         }
     }
 }

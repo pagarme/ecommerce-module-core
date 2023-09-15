@@ -33,7 +33,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     /** @var string */
     private $updatedAt;
     /** @var bool */
-    private $applyProductsCycleToDiscount;
+    private $applyDiscountInAllProductCycles;
 
     /**
      * @return int
@@ -224,17 +224,17 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
     /**
      * @return bool
      */
-    public function getApplyProductsCycleToDiscount()
+    public function getApplyDiscountInAllProductCycles()
     {
-        return boolval($this->applyProductsCycleToDiscount);
+        return boolval($this->applyDiscountInAllProductCycles);
     }
 
     /**
-     * @param bool $applyProductsCycleToDiscount
+     * @param bool $applyDiscountInAllProductCycles
      */
-    public function setApplyProductsCycleToDiscount($applyProductsCycleToDiscount)
+    public function setApplyDiscountInAllProductCycles($applyDiscountInAllProductCycles)
     {
-        $this->applyProductsCycleToDiscount = $applyProductsCycleToDiscount;
+        $this->applyDiscountInAllProductCycles = $applyDiscountInAllProductCycles;
     }
 
     /**
@@ -259,7 +259,7 @@ class ProductSubscription extends AbstractEntity implements ProductSubscriptionI
         $obj->repetitions = $this->getRepetitions();
         $obj->createdAt = $this->getCreatedAt();
         $obj->updatedAt = $this->getUpdatedAt();
-        $obj->applyProductsCycleToDiscount = $this->getApplyProductsCycleToDiscount();
+        $obj->applyDiscountInAllProductCycles = $this->getApplyDiscountInAllProductCycles();
 
         return $obj;
     }

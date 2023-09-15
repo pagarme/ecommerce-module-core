@@ -24,7 +24,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `boleto`,
                 `sell_as_normal_product`,
                 `billing_type`,
-                `apply_products_cycle_to_discount`
+                `apply_discount_in_all_product_cycles`
             ) VALUES (
                 '{$object->getProductId()}',
                 '{$object->getCreditCard()}',
@@ -32,7 +32,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 '{$object->getBoleto()}',
                 '{$object->getSellAsNormalProduct()}',
                 '{$object->getBillingType()}',
-                '{$object->getApplyProductsCycleToDiscount()}'
+                '{$object->getApplyDiscountInAllProductCycles()}'
             )
         ";
 
@@ -57,7 +57,7 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `boleto` = '{$object->getBoleto()}',
                 `sell_as_normal_product` = '{$object->getSellAsNormalProduct()}',
                 `billing_type` = '{$object->getBillingType()}',
-                `apply_products_cycle_to_discount` = '{$object->getApplyProductsCycleToDiscount()}'
+                `apply_discount_in_all_product_cycles` = '{$object->getApplyDiscountInAllProductCycles()}'
             WHERE id = {$object->getId()}
         ";
 

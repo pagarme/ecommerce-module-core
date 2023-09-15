@@ -169,7 +169,7 @@ final class SubscriptionService
             if ($subscriptionItem instanceof Plan) {
                 $planItems = $subscriptionItem->getItems();
             }
-            if (empty($subscriptionItem->getApplyProductsCycleToDiscount())) {
+            if (empty($subscriptionItem->getApplyDiscountInAllProductCycles())) {
                 $changeCycle = false;
                 break;
             }

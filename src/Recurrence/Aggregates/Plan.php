@@ -33,7 +33,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface, Pr
     private $items;
     private $trialPeriodDays;
 
-    private $applyProductsCycleToDiscount;
+    private $applyDiscountInAllProductCycles;
 
     /**
      * @return string
@@ -386,17 +386,17 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface, Pr
     /**
      * @return bool
      */
-    public function getApplyProductsCycleToDiscount()
+    public function getApplyDiscountInAllProductCycles()
     {
-        return boolval($this->applyProductsCycleToDiscount);
+        return boolval($this->applyDiscountInAllProductCycles);
     }
 
     /**
-     * @param bool $applyProductsCycleToDiscount
+     * @param bool $applyDiscountInAllProductCycles
      */
-    public function setApplyProductsCycleToDiscount($applyProductsCycleToDiscount)
+    public function setApplyDiscountInAllProductCycles($applyDiscountInAllProductCycles)
     {
-        $this->applyProductsCycleToDiscount = $applyProductsCycleToDiscount;
+        $this->applyDiscountInAllProductCycles = $applyDiscountInAllProductCycles;
     }
 
     /**
@@ -425,7 +425,7 @@ final class Plan extends AbstractEntity implements RecurrenceEntityInterface, Pr
         $obj->updatedAt = $this->getUpdatedAt();
         $obj->trialPeriodDays = $this->getTrialPeriodDays();
         $obj->items = $this->getItems();
-        $obj->applyProductsCycleToDiscount = $this->getApplyProductsCycleToDiscount();
+        $obj->applyDiscountInAllProductCycles = $this->getApplyDiscountInAllProductCycles();
 
         return $obj;
     }

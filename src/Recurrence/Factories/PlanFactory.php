@@ -149,13 +149,13 @@ class PlanFactory implements FactoryInterface
         }
     }
 
-    private function setApplyProductsCycleToDiscount($postData)
+    private function setApplyDiscountInAllProductCycles($postData)
     {
         if (
-            isset($postData['apply_products_cycle_to_discount'])
-            && is_bool($postData['apply_products_cycle_to_discount'])
+            isset($postData['apply_discount_in_all_product_cycles'])
+            && is_bool($postData['apply_discount_in_all_product_cycles'])
         ) {
-            $this->plan->setApplyProductsCycleToDiscount($postData['apply_products_cycle_to_discount']);
+            $this->plan->setApplyDiscountInAllProductCycles($postData['apply_discount_in_all_product_cycles']);
         }
     }
 
@@ -187,7 +187,7 @@ class PlanFactory implements FactoryInterface
         $this->setInterval();
         $this->setItems($postData);
         $this->setTrialDays($postData);
-        $this->setApplyProductsCycleToDiscount($postData);
+        $this->setApplyDiscountInAllProductCycles($postData);
 
         return $this->plan;
     }
@@ -213,7 +213,7 @@ class PlanFactory implements FactoryInterface
         $this->setItems($dbData);
         $this->setTrialDays($dbData);
 
-        $this->plan->setApplyProductsCycleToDiscount(boolval($dbData['apply_products_cycle_to_discount'] ?? false));
+        $this->plan->setApplyDiscountInAllProductCycles(boolval($dbData['apply_discount_in_all_product_cycles'] ?? false));
         $this->plan->setCreditCard(boolval($dbData['credit_card']));
         $this->plan->setAllowInstallments(boolval($dbData['installments']));
         $this->plan->setBoleto(boolval($dbData['boleto']));

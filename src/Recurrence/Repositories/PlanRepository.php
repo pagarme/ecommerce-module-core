@@ -33,7 +33,7 @@ final class PlanRepository extends AbstractRepository
                 billing_type,
                 status,
                 trial_period_days,
-                apply_products_cycle_to_discount
+                apply_discount_in_all_product_cycles
             )
           VALUES
             (
@@ -49,7 +49,7 @@ final class PlanRepository extends AbstractRepository
                 '{$object->getBillingType()}',
                 '{$object->getStatus()}',
                 '{$object->getTrialPeriodDays()}',
-                '{$object->getApplyProductsCycleToDiscount()}'
+                '{$object->getApplyDiscountInAllProductCycles()}'
             )
         ";
 
@@ -79,7 +79,7 @@ final class PlanRepository extends AbstractRepository
                 `billing_type` = '{$object->getBillingType()}',
                 `status` = '{$object->getStatus()}',
                 `trial_period_days` = '{$object->getTrialPeriodDays()}',
-                `apply_products_cycle_to_discount` = '{$object->getApplyProductsCycleToDiscount()}'
+                `apply_discount_in_all_product_cycles` = '{$object->getApplyDiscountInAllProductCycles()}'
             WHERE id = {$object->getId()}
         ";
 
