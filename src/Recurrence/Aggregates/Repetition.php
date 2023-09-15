@@ -210,9 +210,9 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     public function checkRepetitionIsCompatible(Repetition $repetitionObject)
     {
         if (
-            ($this->getInterval() === $repetitionObject->getInterval()) &&
-            ($this->getIntervalCount() === $repetitionObject->getIntervalCount()) &&
-            ($this->getCycles() === $repetitionObject->getCycles())
+            $this->getInterval() === $repetitionObject->getInterval()
+            && $this->getIntervalCount() === $repetitionObject->getIntervalCount()
+            && $this->getCycles() === $repetitionObject->getCycles()
         ) {
             return true;
         }
