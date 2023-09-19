@@ -2,7 +2,6 @@
 
 namespace Pagarme\Core\Recurrence\Aggregates;
 
-use Magento\Framework\Exception\LocalizedException;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Recurrence\Interfaces\RepetitionInterface;
@@ -96,7 +95,6 @@ class Repetition extends AbstractEntity implements RepetitionInterface
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-        return $this;
     }
 
     /**
@@ -177,7 +175,7 @@ class Repetition extends AbstractEntity implements RepetitionInterface
      */
     public function getIntervalType()
     {
-        return $this->interval;
+        return $this->getInterval();
     }
 
     /**
@@ -211,8 +209,11 @@ class Repetition extends AbstractEntity implements RepetitionInterface
      */
     public function checkRepetitionIsCompatible(Repetition $repetitionObject)
     {
-        if (($this->getInterval() == $repetitionObject->getInterval()) &&
-            ($this->getIntervalCount() == $repetitionObject->getIntervalCount())) {
+        if (
+            $this->getInterval() === $repetitionObject->getInterval()
+            && $this->getIntervalCount() === $repetitionObject->getIntervalCount()
+            && $this->getCycles() === $repetitionObject->getCycles()
+        ) {
             return true;
         }
 
