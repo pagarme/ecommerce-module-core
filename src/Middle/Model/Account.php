@@ -17,15 +17,6 @@ class Account
     {
         return $this->accountId;
     }
-
-    public function isValid()
-    {
-        if (empty($accountId)) {
-            return new InvalidArgumentException("Account Id not valid");
-        }
-        return true;
-    }
-
     public function convertToSdk()
     {
         $accountResponse = new GetAccountResponse();
