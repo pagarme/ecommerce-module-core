@@ -81,7 +81,7 @@ abstract class AbstractModuleCoreSetup
     protected static function setApiBaseUrl()
     {
         if (static::$moduleConfig->isHubEnabled()) {
-            PagarmeCoreAPIConfiguration::$BASEURI = 'https://hubapi.mundipagg.com/core/v1';
+            PagarmeCoreAPIConfiguration::$BASEURI = 'https://hubapi.pagar.me/core/v1';
         }
     }
 
@@ -110,6 +110,7 @@ abstract class AbstractModuleCoreSetup
             static::$moduleConfig->setInheritAll(true);
             static::$moduleConfig->setId(null);
         }
+        static::saveModuleConfig();
     }
 
     protected static function saveModuleConfig()

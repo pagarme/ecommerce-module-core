@@ -162,6 +162,16 @@ final class Configuration extends AbstractEntity
     private $pixConfig;
 
     /**
+     * @var string
+     */
+    private $merchantId;
+
+    /**
+     * @var string
+     */
+    private $accountId;
+
+    /**
      * @var MarketplaceConfig
      */
     private $marketplaceConfig;
@@ -264,6 +274,26 @@ final class Configuration extends AbstractEntity
         $this->voucherConfig = $voucherConfig;
     }
 
+    public function setAccountId($accountId)
+    {
+        $this->accountId = $accountId;
+    }
+
+    public function getAccountId()
+    {
+        return $this->accountId;
+    }
+
+    public function setMerchantId($merchantId)
+    {
+        $this->merchantId = $merchantId;
+    }
+
+    public function getMerchantId()
+    {
+        return $this->merchantId;
+    }
+
     protected function isEnabled()
     {
         return $this->enabled;
@@ -289,7 +319,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  string|array $key
+     * @param string|array $key
      * @return $this
      */
     public function setPublicKey(AbstractPublicKey $key)
@@ -307,7 +337,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  string|array $key
+     * @param string|array $key
      * @return $this
      */
     public function setSecretKey(AbstractSecretKey $key)
@@ -361,7 +391,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  bool $boletoEnabled
+     * @param bool $boletoEnabled
      * @return Configuration
      */
     public function setBoletoEnabled($boletoEnabled)
@@ -375,7 +405,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  bool $creditCardEnabled
+     * @param bool $creditCardEnabled
      * @return Configuration
      */
     public function setCreditCardEnabled($creditCardEnabled)
@@ -415,7 +445,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  bool $twoCreditCardsEnabled
+     * @param bool $twoCreditCardsEnabled
      * @return Configuration
      */
     public function setTwoCreditCardsEnabled($twoCreditCardsEnabled)
@@ -429,7 +459,7 @@ final class Configuration extends AbstractEntity
 
     /**
      *
-     * @param  bool $boletoCreditCardEnabled
+     * @param bool $boletoCreditCardEnabled
      * @return Configuration
      */
     public function setBoletoCreditCardEnabled($boletoCreditCardEnabled)
@@ -771,6 +801,8 @@ final class Configuration extends AbstractEntity
             "testMode" => $this->testMode,
             "hubInstallId" => $this->isHubEnabled() ? $this->hubInstallId->getValue() : null,
             "hubEnvironment" => $this->hubEnvironment,
+            "merchantId" => $this->getMerchantId(),
+            "accountId" => $this->getAccountId(),
             "addressAttributes" => $this->getAddressAttributes(),
             "keys" => $this->keys,
             "cardOperation" => $this->cardOperation,
@@ -913,8 +945,9 @@ final class Configuration extends AbstractEntity
         return call_user_func([$targetObject, $method], $arguments);
     }
 
-    private function isMethodsIgnoringFather($method, $methodSplited, $actions, $targetObject) {
-        $methodsIgnoringFather = ["getSecretKey","getPublicKey","isHubEnabled"];
+    private function isMethodsIgnoringFather($method, $methodSplited, $actions, $targetObject)
+    {
+        $methodsIgnoringFather = ["getSecretKey", "getPublicKey", "isHubEnabled"];
 
         if (
             in_array($method, $methodsIgnoringFather) &&
