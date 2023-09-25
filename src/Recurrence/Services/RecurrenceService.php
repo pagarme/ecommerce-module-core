@@ -119,7 +119,7 @@ class RecurrenceService
     {
         $cycles = 1;
         foreach ($items ?? [] as $item) {
-            if ($item->getCycles() === 0) {
+            if ($item->getCycles() === null) {
                 $cycles = $item->getCycles();
                 break;
             }
