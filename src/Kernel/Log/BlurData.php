@@ -28,16 +28,17 @@ class BlurData
 
     /**
      * @param string $value
-     * @param $delimiter
+     * @param int $delimiter
      * @return string
      */
-    private function blurStringSensitiveData(string $value = "", $delimiter = null)
+    private function blurStringSensitiveData($value, $delimiter)
     {
+        if (empty($value)) {
+            return '';
+        }
         $displayed = substr($value, 0, $delimiter);
-        $blur = str_repeat("*", strlen($value));
-        $blur = substr($blur, $delimiter);
-        $result = "$displayed $blur";
-        return $result;
+        $blur = str_repeat("*", strlen($value) - $delimiter);
+        return $displayed . $blur;
     }
 
     /**
