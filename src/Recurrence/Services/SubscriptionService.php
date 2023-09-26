@@ -315,19 +315,6 @@ final class SubscriptionService
             $pricingScheme = PricingScheme::UNIT($item->getAmount());
             $subProduct->setPricingScheme($pricingScheme);
 
-            $increment = new Increment();
-
-            $shippingAmount = 0;
-            if ($order->getShipping() != null) {
-                $shippingAmount = $order->getShipping()->getAmount();
-            }
-
-            $increment->setValue($shippingAmount);
-            $increment->setIncrementType('flat');
-            $increment->setCycles($cycles);
-
-            $subProduct->setIncrement($increment);
-
             $subscriptionItems[] = $subProduct;
         }
 
