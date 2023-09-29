@@ -87,6 +87,14 @@ class ConfigurationFactory implements FactoryInterface
         }
         $config->setCreateOrderEnabled($data->createOrder);
 
+        if (!empty($data->merchantId)) {
+            $config->setMerchantId($data->merchantId);
+        }
+
+        if (!empty($data->accountId)) {
+            $config->setAccountId($data->accountId);
+        }
+
         if (!empty($data->sendMail)) {
             $config->setSendMailEnabled($data->sendMail);
         }
