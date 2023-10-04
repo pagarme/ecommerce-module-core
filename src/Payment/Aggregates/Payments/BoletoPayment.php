@@ -2,9 +2,11 @@
 
 namespace Pagarme\Core\Payment\Aggregates\Payments;
 
-use DateTime;
-use Exception;
 use PagarmeCoreApiLib\Models\CreateBoletoPaymentRequest;
+use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
+use Pagarme\Core\Payment\Aggregates\Customer;
+use Pagarme\Core\Payment\ValueObjects\AbstractCardIdentifier;
 use Pagarme\Core\Payment\ValueObjects\BoletoBank;
 use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
 
@@ -14,9 +16,6 @@ final class BoletoPayment extends AbstractPayment
     private $bank;
     /** @var string */
     private $instructions;
-
-    /** @var DateTime|null */
-    private $dueAt;
 
     /**
      * @return BoletoBank
@@ -50,27 +49,6 @@ final class BoletoPayment extends AbstractPayment
         $this->instructions = $instructions;
     }
 
-    /**
-     * @return DateTime|null
-     */
-    public function getDueAt()
-    {
-        return $this->dueAt;
-    }
-
-    /**
-     * @param DateTime|string|null $dueAt
-     * @throws Exception
-     */
-    public function setDueAt($dueAt)
-    {
-        $formattedDueAt = $dueAt;
-        if (is_string($dueAt)) {
-            $formattedDueAt = new DateTime($dueAt);
-        }
-        $this->dueAt = $formattedDueAt;
-    }
-
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
@@ -78,7 +56,6 @@ final class BoletoPayment extends AbstractPayment
 
         $obj->bank = $this->bank;
         $obj->instructions = $this->instructions;
-        $obj->dueAt = $this->dueAt;
 
         return $obj;
     }
@@ -95,12 +72,8 @@ final class BoletoPayment extends AbstractPayment
     {
         $paymentRequest = new CreateBoletoPaymentRequest();
 
-        $bank = $this->getBank();
-        if ($bank && method_exists($bank, 'getCode')) {
-            $paymentRequest->bank = $this->getBank()->getCode();
-        }
+        $paymentRequest->bank = $this->getBank()->getCode();
         $paymentRequest->instructions = $this->getInstructions();
-        $paymentRequest->dueAt = $this->getDueAt();
 
         return $paymentRequest;
     }
