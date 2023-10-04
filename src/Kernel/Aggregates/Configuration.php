@@ -679,7 +679,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return string
      */
-    public function getBoletoInstructions()
+    protected function getBoletoInstructions()
     {
         return $this->boletoInstructions;
     }
