@@ -40,7 +40,9 @@ class StoreSettings
      */
     public function isPaymentMethodEnabled(string $paymentMethodName)
     {
-        return (bool) $this->enabledPaymentMethods[$paymentMethodName] ?? false;
+        return (bool) isset($this->enabledPaymentMethods[$paymentMethodName])
+            ? $this->enabledPaymentMethods[$paymentMethodName]
+            : false;
     }
 
     public function setEnabledPaymentMethods(array $enabledPaymentMethods): void
