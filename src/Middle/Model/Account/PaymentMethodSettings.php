@@ -79,10 +79,6 @@ class PaymentMethodSettings
      */
     public function setGatewayType($gatewayType)
     {
-        if (is_string($gatewayType)) {
-            $this->gatewayType = $gatewayType === 'mundipagg';
-            return;
-        }
         $this->gatewayType = $gatewayType;
     }
 
