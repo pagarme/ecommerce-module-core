@@ -42,4 +42,39 @@ abstract class AuthenticationStatusEnum
           self::JUST_INFORMATION,
         ];
     }
+
+    /**
+     * @param string|null $status
+     * @return string
+     */
+    public static function statusMessage(string $status = null)
+    {
+        if (empty($status)) {
+            return '';
+        }
+
+        $message = $status;
+        switch ($status) {
+            case self::TRANSACTION_ACCEPTED:
+                $message .= ' - Transaction approved and authenticated by the Issuer';
+                break;
+            case self::AUTHENTICATION_ATTEMPT:
+                $message .= ' - Transaction approved and authenticated by Brand';
+                break;
+            case self::JUST_INFORMATION:
+                $message .= ' - Only data sent to the Brand and Issuer';
+                break;
+            case self::AUTHENTICATION_UNAVAILABLE:
+                $message .= ' - Authentication unavailable';
+                break;
+            case self::TRANSACTION_NOT_AUTHENTICATED:
+                $message .= ' - Transaction rejected by the Issuer';
+                break;
+            case self::AUTHENTICATION_DENIED_BY_ISSUER:
+                $message .= ' - Transaction rejected by Issuer (post-challenge)';
+                break;
+        }
+
+        return $message;
+    }
 }
