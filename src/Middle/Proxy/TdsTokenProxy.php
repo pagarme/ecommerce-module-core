@@ -17,9 +17,10 @@ class TdsTokenProxy
         $this->client = $auth->services();
     }
 
-    public function getTdsToken($accountId)
+    public function getTdsToken($environment, $accountId)
     {
         return $this->client->getTdsToken()->getToken(
+            $environment,
             $accountId
         );
     }
