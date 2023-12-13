@@ -101,6 +101,7 @@ final class Authentication extends AbstractEntity implements ConvertibleToSDKReq
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
