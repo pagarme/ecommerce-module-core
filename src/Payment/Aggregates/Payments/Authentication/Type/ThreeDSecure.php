@@ -70,6 +70,7 @@ final class ThreeDSecure extends AbstractEntity implements ConvertibleToSDKReque
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = parent::jsonSerialize();
