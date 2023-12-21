@@ -7,7 +7,6 @@ metadata:
   description: Modulo opensource para unificação de integração para a P&G
   namespace: pagarme-psp
   annotations:
-    legacy.stone.tech/owner-email: opensource@pagar.me
     legacy.stone.tech/prod-date: 2021-03-30
   labels:
     legacy.stone.tech/internal-user-auth-base: not-applicable
