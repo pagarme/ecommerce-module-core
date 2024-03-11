@@ -15,10 +15,16 @@ use Pagarme\Core\Middle\Model\Marketplace\TransferSettings;
 
 class RecipientFactory
 {
+    /**
+     * Undocumented function
+     *
+     * @param [type] $recipientData
+     * @return \Pagarme\Core\Middle\Model\Recipient
+     */
     public function createRecipient($recipientData)
     {
         $recipientType = ['register_information']['type'];
-        if ($recipientType !== Recipient::INDIVIDUAL || $recipientType !== Recipient::CORPORATION) {
+        if ($recipientType !== Recipient::INDIVIDUAL && $recipientType !== Recipient::CORPORATION) {
             return new InvalidArgumentException("This request is not valid");
         }
 

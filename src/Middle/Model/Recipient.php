@@ -9,15 +9,13 @@ class Recipient
 {
 
     const INDIVIDUAL = 'individual';
-    const CORPORATION = 'corporatarion';
+    const CORPORATION = 'corporation';
 
     private $bankAccount;
     private $transferSettings;
     private $automaticAnticipationSettings;
     private $registerInformation;
     private $code;
-
-
 
     public function setBankAccount($bankAccount): void
     {
@@ -29,10 +27,12 @@ class Recipient
     {
         $this->registerInformation = $registerInformation;
     }
+
     public function setTransferSettings($transferSettings): void
     {
         $this->transferSettings = $transferSettings;
     }
+
     public function setAutomaticAnticipationSettings($automaticAnticipationSettings): void
     {
         $this->automaticAnticipationSettings = $automaticAnticipationSettings;
@@ -47,15 +47,16 @@ class Recipient
     {
         return $this->bankAccount;
     }
+
     public function getTransferSettings()
     {
         return $this->transferSettings;
     }
+
     public function getAutomaticAnticipationSettings()
     {
         return $this->automaticAnticipationSettings;
     }
-
 
     public function getRegisterInformation()
     {
@@ -66,6 +67,7 @@ class Recipient
     {
         return $this->code;
     }
+    
     public function convertToCreateRequest()
     {
         return new CreateRecipientRequest(
