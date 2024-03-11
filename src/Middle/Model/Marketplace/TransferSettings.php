@@ -3,6 +3,7 @@
 namespace Pagarme\Core\Middle\Model\Marketplace;
 
 use InvalidArgumentException;
+use PagarmeCoreApiLib\Models\CreateTransferSettingsRequest;
 
 class TransferSettings
 {
@@ -96,6 +97,15 @@ class TransferSettings
             'transfer_enabled' => $this->getTransferEnabled(),
             'transfer_interval' => $this->getTransferInterval(),
             'transfer_day' => $this->getTransferDay()
+        );
+    }
+
+    public function convertToSdkRequest()
+    {
+        return new CreateTransferSettingsRequest(
+            $this->getTransferEnabled(),
+            $this->getTransferInterval(),
+            $this->getTransferDay()
         );
     }
 }

@@ -23,7 +23,8 @@ class RecipientFactory
      */
     public function createRecipient($recipientData)
     {
-        $recipientType = ['register_information']['type'];
+        $recipientType = $recipientData['register_information']['type'];
+        $code = $recipientData['register_information']['external_id'];
         if ($recipientType !== Recipient::INDIVIDUAL && $recipientType !== Recipient::CORPORATION) {
             return new InvalidArgumentException("This request is not valid");
         }
@@ -36,7 +37,7 @@ class RecipientFactory
         if ($recipientData['register_information']['type'] === Recipient::CORPORATION) {
             $registerInformation = $this->createCorportarion($recipientData['register_information'], $bankAccount);
         }
-        return $this->createBaseRecipient($bankAccount, $transferSettings, $registerInformation, $recipientData['code']);
+        return $this->createBaseRecipient($bankAccount, $transferSettings, $registerInformation, $code);
     }
 
     private function createCorportarion($recipientData)
@@ -66,7 +67,7 @@ class RecipientFactory
     {
         $registerInformation = new IndividualRegisterInformation();
         $registerInformation->setType($recipientData['type']);
-        $registerInformation->setDocumentNumber($recipientData['document']);
+        $registerInformation->setDocumentNumber(preg_replace("/\D/", "",$recipientData['document']));
         $registerInformation->setEmail($recipientData['email']);
         $registerInformation->setName($recipientData['name']);
         $registerInformation->setSiteUrl($recipientData['site_url']);
@@ -76,7 +77,7 @@ class RecipientFactory
             $registerInformation->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
         $registerInformation->setBirthdate($recipientData['birthdate']);
-        $registerInformation->setMonthlyIncome($recipientData['monthly_income']);
+        $registerInformation->setMonthlyIncome( preg_replace("/\D/", "", $recipientData['monthly_income']));
         $registerInformation->setProfessionalOccupation($recipientData['professional_occupation']);
         $registerInformation->setAddress($this->createAddress($recipientData['address']));
         return $registerInformation->convertToSDKRequest();
@@ -106,23 +107,24 @@ class RecipientFactory
         $bankAccount = new BankAccount();
         $bankAccount->setHolderName($recipientData['holder_name']);
         $bankAccount->setHolderType($recipientData["holder_document_type"]);
-        $bankAccount->setHolderDocument($recipientData["holder_document"]);
+        $bankAccount->setHolderDocument(preg_replace("/\D/", "", $recipientData["holder_document"]));
         $bankAccount->setBank($recipientData["bank"]);
         $bankAccount->setBranchNumber($recipientData["branch_number"]);
-        $bankAccount->setBranchCheckDigit($recipientData["account_check_digit"]);
+        $bankAccount->setBranchCheckDigit($recipientData["branch_check_digit"]);
         $bankAccount->setAccountNumber($recipientData["account_number"]);
+        $bankAccount->setAccountCheckDigit($recipientData["account_check_digit"]);
         $bankAccount->setType($recipientData["account_type"]);
         $bankAccount->setMetadata(null);
-        return $bankAccount;
+        return $bankAccount->convertToSdk();
     }
     private function createTransferSettings($recipientData)
     {
         $transferSettings = new TransferSettings(
-            $recipientData['transfer_enabled'],
+            (boolean)$recipientData['transfer_enabled'],
             $recipientData['transfer_interval'],
             $recipientData['transfer_day']
         );
-        $transferSettings->convertToArray();
+        return $transferSettings->convertToSdkRequest();
     }
 
     private function createBaseRecipient($bankAccount, $transferSettings, $registerInformation, $code)
@@ -136,7 +138,7 @@ class RecipientFactory
 
         $recipient->setRegisterInformation($registerInformation);
         $recipient->setCode($code);
-        $recipient->convertToCreateRequest();
+        return $recipient;
     }
 
     private function createAddress($addressFields)
@@ -147,7 +149,7 @@ class RecipientFactory
         $address->setStreetNumber($addressFields['street_number']);
         $address->setComplementary($addressFields['complementary']);
         $address->setReferencePoint($addressFields['reference_point']);
-        $address->setNeighborhood($addressFields['neighbordhood']);
+        $address->setNeighborhood($addressFields['neighborhood']);
         $address->setState($addressFields['state']);
         $address->setCity($addressFields['city']);
         return $address->convertToCreateRegisterInformationAddressRequest();

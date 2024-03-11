@@ -13,6 +13,7 @@ class BankAccount
     private $branchNumber;
     private $branchCheckDigit;
     private $accountNumber;
+    private $accountCheckDigit;
     private $type;
     private $metadata;
 
@@ -49,6 +50,10 @@ class BankAccount
     public function getAccountNumber()
     {
         return $this->accountNumber;
+    }
+    public function getAccountCheckDigit()
+    {
+        return $this->accountCheckDigit;
     }
 
     public function getType()
@@ -96,6 +101,10 @@ class BankAccount
     {
         $this->accountNumber = $accountNumber;
     }
+    public function setAccountCheckDigit($accountCheckDigit): void
+    {
+        $this->accountCheckDigit = $accountCheckDigit;
+    }
 
     public function setType($type): void
     {
@@ -117,8 +126,10 @@ class BankAccount
             $this->getBranchNumber(),
             $this->getBranchCheckDigit(),
             $this->getAccountNumber(),
+            $this->getAccountCheckDigit(),
             $this->getType(),
-            $this->getMetadata()
+            $this->getMetadata(),
+            null
         );
     }
 }

@@ -4,7 +4,7 @@ namespace Pagarme\Core\Middle\Proxy;
 
 use Pagarme\Core\Middle\Interfaces\BaseRecipientInterface;
 use Pagarme\Core\Middle\Client;
-use Pagarme\Core\Middle\Model\Marketplace\Recipient;
+use Pagarme\Core\Middle\Model\Recipient;
 
 class RecipientProxy
 {
