@@ -4,7 +4,7 @@ namespace Pagarme\Core\Middle\Model\Marketplace;
 
 use PagarmeCoreApiLib\Models\CreateRegisterInformationCorporationRequest;
 
-class CorporationRegisterInformation extends BaseRegisterInformation 
+class CorporationRegisterInformation extends BaseRegisterInformation
 {
     private $companyName;
     private $corporationType;
@@ -24,7 +24,7 @@ class CorporationRegisterInformation extends BaseRegisterInformation
         $this->corporationType = $corporationType;
     }
 
-    
+
     public function setTradingName($tradingName)
     {
         $this->tradingName = $tradingName;
@@ -39,6 +39,7 @@ class CorporationRegisterInformation extends BaseRegisterInformation
     {
         $this->cnae = $cnae;
     }
+
     public function setFoundingDate($foundingDate)
     {
         $this->foundingDate = $foundingDate;
@@ -53,6 +54,7 @@ class CorporationRegisterInformation extends BaseRegisterInformation
     {
         return $this->companyName;
     }
+
     public function getCorporationType()
     {
         return $this->corporationType;
@@ -67,10 +69,12 @@ class CorporationRegisterInformation extends BaseRegisterInformation
     {
         return $this->annualRevenue;
     }
+
     public function getCnae()
     {
         return $this->cnae;
     }
+
     public function getFoundingDate()
     {
         return $this->foundingDate;

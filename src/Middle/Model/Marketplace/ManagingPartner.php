@@ -19,9 +19,10 @@ class ManagingPartner extends BasePersonInformation
     public function convertToArray()
     {
         return array(
-            'type'  => $this->getType(),
+            'type' => $this->getType(),
+            'document' => $this->getDocumentNumber(),
             'email' => $this->getEmail(),
-            'name'  => $this->getName(),
+            'name' => $this->getName(),
             'mother_name' => $this->getMotherName(),
             'phone_numbers' => $this->getPhoneNumbers(),
             'birthdate' => $this->getBirthdate(),

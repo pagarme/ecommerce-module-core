@@ -2,17 +2,16 @@
 
 namespace Pagarme\Core\Middle\Factory;
 
-use Exception;
 use InvalidArgumentException;
+use Pagarme\Core\Middle\Model\Address;
 use Pagarme\Core\Middle\Model\Common\Document;
 use Pagarme\Core\Middle\Model\Marketplace\BankAccount;
-use Pagarme\Core\Middle\Model\Marketplace\IndividualRegisterInformation;
-use Pagarme\Core\Middle\Model\Recipient;
 use Pagarme\Core\Middle\Model\Marketplace\CorporationRegisterInformation;
+use Pagarme\Core\Middle\Model\Marketplace\IndividualRegisterInformation;
 use Pagarme\Core\Middle\Model\Marketplace\ManagingPartner;
-use Pagarme\Core\Middle\Model\Phones;
-use Pagarme\Core\Middle\Model\Address;
 use Pagarme\Core\Middle\Model\Marketplace\TransferSettings;
+use Pagarme\Core\Middle\Model\Phones;
+use Pagarme\Core\Middle\Model\Recipient;
 
 class RecipientFactory
 {
@@ -20,7 +19,7 @@ class RecipientFactory
      * Undocumented function
      *
      * @param array $recipientData
-     * @return \Pagarme\Core\Middle\Model\Recipient
+     * @return Recipient
      */
     public function createRecipient($recipientData)
     {
@@ -45,7 +44,9 @@ class RecipientFactory
     {
         $registerInformation = new CorporationRegisterInformation();
         $registerInformation->setEmail($recipientData['email']);
-        $registerInformation->setDocumentNumber($recipientData['document']);
+        $registerInformation->setSiteUrl($recipientData['site_url']);
+        $document = new Document($recipientData['document']);
+        $registerInformation->setDocumentNumber($document->getDocumentWithoutMask());
         $registerInformation->setType($recipientData['type']);
         foreach ($recipientData['phone_number'] as $phone) {
             $phoneNumber = new Phones($phone['type'], $phone['number']);
@@ -53,7 +54,8 @@ class RecipientFactory
         }
         $registerInformation->setCompanyName($recipientData['company_name']);
         $registerInformation->setTradingName($recipientData['trading_name']);
-        $registerInformation->setAnnualRevenue($recipientData['']);
+        $registerInformation->setAnnualRevenue(preg_replace("/\D/", "", $recipientData['annual_revenue']));
+        $registerInformation->setCorporationType($recipientData['corporation_type']);
         $registerInformation->setCnae($recipientData['cnae']);
         $registerInformation->setFoundingDate($recipientData['founding_date']);
         foreach ($recipientData['managing_partners'] as $partner) {
@@ -79,7 +81,7 @@ class RecipientFactory
             $registerInformation->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
         $registerInformation->setBirthdate($recipientData['birthdate']);
-        $registerInformation->setMonthlyIncome( preg_replace("/\D/", "", $recipientData['monthly_income']));
+        $registerInformation->setMonthlyIncome(preg_replace("/\D/", "", $recipientData['monthly_income']));
         $registerInformation->setProfessionalOccupation($recipientData['professional_occupation']);
         $registerInformation->setAddress($this->createAddress($recipientData['address']));
         return $registerInformation->convertToSDKRequest();
@@ -99,12 +101,13 @@ class RecipientFactory
             $newPartner->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
         $newPartner->setBirthdate($partner['birthdate']);
-        $newPartner->setMonthlyIncome($partner['monthly_income']);
+        $newPartner->setMonthlyIncome(preg_replace("/\D/", "", $partner['monthly_income']));
         $newPartner->setProfessionalOccupation($partner['professional_occupation']);
         $newPartner->setAddress($this->createAddress($partner['address']));
         $newPartner->setSelfDeclaredLegalRepresentative(true);
         return $newPartner->convertToArray();
     }
+
     private function createBankAccount($recipientData)
     {
         $holderDocument = new Document($recipientData["holder_document"]);
@@ -121,6 +124,7 @@ class RecipientFactory
         $bankAccount->setMetadata(null);
         return $bankAccount->convertToSdk();
     }
+
     private function createTransferSettings($recipientData)
     {
         $transferSettings = new TransferSettings(
