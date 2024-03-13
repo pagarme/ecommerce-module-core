@@ -13,6 +13,7 @@ class IndividualRegisterInformation extends BasePersonInformation  implements Co
             $this->getEmail(),
             $this->getDocumentNumber(),
             $this->getType(),
+            $this->getSiteUrl(),
             $this->getPhoneNumbers(),
             $this->getName(),
             $this->getBirthdate(),

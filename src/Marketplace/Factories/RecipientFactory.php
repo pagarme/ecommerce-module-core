@@ -63,7 +63,6 @@ class RecipientFactory implements FactoryInterface
             ->setExternalId($dbData['external_id'])
             ->setName($dbData['name'])
             ->setEmail($dbData['email'])
-            ->setDocumentType($dbData['document_type'])
             ->setDocument($dbData['document'])
             ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
             ->setPagarmeId(new RecipientId($dbData['pagarme_id']));

@@ -4,6 +4,7 @@ namespace Pagarme\Core\Middle\Factory;
 
 use Exception;
 use InvalidArgumentException;
+use Pagarme\Core\Middle\Model\Common\Document;
 use Pagarme\Core\Middle\Model\Marketplace\BankAccount;
 use Pagarme\Core\Middle\Model\Marketplace\IndividualRegisterInformation;
 use Pagarme\Core\Middle\Model\Recipient;
@@ -18,7 +19,7 @@ class RecipientFactory
     /**
      * Undocumented function
      *
-     * @param [type] $recipientData
+     * @param array $recipientData
      * @return \Pagarme\Core\Middle\Model\Recipient
      */
     public function createRecipient($recipientData)
@@ -65,9 +66,10 @@ class RecipientFactory
 
     private function createIndividual($recipientData)
     {
+        $document = new Document($recipientData['document']);
         $registerInformation = new IndividualRegisterInformation();
         $registerInformation->setType($recipientData['type']);
-        $registerInformation->setDocumentNumber(preg_replace("/\D/", "",$recipientData['document']));
+        $registerInformation->setDocumentNumber($document->getDocumentWithoutMask());
         $registerInformation->setEmail($recipientData['email']);
         $registerInformation->setName($recipientData['name']);
         $registerInformation->setSiteUrl($recipientData['site_url']);
@@ -85,10 +87,11 @@ class RecipientFactory
 
     private function createManagingPartner($partner)
     {
+        $document = new Document($partner['document']);
         $newPartner = new ManagingPartner();
         $newPartner->setType($partner['type']);
         $newPartner->setName($partner['name']);
-        $newPartner->setDocumentNumber($partner['document']);
+        $newPartner->setDocumentNumber($document->getDocumentWithoutMask());
         $newPartner->setEmail($partner['email']);
         $newPartner->setMotherName($partner['mother_name']);
         foreach ($partner['phone_number'] as $phone) {
@@ -104,10 +107,11 @@ class RecipientFactory
     }
     private function createBankAccount($recipientData)
     {
+        $holderDocument = new Document($recipientData["holder_document"]);
         $bankAccount = new BankAccount();
         $bankAccount->setHolderName($recipientData['holder_name']);
         $bankAccount->setHolderType($recipientData["holder_document_type"]);
-        $bankAccount->setHolderDocument(preg_replace("/\D/", "", $recipientData["holder_document"]));
+        $bankAccount->setHolderDocument($holderDocument->getDocumentWithoutMask());
         $bankAccount->setBank($recipientData["bank"]);
         $bankAccount->setBranchNumber($recipientData["branch_number"]);
         $bankAccount->setBranchCheckDigit($recipientData["branch_check_digit"]);

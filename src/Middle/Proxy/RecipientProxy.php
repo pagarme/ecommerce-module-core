@@ -36,4 +36,12 @@ class RecipientProxy
         // );
         // return $recipientRequest;
     }
+
+    public function getFromPagarme($recipientId)
+    {
+        $recipientRequest = $this->client->getRecipients()->getRecipient(
+            $recipientId
+        );
+        return $recipientRequest;
+    }
 }

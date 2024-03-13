@@ -87,6 +87,7 @@ class CorporationRegisterInformation extends BaseRegisterInformation
             $this->getEmail(),
             $this->getDocumentNumber(),
             $this->getType(),
+            $this->getSiteUrl(),
             $this->getPhoneNumbers(),
             $this->getCompanyName(),
             $this->getCorporationType(),
