@@ -35,12 +35,12 @@ class Address
 
     public function setComplementary($complementary): void
     {
-        $this->complementary = $complementary;
+        $this->complementary = $complementary ?? "Nenhum";
     }
 
     public function setReferencePoint($referencePoint): void
     {
-        $this->referencePoint = $referencePoint;
+        $this->referencePoint = $referencePoint ?? "Nenhum";
     }
 
     public function setNeighborhood($neighborhood): void
