@@ -16,8 +16,6 @@ use Pagarme\Core\Middle\Model\Recipient;
 class RecipientFactory
 {
     /**
-     * Undocumented function
-     *
      * @param array $recipientData
      * @return Recipient
      */
@@ -32,10 +30,10 @@ class RecipientFactory
         $bankAccount = $this->createBankAccount($recipientData);
         $transferSettings = $this->createTransferSettings($recipientData);
         if ($recipientData['register_information']['type'] === Recipient::INDIVIDUAL) {
-            $registerInformation = $this->createIndividual($recipientData['register_information'], $bankAccount);
+            $registerInformation = $this->createIndividual($recipientData['register_information']);
         }
         if ($recipientData['register_information']['type'] === Recipient::CORPORATION) {
-            $registerInformation = $this->createCorportarion($recipientData['register_information'], $bankAccount);
+            $registerInformation = $this->createCorportarion($recipientData['register_information']);
         }
         return $this->createBaseRecipient($bankAccount, $transferSettings, $registerInformation, $code);
     }
@@ -48,7 +46,8 @@ class RecipientFactory
         $document = new Document($recipientData['document']);
         $registerInformation->setDocumentNumber($document->getDocumentWithoutMask());
         $registerInformation->setType($recipientData['type']);
-        foreach ($recipientData['phone_number'] as $phone) {
+        $phoneArray = $this->cleanPhoneArray($recipientData['phone_number']);
+        foreach ($phoneArray as $phone) {
             $phoneNumber = new Phones($phone['type'], $phone['number']);
             $registerInformation->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
@@ -56,7 +55,6 @@ class RecipientFactory
         $registerInformation->setTradingName($recipientData['trading_name']);
         $registerInformation->setAnnualRevenue(preg_replace("/\D/", "", $recipientData['annual_revenue']));
         $registerInformation->setCorporationType($recipientData['corporation_type']);
-        $registerInformation->setCnae($recipientData['cnae']);
         $registerInformation->setFoundingDate($recipientData['founding_date']);
         foreach ($recipientData['managing_partners'] as $partner) {
             $registerInformation->addManagingPartners($this->createManagingPartner($partner));
@@ -76,7 +74,8 @@ class RecipientFactory
         $registerInformation->setName($recipientData['name']);
         $registerInformation->setSiteUrl($recipientData['site_url']);
         $registerInformation->setMotherName($recipientData['mother_name']);
-        foreach ($recipientData['phone_number'] as $phone) {
+        $phoneArray = $this->cleanPhoneArray($recipientData['phone_number']);
+        foreach ($phoneArray as $phone) {
             $phoneNumber = new Phones($phone['type'], $phone['number']);
             $registerInformation->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
@@ -96,7 +95,8 @@ class RecipientFactory
         $newPartner->setDocumentNumber($document->getDocumentWithoutMask());
         $newPartner->setEmail($partner['email']);
         $newPartner->setMotherName($partner['mother_name']);
-        foreach ($partner['phone_number'] as $phone) {
+        $phoneArray = $this->cleanPhoneArray($partner['phone_number']);
+        foreach ($phoneArray as $phone) {
             $phoneNumber = new Phones($phone['type'], $phone['number']);
             $newPartner->addPhoneNumbers($phoneNumber->convertToRegisterInformationPhonesRequest());
         }
@@ -127,8 +127,12 @@ class RecipientFactory
 
     private function createTransferSettings($recipientData)
     {
+        if ($recipientData['transfer_enabled'] === 0) {
+            return null;
+        }
+
         $transferSettings = new TransferSettings(
-            (boolean)$recipientData['transfer_enabled'],
+            (bool)$recipientData['transfer_enabled'],
             $recipientData['transfer_interval'],
             $recipientData['transfer_day']
         );
@@ -161,5 +165,17 @@ class RecipientFactory
         $address->setState($addressFields['state']);
         $address->setCity($addressFields['city']);
         return $address->convertToCreateRegisterInformationAddressRequest();
+    }
+
+    private function cleanPhoneArray($phoneArray)
+    {
+        $validPhones = [];
+        foreach ($phoneArray as $phone) {
+            if (empty($phone['number'])) {
+                continue;
+            }
+            $validPhones[] = $phone;
+        }
+        return $validPhones;
     }
 }

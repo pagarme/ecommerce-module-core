@@ -34,7 +34,7 @@ class TransferSettings
     private function setTransferInterval($transferInterval): void
     {
         if (!in_array($transferInterval, self::VALID_TRANSFER_INTERVAL)) {
-            new InvalidArgumentException("Invalid argument to transferInterval");
+            throw new InvalidArgumentException("Invalid argument to transferInterval");
         }
         $this->transferInterval = $transferInterval;
     }
@@ -52,27 +52,27 @@ class TransferSettings
     private function validateTransferDay($transferDay)
     {
         if ($this->getTransferInterval() === self::TRANSFER_INTERVAL_WEEKLY && !$this->isValidForWeeklyInterval($transferDay)) {
-            new InvalidArgumentException("");
+            throw new InvalidArgumentException("");
         }
         if ($this->getTransferInterval() === self::TRANSFER_INTERVAL_MONTHLY && !$this->isValidForMonthlyInterval($transferDay)) {
-            new InvalidArgumentException("");
+            throw new InvalidArgumentException("");
         }
         return true;
     }
 
     private function isValidForWeeklyInterval($transferDay)
     {
-        if ($transferDay >= 1 && $transferDay <= 5) {
-            return false;
+        if ((int) $transferDay >= 1 && (int) $transferDay <= 5) {
+            return true;
         }
-        return true;
+        return false;
     }
     private function isValidForMonthlyInterval($transferDay)
     {
         if ($transferDay >= 1 && $transferDay <= 31) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public function getTransferEnabled()

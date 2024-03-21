@@ -11,7 +11,6 @@ class CorporationRegisterInformation extends BaseRegisterInformation
     private $tradingName;
     private $annualRevenue;
     private $managingPartners = [];
-    private $cnae;
     private $foundingDate;
 
     public function setCompanyName($companyName)
@@ -33,11 +32,6 @@ class CorporationRegisterInformation extends BaseRegisterInformation
     public function setAnnualRevenue($annualRevenue)
     {
         $this->annualRevenue = $annualRevenue;
-    }
-
-    public function setCnae($cnae)
-    {
-        $this->cnae = $cnae;
     }
 
     public function setFoundingDate($foundingDate)
@@ -70,11 +64,6 @@ class CorporationRegisterInformation extends BaseRegisterInformation
         return $this->annualRevenue;
     }
 
-    public function getCnae()
-    {
-        return $this->cnae;
-    }
-
     public function getFoundingDate()
     {
         return $this->foundingDate;
@@ -97,7 +86,6 @@ class CorporationRegisterInformation extends BaseRegisterInformation
             $this->getCorporationType(),
             $this->getTradingName(),
             $this->getAnnualRevenue(),
-            $this->getCnae(),
             $this->getFoundingDate(),
             $this->getManagingPartners(),
             $this->getAddress()

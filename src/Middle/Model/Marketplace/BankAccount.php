@@ -94,6 +94,9 @@ class BankAccount
 
     public function setBranchCheckDigit($branchCheckDigit): void
     {
+        if(empty($branchCheckDigit)) {
+            return;
+        }
         $this->branchCheckDigit = $branchCheckDigit;
     }
 

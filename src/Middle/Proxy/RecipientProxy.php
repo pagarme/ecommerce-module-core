@@ -9,6 +9,7 @@ use Pagarme\Core\Middle\Model\Recipient;
 class RecipientProxy
 {
 
+   
     private $client;
 
     /**
@@ -21,6 +22,9 @@ class RecipientProxy
 
     public function create(Recipient $recipient)
     {
+         /**
+     * @var \PagarmeCoreApiLib\Controllers\RecipientsController 
+     */
         $recipientRequest = $this->client->getRecipients()->createRecipient(
             $recipient->convertToCreateRequest()
         );

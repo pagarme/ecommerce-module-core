@@ -17,6 +17,9 @@ class BasePersonInformation extends BaseRegisterInformation
 
     public function setMotherName($motherName)
     {
+        if(empty($motherName)) {
+            return;
+        }
         $this->motherName = $motherName;
     }
 
@@ -28,7 +31,7 @@ class BasePersonInformation extends BaseRegisterInformation
     public function setMonthlyIncome($monthlyIncome)
     {
         if($monthlyIncome < 0) {
-            new \InvalidArgumentException("Monthly income cannot be negative");
+            throw new \InvalidArgumentException("Monthly income cannot be negative");
         }
         $this->monthlyIncome = $monthlyIncome;
     }

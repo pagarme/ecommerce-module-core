@@ -18,7 +18,7 @@ class BaseRegisterInformation
     public function setType($type)
     {
         if($type !== Recipient::CORPORATION && $type !== Recipient::INDIVIDUAL) {
-            new \InvalidArgumentException("Type is not valid");
+            throw new InvalidArgumentException("Type is not valid");
         }
         $this->type = $type;
     }
@@ -31,17 +31,20 @@ class BaseRegisterInformation
     public function setEmail($email)
     {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            new \InvalidArgumentException('Invalid e-mail');
+            throw new InvalidArgumentException('Invalid e-mail');
         }
         $this->email = $email;
     }
 
     public function setSiteUrl($siteUrl)
     {
-        if(!filter_var($siteUrl, FILTER_VALIDATE_URL)) {
-            new InvalidArgumentException("Site Url is not valid!");
+        if(empty($siteUrl)) {
+            return;
         }
-        $this->siteUrl = $siteUrl;
+        if(!filter_var($siteUrl, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException("Site Url is not valid!");
+        }
+        $this->siteUrl = null;
     }
 
     public function setAddress($address)
