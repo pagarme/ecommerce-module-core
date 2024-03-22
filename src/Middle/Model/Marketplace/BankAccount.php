@@ -51,6 +51,7 @@ class BankAccount
     {
         return $this->accountNumber;
     }
+
     public function getAccountCheckDigit()
     {
         return $this->accountCheckDigit;
@@ -94,7 +95,7 @@ class BankAccount
 
     public function setBranchCheckDigit($branchCheckDigit): void
     {
-        if(empty($branchCheckDigit)) {
+        if ($branchCheckDigit === '') {
             return;
         }
         $this->branchCheckDigit = $branchCheckDigit;
@@ -104,6 +105,7 @@ class BankAccount
     {
         $this->accountNumber = $accountNumber;
     }
+
     public function setAccountCheckDigit($accountCheckDigit): void
     {
         $this->accountCheckDigit = $accountCheckDigit;

@@ -1,6 +1,7 @@
 <?php
 
 namespace Pagarme\Core\Middle\Model;
+
 use PagarmeCoreApiLib\Models\CreateRegisterInformationAddressRequest;
 
 class Address
@@ -36,7 +37,7 @@ class Address
 
     public function setReferencePoint($referencePoint)
     {
-        $this->referencePoint = empty($$referencePoint) ? "Nenhum" : $referencePoint;
+        $this->referencePoint = empty($referencePoint) ? "Nenhum" : $referencePoint;
     }
 
     public function setNeighborhood($neighborhood)
@@ -97,14 +98,14 @@ class Address
     public function convertToArray()
     {
         return array(
-            'zip_code'  => $this->getZipCode(),
-            'street'    => $this->getStreet(),
+            'zip_code' => $this->getZipCode(),
+            'street' => $this->getStreet(),
             'street_number' => $this->getStreetNumber(),
             'complementary' => $this->getComplementary(),
             'reference_point' => $this->getReferencePoint(),
             'neighbordhood' => $this->getNeighborhood(),
             'state' => $this->getState(),
-            'city'  => $this->getCity()
+            'city' => $this->getCity()
         );
     }
 
