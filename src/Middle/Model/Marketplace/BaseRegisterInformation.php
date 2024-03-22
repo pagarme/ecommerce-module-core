@@ -11,13 +11,12 @@ class BaseRegisterInformation
     private $documentNumber;
     private $email;
     private $siteUrl;
-    
     private $phoneNumbers;
     private $address;
 
     public function setType($type)
     {
-        if($type !== Recipient::CORPORATION && $type !== Recipient::INDIVIDUAL) {
+        if ($type !== Recipient::CORPORATION && $type !== Recipient::INDIVIDUAL) {
             throw new InvalidArgumentException("Type is not valid");
         }
         $this->type = $type;
@@ -30,7 +29,7 @@ class BaseRegisterInformation
 
     public function setEmail($email)
     {
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('Invalid e-mail');
         }
         $this->email = $email;
@@ -38,13 +37,13 @@ class BaseRegisterInformation
 
     public function setSiteUrl($siteUrl)
     {
-        if(empty($siteUrl)) {
+        if (empty($siteUrl)) {
             return;
         }
-        if(!filter_var($siteUrl, FILTER_VALIDATE_URL)) {
+        if (!filter_var($siteUrl, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException("Site Url is not valid!");
         }
-        $this->siteUrl = null;
+        $this->siteUrl = $siteUrl;
     }
 
     public function setAddress($address)
