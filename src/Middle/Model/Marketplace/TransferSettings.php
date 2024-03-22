@@ -52,10 +52,10 @@ class TransferSettings
     private function validateTransferDay($transferDay)
     {
         if ($this->getTransferInterval() === self::TRANSFER_INTERVAL_WEEKLY && !$this->isValidForWeeklyInterval($transferDay)) {
-            throw new InvalidArgumentException("");
+            throw new InvalidArgumentException("Invalid Transfer Day to Weekly Transfer Interval!");
         }
         if ($this->getTransferInterval() === self::TRANSFER_INTERVAL_MONTHLY && !$this->isValidForMonthlyInterval($transferDay)) {
-            throw new InvalidArgumentException("");
+            throw new InvalidArgumentException("Invalid Transfer Day to Monthly Transfer Interval!");
         }
         return true;
     }

@@ -47,7 +47,7 @@ class RecipientFactoryTest extends TestCase
     /**
      * @expectedException
      */
-    public function testeCreateNewRecipientWithEmptyArray()
+    public function testCreateNewRecipientWithEmptyArray()
     {
         $this->expectError();
         $arrayDataValid = [];
@@ -62,9 +62,9 @@ class RecipientFactoryTest extends TestCase
                 "webkul_seller" => "3",
                 "external_id" => "128693",
                 "type" => "individual",
-                "document" => "844.553.530-70",
+                "document" => "123.456.789-10",
                 "name" => "Teste teste",
-                "email" => "fabiano@teste.com",
+                "email" => "teste@teste.com",
                 "site_url" => "https://teste.com",
                 "mother_name" => "Teste",
                 "birthdate" => "01/03/1989",
@@ -81,26 +81,26 @@ class RecipientFactoryTest extends TestCase
                     ]
                 ],
                 "address" => [
-                    "zip_code" => "83408-796",
-                    "street" => "Rua Basílio Antunes dos Santos",
+                    "zip_code" => "12345-678",
+                    "street" => "Rua Teste",
                     "street_number" => "123",
                     "complementary" => "Teste Complemento",
                     "reference_point" => "Teste Referencia",
-                    "neighborhood" => "Santa Terezinha",
-                    "state" => "PR",
-                    "city" => "Colombo",
+                    "neighborhood" => "Teste Bairro",
+                    "state" => "SP",
+                    "city" => "São Paulo",
                 ]
 
             ],
             "existing_recipient" => "0",
             "holder_name" => "Teste teste",
             "holder_document_type" => "individual",
-            "holder_document" => "844.553.530-70",
+            "holder_document" => "123.456.789-10",
             "bank" => "001",
-            "branch_number" => "0957",
-            "branch_check_digit" => "7",
-            "account_number" => "1279208",
-            "account_check_digit" => "5",
+            "branch_number" => "0000",
+            "branch_check_digit" => "1",
+            "account_number" => "1234567",
+            "account_check_digit" => "1",
             "account_type" => "checking",
             "transfer_enabled" => "1",
             "transfer_interval" => "Weekly",
@@ -114,11 +114,11 @@ class RecipientFactoryTest extends TestCase
                 "webkul_seller" => "4",
                 "external_id" => "150894",
                 "type" => "corporation",
-                "document" => "18.854.214/0001-90",
-                "name" => "Pagarme teste",
-                "company_name" => "Naturezza Comercio E Servicos Ltda",
-                "trading_name" => "Naturezza Comercio E Servicos",
-                "email" => "admin@admin.com",
+                "document" => "12.345.678/0001-10",
+                "name" => "Teste teste",
+                "company_name" => "Teste empresarial Ltda",
+                "trading_name" => "Teste empresarial",
+                "email" => "teste@teste.com",
                 "site_url" => "https://teste.com",
                 "birthdate" => "01/03/1983",
                 "annual_revenue" => "1.500.000,00",
@@ -134,22 +134,22 @@ class RecipientFactoryTest extends TestCase
                     ]
                 ],
                 "main_address" => [
-                    "zip_code" => "83408-796",
-                    "street" => "Rua Basílio Antunes dos Santos",
+                    "zip_code" => "12345-678",
+                    "street" => "Rua Teste",
                     "street_number" => "123",
-                    "neighborhood" => "Santa Terezinha",
-                    "complementary" => "",
-                    "reference_point" => "",
-                    "state" => "PR",
-                    "city" => "Colombo"
+                    "complementary" => "Teste Complemento",
+                    "reference_point" => "Teste Referencia",
+                    "neighborhood" => "Teste Bairro",
+                    "state" => "SP",
+                    "city" => "São Paulo",
                 ],
                 "managing_partners" => [
                     [
-                        "name" => "Francisco Candido Dos Reis Neto",
+                        "name" => "Teste teste",
                         "type" => "individual",
-                        "document" => "287.943.680-07",
-                        "mother_name" => "Teste",
-                        "email" => "admin@admin.com",
+                        "document" => "123.456.789-10",
+                        "mother_name" => "Teste teste",
+                        "email" => "teste@teste.com",
                         "birthdate" => "01/03/1995",
                         "monthly_income" => "1.500,00",
                         "professional_occupation" => "Sócio-Administrador",
@@ -164,27 +164,27 @@ class RecipientFactoryTest extends TestCase
                             ]
                         ],
                         "address" => [
-                            "zip_code" => "83408-796",
-                            "street" => "Rua Basílio Antunes dos Santos",
+                            "zip_code" => "12345-678",
+                            "street" => "Rua Teste",
                             "street_number" => "123",
-                            "neighborhood" => "Santa Terezinha",
-                            "complementary" => "",
-                            "reference_point" => "",
-                            "state" => "PR",
-                            "city" => "Colombo"
+                            "complementary" => "Teste Complemento",
+                            "reference_point" => "Teste Referencia",
+                            "neighborhood" => "Teste Bairro",
+                            "state" => "SP",
+                            "city" => "São Paulo",
                         ]
 
                     ]
                 ]
             ],
-            "holder_name" => "Naturezza Comercio E Servicos Ltda",
+            "holder_name" => "Teste empresarial Ltda",
             "holder_document_type" => "company",
-            "holder_document" => "18.854.214/0001-90",
+            "holder_document" => "12.345.678/0001-10",
             "bank" => "001",
-            "branch_number" => "0957",
-            "branch_check_digit" => "7",
-            "account_number" => "1279208",
-            "account_check_digit" => "5",
+            "branch_number" => "1234",
+            "branch_check_digit" => "1",
+            "account_number" => "1234567",
+            "account_check_digit" => "1",
             "account_type" => "checking",
             "transfer_enabled" => "1",
             "transfer_interval" => "Monthly",
