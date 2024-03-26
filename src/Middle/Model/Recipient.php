@@ -3,7 +3,6 @@
 namespace Pagarme\Core\Middle\Model;
 
 use PagarmeCoreApiLib\Models\CreateRecipientRequest;
-use PagarmeCoreApiLib\Models\UpdateRecipientRequest;
 
 class Recipient
 {
@@ -76,13 +75,6 @@ class Recipient
             $this->getAutomaticAnticipationSettings(),
             $this->getRegisterInformation(),
             $this->getCode()
-        );
-    }
-
-    public function convertToUpdateRequest()
-    {
-        return new UpdateRecipientRequest(
-            
         );
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Pagarme\Core\Middle\Proxy;
 
-use Pagarme\Core\Middle\Interfaces\BaseRecipientInterface;
 use Pagarme\Core\Middle\Client;
 use Pagarme\Core\Middle\Model\Recipient;
 
@@ -29,16 +28,6 @@ class RecipientProxy
             $recipient->convertToCreateRequest()
         );
         return $recipientRequest;
-    }
-
-
-    public function updateRecipient(BaseRecipientInterface $recipient)
-    {
-        // $recipientRequest = $this->client->getRecipients()->updateRecipient(
-        //     $recipient->getPagarmeId(),
-            
-        // );
-        // return $recipientRequest;
     }
 
     public function getFromPagarme($recipientId)

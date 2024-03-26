@@ -28,8 +28,7 @@ class Phones
 
     private function cleanPhone($phoneNumber)
     {
-        $phone = preg_replace('/(?!\d)./', '', $phoneNumber);
-        return sprintf("%05s", $phone);
+        return preg_replace('/\D/', '', $phoneNumber);;
     }
 
 

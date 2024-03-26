@@ -5,7 +5,7 @@ namespace Pagarme\Core\Middle\Model\Marketplace;
 use Pagarme\Core\Payment\Interfaces\ConvertibleToSDKRequestsInterface;
 use PagarmeCoreApiLib\Models\CreateRegisterInformationIndividualRequest;
 
-class IndividualRegisterInformation extends BasePersonInformation  implements ConvertibleToSDKRequestsInterface 
+class IndividualRegisterInformation extends BasePersonInformation implements ConvertibleToSDKRequestsInterface
 {
     public function convertToSDKRequest()
     {
