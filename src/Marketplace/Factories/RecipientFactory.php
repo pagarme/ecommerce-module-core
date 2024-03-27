@@ -29,6 +29,10 @@ class RecipientFactory implements FactoryInterface
             return;
         }
 
+        if (!empty($postData['transfer_settings'])) {
+
+        }
+
         $this->setId($postData);
         $this->setRecipientId($postData);
         $this->setExternalId($postData);
@@ -51,6 +55,12 @@ class RecipientFactory implements FactoryInterface
         $this->setTransferDay($postData);
 
         return $this->recipient;
+    }
+
+    public function formatFromWebhook($postData)
+    {
+        $postData['recipient_id'] = $postData;
+        unset($postData['id']);
     }
 
     public function createFromDbData($dbData)

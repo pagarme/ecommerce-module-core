@@ -55,6 +55,14 @@ class Webhook extends AbstractEntity
             return $this;
         }
 
+        if (
+            $this->type->getEntityType() == 'recipient'
+        ) {
+            $this->component = 'Marketplace';
+            return $this;
+        }
+
+
         $this->component = 'Kernel';
         return $this;
     }
