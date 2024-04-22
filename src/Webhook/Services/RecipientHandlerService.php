@@ -11,6 +11,14 @@ use Pagarme\Core\Marketplace\Aggregates\Recipient;
 
 class RecipientHandlerService
 {
+    CONST STATUS_CODE = 200;
+    
+    const RECIPIENT_UPDATED_MESSAGE = 'Recipient updated';
+
+    const RECIPIENT_NOT_FOUNDED_MESSAGE = 'Recipient with id %s not founded in the platform';
+
+    const WEBHOOK_NOT_IMPLEMENTED_MESSAGE = 'Webhook %s not implemented';
+
     /**
      * @param Webhook $webhook
      * @return mixed
@@ -27,12 +35,12 @@ class RecipientHandlerService
         }
 
         $type = "{$webhook->getType()->getEntityType()}.{$webhook->getType()->getAction()}";
-        $message = "Webhook {$type} not implemented";
+        $message = sprintf(static::WEBHOOK_NOT_IMPLEMENTED_MESSAGE, $type);
         $this->getLogService()->info($message);
 
         return [
             "message" => $message,
-            "code" => 200
+            "code" => static::STATUS_CODE
         ];
     }
 
@@ -43,11 +51,11 @@ class RecipientHandlerService
         $recipientEntity = $webhook->getEntity();
         $foundedRecipent = $recipientService->findSavedByPagarmeId($recipientEntity->getPagarmeId());
         if (empty($foundedRecipent)) {
-            $message = "Recipient with id {$recipientEntity->getPagarmeId()} not founded in the platform";
+            $message = sprintf(static::RECIPIENT_NOT_FOUNDED_MESSAGE, $recipientEntity->getPagarmeId());
             $this->getLogService()->info($message);
             return [
                 "message" => $message,
-                "code" => 200
+                "code" => static::STATUS_CODE
             ];
         }
 
@@ -56,8 +64,8 @@ class RecipientHandlerService
         $recipientService->saveRecipient($foundedRecipent);
 
         return [
-            "message" => 'Recipient updated',
-            "code" => 200
+            "message" => static::RECIPIENT_UPDATED_MESSAGE,
+            "code" => static::STATUS_CODE
         ];
     }
 

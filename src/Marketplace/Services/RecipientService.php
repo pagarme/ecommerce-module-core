@@ -269,7 +269,7 @@ class RecipientService
         if (is_string($pagarmeId)) {
             $pagarmeId = new RecipientId($pagarmeId);
         }
-        return $this->recipientRepository->findByPagarmeId(new RecipientId($pagarmeId));
+        return $this->recipientRepository->findByPagarmeId($pagarmeId);
     }
 
     public function delete($id)

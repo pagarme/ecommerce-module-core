@@ -32,7 +32,7 @@ class RecipientFactory implements FactoryInterface
         if (isset($postData['status'])) {
             $postData = $this->formatFromWebhook($postData);
         }
-        //
+        
         $this->setId($postData);
         $this->setRecipientId($postData);
         $this->setExternalId($postData);
@@ -68,7 +68,7 @@ class RecipientFactory implements FactoryInterface
             ->setName($dbData['name'])
             ->setEmail($dbData['email'])
             ->setDocument($dbData['document'])
-            ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
+            ->setType($dbData['type'] == 'cpf' ? 'individual' : 'company')
             ->setPagarmeId(new RecipientId($dbData['pagarme_id']));
 
         if (isset($dbData['status'])) {

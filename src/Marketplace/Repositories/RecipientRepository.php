@@ -31,7 +31,7 @@ class RecipientRepository extends AbstractRepository
             `external_id`,
             `name`,
             `email`,
-            `document_type`,
+            `type`,
             `document`,
             `pagarme_id`";
 

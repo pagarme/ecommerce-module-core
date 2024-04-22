@@ -493,12 +493,12 @@ class Recipient extends AbstractEntity implements RecipientInterface
      */
     public function setStatus($status, $kycStatus = '')
     {
-        $recipientStatus = $this->parseStatus($status, $kycStatus);
+        $recipientStatus = static::parseStatus($status, $kycStatus);
         $this->status = $recipientStatus;
         return $this;
     }
 
-    public function parseStatus($status, $kycStatus)
+    public static function parseStatus($status, $kycStatus)
     {
         if ($status === 'registration') {
             if ($kycStatus === 'pending') {
@@ -506,13 +506,13 @@ class Recipient extends AbstractEntity implements RecipientInterface
             }
 
             if ($kycStatus === 'denied') {
-                return $kycStatus;
+                return static::DISAPPROVED;
             }
         }
 
         if ($status === 'affiliation') {
             if ($kycStatus === 'partially_denied') {
-                return $kycStatus;
+                return static::VALIDATION_REQUESTED;
             }
 
             if ($kycStatus === 'pending') {
