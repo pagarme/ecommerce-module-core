@@ -32,7 +32,7 @@ class RecipientFactory implements FactoryInterface
         if (isset($postData['status'])) {
             $postData = $this->formatFromWebhook($postData);
         }
-        
+
         $this->setId($postData);
         $this->setRecipientId($postData);
         $this->setExternalId($postData);
@@ -91,7 +91,9 @@ class RecipientFactory implements FactoryInterface
         $postData['recipient_id'] = $postData['id'];
         unset($postData['id']);
 
-        $this->recipient->setStatus($postData['status'], $postData['kyc_details']['status']);
+        $kycStatus = $postData['kyc_details']['status'] ?? '';
+
+        $this->recipient->setStatus($postData['status'], $kycStatus);
 
         return $postData;
     }
