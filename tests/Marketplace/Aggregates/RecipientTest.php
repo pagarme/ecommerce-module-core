@@ -20,14 +20,14 @@ class RecipientTest extends TestCase
     public function statusDataProvider()
     {
         return [
-            ["registration", "pending", RecipientInterface::REGISTERED],
-            ["affiliation", "partially_denied", RecipientInterface::VALIDATION_REQUESTED],
-            ["affiliation", "pending", RecipientInterface::WAITING_FOR_ANALYSIS],
-            ["active", "approved", RecipientInterface::ACTIVE],
-            ["registration", "denied", RecipientInterface::DISAPPROVED],
-            ["suspended", "", RecipientInterface::SUSPENDED],
-            ["blocked", "", RecipientInterface::BLOCKED],
-            ["inactive", "", RecipientInterface::INACTIVE],
+            "Registered status" => ["registration", "pending", RecipientInterface::REGISTERED],
+            "Validation Request status" => ["affiliation", "partially_denied", RecipientInterface::VALIDATION_REQUESTED],
+            "Waiting for analysis status" => ["affiliation", "pending", RecipientInterface::WAITING_FOR_ANALYSIS],
+            "Active status" => ["active", "approved", RecipientInterface::ACTIVE],
+            "Disapproved status" => ["registration", "denied", RecipientInterface::DISAPPROVED],
+            "Suspended status" => ["suspended", "", RecipientInterface::SUSPENDED],
+            "Blocked status" => ["blocked", "", RecipientInterface::BLOCKED],
+            "Inactive status" => ["inactive", "", RecipientInterface::INACTIVE],
         ];
     }
 }
