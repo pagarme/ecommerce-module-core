@@ -41,7 +41,7 @@ class RecipientHandlerServiceTest extends TestCase
         $this->assertSame($result['code'], RecipientHandlerService::STATUS_CODE);
     }
 
-    public function testHandleShouldNotNotFoundRecipient()
+    public function testHandleShouldNotFoundRecipient()
     {
         $webhookType = WebhookType::fromPostType('recipient.updated');
         $webhook = new Webhook();
@@ -64,7 +64,7 @@ class RecipientHandlerServiceTest extends TestCase
         $this->assertSame($result['code'], RecipientHandlerService::STATUS_CODE);
     }
 
-    public function testHandleShouldNotNotFoundHandler()
+    public function testHandleShouldNotFoundHandler()
     {
         $webhookName = 'recipient.created';
         $webhookType = WebhookType::fromPostType($webhookName);
