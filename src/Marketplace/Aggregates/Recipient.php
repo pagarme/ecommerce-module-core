@@ -491,7 +491,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
      * @param string $status
      * @return Recipient
      */
-    public function setStatus($status, $kycStatus = '')
+    public function setStatus($status, $kycStatus)
     {
         $recipientStatus = static::parseStatus($status, $kycStatus);
         $this->status = $recipientStatus;
