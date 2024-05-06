@@ -37,4 +37,12 @@ class RecipientProxy
         );
         return $recipientRequest;
     }
+
+    public function createKycLink($recipientId)
+    {
+        $kycLinkResponse = $this->client->getRecipients()->createKycLink(
+            $recipientId
+        );
+        return $kycLinkResponse;
+    }
 }
