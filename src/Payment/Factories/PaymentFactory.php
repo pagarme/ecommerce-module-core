@@ -14,6 +14,7 @@ use Pagarme\Core\Payment\Aggregates\Payments\NewCreditCardPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\NewDebitCardPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\NewVoucherPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\PixPayment;
+use Pagarme\Core\Payment\Aggregates\Payments\GooglePayPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\SavedCreditCardPayment;
 use Pagarme\Core\Payment\Aggregates\Payments\SavedVoucherCardPayment;
 use Pagarme\Core\Payment\ValueObjects\BoletoBank;
@@ -39,6 +40,7 @@ final class PaymentFactory
             'createVoucherPayments',
             'createDebitCardPayments',
             'createPixPayments',
+            'createGooglePayPayments',
         ];
 
         $this->moduleConfig = MPSetup::getModuleConfiguration();
@@ -272,6 +274,49 @@ final class PaymentFactory
             if (!empty($additionalInformation)) {
                 $payment->setAdditionalInformation($additionalInformation);
             }
+
+            $payment->setAmount($value->amount);
+
+            $payments[] = $payment;
+        }
+
+        return $payments;
+    }
+
+
+    /**
+     * @param array $data
+     * @return GooglePayPayment[]
+     * @throws InvalidParamException
+     */
+    private function createGooglePayPayments($data)
+    {
+        $googlePayDataIndex = GooglePayPayment::getBaseCode();
+
+        if (!isset($data->$googlePayDataIndex)) {
+            return [];
+        }
+
+        $googlePayData = $data->$googlePayDataIndex;
+
+        $payments = [];
+        foreach ($googlePayData as $value) {
+            $payment = new GooglePayPayment();
+
+            // $expiresIn = $this->moduleConfig->getPixConfig()->getExpirationQrCode();
+            // $payment->setExpiresIn($expiresIn);
+
+            $customer = $this->createCustomer($value);
+            if ($customer !== null) {
+                $payment->setCustomer($customer);
+            }
+
+            // $additionalInformation =
+                // $this->moduleConfig->getPixConfig()->getAdditionalInformation();
+
+            // if (!empty($additionalInformation)) {
+                // $payment->setAdditionalInformation($additionalInformation);
+            // }
 
             $payment->setAmount($value->amount);
 
