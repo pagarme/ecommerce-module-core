@@ -3,7 +3,7 @@
 namespace Pagarme\Core\Payment\Aggregates\Payments;
 
 use Pagarme\Core\Payment\ValueObjects\PaymentMethod;
-use PagarmeCoreApiLib\Models\CreateGooglePayRequest;
+use PagarmeCoreApiLib\Models\CreateGooglePayPaymentRequest;
 
 final class GooglePayPayment extends AbstractPayment
 {
@@ -86,13 +86,13 @@ final class GooglePayPayment extends AbstractPayment
     }
 
     /**
-     * @return CreateGooglePayRequest
+     * @return CreateGooglePayPaymentRequest
      */
     protected function convertToPrimitivePaymentRequest()
     {
         $payload = new \stdClass();
         $payload->type = "google_pay";
         $payload->google_pay = $this->getGooglePayload();
-        return new CreateGooglePayRequest($this->getStatementDescriptor(), $payload);
+        return new CreateGooglePayPaymentRequest($this->getStatementDescriptor(), $payload);
     }
 }
