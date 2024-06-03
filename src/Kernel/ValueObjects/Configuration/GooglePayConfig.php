@@ -6,25 +6,14 @@ use Pagarme\Core\Kernel\Abstractions\AbstractValueObject;
 
 class GooglePayConfig extends AbstractValueObject
 {
-    /** @var bool */
     private $enabled;
-
-    /** @var string */
     private $title;
     private $merchantId;
     private $merchantName;
 
     /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
      * @param bool $enabled
-     * @return PixConfig
+     * @return GooglePayConfig
      */
     public function setEnabled($enabled)
     {
@@ -33,58 +22,63 @@ class GooglePayConfig extends AbstractValueObject
     }
 
     /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
      * @param string $title
-     * @return PixConfig
+     * @return GooglePayConfig
      */
     public function setTitle($title)
     {
         $this->title = $title;
         return $this;
     }
+
     /**
-     * @param string $merchant_id
-     * @return PixConfig
+     * @param string $merchantId
+     * @return GooglePayConfig
      */
-    public function setMerchantId($merchant_id)
+    public function setMerchantId($merchantId)
     {
-        $this->merchantId = $merchant_id;
+        $this->merchantId = $merchantId;
         return $this;
     }
+
+    /**
+     * @param string $merchantId
+     * @return GooglePayConfig
+     */
     public function setMerchantName($merchantName)
     {
         $this->merchantName = $merchantName;
         return $this;
     }
-    
+
+    protected function isEqual($object)
+    {
+        return $this->enabled === $this->isEnabled()
+            && $this->title === $this->getTitle()
+            && $this->merchantName === $this->getMerchantName()
+            && $this->merchantId === $this->getMerchantId();
+    }
+
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
     public function getMerchantName()
     {
         return $this->merchantName;
     }
+
     public function getMerchantId()
     {
         return $this->merchantId;
     }
 
-    
-    public function isEqual($object)
-    {
-        return false;
-    }
-    /**
-      * Specify data which should be serialized to JSON
-      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-      * @return mixed data which can be serialized by <b>json_encode</b>,
-      * which is a value of any type other than a resource.
-      * @since 5.4.0
-    */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
