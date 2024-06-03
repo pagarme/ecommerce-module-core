@@ -23,11 +23,11 @@ class GooglePayConfigFactory implements FactoryCreateFromDbDataInterface
             $googlePayConfig->setTitle($data->title);
         }
 
-        if (!empty($data->merchant_id)) {
-            $googlePayConfig->setMerchantId($data->merchant_id);
+        if (!empty($data->merchantId)) {
+            $googlePayConfig->setMerchantId($data->merchantId);
         }
-        if (!empty($data->merchant_name)) {
-            $googlePayConfig->setMerchantName($data->merchant_name);
+        if (!empty($data->merchantName)) {
+            $googlePayConfig->setMerchantName($data->merchantName);
         }
 
         return $googlePayConfig;

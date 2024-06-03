@@ -291,32 +291,26 @@ final class PaymentFactory
      */
     private function createGooglePayPayments($data)
     {
-        $googlePayDataIndex = GooglePayPayment::getBaseCode();
+        $googlepayDataIndex = "googlepay";
 
-        if (!isset($data->$googlePayDataIndex)) {
+        if (!isset($data->$googlepayDataIndex)) {
             return [];
         }
 
-        $googlePayData = $data->$googlePayDataIndex;
+        $googlepayData = $data->$googlepayDataIndex;
 
         $payments = [];
-        foreach ($googlePayData as $value) {
+        foreach ($googlepayData as $value) {
             $payment = new GooglePayPayment();
-
-            // $expiresIn = $this->moduleConfig->getPixConfig()->getExpirationQrCode();
-            // $payment->setExpiresIn($expiresIn);
 
             $customer = $this->createCustomer($value);
             if ($customer !== null) {
                 $payment->setCustomer($customer);
             }
 
-            // $additionalInformation =
-                // $this->moduleConfig->getPixConfig()->getAdditionalInformation();
-
-            // if (!empty($additionalInformation)) {
-                // $payment->setAdditionalInformation($additionalInformation);
-            // }
+            if (!empty($value->additionalInformation)) {
+                $payment->setAdditionalInformation($value->additionalInformation);
+            }
 
             $payment->setAmount($value->amount);
 

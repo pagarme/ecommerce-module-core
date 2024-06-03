@@ -11,8 +11,8 @@ class GooglePayConfig extends AbstractValueObject
 
     /** @var string */
     private $title;
-    private $merchant_id;
-    private $merchant_name;
+    private $merchantId;
+    private $merchantName;
 
     /**
      * @return bool
@@ -55,22 +55,22 @@ class GooglePayConfig extends AbstractValueObject
      */
     public function setMerchantId($merchant_id)
     {
-        $this->merchant_id = $merchant_id;
+        $this->merchantId = $merchant_id;
         return $this;
     }
     public function setMerchantName($merchantName)
     {
-        $this->merchant_name = $merchantName;
+        $this->merchantName = $merchantName;
         return $this;
     }
     
     public function getMerchantName()
     {
-        return $this->merchant_name;
+        return $this->merchantName;
     }
     public function getMerchantId()
     {
-        return $this->merchant_id;
+        return $this->merchantId;
     }
 
     
