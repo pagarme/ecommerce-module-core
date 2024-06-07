@@ -513,4 +513,8 @@ final class Order extends AbstractEntity implements ConvertibleToSDKRequestsInte
     {
         return PaymentMethod::debit_card();
     }
+    private function googlepayPaymentMethod()
+    {
+        return PaymentMethod::googlepay();
+    }
 }
