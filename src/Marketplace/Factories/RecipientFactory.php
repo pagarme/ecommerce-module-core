@@ -29,6 +29,10 @@ class RecipientFactory implements FactoryInterface
             return;
         }
 
+        if (isset($postData['status'])) {
+            $postData = $this->formatFromWebhook($postData);
+        }
+
         $this->setId($postData);
         $this->setRecipientId($postData);
         $this->setExternalId($postData);
@@ -64,8 +68,12 @@ class RecipientFactory implements FactoryInterface
             ->setName($dbData['name'])
             ->setEmail($dbData['email'])
             ->setDocument($dbData['document'])
-            ->setType($dbData['document_type'] == 'cpf' ? 'individual' : 'company')
+            ->setType($dbData['type'] == 'cpf' ? 'individual' : 'company')
             ->setPagarmeId(new RecipientId($dbData['pagarme_id']));
+
+        if (isset($dbData['status'])) {
+            $this->recipient->setStatus($dbData['status']);
+        }
 
         if (self::TYPE_BY_DOCUMENT) {
             $this->recipient->setType($this->getTypeByDocument($this->recipient->getDocument()));
@@ -76,6 +84,18 @@ class RecipientFactory implements FactoryInterface
 
 
         return $this->recipient;
+    }
+
+    private function formatFromWebhook($postData)
+    {
+        $postData['recipient_id'] = $postData['id'];
+        unset($postData['id']);
+
+        $kycStatus = $postData['kyc_details']['status'] ?? '';
+
+        $this->recipient->setStatus($postData['status'], $kycStatus);
+
+        return $postData;
     }
 
     private function getTypeByDocument($document)
