@@ -510,14 +510,12 @@ class Recipient extends AbstractEntity implements RecipientInterface
             }
         }
 
-        if ($status === 'affiliation') {
-            if ($kycStatus === 'partially_denied') {
-                return static::VALIDATION_REQUESTED;
-            }
+        if ($status === 'affiliation' && $kycStatus === 'pending') {
+            return static::WAITING_FOR_ANALYSIS;
+        }
 
-            if ($kycStatus === 'pending') {
-                return static::WAITING_FOR_ANALYSIS;
-            }
+        if ($kycStatus === 'partially_denied') {
+            return static::VALIDATION_REQUESTED;
         }
 
         return $status;
