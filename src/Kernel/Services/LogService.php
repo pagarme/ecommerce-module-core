@@ -49,9 +49,10 @@ class LogService
      */
     public function __construct(
         $channelName,
-        $addHost = false
+        $addHost = false,
+        $stackTraceDepth = 2
     ) {
-        $this->stackTraceDepth = 2;
+        $this->stackTraceDepth = $stackTraceDepth;
         $this->channelName = $channelName;
         $this->path = AbstractModuleCoreSetup::getLogPath();
         if (is_array($this->path)) {
