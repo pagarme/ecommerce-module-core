@@ -92,7 +92,7 @@ class RecipientRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECIPIENTS
         );
-
+        $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
         $query = "SELECT * FROM $table WHERE id = $objectId";
 
         $result = $this->db->fetch($query);
@@ -175,7 +175,7 @@ class RecipientRepository extends AbstractRepository
         $table = $this->db->getTable(
             AbstractDatabaseDecorator::TABLE_RECIPIENTS
         );
-
+        $sellerId = filter_var($sellerId, FILTER_SANITIZE_NUMBER_INT);
         $query = "SELECT * FROM `$table` as t ";
         $query .= "WHERE t.external_id = '$sellerId';";
 
