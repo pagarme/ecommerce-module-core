@@ -26,6 +26,7 @@ final class CardBrand extends AbstractValueObject
     CONST SODEXO_PREMIUM = "SodexoPremium";
     CONST SODEXO_REFEICAO = "SodexoRefeicao";
     CONST SODEXO_COMBUSTIVEL = "SodexoCombustivel";
+    CONST TICKET = "Ticket";
     CONST VR = "VR";
     CONST ALELO = "Alelo";
     CONST BANESE = "Banese";
@@ -134,6 +135,11 @@ final class CardBrand extends AbstractValueObject
         return new self(self::SODEXO_COMBUSTIVEL);
     }
 
+    static public function ticket()
+    {
+        return new self(self::TICKET);
+    }
+
     static public function vr()
     {
         return new self(self::VR);
@@ -172,13 +178,13 @@ final class CardBrand extends AbstractValueObject
     }
 
     /**
-      * Specify data which should be serialized to JSON
-      *
-      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
-      * @return mixed data which can be serialized by <b>json_encode</b>,
-      * which is a value of any type other than a resource.
-      * @since  5.4.0
-    */
+     * Specify data which should be serialized to JSON
+     *
+     * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since  5.4.0
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
