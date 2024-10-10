@@ -23,7 +23,7 @@ final class OrderRepository extends AbstractRepository
         $order = json_decode(json_encode($object));
 
         $query = "
-          INSERT INTO $orderTable (`pagarme_id`, `code`, `status`) 
+          INSERT INTO $orderTable (`pagarme_id`, `code`, `status`)
           VALUES ('{$order->pagarmeId}', '{$order->code}', '{$order->status}');
          ";
 
@@ -119,7 +119,7 @@ final class OrderRepository extends AbstractRepository
         $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
         $platformID = filter_var($platformID, FILTER_SANITIZE_SPECIAL_CHARS);
         $query = "SELECT * FROM `$orderTable` ";
-        $query .= "WHERE code = '{$platformID}';";
+        $query .= "WHERE code = '{$platformID}' ORDER BY id DESC;";
 
         $result = $this->db->fetch($query);
 
