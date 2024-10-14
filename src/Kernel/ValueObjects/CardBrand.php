@@ -131,6 +131,11 @@ final class CardBrand extends AbstractValueObject
         return new self(self::SODEXO_COMBUSTIVEL);
     }
 
+    static public function ticket()
+    {
+        return new self(self::TICKET);
+    }
+
     static public function vr()
     {
         return new self(self::VR);
@@ -169,7 +174,7 @@ final class CardBrand extends AbstractValueObject
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->getName();
