@@ -81,22 +81,8 @@ implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
             return null;
         }
         $percentageOfPayment = $this->getAmount() / $this->order->getAmount();
-        $splitMainRecipient = new Split();
 
-        $marketplaceCommission = intval(
-            round(
-                $splitOrderData->getMarketplaceComission() * $percentageOfPayment
-            )
-        );
-
-        $splitMainRecipient->setCommission(
-            $marketplaceCommission
-        );
-
-        $splitMainRecipient->setRecipientId($this->moduleConfig->getMarketplaceConfig()->getMainRecipientId());
-        $splitMainRecipientRequest = $splitMainRecipient
-            ->convertMainToSDKRequest();
-
+        $sellersTotalCommission = 0;
         foreach ($splitOrderData->getSellersData() as $seller) {
             $splitRecipient = new Split();
 
@@ -106,11 +92,23 @@ implements ConvertibleToSDKRequestsInterface, HaveOrderInterface
                 )
             );
 
+            $sellersTotalCommission += $sellerCommission;
+
             $splitRecipient->setCommission($sellerCommission);
             $splitRecipient->setRecipientId($seller['pagarmeId']);
             $splitRecipientRequests[] = $splitRecipient
                 ->convertSecondaryToSDKRequest();
         }
+
+        $splitMainRecipient = new Split();
+
+        $splitMainRecipient->setRecipientId($this->moduleConfig->getMarketplaceConfig()->getMainRecipientId());
+        $splitMainRecipientRequest = $splitMainRecipient
+            ->convertMainToSDKRequest();
+
+        $splitMainRecipient->setCommission(
+            $this->getAmount() - $sellersTotalCommission
+        );
 
         return [$splitMainRecipientRequest, $splitRecipientRequests];
     }
