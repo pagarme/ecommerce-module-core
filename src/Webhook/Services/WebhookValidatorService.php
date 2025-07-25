@@ -2,11 +2,13 @@
 
 namespace Pagarme\Core\Webhook\Services;
 
+use Exception;
 use Pagarme\Core\Kernel\Services\LogService;
+use stdClass;
 
 class WebhookValidatorService
 {
-    const JWKS_URL = 'https://hubapi.stg.pagar.me/.well-known/jwks.json';
+    const JWKS_URL = 'https://hubapi.pagar.me/.well-known/jwks.json';
     const DEFAULT_ALGORITHM = 'RS256';
     const DEFAULT_KTY_TYPE = 'RSA';
     const DEFAULT_USE = 'sig';
@@ -30,7 +32,8 @@ class WebhookValidatorService
 
         $headerParts = self::parseSignatureHeader($signatureHeader);
         if (!isset($headerParts['alg'], $headerParts['kid'], $headerParts['signature'])) {
-            $logService->exception("Invalid signature header: Missing alg, kid, or signature.");
+            $e = new Exception("Invalid signature header: Missing alg, kid, or signature.");
+            $logService->exception($e);
             return false;
         }
         $alg = $headerParts['alg'];
@@ -38,34 +41,46 @@ class WebhookValidatorService
         $receivedSignatureB64 = $headerParts['signature'];
 
         if ($alg !== self::DEFAULT_ALGORITHM) {
-            $logService->exception("Unsupported algorithm: {$alg}. Expected " . self::DEFAULT_ALGORITHM . ".");
+            $e = new Exception("Unsupported algorithm: {$alg}. Expected " . self::DEFAULT_ALGORITHM . ".");
+            $logService->exception($e);
             return false;
         }
 
         $jwksUrl = self::JWKS_URL;
         $jwksData = self::fetchAndParseJwks($jwksUrl);
         if ($jwksData === null) {
-            $logService->exception("Failed to fetch or parse JWKS from {$jwksUrl}.");
+            $e = new Exception("Failed to fetch or parse JWKS from {$jwksUrl}.");
+            $logService->exception($e);
             return false;
         }
 
         $publicKeyJwk = self::findJwkInJwks($jwksData, $kid, $alg);
         if ($publicKeyJwk === null) {
-            $logService->exception("Public key with KID '{$kid}' and ALG '{$alg}' not found or invalid in JWKS.");
+            $e = new Exception("Public key with KID '{$kid}' and ALG '{$alg}' not found or invalid in JWKS.");
+            $logService->exception($e);
             return false;
         }
 
-        $pemPublicKey = self::createRsaPublicKeyPemFromNandE($publicKeyJwk->n, $publicKeyJwk->e);
+        $pemPublicKey = self::createPemFromModulusAndExponent($publicKeyJwk->n, $publicKeyJwk->e);
         if ($pemPublicKey === null) {
-            $logService->exception("Failed to construct PEM public key from JWK components.");
+            $e = new Exception("Failed to construct PEM public key from JWK components.");
+            $logService->exception($e);
             return false;
         }
 
         $decodedSignature = self::base64UrlDecode($receivedSignatureB64);
-        $isValid = openssl_verify($payloadJson, $decodedSignature, $pemPublicKey, OPENSSL_ALGO_SHA256);
+
+        $isValid = openssl_verify(
+            $payloadJson,
+            $decodedSignature,
+            $pemPublicKey,
+            OPENSSL_ALGO_SHA256
+        );
 
         if ($isValid === -1) {
-            $logService->exception("OpenSSL verification error: " . openssl_error_string());
+            $e = new Exception("OpenSSL verification error: " . openssl_error_string());
+            $logService->exception($e);
+            return false;
         }
 
         return (bool)$isValid;
@@ -134,9 +149,14 @@ class WebhookValidatorService
      * @param string $data
      * @return string
      */
-    private static function base64UrlDecode(string $data): string
+    private static function base64UrlDecode(string $base64url): string
     {
-        return base64_decode(strtr($data, '-_', '+/') . str_repeat('=', 3 - (3 + strlen($data)) % 4));
+        $base64 = strtr($base64url, '-_', '+/');
+        $padding = strlen($base64) % 4;
+        if ($padding > 0) {
+            $base64 .= str_repeat('=', 4 - $padding);
+        }
+        return base64_decode($base64);
     }
 
     /**
@@ -147,85 +167,87 @@ class WebhookValidatorService
      * @param string $eBase64Url RSA exponent in Base64Url format.
      * @return string|null The public key in PEM format or null in case of error.
      */
-    private static function createRsaPublicKeyPemFromNandE(string $nBase64Url, string $eBase64Url): ?string
+    public static function createPemFromModulusAndExponent(string $nBase64Url, string $eBase64Url): ?string
     {
-        $n = self::base64UrlDecode($nBase64Url);
-        $e = self::base64UrlDecode($eBase64Url);
+        $modulus = self::base64UrlDecode($nBase64Url);
+        $exponent = self::base64UrlDecode($eBase64Url);
 
-        $n = ltrim($n, "\0");
-        $e = ltrim($e, "\0");
+        if (!$modulus || !$exponent) return null;
 
-        $components = [];
-        $components[] = self::encodeAsn1Integer($n);
-        $components[] = self::encodeAsn1Integer($e);
-        $rsaPublicKey = self::encodeAsn1Sequence(implode('', $components));
+        $modulus = ltrim($modulus, "\x00");
+        $exponent = ltrim($exponent, "\x00");
 
-        $algorithmIdentifier = self::encodeAsn1Sequence(
-            self::encodeAsn1ObjectIdentifier(self::RSA_ENCRYPTION_OID) . self::encodeAsn1Null()
+        $rsaPublicKey = self::asn1EncodeSequence(
+            self::asn1EncodeInteger($modulus) . self::asn1EncodeInteger($exponent)
         );
 
-        $publicKeyBitString = self::encodeAsn1BitString($rsaPublicKey);
-
-        $subjectPublicKeyInfo = self::encodeAsn1Sequence(
-            $algorithmIdentifier .
-            $publicKeyBitString
+        $algorithmIdentifier = self::asn1EncodeSequence(
+            self::asn1EncodeOID('1.2.840.113549.1.1.1') . self::asn1EncodeNull()
         );
 
-        $pem = "-----BEGIN PUBLIC KEY-----\n";
-        $pem .= chunk_split(base64_encode($subjectPublicKeyInfo), 64, "\n");
-        $pem .= "-----END PUBLIC KEY-----\n";
+        $subjectPublicKeyInfo = self::asn1EncodeSequence(
+            $algorithmIdentifier . self::asn1EncodeBitString($rsaPublicKey)
+        );
+
+        $pem = "-----BEGIN PUBLIC KEY-----\n" .
+            chunk_split(base64_encode($subjectPublicKeyInfo), 64, "\n") .
+            "-----END PUBLIC KEY-----\n";
 
         return $pem;
     }
 
-    private static function encodeAsn1Integer(string $bytes): string
+    private static function asn1EncodeLength(int $length): string
     {
-        $len = strlen($bytes);
-        if (ord($bytes[0]) & 0x80) { $bytes = "\0" . $bytes; $len++; }
-        return "\x02" . self::encodeAsn1Length($len) . $bytes;
-    }
-
-    private static function encodeAsn1Sequence(string $bytes): string
-    {
-        return "\x30" . self::encodeAsn1Length(strlen($bytes)) . $bytes;
-    }
-
-    private static function encodeAsn1ObjectIdentifier(string $oid): string
-    {
-        $parts = explode('.', $oid);
-        $bytes = chr(40 * $parts[0] + $parts[1]);
-        for ($i = 2; $i < count($parts); $i++) {
-            $val = (int)$parts[$i];
-            $temp = [];
-            do {
-                $temp[] = chr(0x80 | ($val & 0x7F));
-                $val >>= 7;
-            } while ($val > 0);
-            $bytes .= implode('', array_reverse($temp));
+        if ($length <= 0x7F) {
+            return chr($length);
         }
-        return "\x06" . self::encodeAsn1Length(strlen($bytes)) . $bytes;
+
+        $temp = ltrim(pack("N", $length), "\x00");
+        return chr(0x80 | strlen($temp)) . $temp;
     }
 
-    private static function encodeAsn1Null(): string
+    private static function asn1EncodeInteger(string $bytes): string
+    {
+        if (ord($bytes[0]) > 0x7F) {
+            $bytes = "\x00" . $bytes;
+        }
+
+        return "\x02" . self::asn1EncodeLength(strlen($bytes)) . $bytes;
+    }
+
+    private static function asn1EncodeSequence(string $data): string
+    {
+        return "\x30" . self::asn1EncodeLength(strlen($data)) . $data;
+    }
+
+    private static function asn1EncodeBitString(string $data): string
+    {
+        return "\x03" . self::asn1EncodeLength(strlen($data) + 1) . "\x00" . $data;
+    }
+
+    private static function asn1EncodeNull(): string
     {
         return "\x05\x00";
     }
 
-    private static function encodeAsn1BitString(string $bytes): string
+    private static function asn1EncodeOID(string $oid): string
     {
-        return "\x03" . self::encodeAsn1Length(strlen($bytes) + 1) . "\x00" . $bytes;
-    }
+        $parts = explode('.', $oid);
+        $first = 40 * (int)$parts[0] + (int)$parts[1];
+        $rest = array_slice($parts, 2);
 
-    private static function encodeAsn1Length(int $length): string
-    {
-        if ($length < 128) {
-            return chr($length);
+        $encoded = chr($first);
+        foreach ($rest as $part) {
+            $val = (int)$part;
+            $chunk = '';
+            do {
+                $chunk = chr($val & 0x7F | 0x80) . $chunk;
+                $val >>= 7;
+            } while ($val > 0);
+            $chunk[strlen($chunk) - 1] = $chunk[strlen($chunk) - 1] & chr(0x7F); // clear high bit on last byte
+            $encoded .= $chunk;
         }
-        $temp = '';
-        while ($length > 0) {
-            $temp = chr($length & 0xFF) . $temp;
-            $length >>= 8;
-        }
-        return chr(0x80 | strlen($temp)) . $temp;
+
+        return "\x06" . self::asn1EncodeLength(strlen($encoded)) . $encoded;
     }
 }
