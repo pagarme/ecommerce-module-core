@@ -19,7 +19,6 @@ class WebhookValidatorService
      *
      * @param string $payloadJson The RAW (JSON) body of the request.
      * @param string $signatureHeader The full signature header value (e.g., "alg=RS256; kid=...; signature=...").
-     * @param string $jwksUrl The JWKS endpoint URL.
      * @return bool True if the signature is valid, false otherwise.
      */
     public static function validateSignature(string $payloadJson, string $signatureHeader): bool
@@ -144,7 +143,7 @@ class WebhookValidatorService
 
     /**
      * Decodes a Base64Url string.
-     * @param string $data
+     * @param string $base64url
      * @return string
      */
     private static function base64UrlDecode(string $base64url): string
@@ -187,11 +186,9 @@ class WebhookValidatorService
             $algorithmIdentifier . self::asn1EncodeBitString($rsaPublicKey)
         );
 
-        $pem = "-----BEGIN PUBLIC KEY-----\n" .
+        return "-----BEGIN PUBLIC KEY-----\n" .
             chunk_split(base64_encode($subjectPublicKeyInfo), 64, "\n") .
             "-----END PUBLIC KEY-----\n";
-
-        return $pem;
     }
 
     private static function asn1EncodeLength(int $length): string
@@ -242,7 +239,7 @@ class WebhookValidatorService
                 $chunk = chr($val & 0x7F | 0x80) . $chunk;
                 $val >>= 7;
             } while ($val > 0);
-            $chunk[strlen($chunk) - 1] = $chunk[strlen($chunk) - 1] & chr(0x7F); // clear high bit on last byte
+            $chunk[strlen($chunk) - 1] = $chunk[strlen($chunk) - 1] & chr(0x7F);
             $encoded .= $chunk;
         }
 
