@@ -12,7 +12,6 @@ class WebhookValidatorService
     const DEFAULT_ALGORITHM = 'RS256';
     const DEFAULT_KTY_TYPE = 'RSA';
     const DEFAULT_USE = 'sig';
-    const RSA_ENCRYPTION_OID = '1.2.840.113549.1.1.1';
 
     /**
      * Validates the signature of a webhook payload.
@@ -69,7 +68,6 @@ class WebhookValidatorService
         }
 
         $decodedSignature = self::base64UrlDecode($receivedSignatureB64);
-
         $isValid = openssl_verify(
             $payloadJson,
             $decodedSignature,
