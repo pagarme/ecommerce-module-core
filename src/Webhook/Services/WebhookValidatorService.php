@@ -45,7 +45,7 @@ class WebhookValidatorService
         }
 
         $apcuAvailable = function_exists('apcu_enabled') && apcu_enabled();
-        if($apcuAvailable)
+        if ($apcuAvailable)
         {
             $jwksData = self::getCachedJwks();
 
@@ -70,7 +70,7 @@ class WebhookValidatorService
             return false;
         }
 
-        if($apcuAvailable) {
+        if ($apcuAvailable) {
             apcu_store(self::JWKS_CACHE_KEY, $jwksData, self::JWKS_CACHE_TTL);
         }
 
@@ -248,7 +248,8 @@ class WebhookValidatorService
                 $chunk = chr($val & 0x7F | 0x80) . $chunk;
                 $val >>= 7;
             } while ($val > 0);
-            $chunk[strlen($chunk) - 1] = $chunk[strlen($chunk) - 1] & chr(0x7F);
+            $lastIndex = strlen($chunk) - 1;
+            $chunk[$lastIndex] = $chunk[$lastIndex] & chr(0x7F);
             $encoded .= $chunk;
         }
 
