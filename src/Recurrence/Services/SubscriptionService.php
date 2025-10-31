@@ -371,7 +371,7 @@ final class SubscriptionService
         return null;
     }
 
-    private function fillInterval($subscription, Plan $plan = null)
+    private function fillInterval($subscription, ?Plan $plan)
     {
         if ($plan !== null) {
             $subscription->setIntervalType($plan->getIntervalType());

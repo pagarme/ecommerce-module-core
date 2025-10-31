@@ -2,10 +2,12 @@
 
 namespace Pagarme\Core\Kernel\Log;
 
+use Monolog\LogRecord;
 use Pagarme\Core\Kernel\Abstractions\AbstractJsonPrettyFormatter;
-class JsonPrettyFormatter extends AbstractJsonPrettyFormatter
+
+class JsonPrettyFormatterWithLogRecord extends AbstractJsonPrettyFormatter
 {
-    public function format(array $record): string
+    public function format(LogRecord $record): string
     {
         return $this->formatMessage($record);
     }

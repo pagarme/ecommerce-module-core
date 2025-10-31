@@ -12,9 +12,9 @@ namespace Pagarme\Core\Kernel\Services;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
+use Pagarme\Core\Kernel\Factories\JsonPrettyFormatterFactory;
 use Pagarme\Core\Kernel\Factories\LogObjectFactory;
 use Pagarme\Core\Kernel\Log\BlurData;
-use Pagarme\Core\Kernel\Log\JsonPrettyFormatter;
 
 /**
  * Class LogService
@@ -63,7 +63,7 @@ class LogService
             $this->channelName
         );
         $handler = new StreamHandler($this->fileName, Logger::DEBUG);
-        $handler->setFormatter(new JsonPrettyFormatter());
+        $handler->setFormatter(JsonPrettyFormatterFactory::create());
         $this->monolog->pushHandler($handler);
         $this->blurData = new BlurData();
     }
