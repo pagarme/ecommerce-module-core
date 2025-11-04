@@ -6,8 +6,10 @@ use Monolog\Formatter\JsonFormatter;
 use Pagarme\Core\Kernel\Factories\LogObjectFactory;
 abstract class AbstractJsonPrettyFormatter extends JsonFormatter
 {
+    /**
+     * @param array|LogRecord $record
+     */
     protected function formatMessage($record): string
-    {
         $logObjectFactory = new LogObjectFactory();
         $logObject = $logObjectFactory->createFromArray($record['context']);
 
