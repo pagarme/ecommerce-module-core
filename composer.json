@@ -12,7 +12,6 @@
     "require": {
         "php": ">=7.1",
         "monolog/monolog": "<3",
-        "pagarme/pagarmecoreapi": "v5.6.6",
         "ext-json": "*"
     },
     "require-dev": {
