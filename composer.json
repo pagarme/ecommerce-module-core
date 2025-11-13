@@ -25,7 +25,8 @@
         "psr-4": {
             "Pagarme\\Core\\": "src",
             "Pagarme\\Core\\Test\\": "tests",
-            "Pagarme\\Core\\Test\\Mock\\": "tests\\mock"
+            "Pagarme\\Core\\Test\\Mock\\": "tests\\mock",
+            "PagarmeCoreApiLib\\": "lib\\src"
         }
     },
     "scripts": {
