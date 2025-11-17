@@ -46,7 +46,7 @@ class CustomerTests extends TestCase
         $emailMaxLength = 64;
         $newEmailLength = $emailMaxLength + 1;
         $customerEmail = "teste@gmail.com";
-        $customerEmail = sprintf("%'a${newEmailLength}s", $customerEmail);
+        $customerEmail = sprintf("%'a{$newEmailLength}s", $customerEmail);
 
         $this->customer->setCode(4);
         $this->customer->setEmail($customerEmail);
