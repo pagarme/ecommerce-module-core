@@ -126,7 +126,7 @@ final class OrderService
         }
     }
 
-    public function cancelChargesAtPagarme(array $charges, Order $order = null)
+    public function cancelChargesAtPagarme(array $charges, ?Order $order)
     {
         $messages = [];
         $APIService = new APIService();
