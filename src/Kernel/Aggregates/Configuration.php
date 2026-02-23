@@ -2,7 +2,6 @@
 
 namespace Pagarme\Core\Kernel\Aggregates;
 
-use Magento\Tests\NamingConvention\true\string;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
