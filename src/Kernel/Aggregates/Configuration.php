@@ -740,7 +740,7 @@ final class Configuration extends AbstractEntity
      */
     public function setAntifraudMinAmount($antifraudMinAmount)
     {
-        $numbers = '/([^0-9])/i';
+        $numbers = '/[^0-9\-]|(?<=.)-/';
         $replace = '';
 
         $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount ?? '');
@@ -748,6 +748,7 @@ final class Configuration extends AbstractEntity
         if ($minAmount < 0) {
             $minAmount = 0;
         }
+
         $this->antifraudMinAmount = $minAmount;
     }
 
