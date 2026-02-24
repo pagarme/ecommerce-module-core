@@ -2,90 +2,90 @@
 
 namespace Pagarme\Core\Kernel\Aggregates;
 
-use Exception;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
 use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\DebitConfig;
+use Pagarme\Core\Kernel\ValueObjects\Configuration\GooglePayConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\MarketplaceConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\PixConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\RecurrenceConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\VoucherConfig;
-use Pagarme\Core\Kernel\ValueObjects\Configuration\DebitConfig;
-use Pagarme\Core\Kernel\ValueObjects\Configuration\GooglePayConfig;
-use Pagarme\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
-use Pagarme\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
-use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
+use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use ReturnTypeWillChange;
 
 final class Configuration extends AbstractEntity
 {
     const KEY_SECRET = 'KEY_SECRET';
     const KEY_PUBLIC = 'KEY_PUBLIC';
-
     const CARD_OPERATION_AUTH_ONLY = 'auth_only';
     const CARD_OPERATION_AUTH_AND_CAPTURE = 'auth_and_capture';
 
     /**
-     *
      * @var bool
      */
     private $enabled;
+
     /**
-     *
      * @var bool
      */
     private $boletoEnabled;
+
     /**
-     *
      * @var bool
      */
     private $creditCardEnabled;
-    private $googlepayEnabled;
+
     /**
-     *
+     * @var bool
+     */
+    private $googlepayEnabled;
+
+    /**
      * @var bool
      */
     private $twoCreditCardsEnabled;
+
     /**
-     *
      * @var bool
      */
     private $boletoCreditCardEnabled;
+
     /**
-     *
      * @var bool
      */
     private $testMode;
+
     /**
-     *
      * @var GUID
      */
     private $hubInstallId;
 
     /**
-     *
      * @var string
      */
     private $hubEnvironment;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $cardOperation;
 
     /**
-     *
      * @var AbstractValidString[]
      */
     private $keys;
 
     /**
-     *
      * @var CardConfig[]
      */
     private $cardConfigs;
-
 
     /**
      * @var bool
@@ -97,52 +97,84 @@ final class Configuration extends AbstractEntity
      */
     private $antifraudMinAmount;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $installmentsEnabled;
 
-    /** @var AddressAttributes */
+    /**
+     * @var AddressAttributes
+     */
     private $addressAttributes;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $allowNoAddress;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $cardStatementDescriptor;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $boletoInstructions;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $storeId;
 
-    /** @var Configuration */
+    /**
+     * @var Configuration
+     */
     private $parentConfiguration;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     private $methodsInherited;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $inheritAll;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $saveCards;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $saveVoucherCards;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $multiBuyer;
 
-    /** @var RecurrenceConfig */
+    /**
+     * @var RecurrenceConfig
+     */
     private $recurrenceConfig;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $installmentsDefaultConfig;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $boletoDueDays;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $boletoBankCode;
 
     /**
@@ -155,11 +187,19 @@ final class Configuration extends AbstractEntity
      */
     private $createOrderEnabled;
 
-    /** @var VoucherConfig */
+    /**
+     * @var VoucherConfig
+     */
     private $voucherConfig;
 
-    /** @var DebitConfig */
+    /**
+     * @var DebitConfig
+     */
     private $debitConfig;
+
+    /**
+     * @var GooglePayConfig
+     */
     private $googlePayConfig;
 
     /**
@@ -173,9 +213,14 @@ final class Configuration extends AbstractEntity
     private $merchantId;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $accountId;
+
+    /**
+     * @var string|null
+     */
+    private $paymentProfileId;
 
     /**
      * @var MarketplaceConfig
@@ -225,6 +270,9 @@ final class Configuration extends AbstractEntity
         return $this->debitConfig;
     }
 
+    /**
+     * @return GooglePayConfig
+     */
     public function getGooglePayConfig()
     {
         return $this->googlePayConfig;
@@ -237,6 +285,7 @@ final class Configuration extends AbstractEntity
     {
         $this->googlePayConfig = $googlePayConfig;
     }
+
     /**
      * @param DebitConfig $debitConfig
      */
@@ -287,37 +336,76 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param VoucherConfig $voucherConfig
+     * @return void
      */
     public function setVoucherConfig(VoucherConfig $voucherConfig)
     {
         $this->voucherConfig = $voucherConfig;
     }
 
+    /**
+     * @param string|null $accountId
+     * @return void
+     */
     public function setAccountId($accountId)
     {
         $this->accountId = $accountId;
     }
 
+    /**
+     * @return string|null
+     */
     public function getAccountId()
     {
         return $this->accountId;
     }
 
+    /**
+     * @param $merchantId
+     * @return void
+     */
     public function setMerchantId($merchantId)
     {
         $this->merchantId = $merchantId;
     }
 
+    /**
+     * @return string
+     */
     public function getMerchantId()
     {
         return $this->merchantId;
     }
 
+    /**
+     * @param string|null $paymentProfileId
+     * @return void
+     */
+    public function setPaymentProfileId($paymentProfileId)
+    {
+        $this->paymentProfileId = $paymentProfileId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentProfileId()
+    {
+        return $this->paymentProfileId;
+    }
+
+    /**
+     * @return bool
+     */
     protected function isEnabled()
     {
         return $this->enabled;
     }
 
+    /**
+     * @param $enabled
+     * @return void
+     */
     public function setEnabled($enabled)
     {
         $this->enabled = filter_var(
@@ -326,19 +414,24 @@ final class Configuration extends AbstractEntity
         );
     }
 
+    /**
+     * @return AbstractValidString|null
+     */
     protected function getPublicKey()
     {
         return $this->keys[self::KEY_PUBLIC];
     }
 
+    /**
+     * @return AbstractValidString|null
+     */
     protected function getSecretKey()
     {
         return $this->keys[self::KEY_SECRET];
     }
 
     /**
-     *
-     * @param string|array $key
+     * @param AbstractPublicKey $key
      * @return $this
      */
     public function setPublicKey(AbstractPublicKey $key)
@@ -349,14 +442,13 @@ final class Configuration extends AbstractEntity
 
         if (is_a($key, TestPublicKey::class)) {
             $this->testMode = true;
-        };
+        }
 
         return $this;
     }
 
     /**
-     *
-     * @param string|array $key
+     * @param AbstractSecretKey $key
      * @return $this
      */
     public function setSecretKey(AbstractSecretKey $key)
@@ -366,7 +458,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     protected function isTestMode()
@@ -375,7 +466,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     public function isHubEnabled()
@@ -388,28 +478,41 @@ final class Configuration extends AbstractEntity
         return false;
     }
 
+    /**
+     * @param GUID $hubInstallId
+     * @return void
+     */
     public function setHubInstallId(GUID $hubInstallId)
     {
         $this->hubInstallId = $hubInstallId;
     }
 
+    /**
+     * @return GUID
+     */
     public function getHubInstallId()
     {
         return $this->hubInstallId;
     }
 
+    /**
+     * @param $hubEnvironment
+     * @return void
+     */
     public function setHubEnvironment($hubEnvironment)
     {
         $this->hubEnvironment = $hubEnvironment;
     }
 
+    /**
+     * @return string
+     */
     public function getHubEnvironment()
     {
         return $this->hubEnvironment;
     }
 
     /**
-     *
      * @param bool $boletoEnabled
      * @return Configuration
      */
@@ -423,7 +526,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @param bool $creditCardEnabled
      * @return Configuration
      */
@@ -436,8 +538,7 @@ final class Configuration extends AbstractEntity
         return $this;
     }
 
-     /**
-     *
+    /**
      * @param bool $googlepayEnabled
      * @return Configuration
      */
@@ -449,6 +550,7 @@ final class Configuration extends AbstractEntity
         );
         return $this;
     }
+
     /**
      * @param $sendMailEnable
      * @return $this
@@ -476,7 +578,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @param bool $twoCreditCardsEnabled
      * @return Configuration
      */
@@ -490,7 +591,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @param bool $boletoCreditCardEnabled
      * @return Configuration
      */
@@ -504,7 +604,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     protected function isBoletoEnabled()
@@ -513,13 +612,16 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     protected function isCreditCardEnabled()
     {
         return $this->creditCardEnabled;
     }
+
+    /**
+     * @return bool
+     */
     protected function isGooglePayEnabled()
     {
         return $this->googlepayEnabled;
@@ -542,7 +644,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     protected function isTwoCreditCardsEnabled()
@@ -551,7 +652,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return bool
      */
     protected function isBoletoCreditCardEnabled()
@@ -560,9 +660,9 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @param CardConfig $newCardConfig
      * @throws InvalidParamException
+     * @return void
      */
     public function addCardConfig(CardConfig $newCardConfig)
     {
@@ -571,7 +671,7 @@ final class Configuration extends AbstractEntity
             if ($cardConfig->equals($newCardConfig)) {
                 throw new InvalidParamException(
                     "The card config is already added!",
-                    $newCardConfig->getBrand()
+                    $newCardConfig->getBrand()->getName()
                 );
             }
         }
@@ -580,7 +680,6 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     *
      * @return CardConfig[]
      */
     protected function getCardConfigs()
@@ -638,11 +737,10 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param int $antifraudMinAmount
-     * @throws InvalidParamException
      */
     public function setAntifraudMinAmount($antifraudMinAmount)
     {
-        $numbers = '/([^0-9])/i';
+        $numbers = '/[^0-9\-]|(?<=.)-/';
         $replace = '';
 
         $minAmount = preg_replace($numbers, $replace, $antifraudMinAmount ?? '');
@@ -650,6 +748,7 @@ final class Configuration extends AbstractEntity
         if ($minAmount < 0) {
             $minAmount = 0;
         }
+
         $this->antifraudMinAmount = $minAmount;
     }
 
@@ -802,6 +901,7 @@ final class Configuration extends AbstractEntity
 
     /**
      * @param int $boletoDueDays
+     * @throws InvalidParamException
      */
     public function setBoletoDueDays($boletoDueDays)
     {
@@ -809,7 +909,7 @@ final class Configuration extends AbstractEntity
             throw new InvalidParamException("Boleto due days should be an integer!", $boletoDueDays);
         }
 
-        $this->boletoDueDays = (int) $boletoDueDays;
+        $this->boletoDueDays = (int)$boletoDueDays;
     }
 
     /**
@@ -832,11 +932,11 @@ final class Configuration extends AbstractEntity
      * Specify data which should be serialized to JSON
      *
      * @link   https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * @return array data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      * @since  5.4.0
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
@@ -855,6 +955,7 @@ final class Configuration extends AbstractEntity
             "hubEnvironment" => $this->hubEnvironment,
             "merchantId" => $this->getMerchantId(),
             "accountId" => $this->getAccountId(),
+            "paymentProfileId" => $this->getPaymentProfileId(),
             "addressAttributes" => $this->getAddressAttributes(),
             "allowNoAddress" => $this->getAllowNoAddress(),
             "keys" => $this->keys,
@@ -974,11 +1075,16 @@ final class Configuration extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @param $method
+     * @param $arguments
+     * @return mixed
+     */
     public function __call($method, $arguments)
     {
         $methodSplited = explode(
             "_",
-            preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $method ?? '')
+            preg_replace('/(?<=\\w)(?=[A-Z])/', "_$1", $method ?? '')
         );
 
         $targetObject = $this;
@@ -999,6 +1105,13 @@ final class Configuration extends AbstractEntity
         return call_user_func([$targetObject, $method], $arguments);
     }
 
+    /**
+     * @param $method
+     * @param $methodSplited
+     * @param $actions
+     * @param $targetObject
+     * @return bool
+     */
     private function isMethodsIgnoringFather($method, $methodSplited, $actions, $targetObject)
     {
         $methodsIgnoringFather = ["getSecretKey", "getPublicKey", "isHubEnabled"];
