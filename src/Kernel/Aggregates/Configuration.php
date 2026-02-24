@@ -3,6 +3,7 @@
 namespace Pagarme\Core\Kernel\Aggregates;
 
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
+use Pagarme\Core\Kernel\Abstractions\AbstractPoiTypeEnums;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
 use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
@@ -223,6 +224,12 @@ final class Configuration extends AbstractEntity
     private $paymentProfileId;
 
     /**
+     * Point of Interaction Type
+     * @var string|null
+     */
+    private $poiType;
+
+    /**
      * @var MarketplaceConfig
      */
     private $marketplaceConfig;
@@ -392,6 +399,32 @@ final class Configuration extends AbstractEntity
     public function getPaymentProfileId()
     {
         return $this->paymentProfileId;
+    }
+
+    /**
+     * @param string|null $poiType
+     * @throws InvalidParamException
+     */
+    public function setPoiType($poiType)
+    {
+        if ($poiType !== null) {
+            if (!AbstractPoiTypeEnums::isValidPoiType($poiType)) {
+                throw new InvalidParamException(
+                    "Invalid POI Type. Accepted values: " . implode(', ', AbstractPoiTypeEnums::getPoiTypes()),
+                    'poiType'
+                );
+            }
+        }
+
+        $this->poiType = $poiType;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPoiType()
+    {
+        return $this->poiType;
     }
 
     /**
@@ -956,6 +989,7 @@ final class Configuration extends AbstractEntity
             "merchantId" => $this->getMerchantId(),
             "accountId" => $this->getAccountId(),
             "paymentProfileId" => $this->getPaymentProfileId(),
+            "poiType" => $this->getPoiType(),
             "addressAttributes" => $this->getAddressAttributes(),
             "allowNoAddress" => $this->getAllowNoAddress(),
             "keys" => $this->keys,
