@@ -2,6 +2,7 @@
 
 namespace Pagarme\Core\Test\Kernel\Aggregates;
 
+use Pagarme\Core\Kernel\Abstractions\AbstractPoiTypeEnums;
 use Pagarme\Core\Kernel\Aggregates\Configuration;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\ValueObjects\CardBrand;
@@ -330,6 +331,99 @@ class ConfigurationTests extends TestCase
         $this->assertNull($this->configuration->getPaymentProfileId());
     }
 
+    public function testPoiTypeDefaultsToNull()
+    {
+        $this->assertNull($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeAcceptsNull()
+    {
+        $this->configuration->setPoiType(null);
+        $this->assertNull($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithPos()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
+        $this->assertEquals(AbstractPoiTypeEnums::POS, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithTef()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::TEF);
+        $this->assertEquals(AbstractPoiTypeEnums::TEF, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithLink()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::LINK);
+        $this->assertEquals(AbstractPoiTypeEnums::LINK, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithTapOnPhone()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::TAP_ON_PHONE);
+        $this->assertEquals(AbstractPoiTypeEnums::TAP_ON_PHONE, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithWhatsappPay()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::WHATSAPP_PAY);
+        $this->assertEquals(AbstractPoiTypeEnums::WHATSAPP_PAY, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithEcommerce()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
+        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithMicroPos()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::MICRO_POS);
+        $this->assertEquals(AbstractPoiTypeEnums::MICRO_POS, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithManualEntry()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::MANUAL_ENTRY);
+        $this->assertEquals(AbstractPoiTypeEnums::MANUAL_ENTRY, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithInvalidValueThrowsInvalidParamException()
+    {
+        $this->expectException(InvalidParamException::class);
+        $this->configuration->setPoiType('InvalidType');
+    }
+
+    public function testSetPoiTypeWithEmptyStringThrowsInvalidParamException()
+    {
+        $this->expectException(InvalidParamException::class);
+        $this->configuration->setPoiType('');
+    }
+
+    public function testSetPoiTypeWithNumericStringThrowsInvalidParamException()
+    {
+        $this->expectException(InvalidParamException::class);
+        $this->configuration->setPoiType('123');
+    }
+
+    public function testSetPoiTypeReplacesExistingValueWithNull()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
+        $this->assertEquals(AbstractPoiTypeEnums::POS, $this->configuration->getPoiType());
+
+        $this->configuration->setPoiType(null);
+        $this->assertNull($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeReplacesExistingValueWithAnotherValidType()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
+        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $this->configuration->getPoiType());
+    }
+
     public function testAddCardConfigSuccessfully()
     {
         $cardConfig = new CardConfig(true, CardBrand::visa(), 12, 6, 1.99, 0.50, 500);
@@ -399,7 +493,7 @@ class ConfigurationTests extends TestCase
             'creditCardEnabled', 'saveCards', 'saveVoucherCards', 'multiBuyer',
             'twoCreditCardsEnabled', 'boletoCreditCardEnabled', 'testMode',
             'hubInstallId', 'hubEnvironment', 'merchantId', 'accountId',
-            'paymentProfileId', 'addressAttributes', 'allowNoAddress', 'keys',
+            'paymentProfileId', 'poiType', 'addressAttributes', 'allowNoAddress', 'keys',
             'cardOperation', 'installmentsEnabled', 'installmentsDefaultConfig',
             'cardStatementDescriptor', 'boletoInstructions', 'boletoDueDays',
             'boletoBankCode', 'cardConfigs', 'storeId', 'methodsInherited',
@@ -424,5 +518,18 @@ class ConfigurationTests extends TestCase
         $this->assertTrue($serialized['enabled']);
         $this->assertEquals('store_123', $serialized['storeId']);
         $this->assertEquals('001', $serialized['boletoBankCode']);
+    }
+
+    public function testJsonSerializePoiTypeIsNullByDefault()
+    {
+        $serialized = $this->configuration->jsonSerialize();
+        $this->assertNull($serialized['poiType']);
+    }
+
+    public function testJsonSerializeReflectsPoiTypeValue()
+    {
+        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
+        $serialized = $this->configuration->jsonSerialize();
+        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $serialized['poiType']);
     }
 }
