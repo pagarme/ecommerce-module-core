@@ -19,6 +19,7 @@ use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
 use Pagarme\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use ReturnTypeWillChange;
 
 final class Configuration extends AbstractEntity
@@ -225,7 +226,7 @@ final class Configuration extends AbstractEntity
 
     /**
      * Point of Interaction Type
-     * @var string|null
+     * @var array|null
      */
     private $poiType;
 
@@ -402,25 +403,30 @@ final class Configuration extends AbstractEntity
     }
 
     /**
-     * @param string|null $poiType
-     * @throws InvalidParamException
+     * @param array|null $poiType
      */
     public function setPoiType($poiType)
     {
         if ($poiType !== null) {
-            if (!AbstractPoiTypeEnums::isValidPoiType($poiType)) {
-                throw new InvalidParamException(
-                    "Invalid POI Type. Accepted values: " . implode(', ', AbstractPoiTypeEnums::getPoiTypes()),
-                    'poiType'
-                );
+            $sanitized = [];
+
+            foreach ($poiType as $type) {
+                if (!PoiType::isValid($type)) {
+                    $type = PoiType::DEFAULT;
+                }
+
+                $sanitized[] = $type;
             }
+
+            $poiType = $sanitized;
+            $poiType = array_unique($poiType);
         }
 
         $this->poiType = $poiType;
     }
 
     /**
-     * @return string|null
+     * @return array|null
      */
     public function getPoiType()
     {
