@@ -3,7 +3,6 @@
 namespace Pagarme\Core\Kernel\Aggregates;
 
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
-use Pagarme\Core\Kernel\Abstractions\AbstractPoiTypeEnums;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\Helper\StringFunctionsHelper;
 use Pagarme\Core\Kernel\ValueObjects\AbstractValidString;
