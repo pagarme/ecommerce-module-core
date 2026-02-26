@@ -2,12 +2,13 @@
 
 namespace Pagarme\Core\Kernel\Factories;
 
+use Exception;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Aggregates\Configuration;
 use Pagarme\Core\Kernel\Factories\Configurations\DebitConfigFactory;
+use Pagarme\Core\Kernel\Factories\Configurations\GooglePayConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\MarketplaceConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\PixConfigFactory;
-use Pagarme\Core\Kernel\Factories\Configurations\GooglePayConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\RecurrenceConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\VoucherConfigFactory;
 use Pagarme\Core\Kernel\Interfaces\FactoryInterface;
@@ -21,7 +22,7 @@ use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\SecretKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestSecretKey;
-use Exception;
+use Throwable;
 
 class ConfigurationFactory implements FactoryInterface
 {
@@ -94,6 +95,14 @@ class ConfigurationFactory implements FactoryInterface
 
         if (!empty($data->accountId)) {
             $config->setAccountId($data->accountId);
+        }
+
+        if (!empty($data->paymentProfileId)) {
+            $config->setPaymentProfileId($data->paymentProfileId);
+        }
+
+        if (!empty($data->poiType)) {
+            $config->setPoiType($data->poiType);
         }
 
         if (!empty($data->sendMail)) {
@@ -278,9 +287,9 @@ class ConfigurationFactory implements FactoryInterface
     {
         try {
             return new TestPublicKey($key);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
 
         }
 
@@ -291,17 +300,17 @@ class ConfigurationFactory implements FactoryInterface
     {
         try {
             return new TestSecretKey($key);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
 
         }
 
         try {
             return new SecretKey($key);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
 
         }
 
@@ -309,7 +318,6 @@ class ConfigurationFactory implements FactoryInterface
     }
 
     /**
-     *
      * @param array $dbData
      * @return AbstractEntity
      */
