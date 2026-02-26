@@ -2,12 +2,12 @@
 
 namespace Pagarme\Core\Test\Kernel\Aggregates;
 
-use Pagarme\Core\Kernel\Abstractions\AbstractPoiTypeEnums;
 use Pagarme\Core\Kernel\Aggregates\Configuration;
 use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\ValueObjects\CardBrand;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestSecretKey;
@@ -344,74 +344,100 @@ class ConfigurationTests extends TestCase
 
     public function testSetPoiTypeWithPos()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
-        $this->assertEquals(AbstractPoiTypeEnums::POS, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::POS], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithTef()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::TEF);
-        $this->assertEquals(AbstractPoiTypeEnums::TEF, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::TEF]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::TEF], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithLink()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::LINK);
-        $this->assertEquals(AbstractPoiTypeEnums::LINK, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::LINK]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::LINK], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithTapOnPhone()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::TAP_ON_PHONE);
-        $this->assertEquals(AbstractPoiTypeEnums::TAP_ON_PHONE, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::TAP_ON_PHONE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::TAP_ON_PHONE], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithWhatsappPay()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::WHATSAPP_PAY);
-        $this->assertEquals(AbstractPoiTypeEnums::WHATSAPP_PAY, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::WHATSAPP_PAY]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::WHATSAPP_PAY], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithEcommerce()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
-        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::ECOMMERCE], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithMicroPos()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::MICRO_POS);
-        $this->assertEquals(AbstractPoiTypeEnums::MICRO_POS, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::MICRO_POS]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::MICRO_POS], $this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithManualEntry()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::MANUAL_ENTRY);
-        $this->assertEquals(AbstractPoiTypeEnums::MANUAL_ENTRY, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::MANUAL_ENTRY]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::MANUAL_ENTRY], $this->configuration->getPoiType());
     }
 
-    public function testSetPoiTypeWithInvalidValueThrowsInvalidParamException()
+    public function testSetPoiTypeWithInvalidValueIsReplacedByDefault()
     {
-        $this->expectException(InvalidParamException::class);
-        $this->configuration->setPoiType('InvalidType');
+        $this->configuration->setPoiType(['InvalidType']);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::DEFAULT], $this->configuration->getPoiType());
     }
 
-    public function testSetPoiTypeWithEmptyStringThrowsInvalidParamException()
+    public function testSetPoiTypeWithMultipleValidValues()
     {
-        $this->expectException(InvalidParamException::class);
-        $this->configuration->setPoiType('');
+        $this->configuration->setPoiType([PoiType::POS, PoiType::TEF, PoiType::ECOMMERCE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertCount(3, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::POS, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::TEF, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::ECOMMERCE, $this->configuration->getPoiType());
     }
 
-    public function testSetPoiTypeWithNumericStringThrowsInvalidParamException()
+    public function testSetPoiTypeDeduplicatesDuplicateValues()
     {
-        $this->expectException(InvalidParamException::class);
-        $this->configuration->setPoiType('123');
+        $this->configuration->setPoiType([PoiType::POS, PoiType::POS, PoiType::TEF]);
+        $result = $this->configuration->getPoiType();
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+        $this->assertContains(PoiType::POS, $result);
+        $this->assertContains(PoiType::TEF, $result);
+    }
+
+    public function testSetPoiTypeWithMixedValidAndInvalidValues()
+    {
+        $this->configuration->setPoiType([PoiType::POS, 'InvalidType']);
+        $result = $this->configuration->getPoiType();
+        $this->assertIsArray($result);
+        $this->assertContains(PoiType::POS, $result);
+        $this->assertContains(PoiType::DEFAULT, $result);
     }
 
     public function testSetPoiTypeReplacesExistingValueWithNull()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
-        $this->assertEquals(AbstractPoiTypeEnums::POS, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->assertEquals([PoiType::POS], $this->configuration->getPoiType());
 
         $this->configuration->setPoiType(null);
         $this->assertNull($this->configuration->getPoiType());
@@ -419,9 +445,9 @@ class ConfigurationTests extends TestCase
 
     public function testSetPoiTypeReplacesExistingValueWithAnotherValidType()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::POS);
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
-        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $this->configuration->getPoiType());
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
+        $this->assertEquals([PoiType::ECOMMERCE], $this->configuration->getPoiType());
     }
 
     public function testAddCardConfigSuccessfully()
@@ -528,8 +554,9 @@ class ConfigurationTests extends TestCase
 
     public function testJsonSerializeReflectsPoiTypeValue()
     {
-        $this->configuration->setPoiType(AbstractPoiTypeEnums::ECOMMERCE);
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
         $serialized = $this->configuration->jsonSerialize();
-        $this->assertEquals(AbstractPoiTypeEnums::ECOMMERCE, $serialized['poiType']);
+        $this->assertIsArray($serialized['poiType']);
+        $this->assertEquals([PoiType::ECOMMERCE], $serialized['poiType']);
     }
 }
