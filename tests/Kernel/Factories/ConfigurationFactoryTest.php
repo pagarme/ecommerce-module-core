@@ -460,6 +460,45 @@ class ConfigurationFactoryTest extends TestCase
         $this->assertNull($config->getMarketplaceConfig());
     }
 
+    public function testCreateFromJsonDataSetsMerchantId()
+    {
+        $data = array_merge($this->baseData, ['merchantId' => 'merch_123']);
+        $config = $this->factory->createFromJsonData(json_encode($data));
+        $this->assertEquals('merch_123', $config->getMerchantId());
+    }
+
+    public function testCreateFromJsonDataDoesNotSetMerchantIdWhenAbsent()
+    {
+        $config = $this->factory->createFromJsonData(json_encode($this->baseData));
+        $this->assertNull($config->getMerchantId());
+    }
+
+    public function testCreateFromJsonDataSetsAccountId()
+    {
+        $data = array_merge($this->baseData, ['accountId' => 'acc_123']);
+        $config = $this->factory->createFromJsonData(json_encode($data));
+        $this->assertEquals('acc_123', $config->getAccountId());
+    }
+
+    public function testCreateFromJsonDataDoesNotSetAccountIdWhenAbsent()
+    {
+        $config = $this->factory->createFromJsonData(json_encode($this->baseData));
+        $this->assertNull($config->getAccountId());
+    }
+
+    public function testCreateFromJsonDataSetsPaymentProfileId()
+    {
+        $data = array_merge($this->baseData, ['paymentProfileId' => 'pp_123']);
+        $config = $this->factory->createFromJsonData(json_encode($data));
+        $this->assertEquals('pp_123', $config->getPaymentProfileId());
+    }
+
+    public function testCreateFromJsonDataDoesNotSetPaymentProfileIdWhenAbsent()
+    {
+        $config = $this->factory->createFromJsonData(json_encode($this->baseData));
+        $this->assertNull($config->getPaymentProfileId());
+    }
+
     public function testCreateFromJsonDataWithValidCardConfigsAddsCardConfigs()
     {
         $data = array_merge($this->baseData, [
