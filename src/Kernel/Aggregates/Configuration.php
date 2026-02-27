@@ -779,7 +779,7 @@ final class Configuration extends AbstractEntity
     /**
      * @return bool
      */
-    protected function getAllowNoAddress()
+    public function getAllowNoAddress()
     {
         return $this->allowNoAddress;
     }

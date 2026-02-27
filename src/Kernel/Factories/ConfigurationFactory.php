@@ -5,6 +5,7 @@ namespace Pagarme\Core\Kernel\Factories;
 use Exception;
 use Pagarme\Core\Kernel\Abstractions\AbstractEntity;
 use Pagarme\Core\Kernel\Aggregates\Configuration;
+use Pagarme\Core\Kernel\Services\LogService;
 use Pagarme\Core\Kernel\Factories\Configurations\DebitConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\GooglePayConfigFactory;
 use Pagarme\Core\Kernel\Factories\Configurations\MarketplaceConfigFactory;
@@ -36,17 +37,28 @@ class ConfigurationFactory implements FactoryInterface
         $config = new Configuration();
 
         foreach ($postData['creditCard'] as $brand => $cardConfig) {
-            $config->addCardConfig(
-                new CardConfig(
-                    $cardConfig['is_enabled'],
-                    $brand,
-                    $cardConfig['installments_up_to'],
-                    $cardConfig['installments_without_interest'],
-                    $cardConfig['interest'],
-                    $cardConfig['incremental_interest'],
-                    null
-                )
-            );
+            try {
+                $brandLower = strtolower($brand);
+                $config->addCardConfig(
+                    new CardConfig(
+                        $cardConfig['is_enabled'],
+                        CardBrand::$brandLower(),
+                        $cardConfig['installments_up_to'],
+                        $cardConfig['installments_without_interest'],
+                        $cardConfig['interest'],
+                        $cardConfig['incremental_interest'],
+                        null
+                    )
+                );
+            } catch (\Exception $e) {
+                $logService = new LogService('ConfigurationFactory', true);
+                $logService->exception($e);
+            } catch (\Throwable $e) {
+                $logService = new LogService('ConfigurationFactory', true);
+                $logService->info(
+                    "Unexpected error while adding CardConfig for brand '{$brand}': " . $e->getMessage()
+                );
+            }
         }
 
         $config->setBoletoEnabled($postData['payment_pagarme_boleto_status']);
