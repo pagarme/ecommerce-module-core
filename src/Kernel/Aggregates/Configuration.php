@@ -225,7 +225,7 @@ final class Configuration extends AbstractEntity
 
     /**
      * Point of Interaction Type
-     * @var array|null
+     * @var array
      */
     private $poiType;
 
@@ -251,6 +251,7 @@ final class Configuration extends AbstractEntity
         $this->testMode = true;
         $this->inheritAll = false;
         $this->installmentsDefaultConfig = false;
+        $this->poiType = [];
     }
 
     /**
@@ -406,26 +407,28 @@ final class Configuration extends AbstractEntity
      */
     public function setPoiType($poiType)
     {
-        if ($poiType !== null) {
-            $sanitized = [];
+        if (empty($poiType)) {
+            $this->poiType = [];
+            return;
+        }
 
-            foreach ($poiType as $type) {
-                if (!PoiType::isValid($type)) {
-                    $type = PoiType::DEFAULT;
-                }
+        $sanitized = [];
 
-                $sanitized[] = $type;
+        foreach ($poiType as $type) {
+            if (!PoiType::isValid($type)) {
+                $type = PoiType::DEFAULT;
             }
 
-            $poiType = $sanitized;
-            $poiType = array_unique($poiType);
+            $sanitized[] = $type;
         }
+
+        $poiType = array_unique($sanitized);
 
         $this->poiType = $poiType;
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     public function getPoiType()
     {

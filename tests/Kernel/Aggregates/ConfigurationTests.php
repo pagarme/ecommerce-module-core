@@ -331,15 +331,24 @@ class ConfigurationTests extends TestCase
         $this->assertNull($this->configuration->getPaymentProfileId());
     }
 
-    public function testPoiTypeDefaultsToNull()
+    public function testPoiTypeDefaultsToEmptyArray()
     {
-        $this->assertNull($this->configuration->getPoiType());
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
     }
 
-    public function testSetPoiTypeAcceptsNull()
+    public function testSetPoiTypeWithNullReturnsEmptyArray()
     {
         $this->configuration->setPoiType(null);
-        $this->assertNull($this->configuration->getPoiType());
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithEmptyArrayReturnsEmptyArray()
+    {
+        $this->configuration->setPoiType([]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeWithPos()
@@ -434,13 +443,14 @@ class ConfigurationTests extends TestCase
         $this->assertContains(PoiType::DEFAULT, $result);
     }
 
-    public function testSetPoiTypeReplacesExistingValueWithNull()
+    public function testSetPoiTypeWithNullReplacesExistingValueWithEmptyArray()
     {
         $this->configuration->setPoiType([PoiType::POS]);
         $this->assertEquals([PoiType::POS], $this->configuration->getPoiType());
 
         $this->configuration->setPoiType(null);
-        $this->assertNull($this->configuration->getPoiType());
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
     }
 
     public function testSetPoiTypeReplacesExistingValueWithAnotherValidType()
@@ -546,10 +556,11 @@ class ConfigurationTests extends TestCase
         $this->assertEquals('001', $serialized['boletoBankCode']);
     }
 
-    public function testJsonSerializePoiTypeIsNullByDefault()
+    public function testJsonSerializePoiTypeIsEmptyArrayByDefault()
     {
         $serialized = $this->configuration->jsonSerialize();
-        $this->assertNull($serialized['poiType']);
+        $this->assertIsArray($serialized['poiType']);
+        $this->assertEmpty($serialized['poiType']);
     }
 
     public function testJsonSerializeReflectsPoiTypeValue()

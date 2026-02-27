@@ -103,7 +103,7 @@ final class PoiType extends AbstractValueObject
      * @param string|null $type The POI type to normalize.
      * @return string|null
      */
-    public static function normalize(string $type)
+    protected static function normalize(string $type)
     {
         foreach (self::getAll() as $poiType) {
             if (strcasecmp($type, $poiType) === 0) {
