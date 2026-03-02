@@ -50,10 +50,10 @@ class ConfigurationFactory implements FactoryInterface
                         null
                     )
                 );
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logService = new LogService('ConfigurationFactory', true);
                 $logService->exception($e);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $logService = new LogService('ConfigurationFactory', true);
                 $logService->info(
                     "Unexpected error while adding CardConfig for brand '{$brand}': " . $e->getMessage()

@@ -4,6 +4,7 @@ namespace Pagarme\Core\Test\Kernel\Factories;
 
 use Pagarme\Core\Kernel\Aggregates\Configuration;
 use Pagarme\Core\Kernel\Factories\ConfigurationFactory;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\AddressAttributes;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\GooglePayConfig;
@@ -497,6 +498,81 @@ class ConfigurationFactoryTest extends TestCase
     {
         $config = $this->factory->createFromJsonData(json_encode($this->baseData));
         $this->assertNull($config->getPaymentProfileId());
+    }
+
+    public function testCreateFromJsonDataSetsPoiTypeWithValidValues()
+    {
+        $data = array_merge($this->baseData, [
+            'poiType' => [PoiType::ECOMMERCE, PoiType::LINK],
+        ]);
+
+        $config = $this->factory->createFromJsonData(json_encode($data));
+
+        $this->assertIsArray($config->getPoiType());
+        $this->assertCount(2, $config->getPoiType());
+        $this->assertContains(PoiType::ECOMMERCE, $config->getPoiType());
+        $this->assertContains(PoiType::LINK, $config->getPoiType());
+    }
+
+    public function testCreateFromJsonDataSetsPoiTypeWithSingleValidValue()
+    {
+        $data = array_merge($this->baseData, [
+            'poiType' => [PoiType::MICRO_POS],
+        ]);
+
+        $config = $this->factory->createFromJsonData(json_encode($data));
+
+        $this->assertIsArray($config->getPoiType());
+        $this->assertCount(1, $config->getPoiType());
+        $this->assertContains(PoiType::MICRO_POS, $config->getPoiType());
+    }
+
+    public function testCreateFromJsonDataReplacesInvalidPoiTypeWithDefault()
+    {
+        $data = array_merge($this->baseData, [
+            'poiType' => ['InvalidType'],
+        ]);
+
+        $config = $this->factory->createFromJsonData(json_encode($data));
+
+        $this->assertIsArray($config->getPoiType());
+        $this->assertContains(PoiType::DEFAULT, $config->getPoiType());
+    }
+
+    public function testCreateFromJsonDataDoesNotSetPoiTypeWhenAbsent()
+    {
+        $config = $this->factory->createFromJsonData(json_encode($this->baseData));
+
+        $this->assertIsArray($config->getPoiType());
+        $this->assertEmpty($config->getPoiType());
+    }
+
+    public function testCreateFromJsonDataDeduplicatesPoiTypeValues()
+    {
+        $data = array_merge($this->baseData, [
+            'poiType' => [PoiType::ECOMMERCE, PoiType::ECOMMERCE],
+        ]);
+
+        $config = $this->factory->createFromJsonData(json_encode($data));
+
+        $this->assertIsArray($config->getPoiType());
+        $this->assertCount(1, $config->getPoiType());
+    }
+
+    public function testCreateFromJsonDataSetsSendMailEnabled()
+    {
+        $data = array_merge($this->baseData, ['sendMail' => true]);
+
+        $config = $this->factory->createFromJsonData(json_encode($data));
+
+        $this->assertTrue($config->isSendMailEnabled());
+    }
+
+    public function testCreateFromJsonDataDoesNotSetSendMailWhenAbsent()
+    {
+        $config = $this->factory->createFromJsonData(json_encode($this->baseData));
+
+        $this->assertNull($config->isSendMailEnabled());
     }
 
     public function testCreateFromJsonDataWithValidCardConfigsAddsCardConfigs()
