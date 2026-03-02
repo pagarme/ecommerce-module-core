@@ -18,6 +18,7 @@ use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
 use Pagarme\Core\Kernel\ValueObjects\Key\AbstractPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\AbstractSecretKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use ReturnTypeWillChange;
 
 final class Configuration extends AbstractEntity
@@ -223,6 +224,12 @@ final class Configuration extends AbstractEntity
     private $paymentProfileId;
 
     /**
+     * Point of Interaction Type
+     * @var array
+     */
+    private $poiType;
+
+    /**
      * @var MarketplaceConfig
      */
     private $marketplaceConfig;
@@ -244,6 +251,7 @@ final class Configuration extends AbstractEntity
         $this->testMode = true;
         $this->inheritAll = false;
         $this->installmentsDefaultConfig = false;
+        $this->poiType = [];
     }
 
     /**
@@ -392,6 +400,39 @@ final class Configuration extends AbstractEntity
     public function getPaymentProfileId()
     {
         return $this->paymentProfileId;
+    }
+
+    /**
+     * @param array|null $poiType
+     */
+    public function setPoiType($poiType)
+    {
+        if (empty($poiType)) {
+            $this->poiType = [];
+            return;
+        }
+
+        $sanitized = [];
+
+        foreach ($poiType as $type) {
+            if (!PoiType::isValid($type)) {
+                $type = PoiType::DEFAULT;
+            }
+
+            $sanitized[] = $type;
+        }
+
+        $poiType = array_unique($sanitized);
+
+        $this->poiType = $poiType;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPoiType()
+    {
+        return $this->poiType;
     }
 
     /**
@@ -956,6 +997,7 @@ final class Configuration extends AbstractEntity
             "merchantId" => $this->getMerchantId(),
             "accountId" => $this->getAccountId(),
             "paymentProfileId" => $this->getPaymentProfileId(),
+            "poiType" => $this->getPoiType(),
             "addressAttributes" => $this->getAddressAttributes(),
             "allowNoAddress" => $this->getAllowNoAddress(),
             "keys" => $this->keys,

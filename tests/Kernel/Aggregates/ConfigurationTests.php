@@ -7,6 +7,7 @@ use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\ValueObjects\CardBrand;
 use Pagarme\Core\Kernel\ValueObjects\Configuration\CardConfig;
 use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestSecretKey;
@@ -330,6 +331,135 @@ class ConfigurationTests extends TestCase
         $this->assertNull($this->configuration->getPaymentProfileId());
     }
 
+    public function testPoiTypeDefaultsToEmptyArray()
+    {
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithNullReturnsEmptyArray()
+    {
+        $this->configuration->setPoiType(null);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithEmptyArrayReturnsEmptyArray()
+    {
+        $this->configuration->setPoiType([]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithPos()
+    {
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::POS], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithTef()
+    {
+        $this->configuration->setPoiType([PoiType::TEF]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::TEF], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithLink()
+    {
+        $this->configuration->setPoiType([PoiType::LINK]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::LINK], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithTapOnPhone()
+    {
+        $this->configuration->setPoiType([PoiType::TAP_ON_PHONE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::TAP_ON_PHONE], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithWhatsappPay()
+    {
+        $this->configuration->setPoiType([PoiType::WHATSAPP_PAY]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::WHATSAPP_PAY], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithEcommerce()
+    {
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::ECOMMERCE], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithMicroPos()
+    {
+        $this->configuration->setPoiType([PoiType::MICRO_POS]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::MICRO_POS], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithManualEntry()
+    {
+        $this->configuration->setPoiType([PoiType::MANUAL_ENTRY]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::MANUAL_ENTRY], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithInvalidValueIsReplacedByDefault()
+    {
+        $this->configuration->setPoiType(['InvalidType']);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEquals([PoiType::DEFAULT], $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeWithMultipleValidValues()
+    {
+        $this->configuration->setPoiType([PoiType::POS, PoiType::TEF, PoiType::ECOMMERCE]);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertCount(3, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::POS, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::TEF, $this->configuration->getPoiType());
+        $this->assertContains(PoiType::ECOMMERCE, $this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeDeduplicatesDuplicateValues()
+    {
+        $this->configuration->setPoiType([PoiType::POS, PoiType::POS, PoiType::TEF]);
+        $result = $this->configuration->getPoiType();
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+        $this->assertContains(PoiType::POS, $result);
+        $this->assertContains(PoiType::TEF, $result);
+    }
+
+    public function testSetPoiTypeWithMixedValidAndInvalidValues()
+    {
+        $this->configuration->setPoiType([PoiType::POS, 'InvalidType']);
+        $result = $this->configuration->getPoiType();
+        $this->assertIsArray($result);
+        $this->assertContains(PoiType::POS, $result);
+        $this->assertContains(PoiType::DEFAULT, $result);
+    }
+
+    public function testSetPoiTypeWithNullReplacesExistingValueWithEmptyArray()
+    {
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->assertEquals([PoiType::POS], $this->configuration->getPoiType());
+
+        $this->configuration->setPoiType(null);
+        $this->assertIsArray($this->configuration->getPoiType());
+        $this->assertEmpty($this->configuration->getPoiType());
+    }
+
+    public function testSetPoiTypeReplacesExistingValueWithAnotherValidType()
+    {
+        $this->configuration->setPoiType([PoiType::POS]);
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
+        $this->assertEquals([PoiType::ECOMMERCE], $this->configuration->getPoiType());
+    }
+
     public function testAddCardConfigSuccessfully()
     {
         $cardConfig = new CardConfig(true, CardBrand::visa(), 12, 6, 1.99, 0.50, 500);
@@ -399,7 +529,7 @@ class ConfigurationTests extends TestCase
             'creditCardEnabled', 'saveCards', 'saveVoucherCards', 'multiBuyer',
             'twoCreditCardsEnabled', 'boletoCreditCardEnabled', 'testMode',
             'hubInstallId', 'hubEnvironment', 'merchantId', 'accountId',
-            'paymentProfileId', 'addressAttributes', 'allowNoAddress', 'keys',
+            'paymentProfileId', 'poiType', 'addressAttributes', 'allowNoAddress', 'keys',
             'cardOperation', 'installmentsEnabled', 'installmentsDefaultConfig',
             'cardStatementDescriptor', 'boletoInstructions', 'boletoDueDays',
             'boletoBankCode', 'cardConfigs', 'storeId', 'methodsInherited',
@@ -424,5 +554,20 @@ class ConfigurationTests extends TestCase
         $this->assertTrue($serialized['enabled']);
         $this->assertEquals('store_123', $serialized['storeId']);
         $this->assertEquals('001', $serialized['boletoBankCode']);
+    }
+
+    public function testJsonSerializePoiTypeIsEmptyArrayByDefault()
+    {
+        $serialized = $this->configuration->jsonSerialize();
+        $this->assertIsArray($serialized['poiType']);
+        $this->assertEmpty($serialized['poiType']);
+    }
+
+    public function testJsonSerializeReflectsPoiTypeValue()
+    {
+        $this->configuration->setPoiType([PoiType::ECOMMERCE]);
+        $serialized = $this->configuration->jsonSerialize();
+        $this->assertIsArray($serialized['poiType']);
+        $this->assertEquals([PoiType::ECOMMERCE], $serialized['poiType']);
     }
 }
