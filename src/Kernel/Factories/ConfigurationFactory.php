@@ -35,6 +35,7 @@ class ConfigurationFactory implements FactoryInterface
     public function createFromPostData($postData)
     {
         $config = new Configuration();
+        $logService = new LogService('ConfigurationFactory', true);
 
         foreach ($postData['creditCard'] as $brand => $cardConfig) {
             try {
@@ -50,14 +51,8 @@ class ConfigurationFactory implements FactoryInterface
                         null
                     )
                 );
-            } catch (Exception $e) {
-                $logService = new LogService('ConfigurationFactory', true);
-                $logService->exception($e);
             } catch (Throwable $e) {
-                $logService = new LogService('ConfigurationFactory', true);
-                $logService->info(
-                    "Unexpected error while adding CardConfig for brand '{$brand}': " . $e->getMessage()
-                );
+                $logService->exception($e);
             }
         }
 
