@@ -39,7 +39,6 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
     protected function doQuery($query)
     {
         $stmt = $this->db->prepare($query);
-        $this->setLastInsertId($this->db->lastInsertId());
         return $stmt->execute();
     }
 
@@ -65,10 +64,5 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
         }
         $retn->rows = $queryResult;
         return $retn;
-    }
-
-    protected function setLastInsertId($insertId)
-    {
-        // no-op: getLastId() reads directly from PDO::lastInsertId()
     }
 }

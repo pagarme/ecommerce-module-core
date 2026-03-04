@@ -110,10 +110,12 @@ abstract class AbstractCommand implements CommandInterface
 
     /**
      * @param string|null $paymentProfileId
+     * @return AbstractCommand
      */
     public function setPaymentProfileId($paymentProfileId)
     {
         $this->paymentProfileId = $paymentProfileId;
+        return $this;
     }
 
     /**
@@ -126,10 +128,12 @@ abstract class AbstractCommand implements CommandInterface
 
     /**
      * @param array $poiType
+     * @return AbstractCommand
      */
     public function setPoiType($poiType)
     {
         $this->poiType = $poiType;
+        return $this;
     }
 
     /**

@@ -2,11 +2,9 @@
 
 namespace Pagarme\Core\Test\Abstractions;
 
-use Pagarme\Core\Kernel\Abstractions\AbstractModuleCoreSetup;
 use Pagarme\Core\Test\Mock\Concrete\Migrate;
 use Pagarme\Core\Test\Mock\Concrete\PlatformCoreSetup;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 abstract class AbstractSetupTest extends TestCase
 {
@@ -32,12 +30,6 @@ abstract class AbstractSetupTest extends TestCase
      */
     private function resetModuleCoreSetupSingleton(): void
     {
-        $reflection = new ReflectionClass(AbstractModuleCoreSetup::class);
-
-        foreach (['instance', 'config', 'moduleConfig', 'moduleVersion', 'platformVersion', 'logPath', 'platformRoot', 'moduleConcreteDir'] as $prop) {
-            $property = $reflection->getProperty($prop);
-            $property->setAccessible(true);
-            $property->setValue(null, null);
-        }
+        PlatformCoreSetup::reset();
     }
 }

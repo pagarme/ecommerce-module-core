@@ -4,7 +4,6 @@ namespace Pagarme\Core\Test\Hub\Commands;
 
 use Pagarme\Core\Hub\Commands\AbstractCommand;
 use Pagarme\Core\Hub\Commands\CommandType;
-use Pagarme\Core\Kernel\Exceptions\InvalidParamException;
 use Pagarme\Core\Kernel\ValueObjects\Id\AccountId;
 use Pagarme\Core\Kernel\ValueObjects\Id\GUID;
 use Pagarme\Core\Kernel\ValueObjects\Id\MerchantId;
@@ -128,18 +127,14 @@ class AbstractCommandTest extends TestCase
         $this->assertEquals($type, $this->command->getType());
     }
 
-    /**
-     * @return void
-     * @throws InvalidParamException
-     */
     public function testSettersReturnSelf()
     {
-        $token   = new HubAccessTokenKey(str_repeat('x', 64));
+        $token = new HubAccessTokenKey(str_repeat('x', 64));
         $account = new AccountId('acc_xxxxxxxxxxxxxxxx');
-        $key     = new TestPublicKey('pk_test_xxxxxxxxxxxxxxxx');
-        $guid    = new GUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
-        $merch   = new MerchantId('merch_xxxxxxxxxxxxxxxx');
-        $type    = CommandType::Development();
+        $key = new TestPublicKey('pk_test_xxxxxxxxxxxxxxxx');
+        $guid = new GUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
+        $merch = new MerchantId('merch_xxxxxxxxxxxxxxxx');
+        $type = CommandType::Development();
 
         $result = $this->command
             ->setAccessToken($token)

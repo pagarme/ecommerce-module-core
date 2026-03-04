@@ -264,6 +264,24 @@ abstract class AbstractModuleCoreSetup
         }
     }
 
+    /**
+     * Resets all static state to null.
+     * Intended for use in tests only.
+     */
+    public static function reset(): void
+    {
+        static::$instance = null;
+        static::$config = null;
+        static::$moduleConfig = null;
+        static::$moduleVersion = null;
+        static::$platformVersion = null;
+        static::$logPath = null;
+        static::$platformRoot = null;
+        static::$moduleConcreteDir = null;
+        static::$dashboardLanguage = null;
+        static::$storeLanguage = null;
+    }
+
     abstract protected function setConfig();
     abstract public function loadModuleConfigurationFromPlatform();
     abstract protected function setModuleVersion();
