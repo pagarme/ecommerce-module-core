@@ -149,7 +149,23 @@ class HubCommandFactoryTest extends TestCase
     {
         $command = $this->factory->createFromStdClass($this->payload);
         $this->assertIsArray($command->getPoiType());
-        $this->assertEquals($this->payload->poiType, $command->getPoiType());
+        $this->assertEquals((array) $this->payload->poiType, $command->getPoiType());
+    }
+
+    public function testMissingPoiTypeResultsInEmptyArray()
+    {
+        unset($this->payload->poiType);
+        $command = $this->factory->createFromStdClass($this->payload);
+        $this->assertIsArray($command->getPoiType());
+        $this->assertEmpty($command->getPoiType());
+    }
+
+    public function testEmptyPoiTypeResultsInEmptyArray()
+    {
+        $this->payload->poiType = [];
+        $command = $this->factory->createFromStdClass($this->payload);
+        $this->assertIsArray($command->getPoiType());
+        $this->assertEmpty($command->getPoiType());
     }
 
     public function testMissingAccountIdResultsInNull()

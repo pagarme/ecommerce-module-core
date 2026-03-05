@@ -12,6 +12,7 @@ use Pagarme\Core\Kernel\ValueObjects\Id\MerchantId;
 use Pagarme\Core\Kernel\ValueObjects\Key\HubAccessTokenKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\PublicKey;
 use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
+use Pagarme\Core\Kernel\ValueObjects\PoiType;
 use ReflectionClass;
 use ReflectionException;
 
@@ -47,7 +48,11 @@ class HubCommandFactory
             $command->setPaymentProfileId($object->paymentProfileId);
         }
 
-        $command->setPoiType($object->poiType);
+        if (!empty($object->poiType)) {
+            $command->setPoiType($object->poiType);
+        } else {
+            $command->setPoiType([]);
+        }
 
         $type = $object->type;
         $command->setType(CommandType::$type());
