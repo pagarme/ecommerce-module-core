@@ -83,7 +83,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @return AccountId
+     * @return AccountId|null
      */
     public function getAccountId()
     {
@@ -91,7 +91,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param  AccountId $accountId
+     * @param  AccountId|null $accountId
      * @return AbstractCommand
      */
     public function setAccountId($accountId)
@@ -173,7 +173,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @return MerchantId
+     * @return MerchantId|null
      */
     public function getMerchantId()
     {
@@ -181,7 +181,7 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @param  MerchantId $merchantId
+     * @param  MerchantId|null $merchantId
      * @return AbstractCommand
      */
     public function setMerchantId($merchantId)
