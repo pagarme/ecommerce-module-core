@@ -37,7 +37,7 @@ class UninstallCommand extends AbstractCommand
         $cleanConfig->accountId = null;
         $cleanConfig->merchantId = null;
         $cleanConfig->paymentProfileId = null;
-        $cleanConfig->poiType = null;
+        $cleanConfig->poiType = [];
 
         $cleanConfig = json_encode($cleanConfig);
         $configFactory = new ConfigurationFactory();
