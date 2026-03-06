@@ -6,7 +6,6 @@ use Pagarme\Core\Kernel\Abstractions\AbstractDatabaseDecorator;
 
 class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
 {
-
     public function getLastId()
     {
         return $this->db->lastInsertId();
@@ -40,7 +39,6 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
     protected function doQuery($query)
     {
         $stmt = $this->db->prepare($query);
-        $this->setLastInsertId($this->db->lastInsertId());
         return $stmt->execute();
     }
 
@@ -66,10 +64,5 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
         }
         $retn->rows = $queryResult;
         return $retn;
-    }
-
-    protected function setLastInsertId($insertId)
-    {
-        $this->db->lastInsertId = $insertId;
     }
 }

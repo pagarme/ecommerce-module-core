@@ -2,7 +2,6 @@
 
 namespace Pagarme\Core\Hub\Commands;
 
-
 use Pagarme\Core\Kernel\Interfaces\CommandInterface;
 use Pagarme\Core\Kernel\Services\LogService;
 use Pagarme\Core\Kernel\ValueObjects\Id\AccountId;
@@ -15,48 +14,57 @@ use Pagarme\Core\Kernel\ValueObjects\Key\TestPublicKey;
 abstract class AbstractCommand implements CommandInterface
 {
     /**
-     *
      * @var HubAccessTokenKey
      */
     protected $accessToken;
+
     /**
-     *
      * @var AccountId
      */
     protected $accountId;
+
     /**
-     *
+     * @var string|null
+     */
+    protected $paymentProfileId;
+
+    /**
+     * @var array
+     */
+    protected $poiType;
+
+    /**
      * @var PublicKey|TestPublicKey
      */
     protected $accountPublicKey;
+
     /**
-     *
      * @var GUID
      */
     protected $installId;
+
     /**
-     *
      * @var MerchantId
      */
     protected $merchantId;
+
     /**
-     *
      * @var CommandType
      */
     protected $type;
+
     /**
-     *
      * @var LogService
      */
     protected $logService;
 
     public function __construct()
     {
+        $this->poiType = [];
         $this->logService = new LogService('Hub', true);
     }
 
     /**
-     *
      * @return HubAccessTokenKey
      */
     public function getAccessToken()
@@ -65,7 +73,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  HubAccessTokenKey $accessToken
      * @return AbstractCommand
      */
@@ -76,7 +83,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @return AccountId
      */
     public function getAccountId()
@@ -85,7 +91,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  AccountId $accountId
      * @return AbstractCommand
      */
@@ -96,7 +101,42 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
+     * @return string|null
+     */
+    public function getPaymentProfileId()
+    {
+        return $this->paymentProfileId;
+    }
+
+    /**
+     * @param string|null $paymentProfileId
+     * @return AbstractCommand
+     */
+    public function setPaymentProfileId($paymentProfileId)
+    {
+        $this->paymentProfileId = $paymentProfileId;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPoiType()
+    {
+        return $this->poiType;
+    }
+
+    /**
+     * @param array $poiType
+     * @return AbstractCommand
+     */
+    public function setPoiType($poiType)
+    {
+        $this->poiType = $poiType;
+        return $this;
+    }
+
+    /**
      * @return PublicKey|TestPublicKey
      */
     public function getAccountPublicKey()
@@ -105,7 +145,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  PublicKey|TestPublicKey $accountPublicKey
      * @return AbstractCommand
      */
@@ -116,7 +155,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @return GUID
      */
     public function getInstallId()
@@ -125,7 +163,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  GUID $installId
      * @return AbstractCommand
      */
@@ -136,7 +173,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @return MerchantId
      */
     public function getMerchantId()
@@ -145,7 +181,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  MerchantId $merchantId
      * @return AbstractCommand
      */
@@ -156,7 +191,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @return CommandType
      */
     public function getType()
@@ -165,7 +199,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     *
      * @param  CommandType $type
      * @return AbstractCommand
      */
