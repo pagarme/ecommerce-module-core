@@ -1,6 +1,6 @@
 <?php
 
-namespace Hub\Commands;
+namespace Pagarme\Core\Test\Hub\Commands;
 
 use Exception;
 use Pagarme\Core\Hub\Commands\AbstractCommand;
@@ -63,10 +63,12 @@ class UninstallCommandTest extends AbstractSetupTest
 
     public function testExecuteThrowsExceptionWhenHubIsNotInstalled()
     {
+        $cleanupCommand = new UninstallCommand();
+        $cleanupCommand->setAccessToken($this->accessToken);
+        $cleanupCommand->execute();
+
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Hub is not installed!");
-
-        parent::setUp();
 
         $command = new UninstallCommand();
         $command->setAccessToken($this->accessToken);
