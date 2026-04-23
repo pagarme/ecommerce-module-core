@@ -115,7 +115,7 @@ abstract class AbstractModuleCoreSetup
 
     protected static function saveModuleConfig()
     {
-        if (strpos(static::$instance->getPlatformVersion(), 'Wordpress') === false) {
+        if (strpos((string) static::$instance->getPlatformVersion(), 'Wordpress') === false) {
             $configurationRepository = new ConfigurationRepository;
             $configurationRepository->save(static::$moduleConfig);
         }
@@ -212,13 +212,13 @@ abstract class AbstractModuleCoreSetup
         return self::$platformVersion;
     }
 
-   public static function getInstallmentType() 
-   {
+    public static function getInstallmentType()
+    {
         if(method_exists(self::$instance, 'getInstallmentType')) {
             return self::$instance->getInstallmentType();
         }
         return null;
-   }
+    }
 
     public static function getLogPath()
     {
@@ -262,6 +262,24 @@ abstract class AbstractModuleCoreSetup
         if (!isset(self::$moduleConcreteDir)) {
             self::$moduleConcreteDir = $concreteModuleDir;
         }
+    }
+
+    /**
+     * Resets all static state to null.
+     * Intended for use in tests only.
+     */
+    public static function reset(): void
+    {
+        static::$instance = null;
+        static::$config = null;
+        static::$moduleConfig = null;
+        static::$moduleVersion = null;
+        static::$platformVersion = null;
+        static::$logPath = null;
+        static::$platformRoot = null;
+        static::$moduleConcreteDir = null;
+        static::$dashboardLanguage = null;
+        static::$storeLanguage = null;
     }
 
     abstract protected function setConfig();
