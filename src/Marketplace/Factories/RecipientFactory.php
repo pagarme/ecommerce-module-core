@@ -101,7 +101,7 @@ class RecipientFactory implements FactoryInterface
     private function getTypeByDocument($document)
     {
         if ($document) {
-            $document = preg_replace("/[^0-9]/", "", $document ?? '');
+            $document = preg_replace('/[^a-zA-Z0-9]/', '', $document ?? '');
             return strlen($document) > 11 ? 'company' : 'individual';
         }
     }
