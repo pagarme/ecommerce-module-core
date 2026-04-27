@@ -192,7 +192,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->document = $document;
+        $this->document = strtoupper($document);
 
         return $this;
     }
@@ -312,7 +312,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->holderDocument = $holderDocument;
+        $this->holderDocument = strtoupper($holderDocument);
 
         return $this;
     }
