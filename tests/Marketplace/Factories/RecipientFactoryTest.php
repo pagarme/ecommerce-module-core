@@ -64,8 +64,6 @@ class RecipientFactoryTest extends TestCase
             "document" => "1A2B3C4D000195",
             "type" => "company",
             "payment_mode" => "bank_transfer",
-            "status" => "active",
-            "kyc_details" => ["status" => "approved"],
         ];
 
         $recipientFactory = new RecipientFactory();

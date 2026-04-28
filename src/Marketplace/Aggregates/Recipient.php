@@ -192,7 +192,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->document = strtoupper($document);
+        $this->document = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $document));
 
         return $this;
     }
@@ -312,7 +312,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->holderDocument = strtoupper($holderDocument);
+        $this->holderDocument = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $holderDocument));
 
         return $this;
     }
