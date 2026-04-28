@@ -38,7 +38,7 @@ class APIException extends Exception
         $this->context = $context;
         $this->errorMessage = $reason;
 
-        if (get_class() != 'APIException') {
+        if (static::class !== 'APIException') {
             $this->unbox();
         }
     }
