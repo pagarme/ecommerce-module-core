@@ -13,31 +13,20 @@ class RecipientFactoryTest extends TestCase
      */
     public function testCreateFromPostDataShouldCreateWithWebhookData($webhookData)
     {
-        $pagarmeId = "rp_xxxxxxxxxxxxxxxx";
-        $postData = [
-            "id" => $pagarmeId,
-            "name" => "Test recipient",
-            "email" => "test@recipient.test",
-            "document" => "11111111111",
-            "description" => "Test description",
-            "type" => "individual",
-            "payment_mode" => "bank_transfer",
-            "status" => "active",
-            "kyc_details" =>
-            [
-                "status" => "approved"
-            ],
-        ];
-
+        // Arrange
         $recipientFactory = new RecipientFactory();
 
+        // Act
         $result = $recipientFactory->createFromPostData($webhookData);
+
+        // Assert
         $this->assertSame($result->getStatus(), RecipientInterface::ACTIVE);
         $this->assertSame($result->getPagarmeId()->getValue(), $webhookData['id']);
     }
 
     public function testCreateFromDbDataShouldCreateWithStatus()
     {
+        // Arrange
         $dbData = [
             "id" => 1,
             "external_id" => 2,
@@ -48,15 +37,18 @@ class RecipientFactoryTest extends TestCase
             "pagarme_id" => "rp_xxxxxxxxxxxxxxxx",
             "status" => RecipientInterface::ACTIVE,
         ];
-
         $recipientFactory = new RecipientFactory();
 
+        // Act
         $result = $recipientFactory->createFromDbData($dbData);
+
+        // Assert
         $this->assertSame($result->getStatus(), RecipientInterface::ACTIVE);
     }
 
     public function testAlphanumericCnpjFromPostDataShouldBeClassifiedAsCompany()
     {
+        // Arrange
         $postData = [
             "id" => 'rp_xxxxxxxxxxxxxxxx',
             "name" => "Test company",
@@ -65,15 +57,18 @@ class RecipientFactoryTest extends TestCase
             "type" => "company",
             "payment_mode" => "bank_transfer",
         ];
-
         $recipientFactory = new RecipientFactory();
+
+        // Act
         $result = $recipientFactory->createFromPostData($postData);
 
+        // Assert
         $this->assertSame('company', $result->getType());
     }
 
     public function testAlphanumericCnpjFromDbDataShouldBeClassifiedAsCompany()
     {
+        // Arrange
         $dbData = [
             "id" => 1,
             "external_id" => 2,
@@ -84,15 +79,18 @@ class RecipientFactoryTest extends TestCase
             "pagarme_id" => "rp_xxxxxxxxxxxxxxxx",
             "status" => RecipientInterface::ACTIVE,
         ];
-
         $recipientFactory = new RecipientFactory();
+
+        // Act
         $result = $recipientFactory->createFromDbData($dbData);
 
+        // Assert
         $this->assertSame('company', $result->getType());
     }
 
     public function testAlphanumericCnpjFromDbDataShouldStripOnlyFormatting()
     {
+        // Arrange
         $dbData = [
             "id" => 1,
             "external_id" => 2,
@@ -103,10 +101,12 @@ class RecipientFactoryTest extends TestCase
             "pagarme_id" => "rp_xxxxxxxxxxxxxxxx",
             "status" => RecipientInterface::ACTIVE,
         ];
-
         $recipientFactory = new RecipientFactory();
+
+        // Act
         $result = $recipientFactory->createFromDbData($dbData);
 
+        // Assert
         $this->assertSame('1A2B3C4D000195', $result->getDocument());
         $this->assertSame('company', $result->getType());
     }
@@ -124,8 +124,7 @@ class RecipientFactoryTest extends TestCase
                     "type" => "individual",
                     "payment_mode" => "bank_transfer",
                     "status" => "active",
-                    "kyc_details" =>
-                    [
+                    "kyc_details" => [
                         "status" => "approved"
                     ],
                 ]
