@@ -182,7 +182,9 @@ class Recipient extends AbstractEntity implements RecipientInterface
      */
     public function setDocument($document)
     {
-        if (empty($document)) {
+        $sanitized = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $document ?? ''));
+
+        if (empty($sanitized)) {
             $inputName = $this->i18n->getDashboard('document');
             $message = $this->i18n->getDashboard(
                 "The %s should not be empty!",
@@ -192,7 +194,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->document = $document;
+        $this->document = $sanitized;
 
         return $this;
     }
@@ -302,7 +304,9 @@ class Recipient extends AbstractEntity implements RecipientInterface
      */
     public function setHolderDocument($holderDocument)
     {
-        if (empty($holderDocument)) {
+        $sanitized = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $holderDocument ?? ''));
+
+        if (empty($sanitized)) {
             $inputName = $this->i18n->getDashboard('holderDocument');
             $message = $this->i18n->getDashboard(
                 "The %s should not be empty!",
@@ -312,7 +316,7 @@ class Recipient extends AbstractEntity implements RecipientInterface
             throw new \Exception($message, 400);
         }
 
-        $this->holderDocument = $holderDocument;
+        $this->holderDocument = $sanitized;
 
         return $this;
     }
