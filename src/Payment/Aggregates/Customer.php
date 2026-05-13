@@ -267,11 +267,6 @@ final class Customer extends AbstractEntity implements ConvertibleToSDKRequestsI
 
     private function formatDocument($document)
     {
-        $document = preg_replace(
-            '/[^0-9]/is', '',
-            substr($document ?? "", 0, 16)
-        );
-
-        return $document;
+        return substr(preg_replace('/[^a-zA-Z0-9]/', '', $document ?? ''), 0, 16);
     }
 }
