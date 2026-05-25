@@ -17,7 +17,7 @@ class Configuration
      * The base Uri for API calls
      * @var string
      */
-    public static $BASEURI = 'https://api.pagar.me/core/v5';
+    public static $BASEURI = 'https://hubapi.stg.pagar.me/core/v5';
 
     /**
      * The username to use with basic authentication
