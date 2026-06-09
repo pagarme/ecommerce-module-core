@@ -25,20 +25,25 @@ final class TransactionRepository extends AbstractRepository
         $query .= "WHERE charge_id = '{$id}';";
 
         $result = $this->db->fetch($query);
+        $helper = new StringFunctionsHelper();
+
+        if (!empty($result['card_data'])) {
+            $result['card_data'] = json_encode(
+                $helper->removeLineBreaksRecursive(
+                    json_decode($result['card_data'], true)
+                )
+            );
+        }
+
+        if (!empty($result['transaction_data'])) {
+            $result['transaction_data'] = json_encode(
+                $helper->removeLineBreaksRecursive(
+                    json_decode($result['transaction_data'], true)
+                )
+            );
+        }
 
         $factory = new TransactionFactory();
-
-        if (!empty($result['card_data'])) {
-            $result['card_data'] = StringFunctionsHelper::removeLineBreaks(
-                $result['card_data']
-            );
-        }
-
-        if (!empty($result['card_data'])) {
-            $result['transaction_data'] = StringFunctionsHelper::removeLineBreaks(
-                $result['transaction_data']
-            );
-        }
 
         return $factory->createFromDbData($result->row);
     }
@@ -53,12 +58,20 @@ final class TransactionRepository extends AbstractRepository
         $transactionTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_TRANSACTION);
 
         $simpleObject = json_decode(json_encode($object));
+        $helper = new StringFunctionsHelper();
 
-        $cardData = json_encode($simpleObject->cardData);
-        $cardData = StringFunctionsHelper::removeLineBreaks($cardData);
+        // Sanitize all string fields on $simpleObject so that properties
+        // directly interpolated into the SQL string (acquirerMessage,
+        // acquirerName, boletoUrl, etc.) cannot break the query via
+        // unescaped single quotes or special characters.
+        $simpleObject = $helper->cleanRecursive($simpleObject);
 
-        $transactionData = (new StringFunctionsHelper)->cleanStrToDb(
-            json_encode($object->getPostData())
+        $cardData = json_encode(
+            $helper->removeLineBreaksRecursive($simpleObject->cardData)
+        );
+
+        $transactionData = json_encode(
+            $helper->cleanRecursive($object->getPostData())
         );
 
         $query = "
