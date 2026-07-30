@@ -60,11 +60,13 @@ final class TransactionRepository extends AbstractRepository
         $simpleObject = json_decode(json_encode($object));
         $helper = new StringFunctionsHelper();
 
-        // Sanitize all string fields on $simpleObject so that properties
-        // directly interpolated into the SQL string (acquirerMessage,
-        // acquirerName, boletoUrl, etc.) cannot break the query via
-        // unescaped single quotes or special characters.
+        // Sanitize all string fields interpolated into the SQL string so they
+        // cannot break the query via unescaped single quotes. boletoUrl is
+        // exempted from special-char stripping so its query params (&, ?, =)
+        // survive; it still gets quote-neutralized for SQL safety.
+        $boletoUrl = $simpleObject->boletoUrl;
         $simpleObject = $helper->cleanRecursive($simpleObject);
+        $simpleObject->boletoUrl = $helper->cleanUrlToDb($boletoUrl);
 
         $cardData = json_encode(
             $helper->removeLineBreaksRecursive($simpleObject->cardData)
