@@ -243,6 +243,19 @@ class StringFunctionsHelperTest extends TestCase
     }
 
     // =========================================================================
+    // cleanUrlToDb
+    // =========================================================================
+
+    public function testCleanUrlToDbPreservesQueryParamsAndNeutralizesQuote(): void
+    {
+        $url = "https://boleto-payments.stone.com.br/boleto?fmt=html&id=6a6bb12d59f677cb3028a834&pk=b3bd83cbb7aac0357e66ebafe2efa64f3ff268beb315a65e52e38c5072b9cfda";
+
+        $this->assertSame($url, $this->helper->cleanUrlToDb($url));
+        $this->assertSame(0, substr_count($this->helper->cleanUrlToDb("a'b"), "'"));
+        $this->assertSame('', $this->helper->cleanUrlToDb(null));
+    }
+
+    // =========================================================================
     // removeSpecialCharactersRecursive
     // =========================================================================
 
