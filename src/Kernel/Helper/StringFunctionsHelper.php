@@ -150,6 +150,19 @@ class StringFunctionsHelper
     }
 
     /**
+     * URL-safe variant of cleanStrToDb: neutralizes the SQL-breaking single
+     * quote and strips tags, but preserves URL-essential chars (& ? = / : - .)
+     * that cleanStrToDb would otherwise delete.
+     *
+     * @param string|null $url
+     * @return string
+     */
+    public function cleanUrlToDb($url)
+    {
+        return str_replace("'", "`", strip_tags($url ?? ''));
+    }
+
+    /**
      * @param string $text
      * @return string
      */
