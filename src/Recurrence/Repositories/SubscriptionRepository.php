@@ -31,10 +31,10 @@ class SubscriptionRepository extends AbstractRepository
         $query = "
             SELECT *
               FROM {$subscriptionTable} as recurrence_subscription                  
-             WHERE recurrence_subscription.pagarme_id = '{$id}'             
+             WHERE recurrence_subscription.pagarme_id = :pagarme_id             
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $id]);
         if ($result->num_rows === 0) {
             return null;
         }
@@ -57,10 +57,10 @@ class SubscriptionRepository extends AbstractRepository
         $query = "
             SELECT *
               FROM {$subscriptionTable} as recurrence_subscription                  
-             WHERE recurrence_subscription.code = '{$code}'             
+             WHERE recurrence_subscription.code = :code             
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => (string) $code]);
         if ($result->num_rows === 0) {
             return null;
         }
@@ -102,20 +102,31 @@ class SubscriptionRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getCustomer()->getPagarmeId()->getValue()}',
-                '{$object->getPagarmeId()->getValue()}',
-                '{$object->getCode()}',
-                '{$object->getStatus()->getStatus()}',
-                '{$object->getInstallments()}',
-                '{$object->getPaymentMethod()}',
-                '{$object->getRecurrenceType()}',
-                '{$object->getIntervalType()}',
-                '{$object->getIntervalCount()}',
-                '{$object->getPlanIdValue()}'
+                :customer_id,
+                :pagarme_id,
+                :code,
+                :status,
+                :installments,
+                :payment_method,
+                :recurrence_type,
+                :interval_type,
+                :interval_count,
+                :plan_id
             );
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'customer_id' => (string) $object->getCustomer()->getPagarmeId()->getValue(),
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'code' => (string) $object->getCode(),
+            'status' => (string) $object->getStatus()->getStatus(),
+            'installments' => (string) $object->getInstallments(),
+            'payment_method' => (string) $object->getPaymentMethod(),
+            'recurrence_type' => (string) $object->getRecurrenceType(),
+            'interval_type' => (string) $object->getIntervalType(),
+            'interval_count' => (string) $object->getIntervalCount(),
+            'plan_id' => (string) $object->getPlanIdValue(),
+        ]);
 
         if (!empty($object->getItems())) {
             $this->saveSubscriptionItem($object->getItems());
@@ -140,18 +151,28 @@ class SubscriptionRepository extends AbstractRepository
 
         $query = "
             UPDATE {$subscriptionTable} SET
-              pagarme_id = '{$object->getPagarmeId()->getValue()}',
-              code = '{$object->getCode()}',
-              status = '{$object->getStatus()->getStatus()}',
-              installments = '{$object->getInstallments()}',
-              payment_method = '{$object->getPaymentMethod()}',
-              recurrence_type = '{$object->getRecurrenceType()}',
-              interval_type = '{$object->getIntervalType()}',
-              interval_count = '{$object->getIntervalCount()}'
-            WHERE id = {$object->getId()}
+              pagarme_id = :pagarme_id,
+              code = :code,
+              status = :status,
+              installments = :installments,
+              payment_method = :payment_method,
+              recurrence_type = :recurrence_type,
+              interval_type = :interval_type,
+              interval_count = :interval_count
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'code' => (string) $object->getCode(),
+            'status' => (string) $object->getStatus()->getStatus(),
+            'installments' => (string) $object->getInstallments(),
+            'payment_method' => (string) $object->getPaymentMethod(),
+            'recurrence_type' => (string) $object->getRecurrenceType(),
+            'interval_type' => (string) $object->getIntervalType(),
+            'interval_count' => (string) $object->getIntervalCount(),
+            'id' => $object->getId(),
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -171,8 +192,8 @@ class SubscriptionRepository extends AbstractRepository
                 AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION
             );
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE id = '" . $objectId . "'";
-        $result = $this->db->fetch($query);
+        $query = "SELECT * FROM $table WHERE id = :id";
+        $result = $this->db->fetch($query, ['id' => (string) $objectId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -241,10 +262,10 @@ class SubscriptionRepository extends AbstractRepository
             SELECT recurrence_subscription.*
               FROM {$recurrenceTable} as recurrence_subscription
               JOIN {$customerTable} as customer ON (recurrence_subscription.customer_id = customer.pagarme_id)
-             WHERE customer.code = '{$customerId}'
+             WHERE customer.code = :customer_code
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['customer_code' => (string) $customerId]);
         if ($result->num_rows === 0) {
             return [];
         }

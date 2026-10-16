@@ -46,11 +46,11 @@ final class ChargeRepository extends AbstractRepository
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
                   ON c.pagarme_id = t.charge_id 
-            WHERE c.order_id = '$id'
+            WHERE c.order_id = :order_id
             GROUP BY c.id;
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['order_id' => $id]);
 
         if ($result->num_rows === 0) {
             return [];
@@ -107,20 +107,31 @@ final class ChargeRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$simpleObject->pagarmeId}',
-                '{$simpleObject->orderId}',
-                '{$simpleObject->code}',
-                {$simpleObject->amount},
-                {$simpleObject->paidAmount},
-                {$simpleObject->canceledAmount},
-                {$simpleObject->refundedAmount},
-                '{$simpleObject->status}',
-                '{$metadata}',
-                '{$simpleObject->customerId}'
+                :pagarme_id,
+                :order_id,
+                :code,
+                :amount,
+                :paid_amount,
+                :canceled_amount,
+                :refunded_amount,
+                :status,
+                :metadata,
+                :customer_id
             );
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $simpleObject->pagarmeId,
+            'order_id' => (string) $simpleObject->orderId,
+            'code' => (string) $simpleObject->code,
+            'amount' => $simpleObject->amount,
+            'paid_amount' => $simpleObject->paidAmount,
+            'canceled_amount' => $simpleObject->canceledAmount,
+            'refunded_amount' => $simpleObject->refundedAmount,
+            'status' => (string) $simpleObject->status,
+            'metadata' => (string) $metadata,
+            'customer_id' => (string) $simpleObject->customerId,
+        ]);
 
         $transactionRepository = new TransactionRepository();
         foreach ($object->getTransactions() as $transaction) {
@@ -138,17 +149,26 @@ final class ChargeRepository extends AbstractRepository
 
         $query = "
             UPDATE $chargeTable SET
-              amount = {$charge->amount},
-              paid_amount = {$charge->paidAmount},                         
-              refunded_amount = {$charge->refundedAmount},                         
-              canceled_amount = {$charge->canceledAmount},
-              status = '{$charge->status}',
-              metadata = '{$metadata}',
-              customer_id = '{$charge->customerId}'
-            WHERE id = {$charge->id}
+              amount = :amount,
+              paid_amount = :paid_amount,
+              refunded_amount = :refunded_amount,
+              canceled_amount = :canceled_amount,
+              status = :status,
+              metadata = :metadata,
+              customer_id = :customer_id
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'amount' => $charge->amount,
+            'paid_amount' => $charge->paidAmount,
+            'refunded_amount' => $charge->refundedAmount,
+            'canceled_amount' => $charge->canceledAmount,
+            'status' => (string) $charge->status,
+            'metadata' => (string) $metadata,
+            'customer_id' => (string) $charge->customerId,
+            'id' => $charge->id,
+        ]);
 
         //update Transactions;
         $transactionRepository = new TransactionRepository();
@@ -205,11 +225,11 @@ final class ChargeRepository extends AbstractRepository
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
                   ON c.pagarme_id = t.charge_id 
-            WHERE c.pagarme_id = '$id'
+            WHERE c.pagarme_id = :pagarme_id
             GROUP BY c.id;
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => $id]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -239,9 +259,9 @@ final class ChargeRepository extends AbstractRepository
                     FROM `{$chargeTable}` as charge  
                LEFT JOIN `{$orderTable}` as o on charge.order_id = o.pagarme_id 
                    WHERE o.id is null 
-                     AND charge.code = '{$code}'";
+                     AND charge.code = :code";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => $code]);
 
         if ($result->num_rows === 0) {
             return [];

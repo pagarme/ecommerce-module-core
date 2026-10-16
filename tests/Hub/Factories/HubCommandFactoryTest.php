@@ -92,6 +92,14 @@ class HubCommandFactoryTest extends TestCase
         $this->assertInstanceOf(AbstractCommand::class, $command);
     }
 
+    public function testShouldRejectAnExistingClassWhichIsNotAHubCommand()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->payload->command = "Abstract";
+        $this->factory->createFromStdClass($this->payload);
+    }
+
     public function testInvalidCommandShouldThrowException()
     {
         $this->expectException(Exception::class);

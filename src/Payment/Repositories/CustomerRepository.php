@@ -16,9 +16,9 @@ final class CustomerRepository extends AbstractRepository
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
         $customerCode = filter_var($customerCode, FILTER_SANITIZE_SPECIAL_CHARS);
-        $query = "SELECT * FROM $table WHERE code = '$customerCode'";
+        $query = "SELECT * FROM $table WHERE code = :code";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => (string) $customerCode]);
 
         if ($result->num_rows > 0) {
             $factory = new CustomerFactory();
@@ -44,12 +44,15 @@ final class CustomerRepository extends AbstractRepository
             )
           VALUES 
             (
-                '{$obj->code}',
-                '{$obj->pagarmeId}'
-            )          
+                :code,
+                :pagarme_id
+            )
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'code' => (string) $obj->code,
+            'pagarme_id' => (string) $obj->pagarmeId,
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -61,9 +64,9 @@ final class CustomerRepository extends AbstractRepository
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
         $customerCode = filter_var($customerCode, FILTER_SANITIZE_SPECIAL_CHARS);
-        $query = "DELETE FROM $table WHERE code = '$customerCode'";
+        $query = "DELETE FROM $table WHERE code = :code";
 
-        return $this->db->query($query);
+        return $this->db->query($query, ['code' => (string) $customerCode]);
     }
 
     public function delete(AbstractEntity $object)
@@ -80,9 +83,9 @@ final class CustomerRepository extends AbstractRepository
     {
         $id = $pagarmeId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_CUSTOMER);
-        $query = "SELECT * FROM $table WHERE pagarme_id = '$id'";
+        $query = "SELECT * FROM $table WHERE pagarme_id = :pagarme_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $id]);
 
         if ($result->num_rows > 0) {
             $factory = new CustomerFactory();

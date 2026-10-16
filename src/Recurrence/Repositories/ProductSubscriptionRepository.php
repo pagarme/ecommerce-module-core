@@ -26,17 +26,17 @@ class ProductSubscriptionRepository extends AbstractRepository
                 `billing_type`,
                 `apply_discount_in_all_product_cycles`
             ) VALUES (
-                '{$object->getProductId()}',
-                '{$object->getCreditCard()}',
-                '{$object->getAllowInstallments()}',
-                '{$object->getBoleto()}',
-                '{$object->getSellAsNormalProduct()}',
-                '{$object->getBillingType()}',
-                '{$object->getApplyDiscountInAllProductCycles()}'
+                :product_id,
+                :credit_card,
+                :allow_installments,
+                :boleto,
+                :sell_as_normal_product,
+                :billing_type,
+                :apply_discount_in_all_product_cycles
             )
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, $this->bindings($object));
 
         $object->setId($this->db->getLastId());
 
@@ -51,19 +51,36 @@ class ProductSubscriptionRepository extends AbstractRepository
 
         $query = "
             UPDATE $table SET
-                `product_id` = '{$object->getProductId()}',
-                `credit_card` = '{$object->getCreditCard()}',
-                `allow_installments` = '{$object->getAllowInstallments()}',
-                `boleto` = '{$object->getBoleto()}',
-                `sell_as_normal_product` = '{$object->getSellAsNormalProduct()}',
-                `billing_type` = '{$object->getBillingType()}',
-                `apply_discount_in_all_product_cycles` = '{$object->getApplyDiscountInAllProductCycles()}'
-            WHERE id = {$object->getId()}
+                `product_id` = :product_id,
+                `credit_card` = :credit_card,
+                `allow_installments` = :allow_installments,
+                `boleto` = :boleto,
+                `sell_as_normal_product` = :sell_as_normal_product,
+                `billing_type` = :billing_type,
+                `apply_discount_in_all_product_cycles` = :apply_discount_in_all_product_cycles
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, $this->bindings($object) + ['id' => $object->getId()]);
 
         $this->saveRepetitions($object);
+    }
+
+    /**
+     * Values are cast to string, as the previous interpolation did, so null
+     * still maps to '' and not SQL NULL.
+     */
+    private function bindings($object)
+    {
+        return [
+            'product_id' => (string) $object->getProductId(),
+            'credit_card' => (string) $object->getCreditCard(),
+            'allow_installments' => (string) $object->getAllowInstallments(),
+            'boleto' => (string) $object->getBoleto(),
+            'sell_as_normal_product' => (string) $object->getSellAsNormalProduct(),
+            'billing_type' => (string) $object->getBillingType(),
+            'apply_discount_in_all_product_cycles' => (string) $object->getApplyDiscountInAllProductCycles(),
+        ];
     }
 
     public function saveRepetitions(AbstractEntity &$object)
@@ -82,9 +99,9 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
 
-        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+        $query = "DELETE FROM $table WHERE id = :id";
 
-        $result = $this->db->query($query);
+        $result = $this->db->query($query, ['id' => $object->getId()]);
 
         $this->deleteRepetitions($object);
 
@@ -105,9 +122,9 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE id = $objectId";
+        $query = "SELECT * FROM $table WHERE id = :id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $objectId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -172,9 +189,9 @@ class ProductSubscriptionRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_PRODUCTS_SUBSCRIPTION
         );
         $productId = filter_var($productId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE product_id = $productId";
+        $query = "SELECT * FROM $table WHERE product_id = :product_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['product_id' => $productId]);
         if ($result->num_rows === 0) {
             return null;
         }

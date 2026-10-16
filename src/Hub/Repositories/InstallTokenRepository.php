@@ -18,18 +18,19 @@ final class InstallTokenRepository extends AbstractRepository
             $this->db->getTable(AbstractDatabaseDecorator::TABLE_HUB_INSTALL_TOKEN);
 
         $stdObject = json_decode(json_encode($object));
-        $token = $stdObject->token;
-        $used = $stdObject->used ? 'true' : 'false';
-        $created_at_timestamp = $stdObject->createdAtTimestamp;
-        $expire_at_timestamp = $stdObject->expireAtTimestamp;
 
         $query = "
              INSERT INTO `$table`" .
             " (token, used, created_at_timestamp, expire_at_timestamp) " .
-            " VALUES ('$token',$used,$created_at_timestamp,$expire_at_timestamp)"
+            " VALUES (:token, :used, :created_at_timestamp, :expire_at_timestamp)"
           ;
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'token' => $stdObject->token,
+            'used' => $stdObject->used ? 1 : 0,
+            'created_at_timestamp' => $stdObject->createdAtTimestamp,
+            'expire_at_timestamp' => $stdObject->expireAtTimestamp,
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -38,22 +39,24 @@ final class InstallTokenRepository extends AbstractRepository
             $this->db->getTable(AbstractDatabaseDecorator::TABLE_HUB_INSTALL_TOKEN);
 
         $stdObject = json_decode(json_encode($object));
-        $token = $stdObject->token;
-        $used = $stdObject->used ? 'true' : 'false';
-        $created_at_timestamp = $stdObject->createdAtTimestamp;
-        $expire_at_timestamp = $stdObject->expireAtTimestamp;
 
         $query = "UPDATE `$table`" .
             " SET " .
             "
-                token = '$token' ,
-                used = $used ,
-                created_at_timestamp = $created_at_timestamp ,
-                expire_at_timestamp = $expire_at_timestamp
+                token = :token ,
+                used = :used ,
+                created_at_timestamp = :created_at_timestamp ,
+                expire_at_timestamp = :expire_at_timestamp
             " .
-            " WHERE id = {$stdObject->id}";
+            " WHERE id = :id";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'token' => $stdObject->token,
+            'used' => $stdObject->used ? 1 : 0,
+            'created_at_timestamp' => $stdObject->createdAtTimestamp,
+            'expire_at_timestamp' => $stdObject->expireAtTimestamp,
+            'id' => $stdObject->id,
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -86,9 +89,9 @@ final class InstallTokenRepository extends AbstractRepository
         $token = $pagarmeId->getValue();
 
         $query = "SELECT * FROM `$table` as t ";
-        $query .= "WHERE t.token = '$token';";
+        $query .= "WHERE t.token = :token;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['token' => $token]);
 
         if ($result->num_rows > 0) {
             $factory = new InstallTokenFactory();
