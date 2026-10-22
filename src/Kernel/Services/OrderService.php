@@ -209,7 +209,7 @@ final class OrderService
     public function addChargeMessagesToLog($platformOrder, $orderInfo, $errorMessages)
     {
 
-        if (!empty($errorMessages)) {
+        if (empty($errorMessages)) {
             return;
         }
 
@@ -274,7 +274,7 @@ final class OrderService
                 );
 
                 $charges = $this->getChargesFromResponse($response);
-                $errorMessages = $this->cancelChargesAtPagarme($charges);
+                $errorMessages = $this->cancelChargesAtPagarme($charges, null);
 
                 $this->addChargeMessagesToLog($platformOrder, $paymentOrder, $errorMessages);
 
