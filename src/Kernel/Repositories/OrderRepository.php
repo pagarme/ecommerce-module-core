@@ -24,10 +24,14 @@ final class OrderRepository extends AbstractRepository
 
         $query = "
           INSERT INTO $orderTable (`pagarme_id`, `code`, `status`)
-          VALUES ('{$order->pagarmeId}', '{$order->code}', '{$order->status}');
+          VALUES (:pagarme_id, :code, :status);
          ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => $order->pagarmeId,
+            'code' => $order->code,
+            'status' => $order->status,
+        ]);
 
         $chargeRepository = new ChargeRepository();
         foreach ($object->getCharges() as $charge) {
@@ -48,11 +52,14 @@ final class OrderRepository extends AbstractRepository
 
         $query = "
             UPDATE $orderTable SET
-              status = '{$order->status}'
-            WHERE id = {$order->id}
+              status = :status
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'status' => $order->status,
+            'id' => $order->id,
+        ]);
 
         //update Charges;
         $chargeRepository = new ChargeRepository();
@@ -67,9 +74,9 @@ final class OrderRepository extends AbstractRepository
         $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
         $codeId = filter_var($codeId, FILTER_SANITIZE_SPECIAL_CHARS);
         $query = "SELECT * FROM `$orderTable` ";
-        $query .= "WHERE code = '{$codeId}';";
+        $query .= "WHERE code = :code;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => $codeId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -101,9 +108,9 @@ final class OrderRepository extends AbstractRepository
         $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
 
         $query = "SELECT * FROM `$orderTable` ";
-        $query .= "WHERE pagarme_id = '{$id}';";
+        $query .= "WHERE pagarme_id = :pagarme_id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => $id]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -119,9 +126,9 @@ final class OrderRepository extends AbstractRepository
         $orderTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_ORDER);
         $platformID = filter_var($platformID, FILTER_SANITIZE_SPECIAL_CHARS);
         $query = "SELECT * FROM `$orderTable` ";
-        $query .= "WHERE code = '{$platformID}' ORDER BY id DESC;";
+        $query .= "WHERE code = :code ORDER BY id DESC;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => $platformID]);
 
         if ($result->num_rows === 0) {
             return null;

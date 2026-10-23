@@ -29,10 +29,10 @@ class SubscriptionItemRepository extends AbstractRepository
         $query = "
             SELECT *
               FROM {$subscriptionItemTable}                  
-             WHERE pagarme_id = '{$id}'             
+             WHERE pagarme_id = :pagarme_id             
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $id]);
         if ($result->num_rows === 0) {
             return null;
         }
@@ -53,10 +53,10 @@ class SubscriptionItemRepository extends AbstractRepository
         $query = "
             SELECT *
               FROM {$subscriptionItemTable}
-             WHERE subscription_id = '{$id}'
+             WHERE subscription_id = :subscription_id
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['subscription_id' => (string) $id]);
         if ($result->num_rows === 0) {
             return null;
         }
@@ -81,10 +81,10 @@ class SubscriptionItemRepository extends AbstractRepository
         $query = "
             SELECT *
               FROM {$subscriptionItemTable}                  
-             WHERE code = '{$code}'             
+             WHERE code = :code             
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => (string) $code]);
         if ($result->num_rows === 0) {
             return null;
         }
@@ -120,14 +120,19 @@ class SubscriptionItemRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getPagarmeId()->getValue()}',
-                '{$object->getSubscriptionId()->getValue()}',
-                '{$object->getCode()}',
-                '{$object->getQuantity()}'
+                :pagarme_id,
+                :subscription_id,
+                :code,
+                :quantity
             );
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'subscription_id' => (string) $object->getSubscriptionId()->getValue(),
+            'code' => (string) $object->getCode(),
+            'quantity' => (string) $object->getQuantity(),
+        ]);
     }
 
     /**
@@ -142,14 +147,20 @@ class SubscriptionItemRepository extends AbstractRepository
 
         $query = "
             UPDATE {$subscriptionItemTable} SET
-              pagarme_id = '{$object->getPagarmeId()->getValue()}',
-              code = '{$object->getCode()}',
-              subscription_id = '{$object->getSubscriptionId()->getValue()}',
-              quantity = '{$object->getQuantity()}'
-            WHERE id = {$object->getId()}
+              pagarme_id = :pagarme_id,
+              code = :code,
+              subscription_id = :subscription_id,
+              quantity = :quantity
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'code' => (string) $object->getCode(),
+            'subscription_id' => (string) $object->getSubscriptionId()->getValue(),
+            'quantity' => (string) $object->getQuantity(),
+            'id' => $object->getId(),
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -168,8 +179,8 @@ class SubscriptionItemRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_ITEM
         );
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM {$subscriptionItemTable} WHERE id = '" . $objectId . "'";
-        $result = $this->db->fetch($query);
+        $query = "SELECT * FROM {$subscriptionItemTable} WHERE id = :id";
+        $result = $this->db->fetch($query, ['id' => (string) $objectId]);
 
         if ($result->num_rows === 0) {
             return null;

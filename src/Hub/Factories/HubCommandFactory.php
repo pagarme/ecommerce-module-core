@@ -18,6 +18,12 @@ use ReflectionException;
 class HubCommandFactory
 {
     /**
+     * Command names come from the Hub payload and become a class name, so
+     * only the known commands may be resolved.
+     */
+    const ALLOWED_COMMANDS = ['Install', 'Uninstall', 'Update'];
+
+    /**
      * @param  $object
      * @return AbstractCommand
      * @throws ReflectionException|InvalidParamException
@@ -25,6 +31,10 @@ class HubCommandFactory
      */
     public function createFromStdClass($object)
     {
+        if (!in_array($object->command, self::ALLOWED_COMMANDS, true)) {
+            throw new Exception("Invalid Command! " . $object->command);
+        }
+
         $commandClass = (new ReflectionClass(AbstractCommand::class))->getNamespaceName();
         $commandClass .= "\\" . $object->command . "Command";
 

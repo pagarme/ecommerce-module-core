@@ -22,15 +22,20 @@ final class SavedCardRepository extends AbstractRepository
     {
         $id = $customerId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "SELECT * FROM $table WHERE owner_id = '$id'";
+        $query = "SELECT * FROM $table WHERE owner_id = :owner_id";
+        $bindings = ['owner_id' => (string) $id];
         if ($cardType && is_array($cardType)) {
             if ($includeEmptyType) {
                 array_push($cardType, '');
             }
-            $cardType = implode('\', \'', $cardType);
-            $query .= " AND type IN ('$cardType')";
+            $placeholders = [];
+            foreach (array_values($cardType) as $index => $type) {
+                $placeholders[] = ":card_type_$index";
+                $bindings["card_type_$index"] = (string) $type;
+            }
+            $query .= " AND type IN (" . implode(', ', $placeholders) . ")";
         }
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, $bindings);
 
         $factory = new SavedCardFactory();
         $savedCards = [];
@@ -67,18 +72,27 @@ final class SavedCardRepository extends AbstractRepository
             )
           VALUES 
             (
-                '{$obj->pagarmeId}',
-                '{$obj->ownerId}',
-                '{$obj->ownerName}',
-                '{$obj->firstSixDigits}',
-                '{$obj->lastFourDigits}',
-                '{$obj->brand}',
-                '{$obj->type}',
-                '{$obj->createdAt}'
+                :pagarme_id,
+                :owner_id,
+                :owner_name,
+                :first_six_digits,
+                :last_four_digits,
+                :brand,
+                :type,
+                :created_at
             )          
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $obj->pagarmeId,
+            'owner_id' => (string) $obj->ownerId,
+            'owner_name' => (string) $obj->ownerName,
+            'first_six_digits' => (string) $obj->firstSixDigits,
+            'last_four_digits' => (string) $obj->lastFourDigits,
+            'brand' => (string) $obj->brand,
+            'type' => (string) $obj->type,
+            'created_at' => (string) $obj->createdAt,
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -89,18 +103,18 @@ final class SavedCardRepository extends AbstractRepository
     public function delete(AbstractEntity $object)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "DELETE FROM $table where id = {$object->getId()}";
+        $query = "DELETE FROM $table where id = :id";
 
-        $this->db->query($query);
+        $this->db->query($query, ['id' => $object->getId()]);
     }
 
     public function find($objectId)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE id = '$objectId'";
+        $query = "SELECT * FROM $table WHERE id = :id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => (string) $objectId]);
 
         if ($result->num_rows > 0) {
             $factory = new SavedCardFactory();
@@ -115,9 +129,9 @@ final class SavedCardRepository extends AbstractRepository
     {
         $id = $pagarmeId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_SAVED_CARD);
-        $query = "SELECT * FROM $table WHERE pagarme_id = '$id'";
+        $query = "SELECT * FROM $table WHERE pagarme_id = :pagarme_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $id]);
 
         if ($result->num_rows > 0) {
             $factory = new SavedCardFactory();

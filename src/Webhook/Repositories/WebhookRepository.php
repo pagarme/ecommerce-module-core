@@ -13,9 +13,11 @@ class WebhookRepository extends AbstractRepository
     protected function create(AbstractEntity &$object)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_WEBHOOK);
-        $query = "INSERT INTO $table (pagarme_id) VALUES ('{$object->getPagarmeId()->getValue()}')";
+        $query = "INSERT INTO $table (pagarme_id) VALUES (:pagarme_id)";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => $object->getPagarmeId()->getValue(),
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -32,9 +34,9 @@ class WebhookRepository extends AbstractRepository
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_WEBHOOK);
         $objectId = filter_var($objectId, FILTER_SANITIZE_SPECIAL_CHARS);
-        $query = "SELECT * FROM $table WHERE id = '$objectId'";
+        $query = "SELECT * FROM $table WHERE id = :id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $objectId]);
 
         if ($result->num_rows > 0) {
             $factory = new WebhookFactory();
@@ -54,9 +56,9 @@ class WebhookRepository extends AbstractRepository
     {
         $id = $pagarmeId->getValue();
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_WEBHOOK);
-        $query = "SELECT * FROM $table WHERE pagarme_id = '$id'";
+        $query = "SELECT * FROM $table WHERE pagarme_id = :pagarme_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => $id]);
 
         if ($result->num_rows > 0) {
             $factory = new WebhookFactory();

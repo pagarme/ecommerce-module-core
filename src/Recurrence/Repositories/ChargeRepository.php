@@ -46,11 +46,11 @@ final class ChargeRepository extends AbstractRepository
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
                   ON c.pagarme_id = t.charge_id 
-            WHERE c.order_id = '$id'
+            WHERE c.order_id = :order_id
             GROUP BY c.id;
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['order_id' => (string) $id]);
 
         if ($result->num_rows === 0) {
             return [];
@@ -101,24 +101,39 @@ final class ChargeRepository extends AbstractRepository
 
         $query .= "
             (
-                '{$object->getPagarmeId()->getValue()}',
-                '{$object->getInvoiceId()}',
-                '{$object->getSubscriptionId()}',
-                '{$object->getCode()}',
-                {$object->getAmount()},
-                {$object->getPaidAmount()},
-                {$object->getCanceledAmount()},
-                {$object->getRefundedAmount()},
-                '{$object->getStatus()->getStatus()}',
-                '{$metadata}', 
-                '{$object->getPaymentMethod()->getPaymentMethod()}',
-                '{$object->getBoletoUrl()}',
-               '{$object->getCycleStart()->format('Y-m-d H:i:s')}',
-               '{$object->getCycleEnd()->format('Y-m-d H:i:s')}' 
+                :pagarme_id,
+                :invoice_id,
+                :subscription_id,
+                :code,
+                :amount,
+                :paid_amount,
+                :canceled_amount,
+                :refunded_amount,
+                :status,
+                :metadata,
+                :payment_method,
+                :boleto_link,
+               :cycle_start,
+               :cycle_end
             );
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'invoice_id' => (string) $object->getInvoiceId(),
+            'subscription_id' => (string) $object->getSubscriptionId(),
+            'code' => (string) $object->getCode(),
+            'amount' => $object->getAmount(),
+            'paid_amount' => $object->getPaidAmount(),
+            'canceled_amount' => $object->getCanceledAmount(),
+            'refunded_amount' => $object->getRefundedAmount(),
+            'status' => (string) $object->getStatus()->getStatus(),
+            'metadata' => (string) $metadata,
+            'payment_method' => (string) $object->getPaymentMethod()->getPaymentMethod(),
+            'boleto_link' => (string) $object->getBoletoUrl(),
+            'cycle_start' => (string) $object->getCycleStart()->format('Y-m-d H:i:s'),
+            'cycle_end' => (string) $object->getCycleEnd()->format('Y-m-d H:i:s'),
+        ]);
 
         $transactionRepository = new TransactionRepository();
         foreach ($object->getTransactions() as $transaction) {
@@ -139,16 +154,24 @@ final class ChargeRepository extends AbstractRepository
 
         $query = "
             UPDATE $chargeTable SET
-              amount = {$charge->amount},
-              paid_amount = {$charge->paidAmount},                         
-              refunded_amount = {$charge->refundedAmount},                         
-              canceled_amount = {$charge->canceledAmount},
-              status = '{$charge->status}',
-              metadata = '{$metadata}'
-            WHERE id = {$charge->id}
+              amount = :amount,
+              paid_amount = :paid_amount,
+              refunded_amount = :refunded_amount,
+              canceled_amount = :canceled_amount,
+              status = :status,
+              metadata = :metadata
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'amount' => $charge->amount,
+            'paid_amount' => $charge->paidAmount,
+            'refunded_amount' => $charge->refundedAmount,
+            'canceled_amount' => $charge->canceledAmount,
+            'status' => (string) $charge->status,
+            'metadata' => (string) $metadata,
+            'id' => $charge->id,
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -185,10 +208,10 @@ final class ChargeRepository extends AbstractRepository
                cycle_start,
                cycle_end
                    
-            FROM `$table` WHERE invoice_id = '{$invoiceId}';
+            FROM `$table` WHERE invoice_id = :invoice_id;
             ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['invoice_id' => (string) $invoiceId]);
 
         $factory = new ChargeFactory();
 
@@ -236,11 +259,11 @@ final class ChargeRepository extends AbstractRepository
                 $chargeTable as c 
                 LEFT JOIN $transactionTable as t  
                   ON c.pagarme_id = t.charge_id 
-            WHERE c.pagarme_id = '$id'
+            WHERE c.pagarme_id = :pagarme_id
             GROUP BY c.id;
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $id]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -288,11 +311,11 @@ final class ChargeRepository extends AbstractRepository
                 {$chargeTable} as recurrence_charge 
                 LEFT JOIN {$transactionTable} as t 
                        ON recurrence_charge.pagarme_id = t.charge_id 
-            WHERE recurrence_charge.code = '{$codeOrder}'
+            WHERE recurrence_charge.code = :code
             GROUP BY recurrence_charge.id;
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['code' => (string) $codeOrder]);
 
         if ($result->num_rows === 0) {
             return [];
@@ -319,10 +342,10 @@ final class ChargeRepository extends AbstractRepository
                 *
             FROM
                 $chargeTable as c  
-            WHERE subscription_id = '$id'
+            WHERE subscription_id = :subscription_id
         ";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['subscription_id' => (string) $id]);
 
         if ($result->num_rows === 0) {
             return [];

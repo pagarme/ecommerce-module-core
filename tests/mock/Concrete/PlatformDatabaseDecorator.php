@@ -36,20 +36,20 @@ class PlatformDatabaseDecorator extends AbstractDatabaseDecorator
         // TODO: Implement setTablePrefix() method.
     }
 
-    protected function doQuery($query)
+    protected function doQuery($query, array $bind)
     {
         $stmt = $this->db->prepare($query);
-        return $stmt->execute();
+        return $stmt->execute($bind);
     }
 
     /**
      *
      * @return array
      */
-    protected function doFetch($query)
+    protected function doFetch($query, array $bind)
     {
         $stmt = $this->db->prepare($query);
-        $stmt->execute();
+        $stmt->execute($bind);
         return $stmt->fetchAll();
 
     }

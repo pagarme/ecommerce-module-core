@@ -26,16 +26,23 @@ class SubProductRepository extends AbstractRepository
                 `quantity`,
                 `pagarme_id`
             ) VALUES (
-                '{$object->getProductId()}',
-                '{$object->getProductRecurrenceId()}',
-                '{$object->getRecurrenceType()}',
-                '{$object->getCycles()}',
-                '{$object->getQuantity()}',
-                '{$object->getPagarmeIdValue()}'
+                :product_id,
+                :product_recurrence_id,
+                :recurrence_type,
+                :cycles,
+                :quantity,
+                :pagarme_id
             )
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'product_id' => (string) $object->getProductId(),
+            'product_recurrence_id' => (string) $object->getProductRecurrenceId(),
+            'recurrence_type' => (string) $object->getRecurrenceType(),
+            'cycles' => (string) $object->getCycles(),
+            'quantity' => (string) $object->getQuantity(),
+            'pagarme_id' => (string) $object->getPagarmeIdValue(),
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -44,24 +51,31 @@ class SubProductRepository extends AbstractRepository
 
         $query = "
             UPDATE $table SET
-                `product_id` = '{$object->getProductId()}',
-                `product_recurrence_id` = '{$object->getProductRecurrenceId()}',
-                `recurrence_type` = '{$object->getRecurrenceType()}',
-                `cycles` = '{$object->getCycles()}',
-                `quantity` = '{$object->getQuantity()}'
-            WHERE id = {$object->getId()}
+                `product_id` = :product_id,
+                `product_recurrence_id` = :product_recurrence_id,
+                `recurrence_type` = :recurrence_type,
+                `cycles` = :cycles,
+                `quantity` = :quantity
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'product_id' => (string) $object->getProductId(),
+            'product_recurrence_id' => (string) $object->getProductRecurrenceId(),
+            'recurrence_type' => (string) $object->getRecurrenceType(),
+            'cycles' => (string) $object->getCycles(),
+            'quantity' => (string) $object->getQuantity(),
+            'id' => $object->getId(),
+        ]);
     }
 
     public function delete(AbstractEntity $object)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
 
-        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+        $query = "DELETE FROM $table WHERE id = :id";
 
-        $this->db->query($query);
+        $this->db->query($query, ['id' => $object->getId()]);
     }
 
     public function find($objectId)
@@ -84,10 +98,13 @@ class SubProductRepository extends AbstractRepository
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUB_PRODUCTS);
 
         $query = "SELECT * FROM $table" .
-            " WHERE product_recurrence_id = {$recurrenceEntity->getId()}" .
-            " AND recurrence_type = '{$recurrenceEntity->getRecurrenceType()}'";
+            " WHERE product_recurrence_id = :product_recurrence_id" .
+            " AND recurrence_type = :recurrence_type";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, [
+            'product_recurrence_id' => $recurrenceEntity->getId(),
+            'recurrence_type' => (string) $recurrenceEntity->getRecurrenceType(),
+        ]);
         $subProducts = [];
 
         if ($result->num_rows === 0) {
@@ -108,10 +125,13 @@ class SubProductRepository extends AbstractRepository
         $recurrenceId = filter_var($recurrenceId, FILTER_SANITIZE_NUMBER_INT);
         $productId = filter_var($productId, FILTER_SANITIZE_NUMBER_INT);
         $query = "SELECT * FROM $table" .
-            " WHERE product_recurrence_id = {$recurrenceId}" .
-            " AND product_id = '{$productId}'";
+            " WHERE product_recurrence_id = :recurrence_id" .
+            " AND product_id = :product_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, [
+            'recurrence_id' => $recurrenceId,
+            'product_id' => $productId,
+        ]);
 
         if ($result->num_rows === 0) {
             return null;

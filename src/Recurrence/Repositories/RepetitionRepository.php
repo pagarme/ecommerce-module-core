@@ -23,15 +23,15 @@ class RepetitionRepository extends AbstractRepository
                 `recurrence_price`,
                 `cycles`
             ) VALUES (
-                '{$object->getSubscriptionId()}',
-                '{$object->getInterval()}',
-                '{$object->getIntervalCount()}',
-                '{$object->getRecurrencePrice()}',
-                '{$object->getCycles()}'
+                :subscription_id,
+                :interval,
+                :interval_count,
+                :recurrence_price,
+                :cycles
             )
         ";
 
-        return $this->db->query($query);
+        return $this->db->query($query, $this->bindings($object));
     }
 
     protected function update(AbstractEntity &$object)
@@ -40,42 +40,42 @@ class RepetitionRepository extends AbstractRepository
 
         $query = "
             UPDATE $table SET
-                `subscription_id` = '{$object->getSubscriptionId()}',
-                `interval` = '{$object->getInterval()}',
-                `interval_count` = '{$object->getIntervalCount()}',
-                `recurrence_price` = '{$object->getRecurrencePrice()}',
-                `cycles` = '{$object->getCycles()}'
-            WHERE id = {$object->getId()}
+                `subscription_id` = :subscription_id,
+                `interval` = :interval,
+                `interval_count` = :interval_count,
+                `recurrence_price` = :recurrence_price,
+                `cycles` = :cycles
+            WHERE id = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, $this->bindings($object) + ['id' => $object->getId()]);
     }
 
     public function delete(AbstractEntity $object)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
 
-        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+        $query = "DELETE FROM $table WHERE id = :id";
 
-        $this->db->query($query);
+        $this->db->query($query, ['id' => $object->getId()]);
     }
 
     public function deleteBySubscriptionId($subscriptionProductId)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
         $subscriptionProductId = filter_var($subscriptionProductId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "DELETE FROM $table WHERE subscription_id = {$subscriptionProductId}";
+        $query = "DELETE FROM $table WHERE subscription_id = :subscription_id";
 
-        $this->db->query($query);
+        $this->db->query($query, ['subscription_id' => $subscriptionProductId]);
     }
 
     public function find($objectId)
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE id = $objectId";
+        $query = "SELECT * FROM $table WHERE id = :id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $objectId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -85,6 +85,21 @@ class RepetitionRepository extends AbstractRepository
         $repetition = $repetitionFactory->createFromDbData($result->row);
 
         return $repetition;
+    }
+
+    /**
+     * Values are cast to string, as the previous interpolation did, so null
+     * still maps to '' and not SQL NULL.
+     */
+    private function bindings($object)
+    {
+        return [
+            'subscription_id' => (string) $object->getSubscriptionId(),
+            'interval' => (string) $object->getInterval(),
+            'interval_count' => (string) $object->getIntervalCount(),
+            'recurrence_price' => (string) $object->getRecurrencePrice(),
+            'cycles' => (string) $object->getCycles(),
+        ];
     }
 
     public function findByPagarmeId(AbstractValidString $pagarmeId)
@@ -101,9 +116,9 @@ class RepetitionRepository extends AbstractRepository
     {
         $table = $this->db->getTable(AbstractDatabaseDecorator::TABLE_RECURRENCE_SUBSCRIPTION_REPETITIONS);
         $subscriptionId = filter_var($subscriptionId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE subscription_id = $subscriptionId";
+        $query = "SELECT * FROM $table WHERE subscription_id = :subscription_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['subscription_id' => $subscriptionId]);
         $repetitions = [];
 
         if ($result->num_rows === 0) {

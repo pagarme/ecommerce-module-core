@@ -22,9 +22,9 @@ final class TransactionRepository extends AbstractRepository
         $id = $chargeId->getValue();
 
         $query = "SELECT * FROM `$transactionTable` ";
-        $query .= "WHERE charge_id = '{$id}';";
+        $query .= "WHERE charge_id = :charge_id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['charge_id' => $id]);
         $helper = new StringFunctionsHelper();
 
         if (!empty($result['card_data'])) {
@@ -100,25 +100,41 @@ final class TransactionRepository extends AbstractRepository
         ";
         $query .= "
             (
-                '{$simpleObject->pagarmeId}',
-                '{$simpleObject->chargeId}',                
-                {$simpleObject->amount},
-                {$simpleObject->paidAmount},
-                '{$simpleObject->acquirerNsu}',
-                '{$simpleObject->acquirerTid}',
-                '{$simpleObject->acquirerAuthCode}',
-                '{$simpleObject->acquirerName}',
-                '{$simpleObject->acquirerMessage}',
-                '{$simpleObject->type}',
-                '{$simpleObject->status}',
-                '{$simpleObject->createdAt}',
-                '{$simpleObject->boletoUrl}',
-                '{$cardData}',
-                '{$transactionData}'
+                :pagarme_id,
+                :charge_id,
+                :amount,
+                :paid_amount,
+                :acquirer_nsu,
+                :acquirer_tid,
+                :acquirer_auth_code,
+                :acquirer_name,
+                :acquirer_message,
+                :type,
+                :status,
+                :created_at,
+                :boleto_url,
+                :card_data,
+                :transaction_data
             );
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'pagarme_id' => (string) $simpleObject->pagarmeId,
+            'charge_id' => (string) $simpleObject->chargeId,
+            'amount' => $simpleObject->amount,
+            'paid_amount' => $simpleObject->paidAmount,
+            'acquirer_nsu' => (string) $simpleObject->acquirerNsu,
+            'acquirer_tid' => (string) $simpleObject->acquirerTid,
+            'acquirer_auth_code' => (string) $simpleObject->acquirerAuthCode,
+            'acquirer_name' => (string) $simpleObject->acquirerName,
+            'acquirer_message' => (string) $simpleObject->acquirerMessage,
+            'type' => (string) $simpleObject->type,
+            'status' => (string) $simpleObject->status,
+            'created_at' => (string) $simpleObject->createdAt,
+            'boleto_url' => (string) $simpleObject->boletoUrl,
+            'card_data' => (string) $cardData,
+            'transaction_data' => (string) $transactionData,
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
@@ -162,9 +178,9 @@ final class TransactionRepository extends AbstractRepository
         $id = $pagarmeId->getValue();
 
         $query = "SELECT * FROM `$chargeTable` ";
-        $query .= "WHERE pagarme_id = '{$id}';";
+        $query .= "WHERE pagarme_id = :pagarme_id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => $id]);
 
         $factory = new ChargeFactory();
 

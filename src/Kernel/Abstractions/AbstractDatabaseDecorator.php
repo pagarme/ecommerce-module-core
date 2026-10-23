@@ -30,13 +30,17 @@ abstract class AbstractDatabaseDecorator
         $this->setTablePrefix();
         $this->setTableArray();
     }
-    public function query($query)
+    /**
+     * @param string $query SQL with named placeholders (":name")
+     * @param array $bind values bound to the placeholders, never interpolated
+     */
+    public function query($query, array $bind = [])
     {
-        $this->doQuery($query);
+        $this->doQuery($query, $bind);
     }
-    public function fetch($query)
+    public function fetch($query, array $bind = [])
     {
-        $queryResult = $this->doFetch($query);
+        $queryResult = $this->doFetch($query, $bind);
         return $this->formatResults($queryResult);
     }
     public function getTable($tableName)
@@ -49,12 +53,12 @@ abstract class AbstractDatabaseDecorator
     abstract public function getLastId();
     abstract protected function setTableArray();
     abstract protected function setTablePrefix();
-    abstract protected function doQuery($query);
+    abstract protected function doQuery($query, array $bind);
 
     /**
      *
      * @return array
      */
-    abstract protected function doFetch($query);
+    abstract protected function doFetch($query, array $bind);
     abstract protected function formatResults($query);
 }

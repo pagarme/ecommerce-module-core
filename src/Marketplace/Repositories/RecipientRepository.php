@@ -35,26 +35,36 @@ class RecipientRepository extends AbstractRepository
             `document`,
             `pagarme_id`";
 
+        $bindings = [
+            'external_id' => (string) $object->getExternalId(),
+            'name' => (string) $object->getName(),
+            'email' => (string) $object->getEmail(),
+            'type' => (string) $object->getDocumentType(),
+            'document' => (string) $object->getDocument(),
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+        ];
+
         $queryStatusFieldValue = '';
 
         if (!empty($object->getStatus())) {
             $query .= ",`status`";
-            $queryStatusFieldValue = ",{$object->getStatus()}";
+            $queryStatusFieldValue = ",:status";
+            $bindings['status'] = $object->getStatus();
         }
 
         $query .= ") VALUES (
-            '{$object->getExternalId()}',
-            '{$object->getName()}',
-            '{$object->getEmail()}',
-            '{$object->getDocumentType()}',
-            '{$object->getDocument()}',
-            '{$object->getPagarmeId()->getValue()}'";
+            :external_id,
+            :name,
+            :email,
+            :type,
+            :document,
+            :pagarme_id";
 
         $query .= $queryStatusFieldValue;
 
         $query .= ")";
 
-        $this->db->query($query);
+        $this->db->query($query, $bindings);
     }
 
     protected function update(AbstractEntity &$object)
@@ -65,15 +75,22 @@ class RecipientRepository extends AbstractRepository
 
         $query = "
             UPDATE $table SET
-                `external_id`='{$object->getExternalId()}',
-                `name`='{$object->getName()}',
-                `email`='{$object->getEmail()}',
-                `pagarme_id`='{$object->getPagarmeId()->getValue()}',
-                `status`='{$object->getStatus()}'
-            WHERE `id`='{$object->getId()}'
+                `external_id` = :external_id,
+                `name` = :name,
+                `email` = :email,
+                `pagarme_id` = :pagarme_id,
+                `status` = :status
+            WHERE `id` = :id
         ";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'external_id' => (string) $object->getExternalId(),
+            'name' => (string) $object->getName(),
+            'email' => (string) $object->getEmail(),
+            'pagarme_id' => (string) $object->getPagarmeId()->getValue(),
+            'status' => (string) $object->getStatus(),
+            'id' => (string) $object->getId(),
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -82,9 +99,9 @@ class RecipientRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECIPIENTS
         );
 
-        $query = "DELETE FROM $table WHERE id = {$object->getId()}";
+        $query = "DELETE FROM $table WHERE id = :id";
 
-        return $this->db->query($query);
+        return $this->db->query($query, ['id' => $object->getId()]);
     }
 
     public function find($objectId)
@@ -93,9 +110,9 @@ class RecipientRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECIPIENTS
         );
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT * FROM $table WHERE id = $objectId";
+        $query = "SELECT * FROM $table WHERE id = :id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $objectId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -112,9 +129,9 @@ class RecipientRepository extends AbstractRepository
             AbstractDatabaseDecorator::TABLE_RECIPIENTS
         );
 
-        $query = "SELECT * FROM {$table} WHERE pagarme_id = '{$pagarmeId}'";
+        $query = "SELECT * FROM {$table} WHERE pagarme_id = :pagarme_id";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['pagarme_id' => (string) $pagarmeId]);
 
         if ($result->num_rows === 0) {
             return null;
@@ -177,9 +194,9 @@ class RecipientRepository extends AbstractRepository
         );
         $sellerId = filter_var($sellerId, FILTER_SANITIZE_NUMBER_INT);
         $query = "SELECT * FROM `$table` as t ";
-        $query .= "WHERE t.external_id = '$sellerId';";
+        $query .= "WHERE t.external_id = :external_id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['external_id' => (string) $sellerId]);
 
         if ($result->num_rows === 0) {
             return [];
