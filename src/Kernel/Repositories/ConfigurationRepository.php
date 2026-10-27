@@ -38,17 +38,20 @@ class ConfigurationRepository extends AbstractRepository
 
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
         
-        $query = "INSERT INTO `$configTable` (data, store_id) VALUES ('$jsonEncoded', {$object->getStoreId()})";
+        $query = "INSERT INTO `$configTable` (data, store_id) VALUES (:data, :store_id)";
 
-        $this->db->query($query);
+        $this->db->query($query, [
+            'data' => $jsonEncoded,
+            'store_id' => $object->getStoreId(),
+        ]);
     }
 
     protected function update(AbstractEntity &$object)
     {
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
-        $query = " SELECT * FROM `$configTable` WHERE id = {$object->getId()};";
+        $query = "SELECT * FROM `$configTable` WHERE id = :id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $object->getId()]);
 
         if ($result->num_rows == 0) {
             return $this->create($object);
@@ -62,11 +65,14 @@ class ConfigurationRepository extends AbstractRepository
         $jsonEncoded = json_encode($preparedObject);
 
         $query = "
-            UPDATE `$configTable` set data = '{$jsonEncoded}'
-            WHERE id = {$object->getId()};
+            UPDATE `$configTable` set data = :data
+            WHERE id = :id;
         ";
-        
-        return $this->db->query($query);
+
+        return $this->db->query($query, [
+            'data' => $jsonEncoded,
+            'id' => $object->getId(),
+        ]);
     }
 
     public function delete(AbstractEntity $object)
@@ -78,9 +84,9 @@ class ConfigurationRepository extends AbstractRepository
     {
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
         $objectId = filter_var($objectId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT data, id FROM `$configTable` WHERE id = {$objectId};";
+        $query = "SELECT data, id FROM `$configTable` WHERE id = :id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['id' => $objectId]);
 
         $factory = new ConfigurationFactory();
 
@@ -102,9 +108,9 @@ class ConfigurationRepository extends AbstractRepository
 
         $configTable = $this->db->getTable(AbstractDatabaseDecorator::TABLE_MODULE_CONFIGURATION);
         $storeId = filter_var($storeId, FILTER_SANITIZE_NUMBER_INT);
-        $query = "SELECT data, id FROM `$configTable` WHERE store_id = {$storeId};";
+        $query = "SELECT data, id FROM `$configTable` WHERE store_id = :store_id;";
 
-        $result = $this->db->fetch($query);
+        $result = $this->db->fetch($query, ['store_id' => $storeId]);
 
         $factory = new ConfigurationFactory();
 

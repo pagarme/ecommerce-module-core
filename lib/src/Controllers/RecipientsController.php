@@ -38,7 +38,7 @@ class RecipientsController extends BaseController
         if (null === static::$instance) {
             static::$instance = new static();
         }
-        
+
         return static::$instance;
     }
 
@@ -1278,7 +1278,7 @@ class RecipientsController extends BaseController
     ) {
 
         //prepare query string for API call
-        $_queryBuilder = '/recipients/{recipient_id}/kyc_link ';
+        $_queryBuilder = '/recipients/{recipient_id}/kyc_link';
 
         //process optional query parameters
         $_queryBuilder = APIHelper::appendUrlWithTemplateParameters($_queryBuilder, array (
