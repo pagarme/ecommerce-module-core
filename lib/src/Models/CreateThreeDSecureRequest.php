@@ -61,6 +61,13 @@ class CreateThreeDSecureRequest implements JsonSerializable
     public $version;
 
     /**
+     * Risk identifier returned by the 3DS provider. Optional: it is only sent when set.
+     * @maps risk_id
+     * @var string|null $riskId public property
+     */
+    public $riskId;
+
+    /**
      * Constructor to set initial or default values of member properties
      * @param string $mpi             Initialization value for $this->mpi
      * @param string $cavv            Initialization value for $this->cavv
@@ -98,6 +105,9 @@ class CreateThreeDSecureRequest implements JsonSerializable
         $json['success_url']       = $this->successUrl;
         $json['ds_transaction_id'] = $this->dsTransactionId;
         $json['version']           = $this->version;
+        if ($this->riskId !== null) {
+            $json['risk_id']       = $this->riskId;
+        }
 
         return $json;
     }
