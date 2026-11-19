@@ -22,6 +22,11 @@ final class ThreeDSecure extends AbstractEntity implements ConvertibleToSDKReque
     private $transactionId;
 
     /**
+     * @var string|null
+     */
+    private $riskId;
+
+    /**
      * @return string
      */
     public function getMpi()
@@ -56,6 +61,23 @@ final class ThreeDSecure extends AbstractEntity implements ConvertibleToSDKReque
     }
 
     /**
+     * @return string|null
+     */
+    public function getRiskId()
+    {
+        return $this->riskId;
+    }
+
+    /**
+     * @param string $riskId
+     * @return void
+     */
+    public function setRiskId(string $riskId)
+    {
+        $this->riskId = $riskId;
+    }
+
+    /**
      * @return CreateThreeDSecureRequest
      */
     public function convertToSDKRequest()
@@ -63,6 +85,7 @@ final class ThreeDSecure extends AbstractEntity implements ConvertibleToSDKReque
         $threeDSecureRequest = new CreateThreeDSecureRequest();
         $threeDSecureRequest->mpi = $this->getMpi();
         $threeDSecureRequest->transactionId = $this->getTransactionId();
+        $threeDSecureRequest->riskId = $this->getRiskId();
 
         return $threeDSecureRequest;
     }
@@ -89,6 +112,9 @@ final class ThreeDSecure extends AbstractEntity implements ConvertibleToSDKReque
         $threeDSecure = new self();
         $threeDSecure->setMpi($object->mpi);
         $threeDSecure->setTransactionId($object->transactionId);
+        if (!empty($object->riskId)) {
+            $threeDSecure->setRiskId($object->riskId);
+        }
         return $threeDSecure;
     }
 }
